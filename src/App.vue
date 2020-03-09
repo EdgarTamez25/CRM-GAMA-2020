@@ -60,6 +60,7 @@
               v-for="(child, i) in cat.catalogos"
               :key="i"
               :to="child.path"
+              dense
             >
               <v-list-item-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
@@ -130,9 +131,15 @@ export default {
           title :' Catálogos',
           model: false,
           catalogos: [ 
-            { text: 'Usuarios' ,icon: 'person' ,path: '/usuarios'},
-            { text: 'Clientes' ,icon: 'people' ,path: '/'},
-            { text: 'Productos',icon: 'layers' ,path: '/'},
+            { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
+            { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
+            { text: 'Productos'         ,icon: 'print'        ,path: '/productos'},
+            { text: 'Precios'           ,icon: 'attach_money' ,path: '/precios'},
+            { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
+            { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
+            { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
+            { text: 'Costos Indirectos' ,icon: 'monetization_on',path: '/costos-indirectos'},
+            { text: 'Manos de Obra'     ,icon: 'pan_tool'     ,path: '/manos-de-obra'},
           ],
         },
       ]

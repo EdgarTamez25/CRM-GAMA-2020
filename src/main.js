@@ -8,10 +8,10 @@ Vue.config.productionTip = false
 
 // Vue.http.options.root = 'http://localhost:80/ProyectosGit/petbarbershop/api2/public/'
 
-Vue.http.interceptors.push((request, next) => {
-  request.headers.set('Accept', 'application/json')
-  next()
-});
+// Vue.http.interceptors.push((request, next) => {
+//   request.headers.set('Accept', 'application/json')
+//   next()
+// });
 
 new Vue({
   router,
