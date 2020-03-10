@@ -31,7 +31,7 @@
 				
 			    <v-data-table
 			      :headers="headers"
-			      :items="usuarios"
+			      :items="clientes"
 			      :search="search"
 			      fixed-header
 			    >
@@ -71,14 +71,21 @@
 					headers:[
 						{ text: '#'  					 , align: 'left'  , value: 'id'		  },
 						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
-						{ text: 'Correo   '		 , align: 'left'  , value: 'correo' },
-						{ text: 'Nivel'				 , align: 'left'  , value: 'nivel' 	},
-						{ text: 'Sucursal'		 , align: 'left'  , value: 'nomsuc' },
+						{ text: 'Razon Social' , align: 'left'  , value: 'razon_social' },
+						{ text: 'RFC'				    , align: 'left'  , value: 'rfc' 	},
+						{ text: 'CURP'		      , align: 'left'  , value: 'curp' },
 						{ text: 'Ver Detalle'  , align: 'right' , value: 'action', sortable: false },
 					],
-					usuarios:[{ id: 1, nombre:'Edgar Tamez', correo:'edgar.t@gamaetiquetas.com', nivel:'Administrador', nomsuc:'GAMA 1'}]
+					clientes:[]
 
 				}
+			},
+
+			created(){
+				this.$http.get('clientes').then((response)=>{
+					console.log('response', response.body)
+					this.clientes = response.body;
+				})
 			},
 
 			methods:{
@@ -87,7 +94,9 @@
 					this.edit = items;
 
 					this.dialog = true;
-				}
+				},
+
+
 			}
 	}
 </script>
