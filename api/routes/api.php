@@ -19,4 +19,20 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
+// CLIENTES
 Route::get('clientes','clientesController@index')-> name('getAllindex');
+Route::post('cliente','clientesController@add')-> name('addCliente');
+Route::put('cliente/{id}','clientesController@update')-> name('updateCliente');
+
+
+// ZONAS
+Route::get('zonas','zonasController@getAll')-> name('getAllZonas');
+
+// SUB ZONAS
+Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');
+
+// CARTERAS
+Route::get('carteras','carterasController@getAll')-> name('getAllCarteras');
+
+
+
