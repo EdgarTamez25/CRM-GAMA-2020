@@ -28,17 +28,23 @@ Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente')
 // ZONAS
 Route::get('zonas','zonasController@getAll')        -> name('getAllZonas');            //PROBADA
 Route::get('catzonas','zonasController@getcatalogo')-> name('getcatalogo');            //PROBADA
-Route::post('zonas','zonasController@add')          -> name('addZonas');
-Route::put('zonas/{id}','zonasController@update')   -> name('updateZonas');           
-
+Route::post('zonas','zonasController@add')          -> name('addZonas');               //PROBADA
+Route::put('zonas/{id}','zonasController@update')   -> name('updateZonas');            //PROBADA
 
 // SUB ZONAS
 Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');   //PROBADA
 
 // CARTERAS
-Route::get('carteras','carterasController@getAll')-> name('getAllCarteras');            //PROBADA
+Route::get('carteras'     ,'carterasController@getAll')     -> name('getAllCarteras');  //PROBADA
+Route::post('carteras'    ,'carterasController@add')        -> name('addCartera');      //PROBADA
+Route::put('carteras/{id}','carterasController@update')     -> name('updateCartera');   //PROBADA
 
 // CIUDADES
 Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');            //PROBADA
+
+// MONEDAS
+Route::get('monedas'     ,'monedasController@getAll')     -> name('getAllmonedas');  //PROBADA
+Route::post('monedas'    ,'monedasController@add')        -> name('addMoneda');      //PROBADA
+Route::put('monedas/{id}','monedasController@update')     -> name('updateMoneda');   //PROBADA
 
 
