@@ -1,27 +1,15 @@
 <template>
   <v-container>
   	<v-row class="justify-center">
-  		<v-col cols="12">
-				<v-card-actions> <h3><strong> Catálogo de Zonas</strong></h3></v-card-actions><v-divider></v-divider>
-				
-				<!-- <v-row>
-					<v-col class="d-flex" cols="12" sm="6" lg="3">
-			      <v-select
-			        label="Sucursal"
-			        placeholder ="Sucursales"
-			        dense
-			        outlined 
-			        hide-details
-			      ></v-select>
-			    </v-col>
-		    </v-row> -->
+  		<v-col cols="12" lg="8">
+				<v-card-actions> <h3><strong> Catálogo de Zonas</strong></h3></v-card-actions>
 
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
 			        append-icon="search"
-			        label="Buscar producto"
+			        label="Buscar zona"
 			        single-line
 			        hide-details
 			      ></v-text-field>
@@ -31,13 +19,15 @@
 				
 			    <v-data-table
 			      :headers="headers"
-			      :items="usuarios"
+			      :items="getZonas"
 			      :search="search"
 			      fixed-header
+				  height="500px"
+				  hide-default-footer
 			    >
 			    	<template v-slot:item.action="{ item }" > 
-			    		<v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> <!-- Cotizacion -->
-			    		<v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     <!-- Seguimiento -->
+			    		<!-- <v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> Cotizacion -->
+			    		<!-- <v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     Seguimiento -->
 			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
 
@@ -49,14 +39,14 @@
 		    		<ControlZonas :param="param" :edit="edit" @modal="dialog = $event" />
 		    	</v-card>
 		    </v-dialog>
-
   		</v-col>
   	</v-row>
   </v-container>
 </template>
 
 <script>
-	import ControlZonas  from '@/views/Catalogos/Zonas/ControlZonas.vue'
+	import ControlZonas  from '@/views/Catalogos/Zonas/ControlZonas.vue';
+	import {mapGetters, mapActions} from 'vuex';
 
 	export default {
 		components: {
@@ -69,24 +59,34 @@
 					param: 0,
 					edit:'',
 					headers:[
-						{ text: '#'  					 , align: 'left'  , value: 'id'		  },
-						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
-						{ text: 'Correo   '		 , align: 'left'  , value: 'correo' },
-						{ text: 'Nivel'				 , align: 'left'  , value: 'nivel' 	},
-						{ text: 'Sucursal'		 , align: 'left'  , value: 'nomsuc' },
-						{ text: 'Ver Detalle'  , align: 'right' , value: 'action', sortable: false },
+						{ text: '#'  		 , align: 'left'  , value: 'id'		  },
+						{ text: 'Nombre' , align: 'left'  , value: 'nombre' },
+						{ text: 'Ciudad' , align: 'left'  , value: 'nomciudad' },
+						{ text: 'Estado' , align: 'left'  , value: 'nomestado' 	},
+						{ text: ' '  		 , align: 'right' , value: 'action', sortable: false },
 					],
-					usuarios:[{ id: 1, nombre:'Edgar Tamez', correo:'edgar.t@gamaetiquetas.com', nivel:'Administrador', nomsuc:'GAMA 1'}]
-
 				}
 			},
 
+			created(){
+				this.consultaZonas() // CONSULTAR CLIENTES A VUEX
+			},
+
+			computed:{
+				...mapGetters('Zonas'  ,['getZonas']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+			},
+
 			methods:{
+				...mapActions('Zonas'  ,['consultaZonas']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+
 				abrirModal(action, items){
 					this.param = action;
 					this.edit = items;
 					this.dialog = true;
-				}
+				},
+
+				
+				
 			}
 	}
 </script>

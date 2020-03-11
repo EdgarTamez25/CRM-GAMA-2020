@@ -18,21 +18,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// USUARIOS
 
 // CLIENTES
-Route::get('clientes','clientesController@index')-> name('getAllindex');
-Route::post('cliente','clientesController@add')-> name('addCliente');
-Route::put('cliente/{id}','clientesController@update')-> name('updateCliente');
-
+Route::get('clientes','clientesController@index')       -> name('getAllindex');        //PROBADA
+Route::post('cliente','clientesController@add')         -> name('addCliente');         //PROBADA
+Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');      //PROBADA
 
 // ZONAS
-Route::get('zonas','zonasController@getAll')-> name('getAllZonas');
+Route::get('zonas','zonasController@getAll')        -> name('getAllZonas');            //PROBADA
+Route::get('catzonas','zonasController@getcatalogo')-> name('getcatalogo');            //PROBADA
+Route::post('zonas','zonasController@add')          -> name('addZonas');
+Route::put('zonas/{id}','zonasController@update')   -> name('updateZonas');           
+
 
 // SUB ZONAS
-Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');
+Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');   //PROBADA
 
 // CARTERAS
-Route::get('carteras','carterasController@getAll')-> name('getAllCarteras');
+Route::get('carteras','carterasController@getAll')-> name('getAllCarteras');            //PROBADA
 
+// CIUDADES
+Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');            //PROBADA
 
 

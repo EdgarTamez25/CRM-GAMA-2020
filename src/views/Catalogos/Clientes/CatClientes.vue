@@ -46,12 +46,9 @@
 
 <script>
 	import ControlClientes  from '@/views/Catalogos/Clientes/ControlClientes.vue';
-	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex';
 
 	export default {
-		// HAGO REFERENCIA AL MIXIN DE SELECTORES
-		mixins:[SelectMixin],
 		components: {
 			ControlClientes
 		},

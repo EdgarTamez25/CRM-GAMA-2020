@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 
 
 import Clientes from '@/modules/Clientes';
+import Zonas    from '@/modules/Zonas';
+
 
 Vue.use(Vuex)
 
@@ -14,6 +16,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
-    Clientes
+    Clientes,
+    Zonas
   }
 })

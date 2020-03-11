@@ -18,10 +18,23 @@ export default {
 			cartera     : [],
 			carteras    : [],
 			Cartera     : '' 
+
+			
 		}
 	},
 
 	methods: {
+		consultarCiudades(){
+			this.$http.get('ciudades').then((response)=>{
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.ciudad = response.body
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.ciudades.push(response.body[i].nombre)
+				}
+			})
+		},
+
 		consultarZonas(){
 			this.$http.get('zonas').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
@@ -58,6 +71,14 @@ export default {
 	},
 
 	watch:{
+		Ciudad:function(){
+			for(const i in this.ciudad){
+				if(this.ciudad[i].nombre === this.Ciudad){
+					this.id_ciudad = this.ciudad[i].id
+				}
+			}
+		},
+
 		Zonas:function(){
 			for(const i in this.zona){
 				if(this.zona[i].nombre === this.Zonas){
