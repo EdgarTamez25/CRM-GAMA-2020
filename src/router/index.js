@@ -12,6 +12,9 @@ import Pendientes  from '@/views/Pendientes/Pendientes.vue'
   // VISTAS -> CLIENTE
   import CatClientes    from '@/views/Catalogos/Clientes/CatClientes.vue';
   import ControlCliente from '@/views/Catalogos/Clientes/ControlClientes.vue';
+  // VISTAS -> PROVEDOR
+  import CatProveedores   from '@/views/Catalogos/Proveedores/CatProveedores.vue';
+  import ControlProveedor from '@/views/Catalogos/Proveedores/ControlProveedor.vue';
   // VISTAS -> PRODUCTOS
   import CatProductos    from '@/views/Catalogos/Productos/CatProductos.vue';
   import ControlProductos from '@/views/Catalogos/Productos/ControlProductos.vue';
@@ -48,6 +51,9 @@ const routes = [
   // CLIENTES
   { path:'/clientes'		    , name:'clientes'	      , component: CatClientes},
   { path:'/control-cliente'	, name:'control-cliente', component: ControlCliente},
+  // PROVEEDOR
+  { path:'/proveedores'		  , name:'proveedores'	   , component: CatProveedores},
+  { path:'/control-provedor', name:'control-provedor', component: ControlProveedor},
   // PRODUCTOS
   { path:'/productos'		    , name:'productos'	      , component: CatProductos},
   { path:'/control-producto', name:'control-producto', component: ControlProductos},

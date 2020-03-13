@@ -18,33 +18,57 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// USUARIOS
+//=================================== USUARIOS======================================================
+Route::get('catusuarios'  ,'userController@getcatalogo')-> name('catusuarios');   
+Route::get('usuarios'	    ,'userController@getAll')     -> name('getAllUsuarios');  			 //PROBADA
+Route::post('usuarios'    ,'userController@add')        -> name('addUsuarios');    				 //PROBADA
+Route::put('usuarios/{id}','userController@update')  		-> name('updateUsuarios');  			 //PROBADA
 
-// CLIENTES
-Route::get('clientes','clientesController@index')       -> name('getAllindex');        //PROBADA
-Route::post('cliente','clientesController@add')         -> name('addCliente');         //PROBADA
-Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');      //PROBADA
+//==================================== CLIENTES=====================================================
+Route::get('clientes','clientesController@index')       -> name('getAllindex');            //PROBADA
+Route::post('cliente','clientesController@add')         -> name('addCliente');             //PROBADA
+Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');          //PROBADA
 
-// ZONAS
-Route::get('zonas','zonasController@getAll')        -> name('getAllZonas');            //PROBADA
-Route::get('catzonas','zonasController@getcatalogo')-> name('getcatalogo');            //PROBADA
-Route::post('zonas','zonasController@add')          -> name('addZonas');               //PROBADA
-Route::put('zonas/{id}','zonasController@update')   -> name('updateZonas');            //PROBADA
+//==================================== PROVEDORES ==================================================
+Route::get('catproveedores'  ,'proveedoresController@getcatalogo')-> name('getcatprov');   
+Route::get('proveedores'     ,'proveedoresController@getAll') -> name('getAllproveedores');
+Route::post('proveedores'    ,'proveedoresController@add')    -> name('addProveedor');     
+Route::put('proveedores/{id}','proveedoresController@update') -> name('updateProveedor');  
 
-// SUB ZONAS
-Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');   //PROBADA
+//==================================== SUCURSALES ==================================================
+Route::get('sucursales'	,'sucursalesController@getAll')			-> name('getAllSuc');         //PROBADA
+Route::post('sucursales'		,'sucursalesController@add')    -> name('addsuc');         		//PROBADA
+Route::put('sucursales/{id}','sucursalesController@update') -> name('updatesuc');      		//PROBADA
 
-// CARTERAS
-Route::get('carteras'     ,'carterasController@getAll')     -> name('getAllCarteras');  //PROBADA
-Route::post('carteras'    ,'carterasController@add')        -> name('addCartera');      //PROBADA
-Route::put('carteras/{id}','carterasController@update')     -> name('updateCartera');   //PROBADA
+//==================================== ZONAS =======================================================
+Route::get('zonas'			,'zonasController@getAll')     -> name('getAllZonas');             //PROBADA
+Route::get('catzonas'		,'zonasController@getcatalogo')-> name('getcatalogo');             //PROBADA
+Route::post('zonas'			,'zonasController@add')        -> name('addZonas');                //PROBADA
+Route::put('zonas/{id}'	,'zonasController@update')   	 -> name('updateZonas');             //PROBADA
 
-// CIUDADES
-Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');            //PROBADA
+////================================== SUB ZONAS ===================================================
+Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');      //PROBADA
 
-// MONEDAS
-Route::get('monedas'     ,'monedasController@getAll')     -> name('getAllmonedas');  //PROBADA
-Route::post('monedas'    ,'monedasController@add')        -> name('addMoneda');      //PROBADA
-Route::put('monedas/{id}','monedasController@update')     -> name('updateMoneda');   //PROBADA
+////================================== CARTERAS ====================================================
+Route::get('carteras'     ,'carterasController@getAll') -> name('getAllCarteras');         //PROBADA
+Route::post('carteras'    ,'carterasController@add')    -> name('addCartera');             //PROBADA
+Route::put('carteras/{id}','carterasController@update') -> name('updateCartera');          //PROBADA
 
+//==================================== CIUDADES ====================================================
+Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');               //PROBADA
+
+//==================================== MONEDAS =====================================================
+Route::get('monedas'     ,'monedasController@getAll')     -> name('getAllmonedas');        //PROBADA
+Route::post('monedas'    ,'monedasController@add')        -> name('addMoneda');            //PROBADA
+Route::put('monedas/{id}','monedasController@update')     -> name('updateMoneda');         //PROBADA
+
+//==================================== LINEAS ======================================================
+Route::get('lineas'     ,'lineas_prodController@getAll') -> name('getAlllineas');          //PROBADA
+Route::post('lineas'    ,'lineas_prodController@add')    -> name('addLineas');             //PROBADA
+Route::put('lineas/{id}','lineas_prodController@update') -> name('updateLineas');          //PROBADA
+
+//==================================== UNIDADES ====================================================
+Route::get('unidades'     ,'unidadesController@getAll') -> name('getAllunidades');         //PROBADA
+Route::post('unidades'    ,'unidadesController@add')    -> name('addUnidad');              //PROBADA
+Route::put('unidades/{id}','unidadesController@update') -> name('updateUnidad');           //PROBADA
 

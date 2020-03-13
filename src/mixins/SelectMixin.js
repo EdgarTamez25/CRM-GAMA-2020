@@ -18,12 +18,22 @@ export default {
 			cartera     : [],
 			carteras    : [],
 			Cartera     : '' 
-
-			
 		}
 	},
 
 	methods: {
+		consultarSucursales(){
+			this.$http.get('sucursales').then((response)=>{
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.sucursal = response.body
+
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.sucursales.push(response.body[i].nombre)
+				}
+			})
+		},
+
 		consultarCiudades(){
 			this.$http.get('ciudades').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
@@ -71,6 +81,14 @@ export default {
 	},
 
 	watch:{
+		Sucursal:function(){
+			for(const i in this.sucursal){
+				if(this.sucursal[i].nombre === this.Sucursal){
+					this.id_sucursal = this.sucursal[i].id
+				}
+			}
+		},
+
 		Ciudad:function(){
 			for(const i in this.ciudad){
 				if(this.ciudad[i].nombre === this.Ciudad){

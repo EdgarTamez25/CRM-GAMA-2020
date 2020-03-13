@@ -2,14 +2,14 @@
   <v-container>
   	<v-row class="justify-center">
   		<v-col cols="12">
-				<v-card-actions> <h3><strong> Catálogo de Usuarios</strong></h3></v-card-actions>
+				<v-card-actions> <h3><strong> Catálogo de Proveedores</strong></h3></v-card-actions>
 
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
 			        append-icon="search"
-			        label="Buscar usuarios"
+			        label="Buscar Proveedor"
 			        single-line
 			        hide-details
 			      ></v-text-field>
@@ -19,19 +19,15 @@
 				
 			    <v-data-table
 			      :headers="headers"
-			      :items="getUsuarios"
+			      :items="getClientes"
 			      :search="search"
 			      fixed-header
-				    height="500px"
-				    hide-default-footer
+				  height="500px"
+				  hide-default-footer
 			    >
-						<template v-slot:item.nivel="{ item }">
-							<div v-if="item.nivel === 1">  Administrador </div> 
-							<div v-if="item.nivel === 2">  Supervisor 	 </div> 
-							<div v-if="item.nivel === 3">  Vendedor      </div> 
-						</template>
-
 			    	<template v-slot:item.action="{ item }" > 
+			    		<!-- <v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> Cotizacion -->
+			    		<!-- <v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     Seguimiento -->
 			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
 
@@ -39,8 +35,8 @@
 			  </v-card>
 
 				 <v-dialog persistent v-model="dialog" width="700px" >	
-					<v-card class="pt-0 pa-4">
-		    		<ControlUsuario :param="param" :edit="edit" @modal="dialog = $event" />
+		    	<v-card>
+		    		<ControlProveedor :param="param" :edit="edit" @modal="dialog = $event" />
 		    	</v-card>
 		    </v-dialog>
   		</v-col>
@@ -49,12 +45,12 @@
 </template>
 
 <script>
-	import ControlUsuario  from '@/views/Catalogos/Usuarios/ControlUsuario.vue';
+	import ControlProveedor  from '@/views/Catalogos/Proveedores/ControlProveedor.vue';
 	import {mapGetters, mapActions} from 'vuex';
 
 	export default {
 		components: {
-			ControlUsuario
+			ControlProveedor
 		},
 		data () {
 				return {
@@ -63,26 +59,26 @@
 					param: 0,
 					edit:'',
 					headers:[
-						{ text: '#'  			 , align: 'left'  , value: 'id'		  },
-						{ text: 'Nombre'	 , align: 'left'  , value: 'nombre' },
-						{ text: 'Correo'   , align: 'left'  , value: 'correo' },
-						{ text: 'Nivel'		 , align: 'left'  , value: 'nivel' 	},
-						{ text: 'Sucursal' , align: 'left'  , value: 'nomsuc' },
-						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
+						{ text: '#'  					 , align: 'left'  , value: 'id'		  },
+						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
+						{ text: 'Razon Social' , align: 'left'  , value: 'razon_social' },
+						{ text: 'RFC'				    , align: 'left' , value: 'rfc' 	},
+						{ text: 'CURP'		      , align: 'left' , value: 'curp' },
+						{ text: ''  						, align: 'right' , value: 'action', sortable: false },
 					],
 				}
 			},
 
 			created(){
-				this.consultaUsuarios() // CONSULTAR CLIENTES A VUEX
+				this.consultaClientes() // CONSULTAR CLIENTES A VUEX
 			},
 
 			computed:{
-				...mapGetters('Usuarios'  ,['getUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+				...mapGetters('Clientes'  ,['getClientes']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
 			},
 
 			methods:{
-				...mapActions('Usuarios'  ,['consultaUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+				...mapActions('Clientes'  ,['consultaClientes']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 
 				abrirModal(action, items){
 					this.param = action;

@@ -133,6 +133,7 @@ export default {
           catalogos: [ 
             { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
             { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
+            { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
             { text: 'Productos'         ,icon: 'print'        ,path: '/productos'},
             { text: 'Precios'           ,icon: 'attach_money' ,path: '/precios'},
             { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
