@@ -16,19 +16,20 @@ class productosController extends Controller
 		
 		public function getcatalogo()
 		{
-			$CatProvedores = DB::select('SELECT p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,
+			$CatProductos = DB::select('SELECT p.id,p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,
 																					p.id_linea, l.nombre as nomlin, p.id_proveedor, prov.nombre as nomprov,
 																					p.id_unidad, u.nombre as nomunidad
 																	FROM productos p LEFT JOIN lineas_prods l 	ON p.id_linea 		= l.id
 																									 LEFT JOIN proveedores prov ON p.id_proveedor = prov.id 
 																									 LEFT JOIN unidades u       ON p.id_unidad    = u.id
 																	WHERE p.estatus = 1');
+			return $CatProductos;
 		}
 
 		public function add(Request $request){
-			$addprovedor = proveedores::create($request->all());
+			$addproducto = productos::create($request->all());
 			
-			if($addprovedor):
+			if($addproducto):
 				return "El productos se ah insertado correctamente";
 			else:
 				return "Ocurrio un problema al crear el productos, por favor intentelo mas tarde.";
@@ -37,8 +38,22 @@ class productosController extends Controller
 		}
 		
 		public function update($id, Request $req){
-			$data = DB::update('UPDATE productos SET nombre=:nombre, estatus=:estatus WHERE id =:id',
-													['nombre'=> $req -> nombre,'estatus'=> $req -> estatus, 'id'=> $id	]
+			$data = DB::update('UPDATE productos SET codigo=:codigo, nombre=:nombre, descripcion=:descripcion, id_linea=:id_linea,
+																							 tipo_producto=:tipo_producto, id_proveedor=:id_proveedor, id_unidad=:id_unidad,
+																							 obs=:obs, foto=:foto, estatus=:estatus 
+													WHERE id =:id',
+													['codigo' 		 	 => $req -> codigo,
+													 'nombre' 		 	 => $req -> nombre,
+													 'descripcion' 	 => $req -> descripcion,
+													 'id_linea' 		 => $req -> id_linea,
+													 'tipo_producto' => $req -> tipo_producto,
+													 'id_proveedor'  => $req -> id_proveedor,
+													 'id_unidad' 		 => $req -> id_unidad,
+													 'obs' 					 => $req -> obs,
+													 'foto' 				 => $req -> foto,
+													 'estatus' 			 => $req -> estatus, 
+													 'id'	  			 	 => $id	
+													 ]
 												);
 			
 			return 'El productos se actualizo correctamente';

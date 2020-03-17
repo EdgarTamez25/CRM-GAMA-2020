@@ -15,6 +15,7 @@
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 			      <v-btn small class="success" @click="abrirModal(1)">Agregar </v-btn>
+			      <v-btn small class="red darken.4" icon dark @click="consultaUsuarios" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 				
 			    <v-data-table
@@ -24,6 +25,8 @@
 			      fixed-header
 				    height="500px"
 				    hide-default-footer
+						:loading ="Loading"
+						loading-text="Cargando... Por favor espere."
 			    >
 						<template v-slot:item.nivel="{ item }">
 							<div v-if="item.nivel === 1">  Administrador </div> 
@@ -73,12 +76,15 @@
 				}
 			},
 
+
 			created(){
-				this.consultaUsuarios() // CONSULTAR CLIENTES A VUEX
+				this.consultaUsuarios()// CONSULTAR CLIENTES A VUEX
 			},
 
 			computed:{
-				...mapGetters('Usuarios'  ,['getUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+				...mapGetters('Usuarios' ,['Loading','getUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+
+				
 			},
 
 			methods:{

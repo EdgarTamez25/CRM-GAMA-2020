@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 export default{
 	namespaced: true,
 	state:{
-		usuarios: [],
+		proveedores: [],
 		loading: true,
 	},
 
@@ -12,17 +12,17 @@ export default{
 		LOADING(state, data){
 			state.loading = data; 
 		},
-		USUARIOS(state, data){
-			state.usuarios = data
+		PROVEEDORES(state, data){
+			state.proveedores = data
 		},
 	},
 	actions:{
-		consultaUsuarios({commit}){
+		consultaProveedores({commit}){
 			// Limpio Arreglo y Genero Consulta
-			commit('LOADING',true); commit('USUARIOS', [])
+			commit('LOADING',true); commit('PROVEEDORES', [])
 
-			Vue.http.get('catusuarios').then(response=>{
-				commit('USUARIOS', response.body)
+			Vue.http.get('catproveedores').then(response=>{
+				commit('PROVEEDORES', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false)) 
@@ -35,8 +35,8 @@ export default{
 			return state.loading
 		},
 
-		getUsuarios(state){
-		  return state.usuarios
+		getProveedores(state){
+		  return state.proveedores
 		},
 
 	}

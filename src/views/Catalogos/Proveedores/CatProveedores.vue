@@ -15,20 +15,24 @@
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 			      <v-btn small class="success" @click="abrirModal(1)">Agregar </v-btn>
+			      <v-btn small class="red darken.4" icon dark @click="consultaProveedores"><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 				
 			    <v-data-table
 			      :headers="headers"
-			      :items="getClientes"
+			      :items="getProveedores"
 			      :search="search"
 			      fixed-header
-				  height="500px"
-				  hide-default-footer
+						height="500px"
+						hide-default-footer
+						:loading ="Loading"
+						loading-text="Cargando... Por favor espere."
 			    >
 			    	<template v-slot:item.action="{ item }" > 
-			    		<!-- <v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> Cotizacion -->
-			    		<!-- <v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     Seguimiento -->
 			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
+				    </template>
+						<template v-slot:item.tipo_prov="{ item }" > 
+							 {{  item.tipo_prov === 1 ? 'NACIONAL':'INTERNACIONAL'}} 
 				    </template>
 
 			    </v-data-table>
@@ -62,23 +66,25 @@
 						{ text: '#'  					 , align: 'left'  , value: 'id'		  },
 						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
 						{ text: 'Razon Social' , align: 'left'  , value: 'razon_social' },
-						{ text: 'RFC'				    , align: 'left' , value: 'rfc' 	},
-						{ text: 'CURP'		      , align: 'left' , value: 'curp' },
-						{ text: ''  						, align: 'right' , value: 'action', sortable: false },
+						{ text: 'RFC'				   , align: 'left'  , value: 'rfc' 	},
+						{ text: 'CURP'		     , align: 'left'  , value: 'curp' },
+						{ text: 'Tipo Proveedor', align: 'left'  , value: 'tipo_prov' },
+
+						{ text: ''  					 , align: 'right' , value: 'action', sortable: false },
 					],
 				}
 			},
 
 			created(){
-				this.consultaClientes() // CONSULTAR CLIENTES A VUEX
+				this.consultaProveedores() // CONSULTAR PROVEEDORES A VUEX
 			},
 
 			computed:{
-				...mapGetters('Clientes'  ,['getClientes']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+				...mapGetters('Proveedores',['Loading','getProveedores']), // IMPORTANDO USO DE VUEX - PROVEEDORES (GETTERS)
 			},
 
 			methods:{
-				...mapActions('Clientes'  ,['consultaClientes']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+				...mapActions('Proveedores'  ,['consultaProveedores']), // IMPORTANDO USO DE VUEX - PROVEEDORES(ACCIONES)
 
 				abrirModal(action, items){
 					this.param = action;

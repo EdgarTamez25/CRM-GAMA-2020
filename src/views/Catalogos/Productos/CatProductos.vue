@@ -2,19 +2,7 @@
   <v-container>
   	<v-row class="justify-center">
   		<v-col cols="12">
-				<v-card-actions> <h3><strong> Catálogo de Productos</strong></h3></v-card-actions><v-divider></v-divider>
-				
-				<!-- <v-row>
-					<v-col class="d-flex" cols="12" sm="6" lg="3">
-			      <v-select
-			        label="Sucursal"
-			        placeholder ="Sucursales"
-			        dense
-			        outlined 
-			        hide-details
-			      ></v-select>
-			    </v-col>
-		    </v-row> -->
+				<v-card-actions> <h3><strong> Catálogo de Productos</strong></h3></v-card-actions>
 
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
@@ -27,29 +15,35 @@
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 			      <v-btn small class="success" @click="abrirModal(1)">Agregar </v-btn>
+			      <v-btn small class="red darken.4" icon dark @click="consultaProductos" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 				
 			    <v-data-table
 			      :headers="headers"
-			      :items="usuarios"
+			      :items="getProductos"
 			      :search="search"
 			      fixed-header
+				    height="500px"
+				    hide-default-footer
+						:loading ="Loading"
+						loading-text="Cargando... Por favor espere."
 			    >
 			    	<template v-slot:item.action="{ item }" > 
-			    		<v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> <!-- Cotizacion -->
-			    		<v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     <!-- Seguimiento -->
-			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
+			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
+				    </template>
+
+						<template v-slot:item.tipo_producto="{ item }" > 
+							{{ item.tipo_producto === 1 ? 'Materia Prima': 'Producto Final' }}
 				    </template>
 
 			    </v-data-table>
 			  </v-card>
 
 				 <v-dialog persistent v-model="dialog" width="700px" >	
-		    	<v-card>
+					<v-card class="pt-0 pa-4">
 		    		<ControlProductos :param="param" :edit="edit" @modal="dialog = $event" />
 		    	</v-card>
 		    </v-dialog>
-
   		</v-col>
   	</v-row>
   </v-container>
@@ -57,6 +51,7 @@
 
 <script>
 	import ControlProductos  from '@/views/Catalogos/Productos/ControlProductos.vue'
+	import {mapGetters, mapActions} from 'vuex';
 
 	export default {
 		components: {
@@ -69,24 +64,38 @@
 					param: 0,
 					edit:'',
 					headers:[
-						{ text: '#'  					 , align: 'left'  , value: 'id'		  },
-						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
-						{ text: 'Correo   '		 , align: 'left'  , value: 'correo' },
-						{ text: 'Nivel'				 , align: 'left'  , value: 'nivel' 	},
-						{ text: 'Sucursal'		 , align: 'left'  , value: 'nomsuc' },
-						{ text: 'Ver Detalle'  , align: 'right' , value: 'action', sortable: false },
+						{ text: '#'  			 , align: 'left'  , value: 'id'		  },
+						{ text: 'Codigo'	 , align: 'left'  , value: 'codigo' },
+						{ text: 'Nombre'   , align: 'left'  , value: 'nombre' },
+						{ text: 'Unidad'   , align: 'left'  , value: 'nomunidad' },
+						{ text: 'Linea'		 , align: 'left'  , value: 'nomlin' 	},
+						{ text: 'Tipo'     , align: 'left'  , value: 'tipo_producto' },
+						{ text: 'Proveedor', align: 'left'  , value: 'nomprov' },
+						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
 					],
-					usuarios:[{ id: 1, nombre:'Edgar Tamez', correo:'edgar.t@gamaetiquetas.com', nivel:'Administrador', nomsuc:'GAMA 1'}]
-
 				}
 			},
 
+
+			created(){
+				this.consultaProductos()// CONSULTAR CLIENTES A VUEX
+			},
+
+			computed:{
+				...mapGetters('Productos',['Loading','getProductos']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+			},
+
 			methods:{
+				...mapActions('Productos',['consultaProductos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+
 				abrirModal(action, items){
 					this.param = action;
 					this.edit = items;
 					this.dialog = true;
-				}
+				},
+
+				
+				
 			}
 	}
 </script>

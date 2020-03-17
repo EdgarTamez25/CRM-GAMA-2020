@@ -30,10 +30,16 @@ Route::post('cliente','clientesController@add')         -> name('addCliente');  
 Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');          //PROBADA
 
 //==================================== PROVEDORES ==================================================
-Route::get('catproveedores'  ,'proveedoresController@getcatalogo')-> name('getcatprov');   
-Route::get('proveedores'     ,'proveedoresController@getAll') -> name('getAllproveedores');
-Route::post('proveedores'    ,'proveedoresController@add')    -> name('addProveedor');     
-Route::put('proveedores/{id}','proveedoresController@update') -> name('updateProveedor');  
+Route::get('catproveedores'  ,'proveedoresController@getcatalogo')-> name('getcatprov');   //PROBADA
+Route::get('proveedores'     ,'proveedoresController@getAll') -> name('getAllproveedores');//PROBADA
+Route::post('proveedores'    ,'proveedoresController@add')    -> name('addProveedor');     //PROBADA
+Route::put('proveedores/{id}','proveedoresController@update') -> name('updateProveedor');  //PROBADA
+
+//==================================== PRODUCTOS ===================================================
+Route::get('catproductos'  ,'productosController@getcatalogo')-> name('getcatproducto');   //PROBADA
+Route::get('productos'     ,'productosController@getAll') -> name('getAllproductos');  		 //PROBADA
+Route::post('productos'    ,'productosController@add')    -> name('addProductos');     		 //PROBADA
+Route::put('productos/{id}','productosController@update') -> name('updateProductos');  		 //PROBADA
 
 //==================================== SUCURSALES ==================================================
 Route::get('sucursales'	,'sucursalesController@getAll')			-> name('getAllSuc');         //PROBADA

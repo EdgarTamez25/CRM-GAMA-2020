@@ -18,10 +18,44 @@ export default {
 			cartera     : [],
 			carteras    : [],
 			Cartera     : '' 
+		
 		}
 	},
 
 	methods: {
+		consultarUnidades(){
+			this.$http.get('unidades').then((response)=>{
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.unidad = response.body
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.unidades.push(response.body[i].nombre)
+				}
+			})
+		},
+
+		consultarProveedores(){
+			this.$http.get('proveedores').then((response)=>{
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.proveedor = response.body
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.proveedores.push(response.body[i].nombre)
+				}
+			})
+		},
+
+		consultarLineas(){
+			this.$http.get('lineas').then((response)=>{
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.linea = response.body
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.lineas.push(response.body[i].nombre)
+				}
+			})
+		},
+
 		consultarSucursales(){
 			this.$http.get('sucursales').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
@@ -71,7 +105,6 @@ export default {
 			this.$http.get('carteras').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.cartera = response.body
-				// console.log('nombre', response.body)
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.carteras.push(response.body[i].nombre)
@@ -81,6 +114,30 @@ export default {
 	},
 
 	watch:{
+		Unidad:function(){
+			for(const i in this.unidad){
+				if(this.unidad[i].nombre === this.Unidad){
+					this.id_unidad = this.unidad[i].id
+				}
+			}
+		},
+
+		Proveedor:function(){
+			for(const i in this.proveedor){
+				if(this.proveedor[i].nombre === this.Proveedor){
+					this.id_proveedor = this.proveedor[i].id
+				}
+			}
+		},
+
+		Linea:function(){
+			for(const i in this.linea){
+				if(this.linea[i].nombre === this.Linea){
+					this.id_linea = this.linea[i].id
+				}
+			}
+		},
+
 		Sucursal:function(){
 			for(const i in this.sucursal){
 				if(this.sucursal[i].nombre === this.Sucursal){
