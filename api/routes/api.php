@@ -84,3 +84,8 @@ Route::get('preciosxid/{id}' ,'preciosController@preciosxId') -> name('preciosxI
 Route::get('precios'     ,'preciosController@getAll') -> name('getAllprecios');
 Route::post('precios'    ,'preciosController@add')    -> name('addPrecios');     
 Route::put('precios/{id}','preciosController@update') -> name('updatePrecios');  
+
+////=============================== TIPOS PRECIOS ==================================================
+Route::get('tipos-precios'     ,'tipo_precioController@getAll') -> name('getAllTipoPrecio');
+Route::post('tipos-precios'    ,'tipo_precioController@add')    -> name('addTipoPrecio');
+Route::put('tipos-precios/{id}','tipo_precioController@update') -> name('updateTipoPrecio');
