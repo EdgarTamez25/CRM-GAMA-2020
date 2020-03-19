@@ -6,36 +6,34 @@ import Compromisos from '@/views/Compromisos/CatCompromisos.vue'
 import NuevoCompromiso from '@/views/Compromisos/NuevoCompromiso.vue'
 import Pendientes  from '@/views/Pendientes/Pendientes.vue'
 
-  // VISTAS -> USUARIO
+  // USUARIO
   import CatUsuarios    from '@/views/Catalogos/Usuarios/CatUsuarios.vue';
   import ControlUsuario from '@/views/Catalogos/Usuarios/ControlUsuario.vue';
-  // VISTAS -> CLIENTE
+  // CLIENTE
   import CatClientes    from '@/views/Catalogos/Clientes/CatClientes.vue';
   import ControlCliente from '@/views/Catalogos/Clientes/ControlClientes.vue';
-  // VISTAS -> PROVEDOR
+  // PROVEDOR
   import CatProveedores   from '@/views/Catalogos/Proveedores/CatProveedores.vue';
   import ControlProveedor from '@/views/Catalogos/Proveedores/ControlProveedor.vue';
-  // VISTAS -> PRODUCTOS
+  // PRODUCTOS
   import CatProductos    from '@/views/Catalogos/Productos/CatProductos.vue';
   import ControlProductos from '@/views/Catalogos/Productos/ControlProductos.vue';
-  // VISTAS -> ZONAS
+  // ZONAS
   import CatZonas    from '@/views/Catalogos/Zonas/CatZonas.vue';
   import ControlZonas from '@/views/Catalogos/Zonas/ControlZonas.vue';
-  // VISTAS -> PRECIOS
-  import CatPrecios    from '@/views/Catalogos/Precios/CatPrecios.vue';
-  import ControlPrecios from '@/views/Catalogos/Precios/ControlPrecios.vue';
-  // VISTAS -> CARTERAS
+  // // PRECIOS
+  // import CatPrecios    from '@/views/Catalogos/Precios/CatPrecios.vue';
+  // import ControlPrecios from '@/views/Catalogos/Precios/ControlPrecios.vue';
+  // CARTERAS
   import CatCarteras    from '@/views/Catalogos/Carteras/CatCarteras.vue';
   import ControlCarteras from '@/views/Catalogos/Carteras/ControlCarteras.vue';
-  // VISTAS -> MONEDAS
+  // MONEDAS
   import CatMonedas     from '@/views/Catalogos/Monedas/CatMonedas.vue';
   import ControlMonedas from '@/views/Catalogos/Monedas/ControlMonedas.vue';
-  // VISTAS -> COSTOS INDIRECTOS
-  import CatCostosIndirectos     from '@/views/Catalogos/Costos_Indirectos/CatCostosIndirectos.vue';
-  import ControlCostosIndirectos from '@/views/Catalogos/Costos_Indirectos/ControlCostosIndirectos.vue';
-  // VISTAS -> MANOS DE OBRA
-  import CatManosdeObra     from '@/views/Catalogos/Manos_de_obra/CatManosdeObra.vue';
-  import ControlManosdeObra from '@/views/Catalogos/Manos_de_obra/ControlManosdeObra.vue';
+  // PRECIOS
+  import CatPrecios     from '@/views/Administracion/Precios/CatPrecios.vue';
+  import ControlPrecios from '@/views/Administracion/Precios/ControlPrecios.vue';
+
 
 Vue.use(VueRouter)
 
@@ -60,21 +58,16 @@ const routes = [
   // ZONAS Y SUBZONAS
   { path:'/zonas-subzonas'	 , name:'zonas'	        , component: CatZonas},
   { path:'/control-zonas'    , name:'control-zonas' , component: ControlZonas},
-  // PRECIOS
-  { path:'/precios'	        , name:'precios'	        , component: CatPrecios},
-  { path:'/control-precios' , name:'control-precios' , component: ControlPrecios},
   // CARTERAS
   { path:'/carteras'	       , name:'carteras'	       , component: CatCarteras},
   { path:'/control-carteras' , name:'control-carteras' , component: ControlCarteras},
   // MONEDAS
   { path:'/monedas'	        , name:'monedas'	       , component: CatMonedas},
   { path:'/control-monedas' , name:'control-monedas' , component: ControlMonedas},
-  // COSTOS INDIRECTOS
-  { path:'/costos-indirectos'         , name:'costos-indirectos'	       , component: CatCostosIndirectos},
-  { path:'/control-costos-indirectos' , name:'control-costos-indirectos' , component: ControlCostosIndirectos},
-  // MANOS DE OBRA
-  { path:'/manos-de-obra'	        , name:'manos-de-obra'	       , component: CatManosdeObra},
-  { path:'/control-manos-de-obra' , name:'control-manos-de-obra' , component: ControlManosdeObra},
+  // PRECIOS
+  { path:'/precios'	        , name:'precios'	       , component: CatPrecios},
+  { path:'/control-precios' , name:'control-precios' , component: ControlPrecios},
+
 
 ]
 

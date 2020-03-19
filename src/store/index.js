@@ -8,6 +8,7 @@ import Carteras from '@/modules/Carteras';
 import Monedas from '@/modules/Monedas';
 import Proveedores from '@/modules/Proveedores';
 import Productos from '@/modules/Productos';
+import Precios from '@/modules/Precios';
 
 
 
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     Carteras,
     Monedas,
     Proveedores,
-    Productos
+    Productos,
+    Precios
   }
 })

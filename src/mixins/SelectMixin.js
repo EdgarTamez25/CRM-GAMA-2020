@@ -18,11 +18,25 @@ export default {
 			cartera     : [],
 			carteras    : [],
 			Cartera     : '' 
+
+			
 		
 		}
 	},
 
 	methods: {
+
+		consultarMonedas(){
+			this.$http.get('monedas').then((response)=>{
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.moneda = response.body
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.monedas.push(response.body[i].nombre)
+				}
+			})
+		},
+
 		consultarUnidades(){
 			this.$http.get('unidades').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
@@ -114,6 +128,14 @@ export default {
 	},
 
 	watch:{
+		Moneda:function(){
+			for(const i in this.moneda){
+				if(this.moneda[i].nombre === this.Moneda){
+					this.id_moneda = this.moneda[i].id
+				}
+			}
+		},
+
 		Unidad:function(){
 			for(const i in this.unidad){
 				if(this.unidad[i].nombre === this.Unidad){
