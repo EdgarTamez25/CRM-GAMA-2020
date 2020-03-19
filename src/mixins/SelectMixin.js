@@ -17,8 +17,8 @@ export default {
 			id_cartera  : 0,
 			cartera     : [],
 			carteras    : [],
-			Cartera     : '',
-			
+			Cartera     : '' 
+		
 		}
 	},
 
@@ -138,22 +138,6 @@ export default {
 	},
 
 	watch:{
-		Tipo_Precio:function(){
-			for(const i in this.tipo_precio){
-				if(this.tipo_precio[i].nombre === this.Tipo_Precio){
-					this.id_tipo_precio = this.tipo_precio[i].id
-				}
-			}
-		},
-
-		Moneda:function(){
-			for(const i in this.moneda){
-				if(this.moneda[i].nombre === this.Moneda){
-					this.id_moneda = this.moneda[i].id
-				}
-			}
-		},
-
 		Unidad:function(){
 			for(const i in this.unidad){
 				if(this.unidad[i].nombre === this.Unidad){

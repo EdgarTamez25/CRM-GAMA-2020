@@ -31,11 +31,6 @@ import Pendientes  from '@/views/Pendientes/Pendientes.vue'
   import CatPrecios     from '@/views/Administracion/Precios/CatPrecios.vue';
   import ControlPrecios from '@/views/Administracion/Precios/ControlPrecios.vue';
 
-    // TIPO PRECIO
-    import CatTiposPrecios   from '@/views/Catalogos/TiposPrecios/CatTiposPrecios.vue';
-    import ControlTiposPrecios from '@/views/Catalogos/TiposPrecios/ControlTiposPrecios.vue';
-
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -65,12 +60,13 @@ const routes = [
   // MONEDAS
   { path:'/monedas'	        , name:'monedas'	       , component: CatMonedas},
   { path:'/control-monedas' , name:'control-monedas' , component: ControlMonedas},
-  // PRECIOS
-  { path:'/precios'	        , name:'precios'	       , component: CatPrecios},
-  { path:'/control-precios' , name:'control-precios' , component: ControlPrecios},
-  // TIPO PRECIOS
-  { path:'/tipos-precios'	       , name:'tipos-precios'	       , component: CatTiposPrecios},
-  { path:'/control-tipo-precios' , name:'control-tipo-precios' , component: ControlTiposPrecios},
+  // COSTOS INDIRECTOS
+  { path:'/costos-indirectos'         , name:'costos-indirectos'	       , component: CatCostosIndirectos},
+  { path:'/control-costos-indirectos' , name:'control-costos-indirectos' , component: ControlCostosIndirectos},
+  // MANOS DE OBRA
+  { path:'/manos-de-obra'	        , name:'manos-de-obra'	       , component: CatManosdeObra},
+  { path:'/control-manos-de-obra' , name:'control-manos-de-obra' , component: ControlManosdeObra},
+
 ]
 
 const router = new VueRouter({
