@@ -78,3 +78,7 @@ Route::get('unidades'     ,'unidadesController@getAll') -> name('getAllunidades'
 Route::post('unidades'    ,'unidadesController@add')    -> name('addUnidad');              //PROBADA
 Route::put('unidades/{id}','unidadesController@update') -> name('updateUnidad');           //PROBADA
 
+////=============================== TIPOS PRECIOS ==================================================
+Route::get('tipos-precios'     ,'tipo_precioController@getAll') -> name('getAllTipoPrecio');
+Route::post('tipos-precios'    ,'tipo_precioController@add')    -> name('addTipoPrecio');
+Route::put('tipos-precios/{id}','tipo_precioController@update') -> name('updateTipoPrecio');

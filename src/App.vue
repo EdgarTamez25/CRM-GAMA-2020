@@ -136,6 +136,7 @@ export default {
             { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
             { text: 'Productos'         ,icon: 'print'        ,path: '/productos'},
             { text: 'Precios'           ,icon: 'attach_money' ,path: '/precios'},
+            { text: 'Tipos de precios'  ,icon: 'monetization_on' ,path: '/tipos-precios'},
             { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
             { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
             { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
