@@ -269,7 +269,7 @@
 													id_proveedor: this.id_proveedor,
 													id_unidad	  : this.id_unidad,
 													tipo_producto: this.tipo_producto === 'Materia Prima'? 1: 2,
-													obs         : this.obs,
+													obs         : this.obs ? this.obs : '',
 													foto        : '',
 													estatus     : 1
 												}
