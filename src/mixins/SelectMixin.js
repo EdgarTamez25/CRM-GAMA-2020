@@ -17,14 +17,24 @@ export default {
 			id_cartera  : 0,
 			cartera     : [],
 			carteras    : [],
-			Cartera     : '' 
-
+			Cartera     : '',
 			
-		
 		}
 	},
 
 	methods: {
+		
+		consultarTipo_Precios(){
+			this.$http.get('tipos-precios').then((response)=>{
+				console.log('tipo',response.body)
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.tipo_precio = response.body
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.tipo_precios.push(response.body[i].nombre)
+				}
+			})
+		},
 
 		consultarMonedas(){
 			this.$http.get('monedas').then((response)=>{
@@ -128,6 +138,14 @@ export default {
 	},
 
 	watch:{
+		Tipo_Precio:function(){
+			for(const i in this.tipo_precio){
+				if(this.tipo_precio[i].nombre === this.Tipo_Precio){
+					this.id_tipo_precio = this.tipo_precio[i].id
+				}
+			}
+		},
+
 		Moneda:function(){
 			for(const i in this.moneda){
 				if(this.moneda[i].nombre === this.Moneda){

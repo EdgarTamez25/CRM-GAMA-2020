@@ -107,7 +107,6 @@
 
 					</v-col>
 				</v-card>
-
 			</v-dialog>
 
   	</v-row>
@@ -152,10 +151,10 @@
 					headers_precios:[
 						{ text: '#'  			 				, align: 'left'  , value: 'id'		  },
 						{ text: 'Codigo'	 				, align: 'left'  , value: 'codigo' },
-						{ text: 'Proveedor'   		, align: 'left'  , value: 'nombre' },
-						{ text: 'Tipo de precio'  , align: 'left'  , value: 'nomunidad' },
-						{ text: 'Moneda'		 			, align: 'left'  , value: 'nomlin' 	},
-						{ text: 'Estatus'     		, align: 'left'  , value: 'tipo_producto' },
+						{ text: 'Proveedor'   		, align: 'left'  , value: 'nomprov' },
+						{ text: 'Tipo de precio'  , align: 'left'  , value: 'nomtipo_precio' },
+						{ text: 'Moneda'		 			, align: 'left'  , value: 'cod_moneda' 	},
+						{ text: 'Estatus'     		, align: 'left'  , value: 'estatus' },
 						{ text: ' '        				, align: 'right' , value: 'action', sortable: false },
 					],
 				}
@@ -191,7 +190,7 @@
 				MuestraPrecios(item){ // PRECIOS-PROVEEDOR
 					this.artSeleccionado = item.nombre;
 					this.precioActivo = true;
-					this.consultaPreciosxId();
+					this.consultaPreciosxId(item.id);
 
 				}	
 

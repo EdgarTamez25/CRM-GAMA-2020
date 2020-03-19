@@ -21,9 +21,7 @@ import Pendientes  from '@/views/Pendientes/Pendientes.vue'
   // ZONAS
   import CatZonas    from '@/views/Catalogos/Zonas/CatZonas.vue';
   import ControlZonas from '@/views/Catalogos/Zonas/ControlZonas.vue';
-  // // PRECIOS
-  // import CatPrecios    from '@/views/Catalogos/Precios/CatPrecios.vue';
-  // import ControlPrecios from '@/views/Catalogos/Precios/ControlPrecios.vue';
+
   // CARTERAS
   import CatCarteras    from '@/views/Catalogos/Carteras/CatCarteras.vue';
   import ControlCarteras from '@/views/Catalogos/Carteras/ControlCarteras.vue';
@@ -33,6 +31,10 @@ import Pendientes  from '@/views/Pendientes/Pendientes.vue'
   // PRECIOS
   import CatPrecios     from '@/views/Administracion/Precios/CatPrecios.vue';
   import ControlPrecios from '@/views/Administracion/Precios/ControlPrecios.vue';
+
+    // TIPO PRECIO
+    import CatTiposPrecios   from '@/views/Catalogos/TiposPrecios/CatTiposPrecios.vue';
+    import ControlTiposPrecios from '@/views/Catalogos/TiposPrecios/ControlTiposPrecios.vue';
 
 
 Vue.use(VueRouter)
@@ -67,6 +69,9 @@ const routes = [
   // PRECIOS
   { path:'/precios'	        , name:'precios'	       , component: CatPrecios},
   { path:'/control-precios' , name:'control-precios' , component: ControlPrecios},
+  // TIPO PRECIOS
+  { path:'/tipos-precios'	       , name:'tipos-precios'	       , component: CatTiposPrecios},
+  { path:'/control-tipo-precios' , name:'control-tipo-precios' , component: ControlTiposPrecios},
 
 
 ]

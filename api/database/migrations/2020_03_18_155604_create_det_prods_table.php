@@ -14,11 +14,12 @@ class CreateDetProdsTable extends Migration
     public function up()
     {
         Schema::create('det_prods', function (Blueprint $table) {
-            $table->id();
-            $table->id_producto();
-            $table->id_precio();
+            $table->bigIncrements('id');
+            $table->integer('id_producto');
+            $table->integer('id_precio');
             $table->timestamps();
         });
+       
     }
 
     /**

@@ -89,6 +89,7 @@
 							clearable
 							outlined
 							v-model="Proveedor"
+							:disabled="contenidoProvedor"
 						></v-select>
 					</v-col>
 
@@ -107,14 +108,14 @@
 
 					<v-col cols="12" lg="3">
 						<v-select
-							:items="proveedores"
+							:items="tipo_precios"
 							label="Tipo de Precio"
 							placeholder="Tipo de Precio"
 							append-icon="show_chart"
 							dense
 							hide-details
 							outlined
-							v-model="Proveedor"
+							v-model="Tipo_Precio"
 						></v-select>
 					</v-col>
 
@@ -130,14 +131,11 @@
 						></v-text-field>
 					</v-col>
 
-					
-					
-
 					<v-col cols="9" v-if="tipo_producto === 2">
 						<strong >MATERIAS PRIMAS</strong>
 					</v-col>
 
-					 <v-col cols="12" v-if="tipo_producto === 2">
+					<v-col cols="12" v-if="tipo_producto === 2">
             <v-autocomplete
               v-model="MP_Seleccionada"
               :items="Materia_Prima"
@@ -186,7 +184,7 @@
 											<td>{{ mp_det.nombre }}</td>
 											<!-- <td>{{ mp_det.codigo }}</td> -->
 											<td>{{ mp_det.descripcion }}</td>
-											<td>{{ mp_det.nombre }}</td>
+											<td>{{ mp_det.nomprov }}</td>
 										</tr>
 									</tbody>
 								</template>
@@ -194,6 +192,7 @@
 
 						</v-card>
 					</v-col>
+
 					<v-col cols="3" class="text-start">
 						<v-text-field
 							label="Porcentaje Administrativo"
@@ -280,7 +279,7 @@
 				id_tipo_precio  : 0,
 				tipo_precio     : [],
 				tipo_precios    : [],
-				Tipo_Precio     : '',
+				Tipo_Precio     : '' ,
 
 				// VARIABLES PRINCIPALES
 				pjeAdmin: 19,
@@ -288,9 +287,10 @@
 				id_producto: 0,
 				descripcion: 'No hay una descripción del articulo',
 				linea: '',
-				tipo_producto: '',
+				tipo_producto: '', // GUARDA EL TIPO DE PRODUCTO QUE SE SELECCIONE
 				precio: 0,
 				produccion: 0.00,
+				contenidoProvedor: false,
 			 // ALERTAS
 				snackbar: false,
 				text		: '',
@@ -299,10 +299,11 @@
 		},
 
 		created(){
-			this.AsignarMP();
-			this.validarModoVista() // VALIDO EL MODO DE LA VISTAT
-			this.consultarProveedores()
-			this.consultarMonedas()
+			this.AsignarMP();    				// FORMAR ARRAY PARA PRODUCTOS
+			this.validarModoVista() 		// VALIDO EL MODO DE LA VISTA
+			this.consultarProveedores() //LLENAR SELECTOR DE PROVEEDORES
+			this.consultarMonedas()			//LLENAR SELECTOR DE MONEDAS
+			this.consultarTipo_Precios()//LLENAR SELECTOR DE TIPO DE PRECIOS
 
 		},
 			
@@ -330,19 +331,21 @@
 		},
 
 		watch:{
+			// ESTA FUNCION SOLO SE EJECUTA CUANDO MANDAN A LLAMAR LA MODAL PRECIOS
 			edit2: function(){
-				this.AsignarMP();
-				this.validarModoVista();
+				this.AsignarMP(); // Mando a Asignar las materias primas disponibles
+				this.validarModoVista(); // Valido en que modo se encuentra la vista // Nuevo - Editar
 			},
 
 			MP_Seleccionada: function(){
+				// Cada vez que seleccionen una materia prima limpio el array
 				this.MP_Detalle = [];
-
+				// Genero un ciclo de las materias primas seleccionadas para buscar su informacion
 				for(var i = 0; i<this.MP_Seleccionada.length; i++){
-					var MP = this.MP_Seleccionada[i]
-					for(var j=0 ; j<this.Materia_Primas.length;j++){
-						if(MP === this.Materia_Primas[j].nombre){
-							this.MP_Detalle.push({id: this.Materia_Primas[j].id,
+					var MP = this.MP_Seleccionada[i] // Guardo la materia prima seleccionada en una variable
+					for(var j=0 ; j<this.Materia_Primas.length;j++){ // Genero ciclo para buscar la info de la materia prima
+						if(MP === this.Materia_Primas[j].nombre){ //Comparo la MP seleccionada con los del array hasta encontrarla
+							this.MP_Detalle.push({id: this.Materia_Primas[j].id, //Inserto en MP_DETALLE el detalle de la materia prima.
 																		codigo: this.Materia_Primas[j].codigo ,
 																		nombre:  this.Materia_Primas[j].nombre,
 																		descripcion:  this.Materia_Primas[j].descripcion,
@@ -353,13 +356,27 @@
 			},
 
 			Producto: function(){
+				// Boorro todoo lo que contenga el arreglo de Materia Prima -> detalle
 				this.MP_Detalle = [];
+				// Genero un ciclo para buscar el resumen del articulo seleccionado
 				for(var i = 0 ; i< this.getProductos.length; i++){
+					// Si encuentro el producto seleccionado en el array obtengo su informacion
 					if(this.Producto === this.getProductos[i].nombre){
 						this.id_producto = this.getProductos[i].id
 						this.descripcion = this.getProductos[i].descripcion
 						this.linea       = this.getProductos[i].nomlin
 						this.tipo_producto = this.getProductos[i].tipo_producto
+						// Si el tipo de producto es "Producto final" entonces bloque proveedor
+						// Ya que el producto final pertenece a GAMA ETIQUETAS id -> 1 
+						if(this.tipo_producto === 2){ 
+							this.Proveedor = "GAMA ETIQUETAS";
+							this.id_proveedor = 1;
+							this.contenidoProvedor = true;
+						}else{
+							this.Proveedor = "";
+							this.id_proveedor = 0;
+							this.contenidoProvedor = false;
+						}
 					}
 				}
 			}		
@@ -381,7 +398,6 @@
 						this.Materia_Prima.push(this.getProductos[i].nombre	)
 					}
 				}
-				console.log('ma', this.Materia_Primas)
 			},
 
 			validarModoVista(){
@@ -397,22 +413,27 @@
 			validaInfo(){
 				if(!this.Producto)			{ this.snackbar = true; this.text="No puedes omitir el PRODUCTO" ; return }
 				if(!this.Proveedor)	 		{ this.snackbar = true; this.text="No puedes omitir el PROVEEDOR" ; return }
-				if(!this.Tipo_producto)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE PRODUCTO" ; return }
+				// if(!this.Tipo_producto)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE PRODUCTO" ; return }
+				if(!this.Moneda)	 		  { this.snackbar = true; this.text="No puedes omitir la MONEDA" ; return }
+				if(!this.Tipo_Precio)	  { this.snackbar = true; this.text="No puedes omitir el TIPO DE PRECIO" ; return }
 				if(!this.precio)				{ this.snackbar = true; this.text="No puedes omitir el PRECIO" ; return }
-				if(!this.pjeAdmin)				{ this.snackbar = true; this.text="No puedes omitir el PORCENTAJE ADMINISTRATIVO" ; return }
+				if(this.precio === 0)		{ this.snackbar = true; this.text="No puedes omitir el PRECIO" ; return }
+				if(!this.pjeAdmin)		  { this.snackbar = true; this.text="No puedes omitir el PORCENTAJE ADMINISTRATIVO" ; return }
 
 				this.PrepararPeticion()
 			},
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
+				
 				const payload = { 
 													id_producto	: this.id_producto,
 													id_proveedor: this.id_proveedor,
 													tipo_precio : this.id_tipo_precio,
-													iva         : this.iva,
 													id_moneda   : this.id_moneda,
-													estatus     : 1
+													estatus     : 1,
+													tipo_producto: this.tipo_producto,
+													detalle     : this.MP_Detalle
 												}
 
 												console.log('new precio', payload)
@@ -420,24 +441,22 @@
 				this.param2 === 1 ? this.CrearPrecio(payload): this.ActualizarPrecio(payload);
 			},
 
-			CrearPrecio(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ;
+			CrearPrecio(payload){ // ESTA FUNCION MANDAR A INSERTAR EL PRECIO Y LOS DETALLES
+				this.dialog = true ;// ACTIVO DIALOGO -> GUARDANDO INFO
 				setTimeout(() => (this.dialog = false), 2000)
 				
-				// MANDO A INSERTAR CLIENTE
-				this.$http.post('precios', payload).then((response)=>{
-					this.TerminarProceso(response.body);					
+				this.$http.post('precios', payload).then((response)=>{ // MANDO A INSERTAR CLIENTE
+					console.log('response precios', response.body)
+					this.TerminarProceso(response.body);// MANDO A TERMINAR EL PROCESO			
 				})
 			},
 
-			ActualizarPrecio(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ; this.textDialog ="Actualizando Información"
+			ActualizarPrecio(payload){ // ESTA FUNCION MANDA A ACTUALIZAR EL PRECIO Y SUS DETALLES
+				this.dialog = true ; this.textDialog ="Actualizando Información" // ACTIVO DIALOGO -> GUARDANDO INFO
 				setTimeout(() => (this.dialog = false), 2000)
 
 				this.$http.put('precios/'+ this.edit2.id, payload).then((response)=>{
-					this.TerminarProceso(response.body);					
+					this.TerminarProceso(response.body);// MANDO A TERMINAR EL PROCESO							
 				})
 			},
 

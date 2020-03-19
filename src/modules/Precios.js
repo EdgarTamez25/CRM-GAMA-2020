@@ -33,10 +33,12 @@ export default{
 			}).finally(() => commit('LOADING', false)) 
 		},
 
-		consultaPreciosxId({commit}){
+		consultaPreciosxId({commit}, id){
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('PRECIOSXID', [])
-			Vue.http.get('catusuarios').then(response=>{
+
+			Vue.http.get('preciosxid/'+ id).then(response=>{
+				console.log('precios x id', response.body)
 				commit('PRECIOSXID', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
