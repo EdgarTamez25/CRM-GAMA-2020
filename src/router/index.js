@@ -21,7 +21,6 @@ import Pendientes  from '@/views/Pendientes/Pendientes.vue'
   // ZONAS
   import CatZonas    from '@/views/Catalogos/Zonas/CatZonas.vue';
   import ControlZonas from '@/views/Catalogos/Zonas/ControlZonas.vue';
-
   // CARTERAS
   import CatCarteras    from '@/views/Catalogos/Carteras/CatCarteras.vue';
   import ControlCarteras from '@/views/Catalogos/Carteras/ControlCarteras.vue';
@@ -72,8 +71,6 @@ const routes = [
   // TIPO PRECIOS
   { path:'/tipos-precios'	       , name:'tipos-precios'	       , component: CatTiposPrecios},
   { path:'/control-tipo-precios' , name:'control-tipo-precios' , component: ControlTiposPrecios},
-
-
 ]
 
 const router = new VueRouter({
