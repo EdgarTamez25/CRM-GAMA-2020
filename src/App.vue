@@ -39,8 +39,46 @@
 
         </template>
       </v-list>
+      <!-- ADMINISTRACION -->
+      <v-list dense>
+        <template v-for="admin in AppControl">
 
-       <v-list dense>
+          <v-list-group  v-if="admin.administracion" :key="admin.title" v-model="admin.model" :prepend-icon="admin.model ? admin.icon : admin['icon-alt']"
+            color= "cyan darken-4"
+          >
+            <template v-slot:activator>
+              <v-list-item>
+                <v-list-item-content >
+                  <v-list-item-title > 
+                   {{ admin.title}}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="(child, i) in admin.administracion"
+              :key="i"
+              :to="child.path"
+              dense
+            >
+              <v-list-item-action v-if="child.icon">
+                <v-icon>{{ child.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content >
+                <v-list-item-title >
+                  {{ child.text }}
+                </v-list-item-title>
+              </v-list-item-content>
+                {{ child.acceso }}
+
+            </v-list-item>
+          </v-list-group>
+        </template>
+      </v-list>
+
+      <!-- CATALOGOS -->
+      <v-list dense>
         <template v-for="cat in AppControl">
 
           <v-list-group  v-if="cat.catalogos" :key="cat.title" v-model="cat.model" :prepend-icon="cat.model ? cat.icon : cat['icon-alt']"
@@ -127,6 +165,16 @@ export default {
         },
 
         {
+          icon: 'menu_book',
+          title :' Administración',
+          model: false,
+          administracion: [ 
+            { text: 'Precios'  ,icon: 'attach_money' ,path: '/precios'},
+    
+          ],
+        },
+
+        {
           icon: 'account_box',
           title :' Catálogos',
           model: false,
@@ -135,14 +183,13 @@ export default {
             { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
             { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
             { text: 'Productos'         ,icon: 'print'        ,path: '/productos'},
-            { text: 'Precios'           ,icon: 'attach_money' ,path: '/precios'},
             { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
             { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
             { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
-            { text: 'Costos Indirectos' ,icon: 'monetization_on',path: '/costos-indirectos'},
-            { text: 'Manos de Obra'     ,icon: 'pan_tool'     ,path: '/manos-de-obra'},
           ],
         },
+
+        
       ]
   }),
 };
