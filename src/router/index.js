@@ -27,9 +27,9 @@ import Pendientes  from '@/views/Pendientes/Pendientes.vue'
   // MONEDAS
   import CatMonedas     from '@/views/Catalogos/Monedas/CatMonedas.vue';
   import ControlMonedas from '@/views/Catalogos/Monedas/ControlMonedas.vue';
-  // PRECIOS
-  import CatPrecios     from '@/views/Administracion/Precios/CatPrecios.vue';
-  import ControlPrecios from '@/views/Administracion/Precios/ControlPrecios.vue';
+  // // PRECIOS
+  // import CatPrecios     from '@/views/Administracion/Precios/CatPrecios.vue';
+  // import ControlPrecios from '@/views/Administracion/Precios/ControlPrecios.vue';
 
 Vue.use(VueRouter)
 
@@ -60,12 +60,12 @@ const routes = [
   // MONEDAS
   { path:'/monedas'	        , name:'monedas'	       , component: CatMonedas},
   { path:'/control-monedas' , name:'control-monedas' , component: ControlMonedas},
-  // COSTOS INDIRECTOS
-  { path:'/costos-indirectos'         , name:'costos-indirectos'	       , component: CatCostosIndirectos},
-  { path:'/control-costos-indirectos' , name:'control-costos-indirectos' , component: ControlCostosIndirectos},
+  // // COSTOS INDIRECTOS
+  // { path:'/costos-indirectos'         , name:'costos-indirectos'	       , component: CatCostosIndirectos},
+  // { path:'/control-costos-indirectos' , name:'control-costos-indirectos' , component: ControlCostosIndirectos},
   // MANOS DE OBRA
-  { path:'/manos-de-obra'	        , name:'manos-de-obra'	       , component: CatManosdeObra},
-  { path:'/control-manos-de-obra' , name:'control-manos-de-obra' , component: ControlManosdeObra},
+  // { path:'/manos-de-obra'	        , name:'manos-de-obra'	       , component: CatManosdeObra},
+  // { path:'/control-manos-de-obra' , name:'control-manos-de-obra' , component: ControlManosdeObra},
 
 ]
 
