@@ -16,7 +16,7 @@
 				<v-divider class=""></v-divider>
 
 				<v-row>
-					<v-col cols="12" lg="4">
+					<v-col cols="12" sm="6" lg="4">
 						<v-card outlined>
 							<v-simple-table dense>
 								<template>
@@ -43,7 +43,7 @@
 						</v-card>
 					</v-col>
 
-					<v-col cols="12" lg="8">
+					<v-col cols="12" sm="6" lg="8">
 						<v-card outlined>
 							<v-autocomplete
 								:items="getProductos"
@@ -55,17 +55,18 @@
 								dense
 								filled
 								v-model="Producto"
+								disabled
 							></v-autocomplete>
 
 							<v-simple-table dense v-if="Producto">
 								<template >
 									<thead>
 										<tr>
-											<th class="text-left">Descripcion:</th>
+											<th class="text-left">Descripción:</th>
 											<th class="text-justify"> {{ descripcion }}</th>
 										</tr>
 										<tr>
-											<th class="text-left">Linea:</th>
+											<th class="text-left">Línea:</th>
 											<th class="text-left">{{ linea }}</th>
 										</tr>
 										<tr>
@@ -78,7 +79,7 @@
 						</v-card>
 					</v-col>
 
-					<v-col cols="12" lg="3">
+					<v-col cols="12" sm="6" lg="4">
 						<v-select
 							:items="proveedores"
 							label="Proveedores"
@@ -93,20 +94,7 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" lg="3">
-						<v-select
-							:items="monedas"
-							label="Moneda"
-							placeholder="Moneda"
-							append-icon="show_chart"
-							dense
-							hide-details
-							outlined
-							v-model="Moneda"
-						></v-select>
-					</v-col>
-
-					<v-col cols="12" lg="3">
+					<v-col cols="12" sm="6" lg="4">
 						<v-select
 							:items="tipo_precios"
 							label="Tipo de Precio"
@@ -119,7 +107,20 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="3">
+					<v-col cols="6" lg="2">
+						<v-select
+							:items="monedas"
+							label="Moneda"
+							placeholder="Moneda"
+							append-icon="show_chart"
+							dense
+							hide-details
+							outlined
+							v-model="Moneda"
+						></v-select>
+					</v-col>
+
+					<v-col cols="6"  lg="2">
 						<v-text-field
 							label="Precio"
 							placeholder="Precio del producto"
@@ -138,7 +139,7 @@
 					<v-col cols="12" v-if="tipo_producto === 2">
             <v-autocomplete
               v-model="MP_Seleccionada"
-              :items="Materia_Prima"
+              :items="materias_primas"
               outlined
 							dense
               label="Materias Primas"
@@ -165,11 +166,8 @@
 					<v-col cols="12" v-if="tipo_producto === 2 && MATERIAS_PRIMAS">
 						<v-card class="mx-auto" >
 				
-							<v-alert  color="green" text dark  v-if="Materia_Prima.length === 0">
-								No hay materias primas seleccionadas
-							</v-alert>
 
-							<v-simple-table fixed-header height="200px">
+							<v-simple-table fixed-header height="200px" v-if ="MP_Detalle">
 								<template v-slot:default>
 									<thead>
 										<tr>
@@ -193,7 +191,7 @@
 						</v-card>
 					</v-col>
 
-					<v-col cols="3" class="text-start">
+					<v-col cols="12" sm="4" class="text-start">
 						<v-text-field
 							label="Porcentaje Administrativo"
 							hide-details
@@ -249,6 +247,8 @@
 		props:[
 			'param2',
 			'edit2',
+			'id_art',
+			'nomproducto',
 	  ],
 	  data () {
 			return {
@@ -259,8 +259,8 @@
 				textCorrecto: '',
 				
 				// AUTOCOMPLETE
-				Materia_Prima:[], // Nombre=>autocomplete
-				Materia_Primas:[], // Todas las materias Primas
+				// Materia_Prima:[], // Nombre=>autocomplete
+				// Materia_Primas:[], // Todas las materias Primas
 				MP_Seleccionada:[], // Materias Selecionadas
 				MP_Detalle:[], // Mostrar En tabla
 				amenities: [1,4],
@@ -281,6 +281,11 @@
 				tipo_precios    : [],
 				Tipo_Precio     : '' ,
 
+				id_mp  					: 0,
+				materia_prima   : [],
+				materias_primas : [],
+				Materia_Prima   : '',
+
 				// VARIABLES PRINCIPALES
 				pjeAdmin: 19,
 				Producto: '',
@@ -291,19 +296,22 @@
 				precio: 0,
 				produccion: 0.00,
 				contenidoProvedor: false,
+				costo_admin : 0.00,
+				total: 0.00,
+
+				llenarTabla: false,
 			 // ALERTAS
 				snackbar: false,
 				text		: '',
 				color		: 'error',
 			}
 		},
-
 		created(){
-			this.AsignarMP();    				// FORMAR ARRAY PARA PRODUCTOS
 			this.validarModoVista() 		// VALIDO EL MODO DE LA VISTA
 			this.consultarProveedores() //LLENAR SELECTOR DE PROVEEDORES
 			this.consultarMonedas()			//LLENAR SELECTOR DE MONEDAS
 			this.consultarTipo_Precios()//LLENAR SELECTOR DE TIPO DE PRECIOS
+			this.consultar_MateriaPrima() 
 
 		},
 			
@@ -317,15 +325,15 @@
 			},
 
 			Costo_Administrativo: function(){
-				var costo_admin = parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
-				costo_admin > 0 ? costo_admin= costo_admin: costo_admin = 0.00;
-				return costo_admin.toFixed(2);
+				this.costo_admin = parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
+				this.costo_admin > 0 ? this.costo_admin= this.costo_admin: this.costo_admin = 0.00;
+				return this.costo_admin.toFixed(2);
 			},
 
 			TOTAL: function(){
-				var total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
-				total > 0 ? total = total : total = 0.00;
-				return total.toFixed(2);
+				this.total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
+				this.total > 0 ? this.total = this.total : this.total = 0.00;
+				return this.total.toFixed(2);
 			}
 	
 		},
@@ -333,23 +341,27 @@
 		watch:{
 			// ESTA FUNCION SOLO SE EJECUTA CUANDO MANDAN A LLAMAR LA MODAL PRECIOS
 			edit2: function(){
-				this.AsignarMP(); // Mando a Asignar las materias primas disponibles
+				this.consultar_MateriaPrima() 
 				this.validarModoVista(); // Valido en que modo se encuentra la vista // Nuevo - Editar
+					this.llenarTabla = false ;
+
 			},
 
 			MP_Seleccionada: function(){
-				// Cada vez que seleccionen una materia prima limpio el array
-				this.MP_Detalle = [];
-				// Genero un ciclo de las materias primas seleccionadas para buscar su informacion
-				for(var i = 0; i<this.MP_Seleccionada.length; i++){
-					var MP = this.MP_Seleccionada[i] // Guardo la materia prima seleccionada en una variable
-					for(var j=0 ; j<this.Materia_Primas.length;j++){ // Genero ciclo para buscar la info de la materia prima
-						if(MP === this.Materia_Primas[j].nombre){ //Comparo la MP seleccionada con los del array hasta encontrarla
-							this.MP_Detalle.push({id: this.Materia_Primas[j].id, //Inserto en MP_DETALLE el detalle de la materia prima.
-																		codigo: this.Materia_Primas[j].codigo ,
-																		nombre:  this.Materia_Primas[j].nombre,
-																		descripcion:  this.Materia_Primas[j].descripcion,
-																		nomprov:  this.Materia_Primas[j].nomprov})
+				if(!this.llenarTabla){  
+					// Cada vez que seleccionen una materia prima limpio el array
+					this.MP_Detalle = [];
+					// Genero un ciclo de las materias primas seleccionadas para buscar su informacion
+					for(var i = 0; i<this.MP_Seleccionada.length; i++){
+						var MP = this.MP_Seleccionada[i] // Guardo la materia prima seleccionada en una variable
+						for(var j=0 ; j<this.materia_prima.length;j++){ // Genero ciclo para buscar la info de la materia prima
+							if(MP === this.materia_prima[j].nombre){ //Comparo la MP seleccionada con los del array hasta encontrarla
+								this.MP_Detalle.push({id: this.materia_prima[j].id, //Inserto en MP_DETALLE el detalle de la materia prima.
+																			codigo: this.materia_prima[j].codigo ,
+																			nombre:  this.materia_prima[j].nombre,
+																			descripcion:  this.materia_prima[j].descripcion,
+																			nomprov:  this.materia_prima[j].nomprov})
+							}
 						}
 					}
 				}
@@ -380,34 +392,45 @@
 					}
 				}
 			}		
-			
 		},
 
 		methods:{
 			// IMPORTANDO USO DE VUEX - PROVEEDORES(ACCIONES)
-			...mapActions('Precios'  ,['consultaPrecios']),
+			...mapActions('Precios'  ,['consultaPrecios','consultaPreciosxId']),
+
 			remove (item) {
         const index = this.MP_Seleccionada.indexOf(item)
         if (index >= 0) this.MP_Seleccionada.splice(index, 1)
 			},
-			
-			AsignarMP(){
-				for(var i = 0; i<this.getProductos.length; i++){
-					if(this.getProductos[i].tipo_producto === 1){
-						this.Materia_Primas.push(this.getProductos[i])
-						this.Materia_Prima.push(this.getProductos[i].nombre	)
-					}
+
+			validarModoVista(){
+				if(this.param2 === 2){ // ASIGNAR VALORES AL FORMULARIO
+					this.limpiarCampos();
+					this.id_producto 		= this.edit2.id_producto;
+					this.Producto 	 		= this.edit2.nomprod;
+					this.id_proveedor		= this.edit2.id_proveedor;
+					this.Proveedor   		= this.edit2.nomprov;
+					this.id_moneda   		= this.edit2.id_moneda;
+					this.Moneda      		= this.edit2.cod_moneda;
+					this.id_tipo_precio = this.edit2.tipo_precio;
+					this.Tipo_Precio 		= this.edit2.nomtipo_precio;
+					this.precio         = this.edit2.precio;
+					this.llenarTabla    = true;
+					this.consultaDetalleProducto()// CONSULTO MP POR PRODUCTO EN VUEX
+
+				}else{
+					this.limpiarCampos()
+					this.id_producto = this.id_art;   //PRODUCTO QUE TENGO EN SEGUIMIENTO DESDE PRODUCTOS
+					this.Producto    = this.nomproducto;
 				}
 			},
 
-			validarModoVista(){
-				if(this.param2 === 2){
-					// ASIGNAR VALORES AL FORMULARIO
-					this.nombre 			= this.edit2.nombre;
-			
-				}else{
-				this.limpiarCampos()
-				}
+			consultaDetalleProducto(){
+				var temporal = [];
+				this.$http.get('detalle_productos/'+ this.edit2.id ).then((response)=>{
+					for( var i in response.body){ this.MP_Seleccionada.push(response.body[i].nombre) }
+					for( var j in response.body){ this.MP_Detalle.push(response.body[j])}
+				})
 			},
 
 			validaInfo(){
@@ -433,7 +456,13 @@
 													id_moneda   : this.id_moneda,
 													estatus     : 1,
 													tipo_producto: this.tipo_producto,
-													detalle     : this.MP_Detalle
+													detalle     : this.MP_Detalle,
+													precio      : parseFloat(this.precio),
+													produccion  : parseFloat(this.produccion),
+													pje_admin   : parseInt(this.pjeAdmin),
+													costo_admin : parseFloat(this.costo_admin),
+													total       : parseFloat(this.total),
+													predeterminado : 0
 												}
 
 												console.log('new precio', payload)
@@ -446,7 +475,6 @@
 				setTimeout(() => (this.dialog = false), 2000)
 				
 				this.$http.post('precios', payload).then((response)=>{ // MANDO A INSERTAR CLIENTE
-					console.log('response precios', response.body)
 					this.TerminarProceso(response.body);// MANDO A TERMINAR EL PROCESO			
 				})
 			},
@@ -454,7 +482,6 @@
 			ActualizarPrecio(payload){ // ESTA FUNCION MANDA A ACTUALIZAR EL PRECIO Y SUS DETALLES
 				this.dialog = true ; this.textDialog ="Actualizando Información" // ACTIVO DIALOGO -> GUARDANDO INFO
 				setTimeout(() => (this.dialog = false), 2000)
-
 				this.$http.put('precios/'+ this.edit2.id, payload).then((response)=>{
 					this.TerminarProceso(response.body);// MANDO A TERMINAR EL PROCESO							
 				})
@@ -465,13 +492,20 @@
 				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
 				setTimeout(function(){ me.$emit('modal2',false)}, 2000);
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
-				this.consultaPrecios() //ACTUALIZAR CONSULTA DE PROVEEDORES
+				this.consultaPreciosxId(this.id_producto) //ACTUALIZAR CONSULTA DE PROVEEDORES
 			},
 
 			limpiarCampos(){
-				this.nombre 			= '';
+				this.Producto 		= '';
+				this.Proveedor 		= '';
+				this.Tipo_Precio 	= '';
+				this.Moneda 			= '';
+				this.precio 			= '';
+				this.MP_Detalle   = [];
+				this.MP_Seleccionada = [];
 			
-			}
+			},
+
 		}
 	}
 </script>

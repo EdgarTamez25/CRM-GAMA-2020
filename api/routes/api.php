@@ -83,7 +83,13 @@ Route::get('catprecios'  ,'preciosController@getcatalogo')-> name('getcatprecios
 Route::get('preciosxid/{id}' ,'preciosController@preciosxId') -> name('preciosxId');
 Route::get('precios'     ,'preciosController@getAll') -> name('getAllprecios');
 Route::post('precios'    ,'preciosController@add')    -> name('addPrecios');     
-Route::put('precios/{id}','preciosController@update') -> name('updatePrecios');  
+Route::put('precios/{id}','preciosController@update') -> name('updatePrecios'); 
+Route::get('mp-productos','preciosController@mp_producto')-> name('get-mp_producto');
+// SE USA PARA LA MODAL DE PRECIOS
+Route::get('detalle_productos/{id}','preciosController@detalle_productos')-> name('getdetalle_productos'); 
+
+
+
 
 ////=============================== TIPOS PRECIOS ==================================================
 Route::get('tipos-precios'     ,'tipo_precioController@getAll') -> name('getAllTipoPrecio');

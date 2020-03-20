@@ -17,16 +17,24 @@ export default {
 			id_cartera  : 0,
 			cartera     : [],
 			carteras    : [],
-			Cartera     : '' 
-		
+			Cartera     : '', 
 		}
 	},
 
 	methods: {
-		
+		consultar_MateriaPrima(){
+			this.$http.get('mp-productos').then((response)=>{
+				// LLENO ARREGLO CON RESPUESTA COMPLETA
+				this.materia_prima = response.body
+				// FORMO ARREGLO A MOSTRAR EN SELECTOR
+				for(const i in response.body){
+					this.materias_primas.push(response.body[i].nombre)
+				}
+			})
+		},
+			
 		consultarTipo_Precios(){
 			this.$http.get('tipos-precios').then((response)=>{
-				console.log('tipo',response.body)
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.tipo_precio = response.body
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR
@@ -42,7 +50,7 @@ export default {
 				this.moneda = response.body
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
-					this.monedas.push(response.body[i].nombre)
+					this.monedas.push(response.body[i].codigo)
 				}
 			})
 		},
@@ -138,10 +146,34 @@ export default {
 	},
 
 	watch:{
+		Materia_Prima:function(){
+			for(const i in this.materia_prima){
+				if(this.materia_prima[i].nombre === this.Materia_Prima){
+					this.id_mp = this.materia_prima[i].id
+				}
+			}
+		},
+
+		Tipo_Precio:function(){
+			for(const i in this.tipo_precio){
+				if(this.tipo_precio[i].nombre === this.Tipo_Precio){
+					this.id_tipo_precio = this.tipo_precio[i].id
+				}
+			}
+		},
+
 		Unidad:function(){
 			for(const i in this.unidad){
 				if(this.unidad[i].nombre === this.Unidad){
 					this.id_unidad = this.unidad[i].id
+				}
+			}
+		},
+
+		Moneda:function(){
+			for(const i in this.moneda){
+				if(this.moneda[i].codigo === this.Moneda){
+					this.id_moneda = this.moneda[i].id
 				}
 			}
 		},
