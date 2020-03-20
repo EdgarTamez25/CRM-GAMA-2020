@@ -20,6 +20,7 @@ export default{
 		PRECIOSXID(state, data){
 			state.preciosxId = data
 		},
+
 	},
 	actions:{
 		consultaPrecios({commit}){
@@ -43,7 +44,7 @@ export default{
 			}).catch((error)=>{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false)) 
-		}
+		},
 
   },
 

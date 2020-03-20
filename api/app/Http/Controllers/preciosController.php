@@ -23,7 +23,8 @@ class preciosController extends Controller
 
 		public function preciosxId($id){
 			$preciosxid = DB::select('SELECT p.id, p.id_producto, prod.codigo, prod.nombre as nomprod, p.id_proveedor, prov.nombre as nomprov, 
-																		   p.tipo_precio, tp.nombre as nomtipo_precio, p.id_moneda, m.codigo as cod_moneda, p.estatus
+																		   p.tipo_precio, tp.nombre as nomtipo_precio, p.id_moneda, m.codigo as cod_moneda, p.estatus, p.predeterminado,
+																			 p.precio, p.produccion, p.pje_admin, p.costo_admin,p.total
 																FROM precios p LEFT JOIN productos prod 	ON p.id_producto  = prod.id
 																					     LEFT JOIN proveedores prov ON p.id_proveedor = prov.id
 																							 LEFT JOIN tipos_precios tp ON p.tipo_precio  = tp.id 
@@ -32,10 +33,29 @@ class preciosController extends Controller
 				return $preciosxid;
 		}
 
+		
+		public function mp_producto(){
+			$mp_producto = DB::select('SELECT pr.id_producto as id, pr.precio, p.nombre,p.codigo,p.descripcion, prov.nombre as nomprov
+																		FROM  precios pr LEFT JOIN  productos p ON pr.id_producto = p.id 
+																										 LEFT JOIN proveedores prov ON p.id_proveedor = prov.id
+																	WHERE pr.estatus = 1 AND pr.precio > 0 AND p.tipo_producto = 1');
+			return $mp_producto;
+		}
+
+		public function detalle_productos($id){
+			$det_producto = DB::select('SELECT dt.id_producto as id, p.nombre, p.codigo, p.descripcion, prov.nombre as nomprov, pr.precio 
+																		FROM det_prods dt LEFT JOIN productos p ON  dt.id_producto = p.id
+																			LEFT JOIN proveedores prov ON p.id_proveedor = prov.id
+																			LEFT JOIN precios pr ON dt.id_precio = pr.id
+																	WHERE dt.id_precio = ?',[$id]);
+			return $det_producto;
+		}
+		
+
 		public function add(Request $request){
 			// INSERTO EN LA TABLA DE PRECIOS
 			$precioxproducto = precios::create($request->all());
-
+			
 			if($request -> tipo_producto === 2):   // VALIDO SI EL TIPO DE PRODUCTO ES PRODUCTO FINAL
 				$detalle   = $request -> detalle; 	 // CREO UNA VARIABLE PARA GUARDAR EL DETALLE
 				$id_precio = $precioxproducto -> id; // GUARDO EL ID DEL PRECIO CREADO
@@ -54,6 +74,8 @@ class preciosController extends Controller
 				if($contador === 0):
 					return "El precio por producto se ha registrado correctamente.";
 				endif;
+			else:
+				return "El precio de la materia prima se ha registrado correctamente. ";
 			endif;
 		}
 		
@@ -76,7 +98,7 @@ class preciosController extends Controller
 	//================================ FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
 		public function detalleProducto($id_precio, $id_producto){
 				$det_producto = DB::insert('INSERT INTO det_prods(id_producto, id_precio )
-														VALUES(?,?)', [$id_precio, $id_producto ]);
+														VALUES(?,?)', [$id_producto,$id_precio  ]);
 				return $det_producto;
 		}
 }

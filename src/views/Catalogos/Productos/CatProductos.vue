@@ -63,7 +63,7 @@
         	</v-toolbar>
 					<!-- ----TABLA -->
 					<v-col cols="12" v-if="precioActivo">
-						<v-card-actions> <h3><strong> Precios del {{ artSeleccionado }}</strong></h3></v-card-actions>
+						<v-card-actions> <h3><strong> Precios del {{ nomproducto }}</strong></h3></v-card-actions>
 
 						<v-card class="  mt-3" >
 							<v-card-actions>
@@ -92,8 +92,14 @@
 									<v-btn  class="green darken-4" icon dark @click="abrirModalPrecios(2, item)"><v-icon> create </v-icon></v-btn> 
 								</template>
 
+								<template v-slot:item.predeterminado="{ item }" > 
+									<v-btn small dark :color="item.predeterminado === 1? 'green darken-4': 'red darken-4' " > 
+										{{ item.predeterminado === 1? 'Si': 'No'}}
+									</v-btn>  
+								</template>
+
 								<template v-slot:item.tipo_producto="{ item }" > 
-									{{ item.tipo_producto === 1 ? 'Materia Prima': 'Producto Final' }}
+									{{ item.tipo_producto === 1 ? 'Materia Prima': 'Producto Final' }} 
 								</template>
 
 							</v-data-table>
@@ -101,7 +107,13 @@
 
 						<v-dialog persistent v-model="ModalPrecios" width="850px" >	
 							<v-card class="pt-0 pa-4">
-								<ControlPrecios :param2="param2" :edit2="edit2" @modal2="ModalPrecios = $event" />
+								<ControlPrecios 
+									:param2="param2" 
+									:edit2="edit2" 
+									:id_art="id_art" 
+									:nomproducto ="nomproducto"
+									@modal2="ModalPrecios = $event" 
+								/>
 							</v-card>
 						</v-dialog>
 
@@ -126,9 +138,8 @@
 		},
 		data () {
 				return {
-					
 					//PRODUCTOS
-					search: '',
+					search: '',    
 					dialog: false,
 					param: 0,
 					edit:'',
@@ -136,14 +147,15 @@
 						{ text: '#'  			 , align: 'left'  , value: 'id'		  },
 						{ text: 'Codigo'	 , align: 'left'  , value: 'codigo' },
 						{ text: 'Nombre'   , align: 'left'  , value: 'nombre' },
-						{ text: 'Unidad'   , align: 'left'  , value: 'nomunidad' },
+						{ text: 'Proveedor', align: 'left'  , value: 'nomprov' },
+						{ text: 'Precio'   , align: 'left'  , value: 'estatus' },
 						{ text: 'Linea'		 , align: 'left'  , value: 'nomlin' 	},
 						{ text: 'Tipo'     , align: 'left'  , value: 'tipo_producto' },
-						{ text: 'Proveedor', align: 'left'  , value: 'nomprov' },
 						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
 					],
 					// PRECIOS
-					artSeleccionado: '',
+					id_art : 0,
+					nomproducto : '',
 					ModalPrecios : false,
 					precioActivo: false,
 					param2: 0,
@@ -152,9 +164,10 @@
 						{ text: '#'  			 				, align: 'left'  , value: 'id'		  },
 						{ text: 'Codigo'	 				, align: 'left'  , value: 'codigo' },
 						{ text: 'Proveedor'   		, align: 'left'  , value: 'nomprov' },
+						{ text: 'Precio'   				, align: 'left'  , value: 'total' },
 						{ text: 'Tipo de precio'  , align: 'left'  , value: 'nomtipo_precio' },
 						{ text: 'Moneda'		 			, align: 'left'  , value: 'cod_moneda' 	},
-						{ text: 'Estatus'     		, align: 'left'  , value: 'estatus' },
+						{ text: 'Predeterminado'  , align: 'center'  , value: 'predeterminado' },
 						{ text: ' '        				, align: 'right' , value: 'action', sortable: false },
 					],
 				}
@@ -175,23 +188,22 @@
 				...mapActions('Precios',['consultaPreciosxId']), // IMPORTANDO USO DE VUEX - PRECIOS(ACCIONES)
 
 				abrirModal(action, items){ //NUEVO / EDITAR PRODUCTO 
-					this.param = action;
-					this.edit = items;
-					this.dialog = true;
+					this.param = action; // MANDO EL MODO DE LA VISTA 
+					this.edit = items;   // MANDA LA INFORMACION DEL PRODUCTO SELECCIONADO
+					this.dialog = true;  // ABRE LA MODAL PARA CREAR / EDITAR PRECIOS
 				},
 
 				abrirModalPrecios(action, items){ //NUEVO /EDITAR PRECIO
-					console.log('recibo', action)
-					this.param2 = action;
-					this.edit2  = items;
-					this.ModalPrecios = true;
+					this.param2 = action;   //MANDO EL MODO DE LA VISTA 
+					this.edit2  = items;    // MANDA LA INFORMACION DEL PRECIO SELECCIONADO
+					this.ModalPrecios = true;  //ABRE LA MODAL PARA CREAR / EDITAR PRECIOS
 				},
 
-				MuestraPrecios(item){ // PRECIOS-PROVEEDOR
-					this.artSeleccionado = item.nombre;
-					this.precioActivo = true;
-					this.consultaPreciosxId(item.id);
-
+				MuestraPrecios(item){ // ABRE LA MODAL DE PRECIOS POR PROVEEDOR
+					this.id_art  			= item.id;     //GUARDA EL ID DEL PRODUCTO SELECCIONADO
+					this.nomproducto 	= item.nombre; // GUARDA EL NOMBRE DLE ARTICULO SELECCIONADO
+					this.precioActivo = true;              // ABRE LA MODAL DE PRECIOS POR PROVEEDOR
+					this.consultaPreciosxId(item.id);      // MANDA A CONSULTAR LOS PRECIOS POR EL ID DEL ART
 				}	
 
 				
