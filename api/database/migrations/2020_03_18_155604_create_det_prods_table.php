@@ -17,6 +17,7 @@ class CreateDetProdsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('id_producto');
             $table->integer('id_precio');
+            $table->integer('estatus');
             $table->timestamps();
         });
        

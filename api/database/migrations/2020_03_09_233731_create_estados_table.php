@@ -16,8 +16,8 @@ class CreateEstadosTable extends Migration
         Schema::create('estados', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->string('nombre');
-            $table->integer('estatus');
             $table->string('id_pais');
+            $table->integer('estatus');
             $table->timestamps();
         });
     }

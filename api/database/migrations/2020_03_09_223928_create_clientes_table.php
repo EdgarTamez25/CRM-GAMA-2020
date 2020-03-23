@@ -16,15 +16,16 @@ class CreateClientesTable extends Migration
         Schema::create('clientes', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->string('nombre');
-            $table->integer('id_subzona');
-            $table->integer('estatus');
-            $table->string('razon_social');
+            $table->integer('id_subzona')->nullable();
+            $table->string('direccion')->nullable();
+            $table->string('razon_social')->nullable();
             $table->integer('fuente');//id del vendedor : quien registró al cliente
             $table->integer('tipo_cliente');
-            $table->string('rfc');
-            $table->string('curp');
-            $table->integer('nivel');
-            $table->integer('id_cartera');            
+            $table->string('rfc')->nullable();
+            $table->string('curp')->nullable();
+            $table->integer('nivel')->nullable();
+            $table->integer('id_cartera')->nullable();
+            $table->integer('estatus');
             $table->timestamps();
         });
     }

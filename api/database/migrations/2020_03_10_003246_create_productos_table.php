@@ -17,13 +17,13 @@ class CreateProductosTable extends Migration
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->string('codigo');
             $table->string('nombre');
-            $table->longText('descripcion');
+            $table->longText('descripcion')->nullable();
             $table->integer('id_linea');
             $table->integer('tipo_producto');
             $table->integer('id_proveedor');
             $table->integer('id_unidad');
-            $table->longText('obs');
-            $table->string('foto');
+            $table->longText('obs')->nullable();
+            $table->string('foto')->nullable();
             $table->integer('estatus');
             $table->timestamps();
         });

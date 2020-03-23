@@ -18,7 +18,7 @@ class CreateRastreosTable extends Migration
             $table->integer('id_compromiso');
             $table->integer('id_ruta');
             $table->string('inicio');
-            $table->string('fin');
+            $table->string('fin')->nullable();
             $table->integer('estatus');
             $table->timestamps();
         });

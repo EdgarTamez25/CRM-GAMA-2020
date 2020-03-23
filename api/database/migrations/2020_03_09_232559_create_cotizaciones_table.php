@@ -16,11 +16,11 @@ class CreateCotizacionesTable extends Migration
         Schema::create('cotizaciones', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->integer('id_vendedor');
-            $table->integer('estatus');
             $table->integer('id_cliente');
-            $table->dateTime('fecha');
+            $table->dateTime('fecha');//las cotizaciones tienen 15 días de vencimiento
             $table->float('importe');
             $table->float('utilidad');
+            $table->integer('estatus');
             $table->timestamps();
         });
     }

@@ -17,8 +17,9 @@ class CreateDetCotsTable extends Migration
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->integer('id_cot');
             $table->integer('id_producto');
-            $table->integer('descuento');
+            $table->integer('descuento')->nullable();
             $table->integer('cantidad');
+            $table->integer('estatus');
             $table->timestamps();
         });
     }

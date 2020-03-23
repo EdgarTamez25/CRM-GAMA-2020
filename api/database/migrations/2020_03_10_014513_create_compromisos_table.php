@@ -20,9 +20,10 @@ class CreateCompromisosTable extends Migration
             $table->dateTime('fecha');
             $table->dateTime('hora');
             $table->integer('id_contacto');
-            $table->longText('comentarios');
+            $table->longText('comentarios')->nullable();
             $table->integer('id_cliente');
-            $table->integer('fase_venta');//0=sin compromiso, 1=sin cotizar, 2=prospecto, 3=cotizacion, 4=rechazado, 5=aceptado, 6=entregado, 7=finalizado            
+            $table->integer('fase_venta');//0=sin compromiso, 1=sin cotizar, 2=prospecto, 3=cotizacion, 4=rechazado, 5=aceptado, 6=entregado, 7=finalizado
+            $table->integer('estatus');
             $table->timestamps();
         });
     }

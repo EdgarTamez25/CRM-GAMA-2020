@@ -16,10 +16,15 @@ class CreatePreciosTable extends Migration
         Schema::create('precios', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->integer('id_producto');
-            $table->integer('id_proveedor');
+            $table->integer('id_proveedor');//Cuando el producto es un producto final el proveedor es Gama Etiquetas
             $table->integer('tipo_precio');//campaña, metro uadrado, metro lineal, unidad
-            $table->integer('iva');
             $table->integer('id_moneda');
+            $table->float('precio');
+            $table->float('costo_prod');
+            $table->float('costo_admin');
+            $table->integer('pje_adminn');
+            $table->float('total');
+            $table->integer('predeterminado');
             $table->integer('estatus');
             $table->timestamps();
         });

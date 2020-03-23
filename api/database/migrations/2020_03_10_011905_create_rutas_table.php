@@ -17,8 +17,8 @@ class CreateRutasTable extends Migration
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->integer('id_vendedor');
             $table->string('nombre');
-            $table->dateTime('hora_inicio');
-            $table->dateTime('hora_fin');
+            $table->dateTime('hora_inicio')->nullable();
+            $table->dateTime('hora_fin')->nullable();
             $table->integer('id_compromiso');
             $table->integer('estatus');
             $table->timestamps();

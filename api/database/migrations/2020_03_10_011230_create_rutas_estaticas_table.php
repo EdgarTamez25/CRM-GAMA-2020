@@ -15,7 +15,7 @@ class CreateRutasEstaticasTable extends Migration
     {
         Schema::create('rutas_estaticas', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
-            $table->integer('id_rastreo_rutas');
+            $table->integer('id_rastreo_rutas');//En este campo se registra el rastreo de la ruta cuando la localización no cambia
             $table->dateTime('fecha');
             $table->string('latitud');
             $table->string('longitud');

@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->integer('nivel');
             $table->integer('id_sucursal');
             $table->string('foto')->nullable();
+            $table->integer('estatus');
             $table->timestamps();
         });
     }

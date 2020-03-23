@@ -18,7 +18,7 @@ class CreateRastreoRutasTable extends Migration
             $table->integer('id_rastreo');
             $table->string('latitud');
             $table->string('longitud');
-            $table->integer('flujo_rastreo');            
+            $table->integer('flujo_rastreo');//Este campo es referido a los puntos que conforman la ruta (1 cada min o por definir)
             $table->integer('estatus');
             $table->timestamps();
         });
