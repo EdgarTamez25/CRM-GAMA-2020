@@ -1,8 +1,12 @@
 <template>
   <v-container>
   	<v-row class="justify-center">
+			<v-snackbar top v-model="snackbar" :timeout="2000"  :color="color"> {{text}}
+				<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+			</v-snackbar>
+
   		<v-col cols="12">
-				<v-card-actions> <h3><strong> Catálogo de Productos</strong></h3></v-card-actions>
+				<v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions>
 
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
@@ -30,7 +34,7 @@
 			    >
 			    	<template v-slot:item.action="{ item }"  > 
 			    		<v-btn  class="orange darken-1 ma-1" icon dark @click="MuestraPrecios(item)"><v-icon> attach_money </v-icon></v-btn> 
-			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
+			    		<v-btn  class="green darken-4 ma-1" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
 				    </template>
 
 						<template v-slot:item.tipo_producto="{ item }" > 
@@ -93,7 +97,12 @@
 								</template>
 
 								<template v-slot:item.predeterminado="{ item }" > 
-									<v-btn small dark :color="item.predeterminado === 1? 'green darken-4': 'red darken-4' " > 
+									<v-btn 
+										small 
+										dark 
+										:color="item.predeterminado === 1? 'green darken-4': 'red darken-4'" 
+										@click="predeterminado(item)"
+									> 
 										{{ item.predeterminado === 1? 'Si': 'No'}}
 									</v-btn>  
 								</template>
@@ -128,7 +137,6 @@
 <script>
 	import ControlProductos from '@/views/Catalogos/Productos/ControlProductos.vue'
 	import ControlPrecios   from '@/views/Administracion/Precios/ControlPrecios.vue';
-
 	import {mapGetters, mapActions} from 'vuex';
 
 	export default {
@@ -138,14 +146,18 @@
 		},
 		data () {
 				return {
+					// ALERTAS
+					snackbar: false,
+					text		: '',
+					color		: 'success',
 					//PRODUCTOS
 					search: '',    
 					dialog: false,
 					param: 0,
 					edit:'',
 					headers:[
-						{ text: '#'  			 , align: 'left'  , value: 'id'		  },
-						{ text: 'Codigo'	 , align: 'left'  , value: 'codigo' },
+						{ text: '#'  		   , align: 'left'  , value: 'id'		  },
+						{ text: 'Codigo'   , align: 'left'  , value: 'codigo' },
 						{ text: 'Nombre'   , align: 'left'  , value: 'nombre' },
 						{ text: 'Proveedor', align: 'left'  , value: 'nomprov' },
 						{ text: 'Precio'   , align: 'left'  , value: 'estatus' },
@@ -172,7 +184,6 @@
 					],
 				}
 			},
-
 
 			created(){
 				this.consultaProductos()// CONSULTAR PRODUCTOS A VUEX
@@ -204,10 +215,15 @@
 					this.nomproducto 	= item.nombre; // GUARDA EL NOMBRE DLE ARTICULO SELECCIONADO
 					this.precioActivo = true;              // ABRE LA MODAL DE PRECIOS POR PROVEEDOR
 					this.consultaPreciosxId(item.id);      // MANDA A CONSULTAR LOS PRECIOS POR EL ID DEL ART
-				}	
+				},
 
-				
-				
+				predeterminado(item){
+					const payload ={ id_precio: parseInt(item.id), id_producto: parseInt(item.id_producto) }
+					this.$http.post('predeterminado', payload).then((response)=>{
+						this.snackbar = true; this.text = response.body; 
+						this.consultaPreciosxId(item.id_producto)
+					})
+				}
 			}
 	}
 </script>

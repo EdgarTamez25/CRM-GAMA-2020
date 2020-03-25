@@ -24,6 +24,7 @@ export default {
 	methods: {
 		consultar_MateriaPrima(){
 			this.$http.get('mp-productos').then((response)=>{
+				console.log('mp-prima', response.body)
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.materia_prima = response.body
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR

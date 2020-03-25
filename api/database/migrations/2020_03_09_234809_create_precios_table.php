@@ -19,14 +19,15 @@ class CreatePreciosTable extends Migration
             $table->integer('id_proveedor');//Cuando el producto es un producto final el proveedor es Gama Etiquetas
             $table->integer('tipo_precio');//campaña, metro uadrado, metro lineal, unidad
             $table->integer('id_moneda');
-            $table->float('precio');
-            $table->float('costo_prod');
-            $table->float('costo_admin');
-            $table->integer('pje_adminn');
-            $table->float('total');
+            $table->float('precio', 8,2);
+            $table->float('produccion',8,2);
+            $table->integer('pje_admin');
+            $table->float('costo_admin',8,2);
+            $table->float('total',8,2);
             $table->integer('predeterminado');
             $table->integer('estatus');
             $table->timestamps();
+
         });
     }
 

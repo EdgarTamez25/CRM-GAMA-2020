@@ -36,10 +36,26 @@ class clientesController extends Controller
     }
 
     public function update($id, Request $req){
-				$data = DB::update('UPDATE clientes SET nombre=:nombre,id_subzona=:id_subzona,tipo_cliente=:tipo_cliente,rfc=:rfc,curp=:curp, id_cartera=:id_cartera,
-																								razon_social=:razon_social, nivel=:nivel,fuente=:fuente WHERE id =:id'
-														,['nombre'=> $req -> nombre, 'id_subzona'=> $req -> id_subzona ,'tipo_cliente'=> $req->tipo_cliente, 'rfc'=>$req->rfc,'curp'=> $req->curp, 
-															'id_cartera'=> $req->id_cartera, 'razon_social'=>$req->razon_social, 'nivel'=> $req->nivel , 'fuente'=>$req->fuente, 'id'=> $id
+				$data = DB::update('UPDATE clientes SET nombre=:nombre,
+																								id_subzona=:id_subzona,
+																								tipo_cliente=:tipo_cliente,
+																								rfc=:rfc,
+																								curp=:curp, 
+																								id_cartera=:id_cartera,
+																								razon_social=:razon_social, 
+																								nivel=:nivel,
+																								fuente=:fuente 
+															WHERE id=:id'
+														,['nombre'				=> $req -> nombre, 
+															'id_subzona'		=> $req -> id_subzona ,
+															'tipo_cliente'	=> $req	-> tipo_cliente, 
+															'rfc'						=> $req	-> rfc,
+															'curp'					=> $req	-> curp, 
+															'id_cartera'		=> $req	-> id_cartera, 
+															'razon_social'	=> $req	-> razon_social, 
+															'nivel'					=> $req	-> nivel , 
+															'fuente'				=> $req	-> fuente, 
+															'id'						=> $id
 														]
 													);
 				

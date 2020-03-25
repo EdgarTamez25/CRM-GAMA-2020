@@ -148,13 +148,14 @@
               multiple
               chips
 							hide-details=""
+							@click="cambiarProceso"
             >
               <template v-slot:selection="data">
                 <v-chip
                   :input-value="data.selected"
                   close
                   @click="data.select"
-                  @click:close="remove(data.item)"
+                  @click:close="remover(data.item)"
                 >
 									{{ data.item }}
                 </v-chip>
@@ -164,15 +165,13 @@
           </v-col>
 
 					<v-col cols="12" v-if="tipo_producto === 2 && MATERIAS_PRIMAS">
-						<v-card class="mx-auto" >
-				
+						<v-card class="mx-auto" flat >
 
-							<v-simple-table fixed-header height="200px" v-if ="MP_Detalle">
+							<v-simple-table fixed-header dense height="200px" v-if ="MP_Detalle">
 								<template v-slot:default>
 									<thead>
 										<tr>
 											<th class="text-left">Nombre</th>
-											<!-- <th class="text-left">Codigo</th> -->
 											<th class="text-left">Descripción</th>
 											<th class="text-left">Proveedor</th>
 										</tr>
@@ -180,7 +179,6 @@
 									<tbody>
 										<tr v-for="mp_det in MP_Detalle" :key="mp_det.id">
 											<td>{{ mp_det.nombre }}</td>
-											<!-- <td>{{ mp_det.codigo }}</td> -->
 											<td>{{ mp_det.descripcion }}</td>
 											<td>{{ mp_det.nomprov }}</td>
 										</tr>
@@ -241,7 +239,6 @@
 	import {mapGetters, mapActions} from 'vuex'
 	export default {
 		mixins:[SelectMixin],
-
 	  components: {
 		},
 		props:[
@@ -249,7 +246,8 @@
 			'edit2',
 			'id_art',
 			'nomproducto',
-	  ],
+		],
+		
 	  data () {
 			return {
 				selection: '',
@@ -259,11 +257,10 @@
 				textCorrecto: '',
 				
 				// AUTOCOMPLETE
-				// Materia_Prima:[], // Nombre=>autocomplete
-				// Materia_Primas:[], // Todas las materias Primas
 				MP_Seleccionada:[], // Materias Selecionadas
 				MP_Detalle:[], // Mostrar En tabla
 				amenities: [1,4],
+				DetalleActual:[], // GUARDA EL DETALLE QUE CONSULTO. 
 
 				// SELECTOR
 				id_proveedor  : 0,
@@ -306,6 +303,7 @@
 				color		: 'error',
 			}
 		},
+
 		created(){
 			this.validarModoVista() 		// VALIDO EL MODO DE LA VISTA
 			this.consultarProveedores() //LLENAR SELECTOR DE PROVEEDORES
@@ -317,7 +315,7 @@
 			
 		computed:{
 			// IMPORTANDO USO DE VUEX - PROVEEDORES (GETTERS)
-			...mapGetters('Precios',['Loading','getPrecios']),
+			...mapGetters('Precios',['getPreciosxId','getPrecios']),
 			...mapGetters('Productos',['getProductos']),
 
 			MATERIAS_PRIMAS:function(){
@@ -334,37 +332,37 @@
 				this.total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
 				this.total > 0 ? this.total = this.total : this.total = 0.00;
 				return this.total.toFixed(2);
-			}
-	
+			},
 		},
 
 		watch:{
 			// ESTA FUNCION SOLO SE EJECUTA CUANDO MANDAN A LLAMAR LA MODAL PRECIOS
 			edit2: function(){
-				this.consultar_MateriaPrima() 
+				this.consultar_MateriaPrima() //LLENO EL ARRAY DE MATERIAS PRIMAS ANTES DE ASIGNAR autocomplete.
 				this.validarModoVista(); // Valido en que modo se encuentra la vista // Nuevo - Editar
-					this.llenarTabla = false ;
-
+				this.llenarTabla = false ;
 			},
 
 			MP_Seleccionada: function(){
 				if(!this.llenarTabla){  
-					// Cada vez que seleccionen una materia prima limpio el array
-					this.MP_Detalle = [];
-					// Genero un ciclo de las materias primas seleccionadas para buscar su informacion
-					for(var i = 0; i<this.MP_Seleccionada.length; i++){
-						var MP = this.MP_Seleccionada[i] // Guardo la materia prima seleccionada en una variable
-						for(var j=0 ; j<this.materia_prima.length;j++){ // Genero ciclo para buscar la info de la materia prima
-							if(MP === this.materia_prima[j].nombre){ //Comparo la MP seleccionada con los del array hasta encontrarla
-								this.MP_Detalle.push({id: this.materia_prima[j].id, //Inserto en MP_DETALLE el detalle de la materia prima.
-																			codigo: this.materia_prima[j].codigo ,
-																			nombre:  this.materia_prima[j].nombre,
-																			descripcion:  this.materia_prima[j].descripcion,
-																			nomprov:  this.materia_prima[j].nomprov})
+					this.MP_Detalle = []; // Cada vez que seleccionen una materia prima limpio el array
+					this.produccion = 0.00;
+					for(var j=0 ; j<this.materia_prima.length;j++){ // Genero ciclo para buscar la info de la materia prima
+						for(var i = 0; i<this.MP_Seleccionada.length; i++){ // Genero un ciclo de las materias primas seleccionadas para buscar su informacion
+							if(this.MP_Seleccionada[i] === this.materia_prima[j].nombre){ //Comparo la MP seleccionada con los del array hasta encontrarla
+								this.MP_Detalle.push({id:     		this.materia_prima[j].id, //Inserto en MP_DETALLE el detalle de la materia prima.
+																codigo: 		this.materia_prima[j].codigo ,
+																nombre:  		this.materia_prima[j].nombre,
+																descripcion:this.materia_prima[j].descripcion,
+																nomprov:  	this.materia_prima[j].nomprov,
+																})
 							}
+
 						}
 					}
+					this.CalculaCostoProduccion() // Calcular el costo de producción
 				}
+
 			},
 
 			Producto: function(){
@@ -391,21 +389,17 @@
 						}
 					}
 				}
-			}		
+			}
+			
 		},
 
 		methods:{
 			// IMPORTANDO USO DE VUEX - PROVEEDORES(ACCIONES)
 			...mapActions('Precios'  ,['consultaPrecios','consultaPreciosxId']),
 
-			remove (item) {
-        const index = this.MP_Seleccionada.indexOf(item)
-        if (index >= 0) this.MP_Seleccionada.splice(index, 1)
-			},
-
 			validarModoVista(){
+				this.limpiarCampos();
 				if(this.param2 === 2){ // ASIGNAR VALORES AL FORMULARIO
-					this.limpiarCampos();
 					this.id_producto 		= this.edit2.id_producto;
 					this.Producto 	 		= this.edit2.nomprod;
 					this.id_proveedor		= this.edit2.id_proveedor;
@@ -415,21 +409,22 @@
 					this.id_tipo_precio = this.edit2.tipo_precio;
 					this.Tipo_Precio 		= this.edit2.nomtipo_precio;
 					this.precio         = this.edit2.precio;
+					this.produccion     = this.edit2.produccion;
 					this.llenarTabla    = true;
 					this.consultaDetalleProducto()// CONSULTO MP POR PRODUCTO EN VUEX
 
 				}else{
-					this.limpiarCampos()
+					// this.llenarTabla    = true;
 					this.id_producto = this.id_art;   //PRODUCTO QUE TENGO EN SEGUIMIENTO DESDE PRODUCTOS
 					this.Producto    = this.nomproducto;
 				}
 			},
 
 			consultaDetalleProducto(){
-				var temporal = [];
 				this.$http.get('detalle_productos/'+ this.edit2.id ).then((response)=>{
 					for( var i in response.body){ this.MP_Seleccionada.push(response.body[i].nombre) }
 					for( var j in response.body){ this.MP_Detalle.push(response.body[j])}
+					for( var k in response.body){ this.DetalleActual.push(response.body[k].id_key )}
 				})
 			},
 
@@ -450,6 +445,7 @@
 				// FORMAR ARRAY A MANDAR
 				
 				const payload = { 
+													detalleActual: this.DetalleActual,
 													id_producto	: this.id_producto,
 													id_proveedor: this.id_proveedor,
 													tipo_precio : this.id_tipo_precio,
@@ -457,15 +453,14 @@
 													estatus     : 1,
 													tipo_producto: this.tipo_producto,
 													detalle     : this.MP_Detalle,
-													precio      : parseFloat(this.precio),
-													produccion  : parseFloat(this.produccion),
+													precio      : parseFloat(this.precio).toFixed(2),
+													produccion  : parseFloat(this.produccion).toFixed(2),
 													pje_admin   : parseInt(this.pjeAdmin),
-													costo_admin : parseFloat(this.costo_admin),
-													total       : parseFloat(this.total),
+													costo_admin : parseFloat(this.costo_admin).toFixed(2),
+													total       : parseFloat(this.total).toFixed(2),
 													predeterminado : 0
 												}
 
-												console.log('new precio', payload)
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param2 === 1 ? this.CrearPrecio(payload): this.ActualizarPrecio(payload);
 			},
@@ -496,14 +491,31 @@
 			},
 
 			limpiarCampos(){
-				this.Producto 		= '';
-				this.Proveedor 		= '';
+				// this.Producto 		= '';
+				// this.Proveedor 		= '';
 				this.Tipo_Precio 	= '';
 				this.Moneda 			= '';
 				this.precio 			= '';
 				this.MP_Detalle   = [];
 				this.MP_Seleccionada = [];
 			
+			},
+
+			remover (item) {
+        const index = this.MP_Seleccionada.indexOf(item)
+        if (index >= 0) this.MP_Seleccionada.splice(index, 1)
+			},
+
+			cambiarProceso(){ this.llenarTabla = false; }, // HABILITA EL AUTOCOMPLETED BLOQUEADO POR EL WATCH
+			
+			CalculaCostoProduccion(){
+				for(var x =0 ; x < this.MP_Detalle.length; x++){
+					for(var value of this.materia_prima){
+						if(this.MP_Detalle[x].id === value.id ){
+							this.produccion = this.produccion + value.precio
+						}
+					}
+				}
 			},
 
 		}

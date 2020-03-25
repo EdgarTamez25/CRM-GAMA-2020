@@ -86,7 +86,8 @@ Route::post('precios'    ,'preciosController@add')    -> name('addPrecios');
 Route::put('precios/{id}','preciosController@update') -> name('updatePrecios'); 
 Route::get('mp-productos','preciosController@mp_producto')-> name('get-mp_producto');
 // SE USA PARA LA MODAL DE PRECIOS
-Route::get('detalle_productos/{id}','preciosController@detalle_productos')-> name('getdetalle_productos'); 
+Route::get('detalle_productos/{id}','preciosController@detalle_productos')-> name('getdetalle_productos');
+Route::post('predeterminado', 'preciosController@predeterminado')  -> name('predeterminado');
 
 
 

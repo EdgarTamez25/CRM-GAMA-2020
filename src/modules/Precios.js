@@ -39,7 +39,7 @@ export default{
 			commit('LOADING',true); commit('PRECIOSXID', [])
 
 			Vue.http.get('preciosxid/'+ id).then(response=>{
-				console.log('precios x id', response.body)
+				// console.log('precios x id', response.body)
 				commit('PRECIOSXID', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
