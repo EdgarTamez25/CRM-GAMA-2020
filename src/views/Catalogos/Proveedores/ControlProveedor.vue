@@ -19,7 +19,7 @@
 						<v-text-field
 							append-icon="person"
 							label="Nombre"
-							placeholder="Nombre del cliente"
+							placeholder="Nombre del proveedor"
 							hide-details
 							dense
 							clearable
@@ -155,13 +155,6 @@
 				curp				: '',
 				cartera     : '',
 				razon_social: '',
-
-				// SELECET
-				// id_zona     : 0,   //identificador
-				// zona				: [],  //Array completo
-				// zonas				: [],  //Solo nombres 
-				// Zonas				: '',
-			
 			 // ALERTAS
 				snackbar: false,
 				text		: '',

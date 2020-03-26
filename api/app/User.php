@@ -9,7 +9,7 @@ class User extends Model
     protected $table = "users";
     protected $fillable = array(
                                 'nombre','password','correo'
-                                ,'nivel','id_sucursal','foto'
+                                ,'nivel','id_sucursal','foto','estatus'
                                );
 }
 

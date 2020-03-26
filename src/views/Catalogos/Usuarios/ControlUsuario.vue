@@ -324,7 +324,8 @@
 													password		: this.PasswordAEdit,
 													nivel       : nivel,
 													id_sucursal	: this.id_sucursal,
-													foto        : ''
+													foto        : '',
+													estatus: 1 
 												}
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearUsuario(payload): this.ActualizarUsuario(payload);

@@ -133,7 +133,7 @@
       <router-view/>
     </v-content>
 
-    <v-app-bar app color="cyan darken-4" dark class="elevation-0" v-ripple >
+    <v-app-bar app :color="color" dark class="elevation-0" v-ripple >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" ></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <img src="logo.png" width="50px">
@@ -154,8 +154,10 @@ export default {
   },
   data: () => ({
     drawer: null,
+    contador: 0 ,
+    color: '',
+    colores: ['#272727','#f4e200','#0096cb','#bf1c7f','#894975','#6f7170'], //NGRO,AMARILLO,AZUL,ROSA,MORADO,GRIS
      AppControl: [
-        
         {
           admin: [ 
             { text: 'Inicio'      ,icon: 'home'               ,path: '/'},
@@ -182,7 +184,7 @@ export default {
             { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
             { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
             // { text: 'Precios'           ,icon: 'attach_money' ,path: '/precios'},
-            { text: 'Tipos de precios'  ,icon: 'monetization_on' ,path: '/tipos-precios'},
+            // { text: 'Tipos de precios'  ,icon: 'monetization_on' ,path: '/tipos-precios'},
             { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
             { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
             { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
@@ -192,6 +194,25 @@ export default {
         
       ]
   }),
+
+  created(){
+    this.colorBar();
+  },
+
+  methods:{
+   
+    colorBar(){
+      this.color = this.colores[this.contador]  
+      this.contador++
+      if(this.contador <= 5){
+        setTimeout(this.colorBar,10000);
+      }
+      if(this.contador == 5){
+        this.contador = 0
+      }
+      
+    }
+  }
 };
 </script>
 

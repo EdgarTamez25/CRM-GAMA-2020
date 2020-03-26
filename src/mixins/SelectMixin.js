@@ -7,17 +7,7 @@ export default {
 			id_subzona  :  0,
 			subzona			: [],
 			subzonas    : [],
-			SubZona     : '',
-
-			id_zona     : 0,   //identificador
-			zona				: [],  //Array completo
-			zonas				: [],  //Solo nombres 
-			Zonas				: '',
-
-			id_cartera  : 0,
-			cartera     : [],
-			carteras    : [],
-			Cartera     : '', 
+			SubZona     : '',	 
 		}
 	},
 
