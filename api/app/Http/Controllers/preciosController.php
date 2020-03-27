@@ -92,7 +92,7 @@ class preciosController extends Controller
 			
 			if($request -> tipo_producto === 2):   		// VALIDO SI EL TIPO DE PRODUCTO ES PRODUCTO FINAL
 				$detalle   	= $request -> detalle; 	 		// CREO UNA VARIABLE PARA GUARDAR EL DETALLE
-				$detABorrar = $request -> detalleActual;	
+				$detABorrar = $request -> detalleActual;	// VARIABLE DEL DETALLE QUE CONSULTE
 
 				for($a=0; $a< count($detABorrar); $a++):// CICLO PARA ELIMINAR REGISTROS EXISTENTES
 					$borrarDetalle = $this->borrarDetalleProducto($detABorrar[$a]); //MANDO A ELIMINAR REGISTRO POR SU ID

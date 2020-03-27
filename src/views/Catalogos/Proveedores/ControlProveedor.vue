@@ -159,6 +159,11 @@
 				snackbar: false,
 				text		: '',
 				color		: 'error',
+				// SELECTORES
+				id_zona     : 0,   //identificador
+				zona				: [],  //Array completo
+				zonas				: [],  //Solo nombres 
+				Zonas				: '',
 			}
 		},
 

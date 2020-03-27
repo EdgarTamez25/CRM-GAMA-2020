@@ -264,7 +264,7 @@
 					}else if(this.edit.nivel === 2){
 						this.nivel = 'Supervisor'
 					}else{
-						this.nivel = ''
+						this.nivel = 'Vendedor'
 					}
 
 				}else{
