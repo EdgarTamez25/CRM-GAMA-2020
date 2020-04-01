@@ -16,11 +16,12 @@ class CreateProveedoresTable extends Migration
         Schema::create('proveedores', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->string('nombre');
-            $table->string('id_zona');
+            $table->integer('id_zona');
+            $table->string('direccion')->nullable();
             $table->string('razon_social')->nullable();
+            $table->integer('id_giro')->nullable();
             $table->integer('tipo_prov');//nacional, internacional
-            $table->string('rfc')->nullable();
-            $table->string('curp')->nullable();            
+            $table->string('rfc')->nullable();         
             $table->string('estatus');
             $table->timestamps();
         });

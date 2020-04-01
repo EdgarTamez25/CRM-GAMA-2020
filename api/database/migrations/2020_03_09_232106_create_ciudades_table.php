@@ -18,6 +18,7 @@ class CreateCiudadesTable extends Migration
             $table->string('nombre');
             $table->integer('estatus');
             $table->integer('id_estado');
+            $table->integer('id_pais');
             $table->timestamps();
         });
     }

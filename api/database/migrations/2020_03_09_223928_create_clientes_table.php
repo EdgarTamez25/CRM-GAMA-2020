@@ -20,10 +20,10 @@ class CreateClientesTable extends Migration
             $table->integer('id_zona')->nullable();
             $table->string('direccion')->nullable();
             $table->string('razon_social')->nullable();
+            $table->integer('id_giro')->nullable();
             $table->integer('fuente');//id del vendedor : quien registró al cliente
             $table->integer('tipo_cliente');
             $table->string('rfc')->nullable();
-            $table->string('curp')->nullable();
             $table->integer('nivel')->nullable();
             $table->integer('id_cartera')->nullable();
             $table->integer('estatus');

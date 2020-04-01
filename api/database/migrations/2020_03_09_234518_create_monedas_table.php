@@ -18,6 +18,7 @@ class CreateMonedasTable extends Migration
             $table->string('codigo');
             $table->string('nombre');
             $table->float('tipo_cambio');
+            $table->integer('predeterminado');
             $table->integer('estatus');
             $table->timestamps();
         });
