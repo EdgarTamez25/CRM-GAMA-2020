@@ -12,7 +12,7 @@ export default {
 	},
 
 	methods: {
-		consultar_MateriaPrima(){
+		consultar_MateriaPrima(){ // MATERIA PRIMA
 			this.$http.get('mp-productos').then((response)=>{
 				console.log('mp-prima', response.body)
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
@@ -24,7 +24,7 @@ export default {
 			})
 		},
 			
-		consultarTipo_Precios(){
+		consultarTipo_Precios(){ //TIPO DE PRECIOS
 			this.$http.get('tipos-precios').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.tipo_precio = response.body
@@ -35,8 +35,9 @@ export default {
 			})
 		},
 
-		consultarMonedas(){
+		consultarMonedas(){ //MONEDAS
 			this.$http.get('monedas').then((response)=>{
+				console.log('moneda select', response.body)
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.moneda = response.body
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR
@@ -46,7 +47,7 @@ export default {
 			})
 		},
 
-		consultarUnidades(){
+		consultarUnidades(){ //UNIDADES
 			this.$http.get('unidades').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.unidad = response.body
@@ -57,7 +58,7 @@ export default {
 			})
 		},
 
-		consultarProveedores(){
+		consultarProveedores(){ // PROVEEDORES
 			this.$http.get('proveedores').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.proveedor = response.body
@@ -68,7 +69,7 @@ export default {
 			})
 		},
 
-		consultarLineas(){
+		consultarLineas(){ //LINEAS
 			this.$http.get('lineas').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.linea = response.body
@@ -79,7 +80,7 @@ export default {
 			})
 		},
 
-		consultarSucursales(){
+		consultarSucursales(){ //SUCURSALES
 			this.$http.get('sucursales').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.sucursal = response.body
@@ -91,7 +92,7 @@ export default {
 			})
 		},
 
-		consultarCiudades(){
+		consultarCiudades(){ // CIUDADES
 			this.$http.get('ciudades').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.ciudad = response.body
@@ -102,7 +103,7 @@ export default {
 			})
 		},
 
-		consultarZonas(){
+		consultarZonas(){ // ZONAS
 			this.$http.get('zonas').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.zona = response.body
@@ -113,7 +114,7 @@ export default {
 			})
 		},
 
-		consultarSubZonas(id){
+		consultarSubZonas(id){ // SUBZONAS
 			this.$http.get('subzonas/'+ id).then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.subzona = response.body
@@ -124,7 +125,7 @@ export default {
 			})
 		},
 
-		consultarCarteras(){
+		consultarCarteras(){ // CARTERAS
 			this.$http.get('carteras').then((response)=>{
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.cartera = response.body

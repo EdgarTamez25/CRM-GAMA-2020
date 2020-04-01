@@ -40,6 +40,18 @@
 					</v-col>
 
 					<v-col cols="12" lg="6">
+						<v-text-field
+							append-icon="person_pin_circle"
+							label="Dirección"
+							placeholder="Dirección"
+							hide-details
+							dense
+							clearable
+							v-model="direccion"
+						></v-text-field>
+					</v-col>
+
+					<v-col cols="12" lg="6">
 						<v-select
 							:items="zonas"
 							label="Zona"
@@ -48,19 +60,6 @@
 							dense
 							hide-details
 							v-model="Zonas"
-						></v-select>
-					</v-col>
-
-					<v-col cols="12" lg="6">
-						<v-select
-							:disabled="!Zonas"
-							:items="subzonas"
-							label="Sub Zona"
-							placeholder="Sub zona del cliente"
-							append-icon="person_pin_circle"
-							dense
-							hide-details
-							v-model="SubZona"
 						></v-select>
 					</v-col>
 
@@ -97,18 +96,6 @@
 							dense
 							clearable
 							v-model="rfc"
-						></v-text-field>
-					</v-col>
-
-					<v-col cols="12" lg="6">
-						<v-text-field
-							append-icon="email"
-							label="CURP"
-							placeholder="Numero correspondiente al CURP"
-							hide-details
-							dense
-							clearable
-							v-model="curp"
 						></v-text-field>
 					</v-col>
 
@@ -191,10 +178,10 @@
 				nombre			: '',
 				tipo_cliente: '',
 				rfc					:	'',
-				curp				: '',
 				cartera     : '',
 				nivel       : '',
 				razon_social: '',
+				direccion   : '',
 			
 			 // ALERTAS
 				snackbar: false,
@@ -240,16 +227,14 @@
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
 					this.nombre 			= this.edit.nombre;
+					this.direccion    = this.edit.direccion;
 					this.razon_social = this.edit.razon_social;
 					this.Zonas 				= this.edit.nomzona; 
 					this.tipo_cliente = this.edit.tipo_cliente === 1? 'Nacional':'Internacional'
 					this.rfc        	= this.edit.rfc;
-					this.curp         = this.edit.curp;
 					this.id_cartera   = this.edit.id_cartera;
 					this.Cartera      = this.edit.nomcartera;
-					this.consultarSubZonas(this.edit.idzona)
-					this.SubZona 			= this.edit.nomsubzona;
-					this.id_subzona   = this.id_subzona; 
+
 					
 					if(this.edit.nivel === 1){
 						this.nivel  = 'A' 
@@ -265,24 +250,21 @@
 
 			validaInfo(){
 				if(!this.nombre)	  	{ this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL CLIENTE"   ; return }
-				if(!this.SubZona)	  	{ this.snackbar = true; this.text="No puedes omitir la SUB ZONA" ; return }
+				if(!this.Zonas)	  	  { this.snackbar = true; this.text="No puedes omitir la ZONA" ; return }
 				if(!this.tipo_cliente){ this.snackbar = true; this.text="No puedes omitir el TIPO DE CLIENTE"; return }
 				if(!this.nivel)				{ this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
 				if(!this.razon_social){ this.snackbar = true; this.text="No puedes omitir la RAZON SOCIAL"; return }
-				// if(!this.rfc)		  { this.snackbar = true; this.text="No puedes omitir el rfc"	 	; return }
-				// if(!this.curp)		  { this.snackbar = true; this.text="No puedes omitir el CURP"	 	; return }
-				if(!this.cartera)	  { this.snackbar = true; this.text="No puedes omitir la CARTERA"	; return }
-				
-				this.PrepararPeticion()
+				if(!this.cartera)	    { this.snackbar = true; this.text="No puedes omitir la CARTERA"	; return }
+				this.PrepararPeticion() // MANDO A FORMAR EL OBJETO PARA GUARDAR
 			},
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
 				const payload = { nombre			: this.nombre,
-													id_subzona	: this.id_subzona,
+													direccion   : this.direccion,
+													id_zona			: this.id_zona,
 													tipo_cliente: this.tipo_cliente === 'Nacional'? 1:2,
 													rfc					: this.rfc,
-													curp				: this.curp,
 													id_cartera	: this.id_cartera ,
 													fuente      : 1 ,
 													nivel       : this.nivel.length,
@@ -319,21 +301,18 @@
 				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
 
 				setTimeout(function(){ me.$emit('modal',false)}, 2000);
-				// this.snackbar = true ; this.color="success" ;this.text= mensaje;
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
 				this.consultaClientes() //ACTUALIZAR CONSULTA DE CLIENTES
-				// this.$emit('modal',false) //CERRAR MODAL
 			},
 
 			limpiarCampos(){
 				this.nombre = '';
-				this.SubZona = '',
+				this.direccion = '',
 				this.Zonas = '',
 				this.tipo_cliente = '';
 				this.nivel = '';
 				this.razon_social = '';
 				this.rfc = '';
-				this.curp='';
 				this.Cartera = '';
 			}
 		}

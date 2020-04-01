@@ -183,8 +183,6 @@ export default {
             { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
             { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
             { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
-            // { text: 'Precios'           ,icon: 'attach_money' ,path: '/precios'},
-            // { text: 'Tipos de precios'  ,icon: 'monetization_on' ,path: '/tipos-precios'},
             { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
             { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
             { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
@@ -210,8 +208,9 @@ export default {
       if(this.contador == 5){
         this.contador = 0
       }
-      
-    }
+    },
+
+
   }
 };
 </script>

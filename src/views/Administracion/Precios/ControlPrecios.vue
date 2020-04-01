@@ -355,6 +355,7 @@
 																nombre:  		this.materia_prima[j].nombre,
 																descripcion:this.materia_prima[j].descripcion,
 																nomprov:  	this.materia_prima[j].nomprov,
+																moneda :    this.materia_prima[j].moneda
 																})
 							}
 
@@ -431,7 +432,6 @@
 			validaInfo(){
 				if(!this.Producto)			{ this.snackbar = true; this.text="No puedes omitir el PRODUCTO" ; return }
 				if(!this.Proveedor)	 		{ this.snackbar = true; this.text="No puedes omitir el PROVEEDOR" ; return }
-				// if(!this.Tipo_producto)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE PRODUCTO" ; return }
 				if(!this.Moneda)	 		  { this.snackbar = true; this.text="No puedes omitir la MONEDA" ; return }
 				if(!this.Tipo_Precio)	  { this.snackbar = true; this.text="No puedes omitir el TIPO DE PRECIO" ; return }
 				if(!this.precio)				{ this.snackbar = true; this.text="No puedes omitir el PRECIO" ; return }
@@ -512,11 +512,23 @@
 				for(var x =0 ; x < this.MP_Detalle.length; x++){
 					for(var value of this.materia_prima){
 						if(this.MP_Detalle[x].id === value.id ){
+							var precio = this.verificarMoneda(value.moneda)
 							this.produccion = this.produccion + value.precio
 						}
 					}
 				}
 			},
+
+			verificarMoneda(moneda){
+				var tipodeCambio = [];
+				for(var i=0; i<this.moneda.length; i++){
+					if(moneda === this.moneda[i].codigo){
+						tipodeCambio.push(this.moneda)
+					}
+				}
+
+				return tipodeCambio; 
+			}
 
 		}
 	}

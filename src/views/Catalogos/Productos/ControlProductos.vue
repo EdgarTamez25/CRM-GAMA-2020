@@ -220,7 +220,6 @@
 		computed:{
 			// IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
 			...mapGetters('Productos',['getProductos']),
-
 		},
 
 		watch:{
@@ -247,7 +246,6 @@
 					this.id_unidad      = this.edit.id_unidad
 					this.Unidad         = this.edit.nomunidad
 					this.obs       			= this.edit.obs
-
 				}else{
 				this.limpiarCampos()
 				}

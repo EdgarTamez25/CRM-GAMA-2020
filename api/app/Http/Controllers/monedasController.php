@@ -12,7 +12,7 @@ class monedasController extends Controller
     {
         $Monedas = monedas::all();
         return $Monedas;
-    }
+		}
 
 		public function add(Request $request){
 			$addmoneda = monedas::create($request->all());

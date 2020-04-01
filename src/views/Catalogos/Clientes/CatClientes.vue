@@ -63,7 +63,7 @@
 						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
 						{ text: 'Razon Social' , align: 'left'  , value: 'razon_social' },
 						{ text: 'RFC'				    , align: 'left' , value: 'rfc' 	},
-						{ text: 'CURP'		      , align: 'left' , value: 'curp' },
+						// { text: 'CURP'		      , align: 'left' , value: 'curp' },
 						{ text: 'Ver Detalle'  , align: 'right' , value: 'action', sortable: false },
 					],
 				}

@@ -17,7 +17,7 @@ class proveedoresController extends Controller
 		public function getcatalogo()
 		{
 			$CatProvedores = DB::select('SELECT p.id, p.nombre, p.id_zona, z.nombre as nomzona, p.razon_social, 
-																					p.tipo_prov, p.rfc, p.curp
+																					p.tipo_prov, p.rfc, p.direccion
 																	FROM proveedores p LEFT JOIN zonas z ON p.id_zona = z.id
 																	WHERE p.estatus = 1');
 			return $CatProvedores;
@@ -36,14 +36,14 @@ class proveedoresController extends Controller
 		
 		public function update($id, Request $req){
 			$data = DB::update('UPDATE proveedores SET nombre=:nombre, id_zona=:id_zona, razon_social=:razon_social, tipo_prov=:tipo_prov, 
-																								 rfc=:rfc, curp=:curp,estatus=:estatus
+																								 rfc=:rfc, direccion=:direccion,estatus=:estatus
 													WHERE id =:id',
 													['nombre'				=> $req -> nombre, 
 													 'id_zona'			=> $req -> id_zona,
 													 'razon_social' => $req -> razon_social,
 													 'tipo_prov' 		=> $req -> tipo_prov,
 													 'rfc' 					=> $req -> rfc,
-													 'curp' 				=> $req -> curp,
+													 'direccion' 				=> $req -> curp,
 													 'estatus'			=> $req -> estatus, 'id'=> $id	]
 												);
 			

@@ -40,6 +40,18 @@
 					</v-col>
 
 					<v-col cols="12" lg="6">
+						<v-text-field
+							append-icon="person_pin_circle"
+							label="Dirección"
+							placeholder="Dirección"
+							hide-details
+							dense
+							clearable
+							v-model="direccion"
+						></v-text-field>
+					</v-col>
+
+					<v-col cols="12" lg="6">
 						<v-select
 							:items="zonas"
 							label="Zona"
@@ -75,7 +87,7 @@
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<!-- <v-col cols="12" lg="6">
 						<v-text-field
 							append-icon="contacts"
 							label="CURP"
@@ -85,7 +97,7 @@
 							clearable
 							v-model="curp"
 						></v-text-field>
-					</v-col>
+					</v-col> -->
 
 				</v-row>
 				
@@ -155,6 +167,7 @@
 				curp				: '',
 				cartera     : '',
 				razon_social: '',
+				direccion   : '',
 			 // ALERTAS
 				snackbar: false,
 				text		: '',
@@ -192,6 +205,7 @@
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
 					this.nombre 			= this.edit.nombre;
+					this.direccion    = this.edit.direccion;
 					this.razon_social = this.edit.razon_social;
 					this.id_zona      = this.edit.id_zona; 
 					this.Zonas 				= this.edit.nomzona; 
@@ -208,18 +222,16 @@
 				if(!this.Zonas)	  	{ this.snackbar = true; this.text="No puedes omitir la ZONA" ; return }
 				if(!this.tipo_prov){ this.snackbar = true; this.text="No puedes omitir el TIPO DE PROVEEDOR"; return }
 				if(!this.razon_social){ this.snackbar = true; this.text="No puedes omitir la RAZON SOCIAL"; return }
-				// if(!this.rfc)		  { this.snackbar = true; this.text="No puedes omitir el rfc"	 	; return }
-				// if(!this.curp)		  { this.snackbar = true; this.text="No puedes omitir el CURP"	 	; return }
 				this.PrepararPeticion()
 			},
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
 				const payload = { nombre			: this.nombre,
+													direccion   : this.direccion,
 													id_zona	    : this.id_zona,
 													tipo_prov 	: this.tipo_prov === 'Nacional'? 1:2,
 													rfc					: this.rfc,
-													curp				: this.curp,
 													razon_social: this.razon_social,
 													estatus     : 1
 												}
@@ -260,6 +272,7 @@
 
 			limpiarCampos(){
 				this.nombre 			= '';
+				this.direccion 		= '';
 				this.Zonas	 			= '',
 				this.tipo_prov 		= '';
 				this.razon_social = '';

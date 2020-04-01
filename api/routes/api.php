@@ -25,7 +25,7 @@ Route::post('usuarios'    ,'userController@add')        -> name('addUsuarios'); 
 Route::put('usuarios/{id}','userController@update')  		-> name('updateUsuarios');  			 //PROBADA
 
 //==================================== CLIENTES=====================================================
-Route::get('clientes','clientesController@index')       -> name('getAllindex');            //PROBADA
+Route::get('clientes','clientesController@catClientes') -> name('catClientes');            //PROBADA
 Route::post('cliente','clientesController@add')         -> name('addCliente');             //PROBADA
 Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');          //PROBADA
 
