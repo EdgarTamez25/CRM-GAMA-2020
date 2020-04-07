@@ -14,7 +14,9 @@
 			        hide-details
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
-			      <v-btn small class="success" @click="abrirModal(1)">Agregar </v-btn>
+			      <v-btn small class="celeste" dark @click="abrirModal(1)">Agregar </v-btn>
+			      <v-btn small class="gris" icon dark @click="consultaClientes" ><v-icon>refresh</v-icon> </v-btn>
+
 			    </v-card-actions>
 				
 			    <v-data-table
@@ -28,7 +30,7 @@
 			    	<template v-slot:item.action="{ item }" > 
 			    		<!-- <v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> Cotizacion -->
 			    		<!-- <v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     Seguimiento -->
-			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
+			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
 
 			    </v-data-table>
@@ -64,7 +66,7 @@
 						{ text: 'Razon Social' , align: 'left'  , value: 'razon_social' },
 						{ text: 'RFC'				    , align: 'left' , value: 'rfc' 	},
 						// { text: 'CURP'		      , align: 'left' , value: 'curp' },
-						{ text: 'Ver Detalle'  , align: 'right' , value: 'action', sortable: false },
+						{ text: ''  , align: 'right' , value: 'action', sortable: false },
 					],
 				}
 			},

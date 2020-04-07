@@ -7,7 +7,6 @@
 
   		<v-col cols="12">
 				<v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions>
-
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
@@ -18,8 +17,8 @@
 			        hide-details
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
-			      <v-btn small class="success" @click="abrirModal(1)">Agregar </v-btn>
-			      <v-btn small class="red darken.4" icon dark @click="consultaProductos" ><v-icon>refresh</v-icon> </v-btn>
+			      <v-btn small class="celeste" @click="abrirModal(1)" dark>Agregar  </v-btn>
+			      <v-btn small class="gris" icon dark @click="consultaProductos" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 				
 			    <v-data-table
@@ -34,7 +33,7 @@
 			    >
 			    	<template v-slot:item.action="{ item }"  > 
 			    		<v-btn  class="orange darken-1 ma-1" icon dark @click="MuestraPrecios(item)"><v-icon> attach_money </v-icon></v-btn> 
-			    		<v-btn  class="green darken-4 ma-1" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
+			    		<v-btn  class="celeste ma-1" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
 				    </template>
 
 						<template v-slot:item.tipo_producto="{ item }" > 
@@ -56,7 +55,7 @@
 			<v-dialog v-model="precioActivo" fullscreen hide-overlay transition="dialog-bottom-transition">
 				<v-card>
 					<!-- CABEZERA -->
-					<v-toolbar dark color="cyan darken-4">
+					<v-toolbar dark color="celeste">
           	<!-- <v-toolbar-title> <strong> {{ artSeleccionado }} </strong> </v-toolbar-title> -->
           	<v-spacer></v-spacer>
 						<v-toolbar-items>
@@ -79,7 +78,7 @@
 									hide-details
 								></v-text-field>
 								<v-spacer></v-spacer>
-								<v-btn small class="success" @click="abrirModalPrecios(1)">Agregar </v-btn>
+								<v-btn small class="celeste" dark @click="abrirModalPrecios(1)">Agregar </v-btn>
 							</v-card-actions>
 						
 							<v-data-table
@@ -93,7 +92,7 @@
 								loading-text="Cargando... Por favor espere."
 							>
 								<template v-slot:item.action="{ item }" > 
-									<v-btn  class="green darken-4" icon dark @click="abrirModalPrecios(2, item)"><v-icon> create </v-icon></v-btn> 
+									<v-btn  class="celeste" icon dark @click="abrirModalPrecios(2, item)"><v-icon> create </v-icon></v-btn> 
 								</template>
 
 								<template v-slot:item.predeterminado="{ item }" > 

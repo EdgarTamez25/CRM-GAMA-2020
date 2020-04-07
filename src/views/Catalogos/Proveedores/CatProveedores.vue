@@ -14,8 +14,8 @@
 			        hide-details
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
-			      <v-btn small class="success" @click="abrirModal(1)">Agregar </v-btn>
-			      <v-btn small class="red darken.4" icon dark @click="consultaProveedores"><v-icon>refresh</v-icon> </v-btn>
+			      <v-btn small class="celeste" dark @click="abrirModal(1)">Agregar </v-btn>
+			      <v-btn small class="gris" icon dark @click="consultaProveedores"><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 				
 			    <v-data-table
@@ -29,7 +29,7 @@
 						loading-text="Cargando... Por favor espere."
 			    >
 			    	<template v-slot:item.action="{ item }" > 
-			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
+			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
 						<template v-slot:item.tipo_prov="{ item }" > 
 							 {{  item.tipo_prov === 1 ? 'NACIONAL':'INTERNACIONAL'}} 

@@ -33,4 +33,21 @@ class monedasController extends Controller
 			
 			return 'La Moneda se actualizo correctamente';
 	}
+
+	public function predeterminado($id){
+		//BUSCO TODOS LOS PRECIOS POR EL ARTICULO A ACTUALIZAR
+		
+		$cambioAUno = DB::update('UPDATE monedas SET predeterminado= 1  WHERE id =:id', ['id'=>$id]);
+
+		$cambioAcero = DB::update('UPDATE monedas SET predeterminado= 0  WHERE id !=:id', ['id' => $id]);
+
+		return "La moneda predeterminada se actualizo correctamente.";
+		
+	}
+
+	public function getPredeterminada(){
+		$predeterminad = DB::select('SELECT * FROM monedas WHERE predeterminado = 1');
+		return $predeterminad;
+	}
+
 }

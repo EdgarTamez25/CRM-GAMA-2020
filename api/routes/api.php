@@ -67,6 +67,9 @@ Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');    
 Route::get('monedas'     ,'monedasController@getAll')     -> name('getAllmonedas');        //PROBADA
 Route::post('monedas'    ,'monedasController@add')        -> name('addMoneda');            //PROBADA
 Route::put('monedas/{id}','monedasController@update')     -> name('updateMoneda');         //PROBADA
+Route::put('predeterminado/{id}', 'monedasController@predeterminado')  -> name('moneda_predeterminado');
+Route::get('monedaPredeterminada','monedasController@getPredeterminada')->name('get_moneda_predeterminada');
+
 
 //==================================== LINEAS ======================================================
 Route::get('lineas'     ,'lineas_prodController@getAll') -> name('getAlllineas');          //PROBADA
