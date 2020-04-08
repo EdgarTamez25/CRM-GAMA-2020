@@ -248,9 +248,10 @@ export default {
   }),
 
   created(){
-    // this.colorBar(); // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
-    this.consultarMonedas()			//LLENAR SELECTOR DE MONEDAS
-    this.consultaMonedas()      // CONSULTAR MONEDAS VUEX
+    // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
+    this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
+    this.consultaMonedas()  // CONSULTAR MONEDAS VUEX
+    this.ActualizaMoneda()  // CONSULTO LA MONEDA PREDETERMINADA
   },
 
   computed:{
@@ -260,11 +261,10 @@ export default {
   },
 
   methods:{
-    ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada']),
+    ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
     
     BuscarPredeterminado(){
       for(var i=0; i<this.getMonedas.length; i++){
-
         if(this.getMonedas[i].predeterminado === 1){
           this.id_moneda = this.getMonedas[i].id
           this.Moneda    = this.getMonedas[i].codigo

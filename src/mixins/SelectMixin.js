@@ -37,7 +37,7 @@ export default {
 
 		consultarMonedas(){ //MONEDAS
 			this.$http.get('monedas').then((response)=>{
-				console.log('moneda select', response.body)
+				console.log('monedas',response.body)
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.moneda = response.body
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR
@@ -166,6 +166,7 @@ export default {
 			for(const i in this.moneda){
 				if(this.moneda[i].codigo === this.Moneda){
 					this.id_moneda = this.moneda[i].id
+					this.tipo_de_cambio = this.moneda[i].tipo_cambio
 				}
 			}
 		},

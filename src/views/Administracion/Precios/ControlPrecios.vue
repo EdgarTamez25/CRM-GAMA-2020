@@ -7,7 +7,7 @@
 					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 				</v-snackbar>
 
-				<v-card-actions class="pa-0" >
+				<v-card-actions class="pa-0" > <!-- NOMBRE DE LA VISTA -->
 					<h3> <strong> {{ param2 === 1? 'Nuevo Precio':'Editar Precio' }} </strong></h3> 
 					<v-spacer></v-spacer>
 					<v-btn color="error" small @click="$emit('modal2',false)" text><v-icon>clear</v-icon></v-btn>
@@ -16,7 +16,7 @@
 				<v-divider class=""></v-divider>
 
 				<v-row>
-					<v-col cols="12" sm="6" lg="4">
+					<v-col cols="12" sm="6" lg="4">  <!-- RESUMEN DE PRODUCCION -->
 						<v-card outlined>
 							<v-simple-table dense>
 								<template>
@@ -43,7 +43,7 @@
 						</v-card>
 					</v-col>
 
-					<v-col cols="12" sm="6" lg="8">
+					<v-col cols="12" sm="6" lg="8"> <!-- PRODUCTO-->
 						<v-card outlined>
 							<v-autocomplete
 								:items="getProductos"
@@ -79,7 +79,7 @@
 						</v-card>
 					</v-col>
 
-					<v-col cols="12" sm="6" lg="4">
+					<v-col cols="12" sm="6" lg="4"> <!-- PROVEEDOR -->
 						<v-select
 							:items="proveedores"
 							label="Proveedores"
@@ -94,7 +94,7 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" sm="6" lg="4">
+					<v-col cols="12" sm="6" lg="4"> <!-- TIPO DE PRECIO -->
 						<v-select
 							:items="tipo_precios"
 							label="Tipo de Precio"
@@ -107,7 +107,7 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="6" lg="2">
+					<v-col cols="6" lg="2"> <!-- MONEDA  -->
 						<v-select
 							:items="monedas"
 							label="Moneda"
@@ -117,10 +117,11 @@
 							hide-details
 							outlined
 							v-model="Moneda"
+							:disabled="contenidoMoneda"
 						></v-select>
 					</v-col>
 
-					<v-col cols="6"  lg="2">
+					<v-col cols="6"  lg="2"> <!-- PRECIO DEL PRODUCTO -->
 						<v-text-field
 							label="Precio"
 							placeholder="Precio del producto"
@@ -132,11 +133,9 @@
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="9" v-if="tipo_producto === 2">
-						<strong >MATERIAS PRIMAS</strong>
-					</v-col>
+					<v-col cols="9" v-if="tipo_producto === 2"> <strong >MATERIAS PRIMAS</strong> </v-col> <!-- DIVISOR PARA MATERIA PRIMA -->
 
-					<v-col cols="12" v-if="tipo_producto === 2">
+					<v-col cols="12" v-if="tipo_producto === 2"> <!-- SELECTOR MATERIAS PRIMAS -->
             <v-autocomplete
               v-model="MP_Seleccionada"
               :items="materias_primas"
@@ -164,7 +163,7 @@
             </v-autocomplete>
           </v-col>
 
-					<v-col cols="12" v-if="tipo_producto === 2 && MATERIAS_PRIMAS">
+					<v-col cols="12" v-if="tipo_producto === 2 && MATERIAS_PRIMAS">  <!-- MATERIAS PRIMAS A SELECCIONAR -->
 						<v-card class="mx-auto" flat >
 
 							<v-simple-table fixed-header dense height="200px" v-if ="MP_Detalle">
@@ -189,7 +188,7 @@
 						</v-card>
 					</v-col>
 
-					<v-col cols="12" sm="4" class="text-start">
+					<v-col cols="12" sm="4" class="text-start"> <!-- PORCENAJE ADMINISTRATIVO  -->
 						<v-text-field
 							label="Porcentaje Administrativo"
 							hide-details
@@ -200,9 +199,8 @@
 						></v-text-field>
 					</v-col>
 				</v-row>
-
-				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
-				<v-card-actions>
+				
+				<v-card-actions> <!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 					<v-spacer></v-spacer>
 					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param2 === 1">
              Confirmar  
@@ -235,17 +233,17 @@
 </template>
 
 <script>
-	import  SelectMixin from '@/mixins/SelectMixin.js';
-	import {mapGetters, mapActions} from 'vuex'
+	import  SelectMixin from '@/mixins/SelectMixin.js'; // IMPORTAR USO DE SELECTORES
+	import {mapGetters, mapActions} from 'vuex'         // IMPORTAR USO DE VUEX 
 	export default {
 		mixins:[SelectMixin],
 	  components: {
 		},
-		props:[
-			'param2',
-			'edit2',
-			'id_art',
-			'nomproducto',
+		props:[          // COMUNICACION ENTRE CATALOGO Y CONTROLADOR
+			'param2',      //CONTIENE EL MODO DE LA VISTA 1.NUEVO - 2.EDITAR & ELIMINAR
+			'edit2',       // CONTIENE LA CONSULTA QUE ARRASTRAMOS DESDE EL CATALOGO
+			'id_art',      // ID DEL ARTICULO EN SEGUIMIENTO
+			'nomproducto', // NOMBRE DEL PRODUCTO EN SEGUIMIENTO 
 		],
 		
 	  data () {
@@ -263,22 +261,24 @@
 				DetalleActual:[], // GUARDA EL DETALLE QUE CONSULTO. 
 
 				// SELECTOR
-				id_proveedor  : 0,
+				id_proveedor  : 0,  // PROVEEDORES 
 				proveedor     : [],
 				proveedores   : [],
 				Proveedor     : '',
 
-				id_moneda  : 0,
+				id_moneda  : 0,  //  MONEDAS
 				moneda     : [],
 				monedas    : [],
 				Moneda     : '',
+				contenidoMoneda: true,
+				tipo_de_cambio: 0,
 
-				id_tipo_precio  : 0,
+				id_tipo_precio  : 0, // TIPO DE PRECIO
 				tipo_precio     : [],
 				tipo_precios    : [],
 				Tipo_Precio     : '' ,
 
-				id_mp  					: 0,
+				id_mp  					: 0,  // MATERIA PRIMA
 				materia_prima   : [],
 				materias_primas : [],
 				Materia_Prima   : '',
@@ -295,6 +295,7 @@
 				contenidoProvedor: false,
 				costo_admin : 0.00,
 				total: 0.00,
+				
 
 				llenarTabla: false,
 			 // ALERTAS
@@ -309,26 +310,33 @@
 			this.consultarProveedores() //LLENAR SELECTOR DE PROVEEDORES
 			this.consultarMonedas()			//LLENAR SELECTOR DE MONEDAS
 			this.consultarTipo_Precios()//LLENAR SELECTOR DE TIPO DE PRECIOS
-			this.consultar_MateriaPrima() 
-
+			this.consultar_MateriaPrima()
+			
 		},
 			
 		computed:{
-			// IMPORTANDO USO DE VUEX - PROVEEDORES (GETTERS)
+			// IMPORTANDO USO DE VUEX 
 			...mapGetters('Precios',['getPreciosxId','getPrecios']),
 			...mapGetters('Productos',['getProductos']),
+			...mapGetters('Monedas',['predeterminada','moneda_USD']),
 
-			MATERIAS_PRIMAS:function(){
+
+			MATERIAS_PRIMAS:function(){ // EVALUA SI EXISTE ALGUN DETALLE DEL PRODUCTO
 				return this.MP_Detalle.length != 0 ? true: false;
 			},
 
-			Costo_Administrativo: function(){
-				this.costo_admin = parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
-				this.costo_admin > 0 ? this.costo_admin= this.costo_admin: this.costo_admin = 0.00;
-				return this.costo_admin.toFixed(2);
+			Costo_Administrativo: function(){  // CALCULO DEL COSTO ADMINISTRATIVO
+				if(this.predeterminada.codigo === this.Moneda){  // COMPARO SI EL PRECIO ESTA EN FUNCION DE LA MONEDA PREDETERMINADA
+					this.costo_admin = parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100)) // SI LO ESTA SOLAMENTE SUMO
+				}else{ // SI NO ESTA EN FUNCION DE LA MONEDA PREDETERMINADA 
+					var precio = this.convertirMoneda(this.precio) // MANDO A CONVERTIR EL PRECIO
+					this.costo_admin = parseFloat(precio) + (precio *  (this.pjeAdmin/100)) // SUMO EL PRECIO YA CONVERTIDO
+				}
+				this.costo_admin > 0 ? this.costo_admin= this.costo_admin: this.costo_admin = 0.00; // EVALUO QUE EL COSTO NO SEA 0 
+				return this.costo_admin.toFixed(2); // RETORNO EL VALOR ADMINISTRATIVO.
 			},
 
-			TOTAL: function(){
+			TOTAL: function(){ // CALCULO DEL TOTAL DEL RESUMEN.
 				this.total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
 				this.total > 0 ? this.total = this.total : this.total = 0.00;
 				return this.total.toFixed(2);
@@ -378,15 +386,18 @@
 						this.linea       = this.getProductos[i].nomlin
 						this.tipo_producto = this.getProductos[i].tipo_producto
 						// Si el tipo de producto es "Producto final" entonces bloque proveedor
-						// Ya que el producto final pertenece a GAMA ETIQUETAS id -> 1 
+						// Ya que el producto final pertenece| a GAMA ETIQUETAS id -> 1 
 						if(this.tipo_producto === 2){ 
 							this.Proveedor = "GAMA ETIQUETAS";
 							this.id_proveedor = 1;
-							this.contenidoProvedor = true;
+							this.contenidoProvedor = true; //BLOQUEAR PROVEEDOR
+							this.contenidoMoneda   = true; // BLOQUEAR MONEDA
 						}else{
 							this.Proveedor = "";
 							this.id_proveedor = 0;
 							this.contenidoProvedor = false;
+							this.contenidoMoneda   = false; 
+
 						}
 					}
 				}
@@ -399,7 +410,9 @@
 			...mapActions('Precios'  ,['consultaPrecios','consultaPreciosxId']),
 
 			validarModoVista(){
-				this.limpiarCampos();
+
+				this.limpiarCampos();  // MANDAR A LIMPIAR CAMPOS
+
 				if(this.param2 === 2){ // ASIGNAR VALORES AL FORMULARIO
 					this.id_producto 		= this.edit2.id_producto;
 					this.Producto 	 		= this.edit2.nomprod;
@@ -415,10 +428,12 @@
 					this.consultaDetalleProducto()// CONSULTO MP POR PRODUCTO EN VUEX
 
 				}else{
-					// this.llenarTabla    = true;
 					this.id_producto = this.id_art;   //PRODUCTO QUE TENGO EN SEGUIMIENTO DESDE PRODUCTOS
 					this.Producto    = this.nomproducto;
+					this.id_moneda   = this.predeterminada.id;
+					this.Moneda      = this.predeterminada.codigo;
 				}
+				
 			},
 
 			consultaDetalleProducto(){
@@ -443,7 +458,6 @@
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
-				
 				const payload = { 
 													detalleActual: this.DetalleActual,
 													id_producto	: this.id_producto,
@@ -501,35 +515,43 @@
 			
 			},
 
-			remover (item) {
+			remover (item) { // FUNCIONA PARA REMOVER CHIP DEL SELECTOR DE MATERIAS PRIMAS
         const index = this.MP_Seleccionada.indexOf(item)
         if (index >= 0) this.MP_Seleccionada.splice(index, 1)
 			},
 
 			cambiarProceso(){ this.llenarTabla = false; }, // HABILITA EL AUTOCOMPLETED BLOQUEADO POR EL WATCH
 			
-			CalculaCostoProduccion(){
+			CalculaCostoProduccion(){  // CALCULAR COSTO DE PRODUCCION - SUMA TODOS LOS COSTOS DE LAS MATERIAS PRIMAS.
 				for(var x =0 ; x < this.MP_Detalle.length; x++){
-					for(var value of this.materia_prima){
-						if(this.MP_Detalle[x].id === value.id ){
-							var precio = this.verificarMoneda(value.moneda)
-							this.produccion = this.produccion + value.precio
+					for(var value of this.materia_prima){   
+						if(this.MP_Detalle[x].id === value.id ){  						 // COMPARO EL ID DE LAS MATERIAS PRIMAS 
+
+							if(this.predeterminada.codigo === value.moneda ){    // VALIDO SI EL CODIGO DE LA MP ES IGUAL AL PREDETERMINADO
+									this.produccion = this.produccion + value.precio // SI ES IGUAL SOLAMENTE SUMO LAS CANTIDADES
+							}else{																							 // SI NO SON IGUALES 
+								var precio = this.convertirMoneda(value.precio)           // MANDO A CONVERTIR LA MONEDA.   
+								this.produccion = parseFloat(this.produccion) + parseFloat(precio) // UNA VEZ CONVERTIDO EL PRECIO LO SUMO A PRODUCCION. 
+							}
+
 						}
 					}
 				}
 			},
 
-			verificarMoneda(moneda){
-				var tipodeCambio = [];
-				for(var i=0; i<this.moneda.length; i++){
-					if(moneda === this.moneda[i].codigo){
-						tipodeCambio.push(this.moneda)
-					}
+			convertirMoneda(value){
+				var conversion = 0;
+
+				if(this.predeterminada.codigo === 'USD'){ // CONVRTIR DE PESOS A DOLARES 
+					conversion = value / this.predeterminada.tipo_cambio
 				}
 
-				return tipodeCambio; 
-			}
+				if(this.predeterminada.codigo === 'MX'){// CONVERTIR DE DOLARES A PESOS 
+					conversion = value * this.moneda_USD.tipo_cambio
+				}
 
+				return conversion.toFixed(2);  // RETORNO LA CONVERSION
+			}
 		}
 	}
 </script>
