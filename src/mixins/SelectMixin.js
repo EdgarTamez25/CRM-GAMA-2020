@@ -14,7 +14,6 @@ export default {
 	methods: {
 		consultar_MateriaPrima(){ // MATERIA PRIMA
 			this.$http.get('mp-productos').then((response)=>{
-				console.log('mp-prima', response.body)
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.materia_prima = response.body
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR
@@ -37,7 +36,6 @@ export default {
 
 		consultarMonedas(){ //MONEDAS
 			this.$http.get('monedas').then((response)=>{
-				console.log('monedas',response.body)
 				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.moneda = response.body
 				// FORMO ARREGLO A MOSTRAR EN SELECTOR

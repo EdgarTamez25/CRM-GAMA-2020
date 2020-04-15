@@ -84,7 +84,7 @@
 							:items="proveedores"
 							label="Proveedores"
 							placeholder="Proveedor"
-							append-icon="show_chart"
+							append-icon="how_to_reg"
 							dense
 							hide-details
 							clearable
@@ -99,7 +99,7 @@
 							:items="tipo_precios"
 							label="Tipo de Precio"
 							placeholder="Tipo de Precio"
-							append-icon="show_chart"
+							append-icon="attach_money"
 							dense
 							hide-details
 							outlined
@@ -112,7 +112,7 @@
 							:items="monedas"
 							label="Moneda"
 							placeholder="Moneda"
-							append-icon="show_chart"
+							append-icon="monetization_on"
 							dense
 							hide-details
 							outlined
@@ -240,11 +240,18 @@
 	  components: {
 		},
 		props:[          // COMUNICACION ENTRE CATALOGO Y CONTROLADOR
-			'param2',      //CONTIENE EL MODO DE LA VISTA 1.NUEVO - 2.EDITAR & ELIMINAR
+			'param2',      // CONTIENE EL MODO DE LA VISTA 1.NUEVO - 2.EDITAR & ELIMINAR
 			'edit2',       // CONTIENE LA CONSULTA QUE ARRASTRAMOS DESDE EL CATALOGO
 			'id_art',      // ID DEL ARTICULO EN SEGUIMIENTO
 			'nomproducto', // NOMBRE DEL PRODUCTO EN SEGUIMIENTO 
-		],
+				],
+
+		// props:{
+		// 	edit2: Number,
+		// 	param2: Array,
+		// 	id_art: Number,
+		// 	nomproducto: String
+		// },
 		
 	  data () {
 			return {
@@ -326,18 +333,30 @@
 			},
 
 			Costo_Administrativo: function(){  // CALCULO DEL COSTO ADMINISTRATIVO
+				this.costo_admin = 0.00;
+
 				if(this.predeterminada.codigo === this.Moneda){  // COMPARO SI EL PRECIO ESTA EN FUNCION DE LA MONEDA PREDETERMINADA
 					this.costo_admin = parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100)) // SI LO ESTA SOLAMENTE SUMO
+
 				}else{ // SI NO ESTA EN FUNCION DE LA MONEDA PREDETERMINADA 
-					var precio = this.convertirMoneda(this.precio) // MANDO A CONVERTIR EL PRECIO
+					var precio = this.convertirMoneda2(this.precio) // MANDO A CONVERTIR EL PRECIO
 					this.costo_admin = parseFloat(precio) + (precio *  (this.pjeAdmin/100)) // SUMO EL PRECIO YA CONVERTIDO
 				}
+
 				this.costo_admin > 0 ? this.costo_admin= this.costo_admin: this.costo_admin = 0.00; // EVALUO QUE EL COSTO NO SEA 0 
 				return this.costo_admin.toFixed(2); // RETORNO EL VALOR ADMINISTRATIVO.
+
 			},
 
 			TOTAL: function(){ // CALCULO DEL TOTAL DEL RESUMEN.
-				this.total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
+
+				if(this.predeterminada.codigo === this.Moneda){
+					this.total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
+				}else{
+					var precio = this.convertirMoneda2(this.precio)	
+					this.total = this.produccion + parseFloat(precio) + (precio *  (this.pjeAdmin/100))
+				}
+				
 				this.total > 0 ? this.total = this.total : this.total = 0.00;
 				return this.total.toFixed(2);
 			},
@@ -401,7 +420,9 @@
 						}
 					}
 				}
-			}
+			},
+
+			
 			
 		},
 
@@ -541,16 +562,29 @@
 
 			convertirMoneda(value){
 				var conversion = 0;
-
 				if(this.predeterminada.codigo === 'USD'){ // CONVRTIR DE PESOS A DOLARES 
 					conversion = value / this.predeterminada.tipo_cambio
 				}
-
 				if(this.predeterminada.codigo === 'MX'){// CONVERTIR DE DOLARES A PESOS 
 					conversion = value * this.moneda_USD.tipo_cambio
 				}
-
 				return conversion.toFixed(2);  // RETORNO LA CONVERSION
+			},
+
+			convertirMoneda2(value){
+				console.log('recibo precio', value)
+
+				var conversion = 0;
+			 if(this.Moneda === 'USD'){
+				 conversion = value / this.predeterminada.tipo_cambio
+				console.log('conversion en usd', conversion)
+
+			 }
+			 if(this.Moneda === 'MX'){
+				 conversion = value * this.moneda_USD.tipo_cambio
+				 console.log('conversion en mx', conversion)
+			 }
+			 	return conversion.toFixed(2);  // RETORNO LA CONVERSION
 			}
 		}
 	}

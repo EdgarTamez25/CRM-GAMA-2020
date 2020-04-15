@@ -74,7 +74,7 @@
 
 				<v-card-actions>
 						<v-spacer></v-spacer>
-			    	<v-btn color="success" >Guardar</v-btn>
+			    	<v-btn color="celeste" dark >Guardar</v-btn>
 			    	<!-- <v-btn color="error" @click="$emit('modal',false)">Cancelar</v-btn> -->
 			  </v-card-actions>
 			</v-col>

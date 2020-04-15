@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+// CATALOGOS
 import Usuarios from '@/modules/Usuarios';
 import Clientes from '@/modules/Clientes';
 import Zonas    from '@/modules/Zonas';
@@ -9,6 +10,9 @@ import Monedas from '@/modules/Monedas';
 import Proveedores from '@/modules/Proveedores';
 import Productos from '@/modules/Productos';
 import Precios from '@/modules/Precios';
+
+// COMPROMISOS
+import Compromisos from '@/modules/Compromisos';
 
 
 
@@ -30,6 +34,7 @@ export default new Vuex.Store({
     Monedas,
     Proveedores,
     Productos,
-    Precios
+    Precios,
+    Compromisos
   }
 })

@@ -1,10 +1,11 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+  import Vue from 'vue'
+  import VueRouter from 'vue-router'
 
-import Home 	   from '../views/Home.vue'
-import Compromisos from '@/views/Compromisos/CatCompromisos.vue'
-import NuevoCompromiso from '@/views/Compromisos/NuevoCompromiso.vue'
-import Pendientes  from '@/views/Pendientes/Pendientes.vue'
+  import Home 	   from '../views/Home.vue'
+  import Pendientes  from '@/views/Pendientes/Pendientes.vue'
+ 
+  import Compromisos from '@/views/Compromisos/CatCompromisos.vue'
+  import ControlCompromiso from '@/views/Compromisos/ControlCompromiso.vue'
 
   // USUARIO
   import CatUsuarios    from '@/views/Catalogos/Usuarios/CatUsuarios.vue';
@@ -35,9 +36,11 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '/'				 , name: 'Home'		     , component: Home },
-  { path:'/compromisos'		 , name:'compromisos'	 , component: Compromisos},
-  { path:'/Nuevo_Compromisos', name:'nuevocompromiso', component: NuevoCompromiso},
   { path:'/pendientes'		 , name:'pendientes'	 , component: Pendientes},
+
+  // COMPROMISOS
+  { path:'/compromisos'		    , name:'compromisos'	     , component: Compromisos},
+  { path:'/control_compromiso', name:'control_compromiso', component: ControlCompromiso},
 
   //USUARIOS
   { path:'/usuarios'		    , name:'usuarios'	      , component: CatUsuarios},

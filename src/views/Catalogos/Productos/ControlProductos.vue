@@ -55,7 +55,7 @@
 							:items="lineas"
 							label="Lineas"
 							placeholder="Linea"
-							append-icon="show_chart"
+							append-icon="style"
 							dense
 							hide-details
 							clearable
@@ -68,7 +68,7 @@
 							:items="['Materia Prima','Producto Final']"
 							label="Tipo de Producto"
 							placeholder="Tipo de producto"
-							append-icon="show_chart"
+							append-icon="category"
 							dense
 							hide-details
 							clearable
@@ -76,7 +76,7 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<!-- <v-col cols="12" lg="6">
 						<v-select
 							:items="proveedores"
 							label="Proveedores"
@@ -87,14 +87,14 @@
 							clearable
 							v-model="Proveedor"
 						></v-select>
-					</v-col>
+					</v-col> -->
 
 					<v-col cols="12" lg="6">
 						<v-select
 							:items="unidades"
 							label="Unidades"
 							placeholder="Unidad"
-							append-icon="show_chart"
+							append-icon="square_foot"
 							dense
 							hide-details
 							clearable

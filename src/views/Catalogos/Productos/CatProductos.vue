@@ -40,6 +40,14 @@
 							{{ item.tipo_producto === 1 ? 'Materia Prima': 'Producto Final' }}
 				    </template>
 
+						<template v-slot:item.nomprov="{ item }" > 
+							<span :class="item.nomprov != 'Sin proveedor'? 'black--text': 'red--text'"> {{  item.nomprov  }} </span>
+						</template>
+
+						<template v-slot:item.precio="{ item }" > 
+							<span :class="item.precio != 0 ? 'black--text': 'red--text'"> {{  item.precio  }} </span>
+						</template>
+
 			    </v-data-table>
 			  </v-card>
 
@@ -80,7 +88,7 @@
 								<v-spacer></v-spacer>
 								<v-btn small class="celeste" dark @click="abrirModalPrecios(1)">Agregar </v-btn>
 							</v-card-actions>
-						
+
 							<v-data-table
 								:headers="headers_precios"
 								:items="getPreciosxId"
@@ -155,11 +163,11 @@
 					param: 0,
 					edit:'',
 					headers:[
-						{ text: '#'  		   , align: 'left'  , value: 'id'		  },
+						// { text: '#'  		   , align: 'left'  , value: 'id'		  },
 						{ text: 'Codigo'   , align: 'left'  , value: 'codigo' },
 						{ text: 'Nombre'   , align: 'left'  , value: 'nombre' },
 						{ text: 'Proveedor', align: 'left'  , value: 'nomprov' },
-						{ text: 'Precio'   , align: 'left'  , value: 'estatus' },
+						{ text: 'Precio'   , align: 'left'  , value: 'precio' },
 						{ text: 'Linea'		 , align: 'left'  , value: 'nomlin' 	},
 						{ text: 'Tipo'     , align: 'left'  , value: 'tipo_producto' },
 						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
@@ -205,7 +213,7 @@
 
 				abrirModalPrecios(action, items){ //NUEVO /EDITAR PRECIO
 					this.param2 = action;   //MANDO EL MODO DE LA VISTA 
-					this.edit2  = items;    // MANDA LA INFORMACION DEL PRECIO SELECCIONADO
+					this.edit2  = items ;    // MANDA LA INFORMACION DEL PRECIO SELECCIONADO
 					this.ModalPrecios = true;  //ABRE LA MODAL PARA CREAR / EDITAR PRECIOS
 				},
 

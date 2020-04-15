@@ -1,167 +1,221 @@
 <template>
-	<v-container class="pa-0">
-		<v-row class="justify-center">
-			<v-col cols="12">
+  <v-container>
+  	<v-row class="justify-center">
+  		<v-col cols="12">
 
-				<v-card-actions> <h3><strong> Compromisos</strong></h3></v-card-actions><v-divider></v-divider>
-				
+				<v-row>
+					<v-col cols="12" sm="6" md="3"> <!-- TITULO DE LA VISTA -->
+						<h3><strong> Compromisos </strong></h3>
+					</v-col>
+
+					<v-spacer></v-spacer>
+
+					<v-col cols="12" sm="6" md="3" lg="2"> <!-- FECHA DE COMPROMISO -->
+						<v-dialog
+							ref="dialog"
+							v-model="modal"
+							:return-value.sync="date"
+							persistent
+							width="290px"
+						>
+							<template v-slot:activator="{ on }">
+								<v-text-field
+									v-model="date"
+									label="Fecha de compromiso"
+									append-icon="event"
+									readonly
+									v-on="on"
+									outlined 
+									dense
+									hide-details
+									color="celeste"
+								></v-text-field>
+							</template>
+							<v-date-picker v-model="date" locale="es-es" class="rosa" scrollable>
+								<v-spacer></v-spacer>
+								<v-btn text color="gris" @click="modal = false">Cancelar</v-btn>
+								<v-btn dark color="celeste" @click="$refs.dialog.save(date)">OK</v-btn>
+							</v-date-picker>
+						</v-dialog>
+					</v-col>
+
+					<v-col cols="12" sm="6" md="3" lg="2"> <!-- FECHA DE CUMPLIMIENTO -->
+						<v-dialog
+							ref="dialog"
+							v-model="modal"
+							:return-value.sync="date"
+							persistent
+							width="290px"
+						>
+							<template v-slot:activator="{ on }">
+								<v-text-field
+									v-model="date"
+									label="Fecha de cumplimiento"
+									append-icon="event"
+									readonly
+									v-on="on"
+									outlined 
+									dense
+									hide-details
+									color="celeste"
+								></v-text-field>
+							</template>
+							<v-date-picker v-model="date" locale="es-es" color="rosa" scrollable>
+								<v-spacer></v-spacer>
+								<v-btn text color="gris" @click="modal = false">Cancelar</v-btn>
+								<v-btn dark color="celeste" @click="$refs.dialog.save(date)">OK</v-btn>
+							</v-date-picker>
+						</v-dialog>
+					</v-col>
+				</v-row>
+
+				<!-- <v-divider></v-divider> -->
+
 				<v-row>
 					<v-col class="d-flex" cols="12" sm="6" lg="4">
-			      <v-select
-			        label="Responsable"
-			        placeholder ="Vendedor responsable"
-			        dense
-			        outlined 
-			        hide-details
-			      ></v-select>
-			    </v-col>
-			    <v-col class="d-flex" cols="12" sm="6" lg="3">
-			      <v-select
-			        label="Tipo de compromiso"
-			        placeholder ="Compromiso ah asignar"
-			        dense
-			        outlined 
-			        hide-details
-			      ></v-select>
-			    </v-col>
-			    <v-spacer></v-spacer>
-			    <v-col cols="12" sm="6" md="2">
-			      <v-dialog
-			        ref="dialog"
-			        v-model="modal"
-			        :return-value.sync="date"
-			        persistent
-			        width="290px"
-			      >
-			        <template v-slot:activator="{ on }">
-			          <v-text-field
-			            v-model="date"
-			            label="Fecha de compromiso"
-			            append-icon="event"
-			            readonly
-			            v-on="on"
-			            outlined 
-			            dense
-			            hide-details
-			          ></v-text-field>
-			        </template>
-			        <v-date-picker v-model="date" locale="es-es" color="blue darken-4" scrollable>
-			          <v-spacer></v-spacer>
-			          <v-btn text color="error" @click="modal = false">Cancel</v-btn>
-			          <v-btn dark color="primary" @click="$refs.dialog.save(date)">OK</v-btn>
-			        </v-date-picker>
-			      </v-dialog>
-			    </v-col>
-			    <v-col cols="12" sm="6" md="2">
-			      <v-dialog
-			        ref="dialog"
-			        v-model="modal"
-			        :return-value.sync="date"
-			        persistent
-			        width="290px"
-			      >
-			        <template v-slot:activator="{ on }">
-			          <v-text-field
-			            v-model="date"
-			            label="Fecha de cumplimiento"
-			            append-icon="event"
-			            readonly
-			            v-on="on"
-			            outlined 
-			            dense
-			            hide-details
-			          ></v-text-field>
-			        </template>
-			        <v-date-picker v-model="date" locale="es-es" color="blue darken-4" scrollable>
-			          <v-spacer></v-spacer>
-			          <v-btn text color="error" @click="modal = false">Cancel</v-btn>
-			          <v-btn dark color="blue darken-4" @click="$refs.dialog.save(date)">OK</v-btn>
-			        </v-date-picker>
-			      </v-dialog>
-			    </v-col>
+						<v-autocomplete
+							:items="states"
+							:filter="customFilter"
+							color="celeste"
+							item-text="name"
+							label="Responsable"
+							outlined
+							hide-details
+							dense
+						></v-autocomplete>
+					</v-col>
+
+					<v-col class="d-flex" cols="12" sm="6" lg="3">
+						<v-select
+							label="Tipo de compromiso"
+							placeholder ="Compromiso ah asignar"
+							dense
+							outlined 
+							hide-details
+							color="celeste"
+						></v-select>
+					</v-col>
 		    </v-row>
 
-		    <v-dialog persistent v-model="dialog" width="800" >	
-		    	<v-card>
-		    		<NuevoCompromiso :dialog="dialog" @modal="dialog = $event" />
-		    	</v-card>
-		    </v-dialog>
-
-				<v-card class="elevation-10" >
+				<!-- CATALOGO DE COMPROMISOS -->
+				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
 			        append-icon="search"
-			        label="Buscar"
+			        label="Buscar compromiso"
 			        single-line
 			        hide-details
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
-			      <v-btn small class="success" @click="dialog= true">Agregar </v-btn>
+			      <v-btn small class="celeste" dark @click="abrirModal(1)">Agregar </v-btn>
+			      <v-btn small class="gris" icon dark @click="consultaCompromisos" ><v-icon>refresh</v-icon> </v-btn>
+
 			    </v-card-actions>
 				
 			    <v-data-table
 			      :headers="headers"
-			      :items="compromisos"
+			      :items="getCompromisos"
 			      :search="search"
 			      fixed-header
+				 		height="500px"
+				  	hide-default-footer
+						:loading ="Loading"
+						loading-text="Cargando... Por favor espere."
 			    >
-			    	<template v-slot:item.action="{ item }" >
-			    <!-- 		<v-btn small class="orange darken-4" dark class=>Cotizar</v-btn>
-			    		<v-btn small class="blue darken-4" dark>Seguimiento</v-btn> -->
-				      <v-icon  class="mr-2"> chrome_reader_mode </v-icon>
-				      <v-icon  > directions_run  </v-icon>
+			    	<template v-slot:item.action="{ item }" > 
+			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
 
 			    </v-data-table>
 			  </v-card>
-			</v-col>
-		</v-row>
-	</v-container>
+
+				 <v-dialog persistent v-model="dialog" width="700px" >	
+		    	<v-card>
+		    		<ControlCompromiso :param="param" :edit="edit" @modal="dialog = $event" />
+		    	</v-card>
+		    </v-dialog>
+
+  		</v-col>
+  	</v-row>
+  </v-container>
 </template>
-	
+
 <script>
-import NuevoCompromiso  from '@/views/Compromisos/NuevoCompromiso'
+	import ControlCompromiso  from '@/views/Compromisos/ControlCompromiso.vue';
+	import {mapGetters, mapActions} from 'vuex';
 
-export default {
-  components: {
-  	NuevoCompromiso
-  },
-  data() {
-      return {
-      	search: '',
-        headers: [
-          { text: 'Responsable', align: 'left', value: 'nombre' },
-        //   { text: 'Contacto', value: 'contacto',  },
-          { text: 'Tipo de Compromiso', value: 'tcompromiso' },
-          { text: 'Compromiso', value: 'f_compromiso' },
-          { text: 'Comentario', value: 'comentario_1' },
-          { text: 'Cumplimiento', value: 'f_cumplimiento' },
-          { text: 'Comentario Final', value: 'comentario_2' },
-          { text: 'Folio', value: 'folio' },
-          { text: 'Estatus', value: 'estatus' },
-          { text: '', value: 'action', sortable: false },
+	export default {
+		components: {
+			ControlCompromiso
+		},
+		data () {
+				return {
+					search: '',
+					dialog: false,
+					param: 0,
+					edit:'',
+					headers: [
+							{ text: 'Responsable'				, align: 'left'	 , value: 'nombre' },
+							{ text: 'Tipo'							, align: 'center', value: 'tcompromiso' },
+							{ text: 'Compromiso'				, align: 'left'	 , value: 'f_compromiso' },
+							{ text: 'Comentario'				, align: 'left'	 , value: 'comentario_1' },
+							{ text: 'Cumplimiento'			, align: 'left'	 , value: 'f_cumplimiento' },
+							{ text: 'Comentario Final'	, align: 'left'	 , value: 'comentario_2' },
+							{ text: 'Folio'							, align: 'left'	 , value: 'folio' },
+							{ text: 'Estatus'						, align: 'left'	 , value: 'estatus' },
+							{ text: '', value: 'action' , sortable: false },
 
+					],
+
+					states: [
+          { name: 'Florida', abbr: 'FL', id: 1 },
+          { name: 'Georgia', abbr: 'GA', id: 2 },
+          { name: 'Nebraska', abbr: 'NE', id: 3 },
+          { name: 'California', abbr: 'CA', id: 4 },
+          { name: 'New York', abbr: 'NY', id: 5 },
         ],
 
-        compromisos: [{ nombre: 'Edgar Tamez', 
-      								  contacto: '811-025-345',
-      								  tcompromiso: 'llamar de negociación',
-      									f_compromiso: '26/02/2020',
-      									comentario_1: 'No recibio la llamada.',
-      									f_cumplimiento: '',
-      								 	comentario_2: '',
-      								 	folio: 'ET001',
-      								 	estatus: 'Prospecto',
-      							}],
+					date: new Date().toISOString().substr(0, 10),
+					menu: false,
+					modal: false,
+					menu2: false,
+					dialog: false,
+			
+				}
+			},
 
-        date: new Date().toISOString().substr(0, 10),
-	      menu: false,
-	      modal: false,
-	      menu2: false,
-	      dialog: false,
-      }
+			created(){
+				this.consultaCompromisos() // CONSULTAR CLIENTES A VUEX
+			},
 
-    },
-}
+			computed:{
+				...mapGetters('Compromisos'  ,['getCompromisos','Loading']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+			},
+
+			methods:{
+				...mapActions('Compromisos'  ,['consultaCompromisos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+
+				abrirModal(action, items){
+					this.param = action;
+					this.edit = items;
+					this.dialog = true;
+				},
+
+				customFilter (item, queryText, itemText) {
+        const textOne = item.name.toLowerCase()
+        const textTwo = item.abbr.toLowerCase()
+        const searchText = queryText.toLowerCase()
+
+        return textOne.indexOf(searchText) > -1 ||
+          textTwo.indexOf(searchText) > -1
+      },
+      save () {
+        this.isEditing = !this.isEditing
+        this.hasSaved = true
+      },
+				
+				
+			}
+	}
 </script>
