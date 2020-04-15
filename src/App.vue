@@ -147,7 +147,6 @@
 					  <v-btn color="white" small @click="dialogMoneda=false" text><v-icon>clear</v-icon></v-btn>
           </v-card-title>
           
-
             <div class="pa-4">
               <v-select
                 :items="monedas"

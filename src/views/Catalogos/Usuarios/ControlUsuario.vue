@@ -107,15 +107,10 @@
 						</v-col>
 					</template>
 
-					<v-col cols="12" lg="6"  v-show="param === 2" class="text-right pa-4">
-						<v-btn small rounded color="blue darken-4" dark  @click="cambiaPassword = !cambiaPassword" v-if="cambiaPassword"> Cambiar Contraseña	</v-btn>
-						<v-btn small rounded color="error" dark @click="cambiaPassword = !cambiaPassword" v-else > Cancelar </v-btn>
+					<v-col cols="12" lg="6"  v-show="param === 2" class="text-right pa-4"> <!-- BOTON PARA MOSTRAR CONTRASEÑAS -->
+						<v-btn small rounded color="celeste" dark  @click="cambiaPassword = !cambiaPassword" v-if="cambiaPassword"> Cambiar Contraseña	</v-btn>
+						<v-btn small rounded color="gris" dark @click="cambiaPassword = !cambiaPassword" v-else > Cancelar </v-btn>
 					</v-col>
-					<!-- <v-card-actions class="mx-3" v-show="param === 2">
-						<v-spacer></v-spacer>
-						<v-btn small rounded color="blue darken-4" dark  @click="cambiaPassword = !cambiaPassword" v-if="cambiaPassword"> Cambiar Contraseña	</v-btn>
-						<v-btn small rounded color="error" dark @click="cambiaPassword = !cambiaPassword" v-else > Cancelar </v-btn>
-					</v-card-actions> -->
 
 					<template v-if="!cambiaPassword">
 						<v-col cols="12" lg="6">
@@ -151,6 +146,23 @@
 
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 				<v-card-actions>
+					
+					<v-dialog v-model="borrarModal" persistent max-width="400" v-if="param === 2"> <!-- PROCESO PARA ELIMINAR  -->
+            <template v-slot:activator="{ on }" >
+              <v-btn small outlined color="red darken-4" dark v-on="on">Eliminar</v-btn>
+            </template>
+            <v-card>
+              <v-col cols="12"  class="pa-4">
+                <strong >¿ ESTAS SEGURO DE ELIMINAR A ESTÉ USUARIO ?</strong>
+              </v-col>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="red darken-1"   text small @click="borrarModal = false">Cancelar</v-btn>
+                <v-btn color="green darken-1" dark small @click="borrar">Eliminar </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog> <!-- FIN DEL PROCESO PARA ELIMINAR  -->
+
 					<v-spacer></v-spacer>
 					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
              Confirmar  
@@ -159,8 +171,8 @@
              Actualizar  
           </v-btn>
 
-          <v-dialog v-model="dialog" hide-overlay persistent width="300">
-            <v-card color="blue darken-4" dark >
+          <v-dialog v-model="dialog" hide-overlay persistent width="300"> <!-- PROCESO DE ESPERA -->
+            <v-card :color="colorDialog" dark >
               <v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
                 <br>
                 <v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
@@ -168,12 +180,12 @@
             </v-card>
           </v-dialog>
 
-					<v-dialog v-model="Correcto" hide-overlay persistent width="350">
+					<v-dialog v-model="Correcto" hide-overlay persistent width="350"> <!-- PROCESO CORRECTO -->
             <v-card color="success"  dark class="pa-3">
 							<h3><strong>{{ textCorrecto }} </strong></h3>
             </v-card>
-						
           </v-dialog>
+
 				</v-card-actions>
 
 			</v-col>
@@ -206,6 +218,7 @@
 				show1					: true,
 				show2					: true,
 				// VARIABLES PRINCIPALES
+				id_usuario:  null,
 				nombre		: '',
 				correo		: '',
 				nivel 		: '',
@@ -224,6 +237,9 @@
 				textDialog : "Guardando Información",
 				Correcto   : false,
 				textCorrecto: '',
+				colorDialog: '',
+				// BOTON DE BORRAR
+				borrarModal: false
 			}
 		},
 		
@@ -253,6 +269,8 @@
 			validarModoVista(){
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
+					console.log('edit', this.edit)
+					this.id_usuario     = this.edit.id
 					this.nombre 				= this.edit.nombre
 					this.correo 				= this.edit.correo
 					this.PasswordActual = this.edit.password
@@ -344,7 +362,7 @@
 
 			ActualizarUsuario(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ; this.textDialog ="Actualizando Información"
+				this.dialog = true ; this.textDialog ="Actualizando Información" ; this.colorDialog ="blue darken-4"
 				setTimeout(() => (this.dialog = false), 2000)
 
 				this.$http.put('usuarios/'+ this.edit.id, payload).then((response)=>{
@@ -357,7 +375,20 @@
 				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
 				setTimeout(function(){ me.$emit('modal',false)}, 2000);
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
-				this.consultaUsuarios() //ACTUALIZAR CONSULTA DE CLIENTES
+				this.consultaUsuarios() //ACTUALIZAR CONSULTA DE USUARIOS
+			},
+
+			borrar(){
+				this.borrarModal = false; // DESACTIVA LA ALERTA 
+				this.dialog = true ; // ACTIVA EL MODAL DE ESPERA 
+				this.textDialog = "Eliminando usuario" ; // LO QUE VA DECIR 
+				 this.colorDialog="red darken-4";   // COLOR DE LA MODAL
+				setTimeout(() => (this.dialog = false), 2000) // LO QUE VA DURAR LA MODAL ABIERTA
+				
+				var me = this
+				this.$http.delete('usuarios/'+ this.id_usuario).then((response)=>{
+					this.TerminarProceso(response.body);
+				})
 			},
 
 			limpiarCampos(){

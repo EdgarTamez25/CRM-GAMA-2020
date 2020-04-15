@@ -46,6 +46,11 @@ class userController extends Controller
 			return 'El usuario se actualizo correctamente';
 		}
 
+		public function delete($id){
+			$deleteUsuario = DB::delete('DELETE FROM users WHERE id = ?',[$id]);
+			return "Usuario Eliminado Correctamente";
+		}
+
 	// ============================== FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
 	
 	public function validaEmail($correo){

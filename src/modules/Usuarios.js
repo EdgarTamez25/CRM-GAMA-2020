@@ -28,6 +28,11 @@ export default{
 			}).finally(() => commit('LOADING', false)) 
 		},
 
+		eliminarUsuario({commit}){
+
+			
+		}
+
   },
 
 	getters:{

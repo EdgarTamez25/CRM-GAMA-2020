@@ -35,13 +35,13 @@
 						
 						<template v-slot:item.predeterminado="{ item }" > 
 			    		<v-btn 
-										small 
-										dark 
-										:color="item.predeterminado === 1? 'green darken-4': 'red darken-4'" 
-										@click="predeterminado(item.id)"
-									> 
-										{{ item.predeterminado === 1? 'Si': 'No'}}
-									</v-btn> 
+								small 
+								dark 
+								:color="item.predeterminado === 1? 'green darken-4': 'red darken-4'" 
+								@click="predeterminado(item.id)"
+							> 
+								{{ item.predeterminado === 1? 'Si': 'No'}}
+							</v-btn> 
 				    </template>
 
 			    </v-data-table>
@@ -91,12 +91,13 @@
 			},
 
 			methods:{
-				...mapActions('Monedas'  ,['consultaMonedas']), // IMPORTANDO USO DE VUEX - Carteras(ACCIONES)
+				...mapActions('Monedas'  ,['consultaMonedas','ActualizaMoneda']), // IMPORTANDO USO DE VUEX - Carteras(ACCIONES)
 
 				predeterminado(id){
 					this.$http.put('predeterminado/'+ id).then((response)=>{
 						// console.log('response monedas', response.body)
 						this.consultaMonedas()
+						this.ActualizaMoneda()
 					})
 				},
 
