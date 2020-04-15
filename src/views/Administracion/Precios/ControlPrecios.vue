@@ -333,14 +333,19 @@
 			},
 
 			Costo_Administrativo: function(){  // CALCULO DEL COSTO ADMINISTRATIVO
+
 				this.costo_admin = 0.00;
 
 				if(this.predeterminada.codigo === this.Moneda){  // COMPARO SI EL PRECIO ESTA EN FUNCION DE LA MONEDA PREDETERMINADA
 					this.costo_admin = parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100)) // SI LO ESTA SOLAMENTE SUMO
-
-				}else{ // SI NO ESTA EN FUNCION DE LA MONEDA PREDETERMINADA 
-					var precio = this.convertirMoneda2(this.precio) // MANDO A CONVERTIR EL PRECIO
-					this.costo_admin = parseFloat(precio) + (precio *  (this.pjeAdmin/100)) // SUMO EL PRECIO YA CONVERTIDO
+				}else { // SI NO ESTA EN FUNCION DE LA MONEDA PREDETERMINADA 
+					if(this.Moneda === 'MX'){ 
+						this.costo_admin = parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100)) // SUMO EL PRECIO YA CONVERTIDO
+					}else{
+						var precio = this.convertirMoneda2(this.precio) // MANDO A CONVERTIR EL PRECIO
+						this.costo_admin = parseFloat(precio) + (precio *  (this.pjeAdmin/100)) // SUMO EL PRECIO YA CONVERTIDO
+					}
+					
 				}
 
 				this.costo_admin > 0 ? this.costo_admin= this.costo_admin: this.costo_admin = 0.00; // EVALUO QUE EL COSTO NO SEA 0 
@@ -353,8 +358,12 @@
 				if(this.predeterminada.codigo === this.Moneda){
 					this.total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100))
 				}else{
-					var precio = this.convertirMoneda2(this.precio)	
-					this.total = this.produccion + parseFloat(precio) + (precio *  (this.pjeAdmin/100))
+					if(this.Moneda === 'MX'){ // SI EL PRECIO ESTA EN MONEDA MX ENTONCES SOLO SOLO LA CANTIDAD
+						this.total = this.produccion + parseFloat(this.precio) + (this.precio *  (this.pjeAdmin/100)) // SUMO EL PRECIO YA CONVERTIDO
+					}else{  // SI ESTA EN DOLARES ENTONCES GENERO CONVERSION 
+						var precio = this.convertirMoneda2(this.precio) // MANDO A CONVERTIR EL PRECIO
+						this.total = this.produccion + parseFloat(precio) + (precio *  (this.pjeAdmin/100)) // SUMO EL PRECIO YA CONVERTIDO
+					}
 				}
 				
 				this.total > 0 ? this.total = this.total : this.total = 0.00;
@@ -421,8 +430,6 @@
 					}
 				}
 			},
-
-			
 			
 		},
 
@@ -572,17 +579,13 @@
 			},
 
 			convertirMoneda2(value){
-				console.log('recibo precio', value)
-
 				var conversion = 0;
 			 if(this.Moneda === 'USD'){
 				 conversion = value / this.predeterminada.tipo_cambio
-				console.log('conversion en usd', conversion)
 
 			 }
 			 if(this.Moneda === 'MX'){
 				 conversion = value * this.moneda_USD.tipo_cambio
-				 console.log('conversion en mx', conversion)
 			 }
 			 	return conversion.toFixed(2);  // RETORNO LA CONVERSION
 			}
