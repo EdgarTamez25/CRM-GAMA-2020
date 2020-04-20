@@ -103,7 +103,9 @@ class preciosController extends Controller
 					$id_producto = $detalle[$i]['id']; // OBTENGO EL ID DEL PRODUCTO EN LA POSICION i 
 					$insertDetalle = $this->detalleProducto($id, $id_producto); //MANDO A INSERTAR EL DETALLE
 				endfor;
-
+				
+				return "El precio por producto se ha registrado correctamente.";
+			else: 
 				return "El precio por producto se ha registrado correctamente.";
 			endif;
 			
