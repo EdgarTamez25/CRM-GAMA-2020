@@ -16,17 +16,18 @@
 				<v-divider class="ma-2"></v-divider>
 
 				<v-row>
-
-					<v-col cols="12" sm="6" > <!-- SUCURSALES -->
+					
+					 <!-- SUCURSALES -->
+					<!-- <v-col cols="12" sm="6" >
 						<v-select
-							v-model="Sucursal" label="Sucursal" placeholder ="Sucursal" 
+							:items="sucursales" v-model="Sucursal" label="Sucursal" placeholder ="Sucursal" 
 							dense outlined hide-details color="celeste" append-icon="domain"
 						></v-select>
-					</v-col>
+					</v-col> -->
 
 					<v-col cols="12" sm="6" >  <!-- VENDEDORES -->
 						<v-autocomplete
-							:items="vendedores" v-model="vendedor" item-text="name" label="Vendedor" 
+							:items="vendedores" v-model="vendedor" item-text="nombre" label="Vendedor" 
 							dense outlined hide-details color="celeste" append-icon="persons"
 						></v-autocomplete>
 					</v-col>
@@ -40,9 +41,16 @@
 
 					<v-col cols="12" sm="6" > <!-- CATEGORIA -->
 						<v-select
-							:items="categorias" v-model="Categoria" label="Categoria"  
+							:items="categorias" item-text="nombre" v-model="Categoria" label="Categoria"  
 							 placeholder ="Categorias" outlined dense hide-details append-icon="ballot"
 						></v-select>
+					</v-col>
+
+					<v-col cols="12" sm="6" > <!-- CLIENTE -->
+						<v-autocomplete
+							:items="clientes" v-model="cliente" item-text="nombre" label="Clientes" 
+							dense outlined hide-details color="celeste" append-icon="people"
+						></v-autocomplete>
 					</v-col>
 
 					<v-col cols="12" sm="6"> <!-- FECHA DE COMPROMISO -->
@@ -77,13 +85,6 @@
 								<v-btn small dark color="rosa" @click="$refs.hora_compromiso.save(hora)">OK</v-btn>
 							</v-time-picker>
 						</v-dialog>
-					</v-col>
-
-					<v-col cols="12" sm="6" > <!-- CLIENTE -->
-						<v-autocomplete
-							:items="clientes" v-model="cliente" item-text="name" label="Clientes" 
-							dense outlined hide-details color="celeste" append-icon="people"
-						></v-autocomplete>
 					</v-col>
 
 					<v-col cols="12"  > <!-- COMENARIO -->
@@ -144,23 +145,26 @@
 			return {
 				// VARIABLES PRINCIPALES
 				tipo_compromiso: 'Externo',
-				comentario: '',
+				comentario 		 : '',
 
 				// FECHA
-				fecha: new Date().toISOString().substr(0, 10),
-				menu: false,
-				fechamodal: false,
+				fecha						: new Date().toISOString().substr(0, 10),
+				menu 						: false,
+				fechamodal 			: false,
 				fecha_compromiso: false,
 
 				// HORA
-				hora: null,
-        menu2: false,
-        horamodal: false,
+				hora 					 : null,
+        menu2 				 : false,
+        horamodal			 : false,
 				hora_compromiso: false,
 				
 				// AUTOCOMPLETE
-				vendedores: [],
-				vendedor	: '',
+				id_vendedor: null,
+				vendedores : [],
+				vendedor	 : '',
+
+				id_cliente: null,
 				clientes	: [],
 				cliente		: '',
 
@@ -171,7 +175,6 @@
 				Sucursal     : '',
 
 				id_categoria : null,
-				categoria    : [],
 				categorias   : [],
 				Categoria    : '',
 				
@@ -188,6 +191,10 @@
 		
 		created(){
 			this.validarModoVista() 	  // VALIDO EL MODO DE LA VISTA
+			this.consultar_Vendedores()
+			this.consultar_Categorias()
+			this.consultar_Clientes()
+			// this.consultarSucursales()
 		},
 			
 		computed:{
@@ -225,25 +232,33 @@
 			},
 
 			validaInfo(){
-				if(!this.codigo)	 { this.snackbar = true; this.text="No puedes omitir el CODIGO DEL PRODUCTO"   ; return }
-				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL USUARIO"   ; return }
+				if(!this.vendedor)	 			{ this.snackbar = true; this.text="No puedes omitir el VENDEDOR"   					 ; return }
+				if(!this.tipo_compromiso)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
+				if(!this.Categoria)				{ this.snackbar = true; this.text="No puedes omitir la CATEGORIA"   				 ; return }
+				if(!this.fecha)						{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
+				if(!this.hora)						{ this.snackbar = true; this.text="No puedes omitir la HORA"   							 ; return }
 
 				this.PrepararPeticion()
 			},
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
-				const payload = { codigo      : this.codigo,
-													nombre	    : this.nombre,
-													descripcion	: this.descripcion,
-													id_linea 		: this.id_linea,
-													id_proveedor: this.id_proveedor,
-													id_unidad	  : this.id_unidad,
-													tipo_producto: this.tipo_producto === 'Materia Prima'? 1: 2,
-													obs         : this.obs ? this.obs : '',
-													foto        : '',
-													estatus     : 1
+				var tipocompromiso = this.tipo_compromiso === 'Interno' ? 1 : 2;
+
+				const payload = { id_vendedor 		: this.id_vendedor,
+													tipo_compromiso	: tipocompromiso,
+													id_categoria		: this.id_categoria,
+													id_cliente 		  : this.id_cliente,
+													fecha						: this.fecha,
+													hora	  				: this.hora,
+													comentarios      : this.comentario ? this.comentario : "",
+													id_usuario      : 1, // USUARIO QUE CREA EL REGISTRO
+													fase_venta      : 0,
+													estatus     		: 1,
+													cumplimiento    : 0
 												}
+				console.log('payload', payload)
+
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearProducto(payload): this.ActualizarProducto(payload);
 			},
@@ -254,7 +269,7 @@
 				setTimeout(() => (this.dialog = false), 2000)
 				
 				// MANDO A INSERTAR CLIENTE
-				this.$http.post('productos', payload).then((response)=>{
+				this.$http.post('addcompromiso', payload).then((response)=>{
 					this.TerminarProceso(response.body);					
 				})
 			},

@@ -25,6 +25,9 @@ Route::post('usuarios'    ,'userController@add')        -> name('addUsuarios'); 
 Route::put('usuarios/{id}','userController@update')  		-> name('updateUsuarios');  			 //PROBADA
 Route::delete('usuarios/{id}','userController@delete')  -> name('deleteUsuarios');  			 //PROBADA
 
+//=================================== VENDEDORES======================================================
+Route::get('vendedores'		 ,'vendedoresController@vendedores')-> name('VendxSuc');  			 //PROBADA
+Route::get('vendxsuc/{suc}','vendedoresController@vendxSuc')  -> name('VendxSuc');  			 //PROBADA
 
 //==================================== CLIENTES=====================================================
 Route::get('clientes','clientesController@catClientes') -> name('catClientes');            //PROBADA
@@ -95,9 +98,17 @@ Route::get('detalle_productos/{id}','preciosController@detalle_productos')-> nam
 Route::post('predeterminado', 'preciosController@predeterminado')  -> name('predeterminado');
 
 
-
-
 ////=============================== TIPOS PRECIOS ==================================================
 Route::get('tipos-precios'     ,'tipo_precioController@getAll') -> name('getAllTipoPrecio');
 Route::post('tipos-precios'    ,'tipo_precioController@add')    -> name('addTipoPrecio');
 Route::put('tipos-precios/{id}','tipo_precioController@update') -> name('updateTipoPrecio');
+
+////================================== CATEGORIAS ==================================================
+Route::get('categorias'     ,'categoriasController@categorias') -> name('categorias');
+
+////================================== COMPROMISOS ==================================================
+Route::get('compromisos'     ,'compromisosController@Compromisos')   -> name('Compromisos');
+Route::post('addcompromiso'  ,'compromisosController@addcompromiso') -> name('addcompromiso');
+
+
+

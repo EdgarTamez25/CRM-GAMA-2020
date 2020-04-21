@@ -182,6 +182,15 @@
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
 			    >
+
+						<template v-slot:item.tipo_compromiso="{ item }" > 
+			    		{{ item.tipo_compromiso === 1? 'Interno': 'Externo'}}
+				    </template>
+
+						<template v-slot:item.cumplimiento="{ item }" >  
+			    			{{ item.cumplimiento === 0? 'Sin realizar': 'Cumplido'}} 
+				    </template>
+
 			    	<template v-slot:item.action="{ item }" > 
 			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
@@ -215,12 +224,13 @@
 					param: 0,
 					edit:'',
 					headers: [
-							{ text: 'Vendedor'					, align: 'left'	 , value: 'nombre' },
-							{ text: 'Tipo'							, align: 'left'	 , value: 'tcompromiso' },
-							{ text: 'Categoria'					, align: 'left'	 , value: 'f_compromiso' },
+							{ text: 'Vendedor'					, align: 'left'	 , value: 'nomvend' },
+							{ text: 'Tipo'							, align: 'left'	 , value: 'tipo_compromiso' },
+							{ text: 'Categoria'					, align: 'left'	 , value: 'nomcatego' },
+							{ text: 'Cliente'					  , align: 'left'	 , value: 'nomcli' },
 							{ text: 'Fecha'							, align: 'left'	 , value: 'fecha' },
 							{ text: 'Hora'							, align: 'left'	 , value: 'hora' },
-							{ text: 'Comentario'				, align: 'left'	 , value: 'comentario' },
+							{ text: 'Comentario'				, align: 'left'	 , value: 'comentarios' },
 							{ text: 'Cumplimiento'			, align: 'left'	 , value: 'cumplimiento' },
 							{ text: '', value: 'action' , sortable: false },
 

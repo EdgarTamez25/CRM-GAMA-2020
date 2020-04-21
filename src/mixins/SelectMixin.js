@@ -7,16 +7,33 @@ export default {
 			id_subzona  :  0,
 			subzona			: [],
 			subzonas    : [],
-			SubZona     : '',	 
+			SubZona     : '',	
 		}
 	},
 
 	methods: {
+
+		consultar_Clientes(){  // AUTOCOMPLETE -> CLIENTES
+			this.$http.get('clientes').then((response)=>{
+				this.clientes = response.body //LLENNO ARRAY
+			})
+		},
+
+		consultar_Categorias(){ // CATEGORIAS
+			this.$http.get('categorias').then((response)=>{
+				this.categorias = response.body  // LLENO ARREGLO CON RESPUESTA COMPLETA
+			})
+		},
+
+		consultar_Vendedores(){  // AUTOCOMPLETE -> VENDEDORES
+			this.$http.get('vendedores').then((response)=>{
+				this.vendedores = response.body //LLENNO ARRAY
+			})
+		},
+
 		consultar_MateriaPrima(){ // MATERIA PRIMA
 			this.$http.get('mp-productos').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.materia_prima = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.materias_primas.push(response.body[i].nombre)
 				}
@@ -25,9 +42,7 @@ export default {
 			
 		consultarTipo_Precios(){ //TIPO DE PRECIOS
 			this.$http.get('tipos-precios').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.tipo_precio = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.tipo_precios.push(response.body[i].nombre)
 				}
@@ -36,9 +51,7 @@ export default {
 
 		consultarMonedas(){ //MONEDAS
 			this.$http.get('monedas').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.moneda = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.monedas.push(response.body[i].codigo)
 				}
@@ -47,9 +60,7 @@ export default {
 
 		consultarUnidades(){ //UNIDADES
 			this.$http.get('unidades').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.unidad = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.unidades.push(response.body[i].nombre)
 				}
@@ -58,9 +69,7 @@ export default {
 
 		consultarProveedores(){ // PROVEEDORES
 			this.$http.get('proveedores').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.proveedor = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.proveedores.push(response.body[i].nombre)
 				}
@@ -69,9 +78,7 @@ export default {
 
 		consultarLineas(){ //LINEAS
 			this.$http.get('lineas').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.linea = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.lineas.push(response.body[i].nombre)
 				}
@@ -80,10 +87,7 @@ export default {
 
 		consultarSucursales(){ //SUCURSALES
 			this.$http.get('sucursales').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.sucursal = response.body
-
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.sucursales.push(response.body[i].nombre)
 				}
@@ -92,9 +96,7 @@ export default {
 
 		consultarCiudades(){ // CIUDADES
 			this.$http.get('ciudades').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.ciudad = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.ciudades.push(response.body[i].nombre)
 				}
@@ -103,9 +105,7 @@ export default {
 
 		consultarZonas(){ // ZONAS
 			this.$http.get('zonas').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.zona = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.zonas.push(response.body[i].nombre)
 				}
@@ -114,9 +114,7 @@ export default {
 
 		consultarSubZonas(id){ // SUBZONAS
 			this.$http.get('subzonas/'+ id).then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.subzona = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.subzonas.push(response.body[i].nombre)
 				}
@@ -125,9 +123,7 @@ export default {
 
 		consultarCarteras(){ // CARTERAS
 			this.$http.get('carteras').then((response)=>{
-				// LLENO ARREGLO CON RESPUESTA COMPLETA
 				this.cartera = response.body
-				// FORMO ARREGLO A MOSTRAR EN SELECTOR
 				for(const i in response.body){
 					this.carteras.push(response.body[i].nombre)
 				}
@@ -136,6 +132,30 @@ export default {
 	},
 
 	watch:{
+		cliente:function(){
+			for(const i in this.clientes){
+				if(this.clientes[i].nombre === this.cliente ){
+					this.id_cliente = this.clientes[i].id
+				}
+			}
+		},
+
+		Categoria:function(){
+			for(const i in this.categorias){
+				if(this.categorias[i].nombre === this.Categoria ){
+					this.id_categoria = this.categorias[i].id
+				}
+			}
+		},
+
+		vendedor:function(){
+			for(const i in this.vendedores){
+				if(this.vendedores[i].nombre === this.vendedor ){
+					this.id_vendedor = this.vendedores[i].id
+				}
+			}
+		},
+
 		Materia_Prima:function(){
 			for(const i in this.materia_prima){
 				if(this.materia_prima[i].nombre === this.Materia_Prima){

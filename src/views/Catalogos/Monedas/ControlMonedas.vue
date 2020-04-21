@@ -178,7 +178,7 @@
 			CrearMoneda(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
 				this.dialog = true ;
-				setTimeout(() => (this.dialog = false), 2000)
+				setTimeout(() => (this.dialog = false), 	)
 				
 				// MANDO A INSERTAR ZONA
 				this.$http.post('monedas', payload).then((response)=>{

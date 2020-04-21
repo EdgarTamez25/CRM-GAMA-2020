@@ -18,10 +18,11 @@ export default{
 	},
 	actions:{
 		consultaCompromisos({commit}){
-			console.log('compromisos')
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('COMPROMISOS', [])
-			Vue.http.get('catcompromisos').then(response=>{
+			Vue.http.get('compromisos').then(response=>{
+			console.log('compromisos', response.body)
+
 				commit('COMPROMISOS', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
