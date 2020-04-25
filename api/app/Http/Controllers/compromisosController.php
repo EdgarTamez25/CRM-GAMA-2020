@@ -24,15 +24,15 @@ class compromisosController extends Controller
 
     public function addcompromiso(Request $request){
 
-        $addCompromiso = DB::insert('INSERT INTO compromisos( id_vendedor, tipo_compromiso, id_categoria,fecha, hora, id_cliente, 
+        $addCompromiso = DB::insert('INSERT INTO compromisos( id_vendedor, tipo_compromiso, id_categoria, fecha, hora, id_cliente, 
 																															comentarios, fase_venta, id_usuario, cumplimiento, estatus)
-																				VALUES(?,?,?,?,?,?,?,?,?,??)',
+																				VALUES(?,?,?,?,?,?,?,?,?,?,?)',
 																			[
 																			 $request -> id_vendedor,  $request -> tipo_compromiso,
 																			 $request -> id_categoria, $request -> fecha,
 																			 $request -> hora, 				 $request -> id_cliente,
 																			 $request -> comentarios,  $request -> fase_venta,
-																			 $request -> id_usuario ,  $request -> cumplimiento ,
+																			 $request -> id_usuario ,  $request -> cumplimiento,
 																			 $request -> estatus
 																			]);
 

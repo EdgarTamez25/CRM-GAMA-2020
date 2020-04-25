@@ -230,7 +230,7 @@
 							{ text: 'Cliente'					  , align: 'left'	 , value: 'nomcli' },
 							{ text: 'Fecha'							, align: 'left'	 , value: 'fecha' },
 							{ text: 'Hora'							, align: 'left'	 , value: 'hora' },
-							{ text: 'Comentario'				, align: 'left'	 , value: 'comentarios' },
+							// { text: 'Comentario'				, align: 'left'	 , value: 'comentarios' },
 							{ text: 'Cumplimiento'			, align: 'left'	 , value: 'cumplimiento' },
 							{ text: '', value: 'action' , sortable: false },
 
