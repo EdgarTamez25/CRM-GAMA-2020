@@ -109,6 +109,10 @@ Route::get('categorias'     ,'categoriasController@categorias') -> name('categor
 ////================================== COMPROMISOS ==================================================
 Route::get('compromisos'     ,'compromisosController@Compromisos')   -> name('Compromisos');
 Route::post('addcompromiso'  ,'compromisosController@addcompromiso') -> name('addcompromiso');
+Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
+
+
+
 
 
 

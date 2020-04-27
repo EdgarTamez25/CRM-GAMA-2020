@@ -1,11 +1,13 @@
 <template>
-  <v-container>
+  <!-- <v-container> -->
+  <v-content class="pa-0">
+
   	<v-row class="justify-center">
 			<v-snackbar top v-model="snackbar" :timeout="2000"  :color="color"> {{text}}
 				<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 			</v-snackbar>
 
-  		<v-col cols="12">
+  		<v-col cols="12" sm="11">
 				<v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions>
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
@@ -138,7 +140,8 @@
 			</v-dialog>
 
   	</v-row>
-  </v-container>
+  </v-content>
+  <!-- </v-container> -->
 </template>
 
 <script>

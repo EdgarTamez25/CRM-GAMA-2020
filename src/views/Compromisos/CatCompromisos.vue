@@ -1,79 +1,18 @@
 <template>
-  <v-container>
+  <!-- <v-container> -->
+  <v-content class="pa-0">
+
   	<v-row class="justify-center">
-  		<v-col cols="12">
+  		<v-col cols="12" sm="11">
 
 				<v-row>
 					<v-col cols="12" sm="6" md="3"> <!-- TITULO DE LA VISTA -->
-						<h3><strong> Compromisos </strong></h3>
+						<h3><strong> COMPROMISOS </strong></h3>
 					</v-col>
-
-					<!-- <v-spacer></v-spacer> -->
-					<!-- FECHA DE COMPROMISO -->
-					<!-- <v-col cols="12" sm="6" md="3" lg="2"> 
-						<v-dialog
-							ref="dialog"
-							v-model="modal"
-							:return-value.sync="date"
-							persistent
-							width="290px"
-						>
-							<template v-slot:activator="{ on }">
-								<v-text-field
-									v-model="date"
-									label="Fecha de compromiso"
-									append-icon="event"
-									readonly
-									v-on="on"
-									outlined 
-									dense
-									hide-details
-									color="celeste"
-								></v-text-field>
-							</template>
-							<v-date-picker v-model="date" locale="es-es" class="rosa" scrollable>
-								<v-spacer></v-spacer>
-								<v-btn text color="gris" @click="modal = false">Cancelar</v-btn>
-								<v-btn dark color="celeste" @click="$refs.dialog.save(date)">OK</v-btn>
-							</v-date-picker>
-						</v-dialog>
-					</v-col> -->
-
-					<!-- FECHA DE CUMPLIMIENTO -->
-					<!-- <v-col cols="12" sm="6" md="3" lg="2"> 
-						<v-dialog
-							ref="dialog"
-							v-model="modal"
-							:return-value.sync="date"
-							persistent
-							width="290px"
-						>
-							<template v-slot:activator="{ on }">
-								<v-text-field
-									v-model="date"
-									label="Fecha de cumplimiento"
-									append-icon="event"
-									readonly
-									v-on="on"
-									outlined 
-									dense
-									hide-details
-									color="celeste"
-								></v-text-field>
-							</template>
-							<v-date-picker v-model="date" locale="es-es" color="rosa" scrollable>
-								<v-spacer></v-spacer>
-								<v-btn text color="gris" @click="modal = false">Cancelar</v-btn>
-								<v-btn dark color="celeste" @click="$refs.dialog.save(date)">OK</v-btn>
-							</v-date-picker>
-						</v-dialog>
-					</v-col> -->
 				</v-row>
 
-				<!-- <v-divider></v-divider> -->
-
-				<v-row>
-					<v-col cols="12" sm="6" md="3" lg="3"> <!-- FECHA DE COMPROMISO -->
+				<!--		<v-row>
+					<v-col cols="12" sm="6" md="3" lg="3"> <!-- FECHA DE COMPROMISO
 						<v-dialog
 							ref="dialog"
 							v-model="modal"
@@ -102,7 +41,7 @@
 						</v-dialog>
 					</v-col>
 
-					<v-col cols="12" sm="6" md="3" lg="3"> <!-- FECHA DE CUMPLIMIENTO -->
+					<v-col cols="12" sm="6" md="3" lg="3"> <!-- FECHA DE CUMPLIMIENTO 
 						<v-dialog
 							ref="dialog"
 							v-model="modal"
@@ -143,18 +82,8 @@
 							dense
 						></v-autocomplete>
 					</v-col>
-
-					<!-- <v-col class="d-flex" cols="12" sm="6" lg="3">
-						<v-select
-							label="Tipo de compromiso"
-							placeholder ="Compromiso ah asignar"
-							dense
-							outlined 
-							hide-details
-							color="celeste"
-						></v-select>
-					</v-col> -->
-		    </v-row>
+				
+		    </v-row> -->
 
 				<!-- CATALOGO DE COMPROMISOS -->
 				<v-card class="elevation-10 mt-3" >
@@ -206,7 +135,8 @@
 
   		</v-col>
   	</v-row>
-  </v-container>
+  </v-content>
+  <!-- </v-container> -->
 </template>
 
 <script>
@@ -278,11 +208,10 @@
         return textOne.indexOf(searchText) > -1 ||
           textTwo.indexOf(searchText) > -1
       	},
-      save () {
-        this.isEditing = !this.isEditing
-        this.hasSaved = true
-      },
-				
+				save () {
+					this.isEditing = !this.isEditing
+					this.hasSaved = true
+				},
 				
 			}
 	}

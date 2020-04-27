@@ -180,7 +180,7 @@
           <v-icon large>attach_money</v-icon>
         </v-btn>
       </v-toolbar-items>
-      <img src="logo.png" width="50px">
+      <img src="@/assets/logoCRM.png" width="50px">
     </v-app-bar>
    
   </v-app>

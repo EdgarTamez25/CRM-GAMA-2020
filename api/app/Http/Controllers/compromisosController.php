@@ -10,7 +10,7 @@ class compromisosController extends Controller
 {
 
 		public function Compromisos(){
-			$compromisos = DB::select('SELECT c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
+			$compromisos = DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
 																			  c.fecha, c.hora, c.id_cliente, cli.nombre as nomcli, c.comentarios, c.fase_venta, c.id_usuario, u.nombre as nomuser,
 																				c.obs_usuario, c.cumplimiento, c.estatus
 																 FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
@@ -38,6 +38,33 @@ class compromisosController extends Controller
 
 				return "El compromiso se ha creado correctamente";															
 				
+		}
+
+		public function putcompromiso($id, Request $req){
+			$updateCompromiso = DB::update('UPDATE compromisos SET id_vendedor=:id_vendedor,
+																															tipo_compromiso=:tipo_compromiso,
+																															id_categoria=:id_categoria,
+																															fecha=:fecha,
+																															hora=:hora,
+																															id_cliente=:id_cliente, 
+																															comentarios=:comentarios,
+																															id_usuario=:id_usuario,
+																															estatus=:estatus
+																			WHERE id=:id'
+																						,['id_vendedor'				=> $req -> id_vendedor, 
+																							'tipo_compromiso'   => $req -> tipo_compromiso,
+																							'id_categoria'      => $req -> id_categoria,
+																							'fecha'							=> $req	-> fecha,
+																							'hora'							=> $req	-> hora, 
+																							'id_cliente'				=> $req	-> id_cliente, 
+																							'comentarios'				=> $req	-> comentarios , 
+																							'id_usuario'				=> $req	-> id_usuario, 
+																							'estatus' 				  => $req -> estatus,
+																							'id'								=> $id
+																							]
+																			);
+
+				return 'El compromiso se actualizo correctamente';
 		}
 	
 }

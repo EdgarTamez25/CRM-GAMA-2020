@@ -210,22 +210,22 @@
 
 		methods:{
 			// IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
-			...mapActions('Productos',['consultaProductos']),
+			...mapActions('Compromisos',['consultaCompromisos']),
 
 			validarModoVista(){
 				if(this.param === 2){
+					console.log('entro a editar', this.edit)
 					// ASIGNAR VALORES AL FORMULARIO
-					this.codigo 				= this.edit.codigo
-					this.nombre 				= this.edit.nombre
-					this.descripcion 	  = this.edit.descripcion
-					this.id_linea       = this.edit.id_linea
-					this.Linea 					= this.edit.nomlin
-					this.tipo_producto  = this.edit.tipo_producto === 1 ? 'Materia Prima' :'Producto Final'
-					this.id_proveedor   = this.edit.id_proveedor
-					this.Proveedor 			= this.edit.nomprov
-					this.id_unidad      = this.edit.id_unidad
-					this.Unidad         = this.edit.nomunidad
-					this.obs       			= this.edit.obs
+					this.id_vendedor 		= this.edit.id_vendedor
+					this.vendedor 			= this.edit.nomvend
+					this.id_categoria   = this.edit.id_categoria
+					this.Categoria 	    = this.edit.nomcatego
+					this.id_cliente 		= this.edit.id_cliente
+					this.cliente        = this.edit.nomcli
+					this.fecha 					= this.edit.fecha
+					this.hora           = this.edit.hora
+					this.comentario     = this.edit.comentarios
+					this.tipo_compromiso = this.edit.tipo_compromiso === 1? 'Interno': 'Externo'
 				}else{
 				this.limpiarCampos()
 				}
@@ -279,7 +279,7 @@
 				this.dialog = true ; this.textDialog ="Actualizando Información"
 				setTimeout(() => (this.dialog = false), 2000)
 
-				this.$http.put('productos/'+ this.edit.id, payload).then((response)=>{
+				this.$http.put('putcompromiso/'+ this.edit.id, payload).then((response)=>{
 					this.TerminarProceso(response.body);					
 				})
 			},
@@ -289,18 +289,20 @@
 				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
 				setTimeout(function(){ me.$emit('modal',false)}, 2000);
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
-				this.consultaProductos() //ACTUALIZAR CONSULTA DE CLIENTES
+				this.consultaCompromisos() //ACTUALIZAR CONSULTA DE CLIENTES
 			},
 
 			limpiarCampos(){
-				this.codigo    			= '';
-				this.nombre    			= '';
-				this.descripcion  	= '',
-				this.Linea     			= '',
-				this.tipo_producto  = '',
-				this.Proveedor		  = '';
-				this.Unidad 		    = '';
-				this.obs  					= '';
+				this.id_vendedor 		= ''; 
+				this.vendedor 			= ''; 
+				this.id_categoria   = ''; 
+				this.Categoria 	    = ''; 
+				this.id_cliente 		= ''; 
+				this.cliente        = ''; 
+				this.fecha 					= ''; 
+				this.hora           = ''; 
+				this.comentario     = ''; 
+				this.tipo_compromiso = '';
 			}
 		}
 	}
