@@ -20,6 +20,8 @@ class CreateProveedoresTable extends Migration
             $table->string('direccion')->nullable();
             $table->string('razon_social')->nullable();
             $table->integer('id_giro')->nullable();
+            $table->string('tel1')->nullable();
+            $table->string('tel2')->nullable();
             $table->integer('tipo_prov');//nacional, internacional
             $table->string('rfc')->nullable();         
             $table->string('estatus');

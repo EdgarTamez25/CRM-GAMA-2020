@@ -24,6 +24,8 @@ class CreateClientesTable extends Migration
             $table->integer('fuente');//id del vendedor : quien registró al cliente
             $table->integer('tipo_cliente');
             $table->string('rfc')->nullable();
+            $table->string('tel1')->nullable();
+            $table->string('tel2')->nullable();
             $table->integer('nivel')->nullable();
             $table->integer('id_cartera')->nullable();
             $table->integer('estatus');

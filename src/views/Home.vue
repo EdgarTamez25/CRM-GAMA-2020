@@ -2,10 +2,10 @@
   <v-content class="pa-0">
     <v-row justify="center" >
       <v-col cols="11">
-        <v-card class="celeste" dark>
+        <v-card class="celeste elevation-12" dark>
           <v-card-actions>
               <v-card-title><img src="@/assets/logoCRM.png" height="80px"></v-card-title>
-              <v-card-title>BIENVENIDOS </v-card-title>
+              <v-card-subtitle size="300px">GAMA ETIQUETAS <br> Bienvenidos </v-card-subtitle>
           </v-card-actions>
 
           <v-card-text class="text-justify ">

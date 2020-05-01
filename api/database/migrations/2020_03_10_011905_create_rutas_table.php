@@ -16,7 +16,9 @@ class CreateRutasTable extends Migration
         Schema::create('rutas', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
             $table->integer('id_vendedor');
-            $table->string('nombre');
+            $table->integer('numruta') ->nullable();
+            $table->string('nombre')->nullable();
+            $table->date('fecha');          // FECHA DEL COMPROMISO
             $table->dateTime('hora_inicio')->nullable();
             $table->dateTime('hora_fin')->nullable();
             $table->integer('id_compromiso');
