@@ -18,10 +18,11 @@ export default{
 	},
 	actions:{
 		consultaProductos({commit}){
-			console.log('productos')
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('PRODUCTOS', [])
 			Vue.http.get('catproductos').then(response=>{
+				console.log('productos',response.body)
+
 				commit('PRODUCTOS', response.body)
 			}).catch((error)=>{
 				console.log('error',error)

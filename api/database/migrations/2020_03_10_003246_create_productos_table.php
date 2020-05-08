@@ -20,7 +20,8 @@ class CreateProductosTable extends Migration
             $table->longText('descripcion')->nullable();
             $table->integer('id_linea');
             $table->integer('tipo_producto');
-            $table->integer('id_proveedor');
+            $table->integer('cantidad');
+            // $table->integer('id_proveedor');
             $table->integer('id_unidad');
             $table->longText('obs')->nullable();
             $table->string('foto')->nullable();

@@ -50,20 +50,20 @@
 						></v-textarea>
 					</v-col>
 
-					<v-col cols="12" lg="6">
-						<v-select
-							:items="lineas"
-							label="Lineas"
-							placeholder="Linea"
-							append-icon="style"
-							dense
+					<v-col cols="12" lg="6" >
+						<v-text-field
+							append-icon=""
+							label="Cantidad"
+							placeholder="Cantidad"
 							hide-details
+							dense
 							clearable
-							v-model="Linea"
-						></v-select>
+							v-model ="cantidad"
+							type="number"
+						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<!-- <v-col cols="12" lg="6">
 						<v-select
 							:items="['Materia Prima','Producto Final']"
 							label="Tipo de Producto"
@@ -73,19 +73,6 @@
 							hide-details
 							clearable
 							v-model="tipo_producto"
-						></v-select>
-					</v-col>
-
-					<!-- <v-col cols="12" lg="6">
-						<v-select
-							:items="proveedores"
-							label="Proveedores"
-							placeholder="Proveedor"
-							append-icon="show_chart"
-							dense
-							hide-details
-							clearable
-							v-model="Proveedor"
 						></v-select>
 					</v-col> -->
 
@@ -102,6 +89,29 @@
 						></v-select>
 					</v-col>
 
+						<v-col cols="12" lg="6">
+						<v-select
+							:items="lineas"
+							label="Lineas"
+							placeholder="Linea"
+							append-icon="style"
+							hide-details
+							clearable
+							v-model="Linea"
+							dense
+						></v-select>
+					</v-col>
+
+					<v-col cols="12" lg="6" >
+						<v-file-input
+							label="Imagen"
+							prepend-icon="mdi-camera"
+							hide-details
+							dense
+							v-model="foto"
+						></v-file-input>
+					</v-col>
+
 					<v-col cols="12" >
 						<v-textarea
 							filled
@@ -114,17 +124,6 @@
 						></v-textarea>
 					</v-col>
 
-
-					<!-- <v-col cols="12" lg="4" class="text-right">
-						<v-avatar size="90px" tile  v-if="foto"> 
-							<v-img :src="foto" aspect-ratio="10" contain max-height="200px" min-height="200px" ></v-img>
-						</v-avatar>
-
-						<v-avatar size="90px" v-else> 
-							<v-img src="persona.jpg" aspect-ratio="10" contain max-height="200px" min-height="200px" ></v-img>
-						</v-avatar>
-					</v-col> -->
-					
 				</v-row>
 
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
@@ -180,7 +179,8 @@
 				descripcion  : '',
 				foto         : '',
 				tipo_producto: '',
-				obs          : '', 
+				obs          : '',
+				cantidad     : 0 , 
 
 				// SELECTORES
 				id_linea  : 0,
@@ -225,6 +225,10 @@
 		watch:{
 			edit: function(){
 				this.validarModoVista();
+			},
+
+			foto: function(){
+				console.log('foto', this.foto)
 			}
 		},
 
@@ -245,6 +249,7 @@
 					this.Proveedor 			= this.edit.nomprov
 					this.id_unidad      = this.edit.id_unidad
 					this.Unidad         = this.edit.nomunidad
+					this.cantidad       = this.edit.cantidad
 					this.obs       			= this.edit.obs
 				}else{
 				this.limpiarCampos()
@@ -254,6 +259,9 @@
 			validaInfo(){
 				if(!this.codigo)	 { this.snackbar = true; this.text="No puedes omitir el CODIGO DEL PRODUCTO"   ; return }
 				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL USUARIO"   ; return }
+				if(!this.cantidad) { this.snackbar = true; this.text="No puedes omitir la CANTIDAD"   ; return }
+				if(!this.Unidad)	 { this.snackbar = true; this.text="No puedes omitir la UNIDAD"   ; return }
+
 
 				this.PrepararPeticion()
 			},
@@ -266,7 +274,9 @@
 													id_linea 		: this.id_linea,
 													id_proveedor: this.id_proveedor,
 													id_unidad	  : this.id_unidad,
-													tipo_producto: this.tipo_producto === 'Materia Prima'? 1: 2,
+													cantidad    : this.cantidad,
+													// tipo_producto: this.tipo_producto === 'Materia Prima'? 1: 2,
+													tipo_producto: 1,
 													obs         : this.obs ? this.obs : '',
 													foto        : '',
 													estatus     : 1
@@ -312,6 +322,7 @@
 				this.tipo_producto  = '',
 				this.Proveedor		  = '';
 				this.Unidad 		    = '';
+				this.cantidad       = 0 ;
 				this.obs  					= '';
 			}
 		}

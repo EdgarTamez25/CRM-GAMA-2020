@@ -26,9 +26,11 @@ class productosController extends Controller
 		// }
 
 		public function getcatalogo(){
-			$CatProductos = DB::select('SELECT p.id, p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,
+			$CatProductos = DB::select('SELECT p.id, p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,p.cantidad,
 																				 p.id_linea, l.nombre as nomlin, p.id_unidad, u.nombre as nomunidad,
 																			IFNULL( ( SELECT pr.precio FROM precios pr WHERE predeterminado =1 AND id_producto = p.id), "0.00") AS precio,
+																			IFNULL( ( SELECT m.codigo  FROM precios pr LEFT JOIN monedas m ON pr.id_moneda = m.id 
+																									WHERE pr.predeterminado =1 AND id_producto = p.id), "") AS codmoneda,
 																			IFNULL( ( SELECT prov.nombre FROM precios pr 
 																										LEFT JOIN proveedores prov ON  pr.id_proveedor = prov.id 
 																								WHERE predeterminado =1 AND id_producto = p.id), "Sin proveedor") AS nomprov,
@@ -53,7 +55,7 @@ class productosController extends Controller
 		
 		public function update($id, Request $req){
 			$data = DB::update('UPDATE productos SET codigo=:codigo, nombre=:nombre, descripcion=:descripcion, id_linea=:id_linea,
-																							 tipo_producto=:tipo_producto, id_proveedor=:id_proveedor, id_unidad=:id_unidad,
+																							 tipo_producto=:tipo_producto, cantidad=:cantidad, id_unidad=:id_unidad,
 																							 obs=:obs, foto=:foto, estatus=:estatus 
 													WHERE id =:id',
 													['codigo' 		 	 => $req -> codigo,
@@ -61,7 +63,7 @@ class productosController extends Controller
 													 'descripcion' 	 => $req -> descripcion,
 													 'id_linea' 		 => $req -> id_linea,
 													 'tipo_producto' => $req -> tipo_producto,
-													 'id_proveedor'  => $req -> id_proveedor,
+													 'cantidad'  		 => $req -> cantidad,
 													 'id_unidad' 		 => $req -> id_unidad,
 													 'obs' 					 => $req -> obs,
 													 'foto' 				 => $req -> foto,

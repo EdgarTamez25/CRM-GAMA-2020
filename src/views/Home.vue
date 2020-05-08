@@ -1,39 +1,152 @@
 <template>
   <v-content class="pa-0">
-    <v-row justify="center" >
-      <v-col cols="11">
-        <v-card class="celeste elevation-12" dark>
-          <v-card-actions>
-              <v-card-title><img src="@/assets/logoCRM.png" height="80px"></v-card-title>
-              <v-card-subtitle size="300px">GAMA ETIQUETAS <br> Bienvenidos </v-card-subtitle>
-          </v-card-actions>
+    <v-row >
+      <v-col cols="12">
 
-          <v-card-text class="text-justify ">
-            Somos una empresa 100% mexicana dedicada a la producción y servicio de impresiones de etiquetas y otros productos. <br><br>
-            Somos una organización dedicada a la Comercialización, Fabricación, Desarrollo, Instalación, Distribución de Etiquetas y 
-            Productos relacionados con la Impresión, trabajamos bajo los procesos Flexográficos, Offset y Digital, además proporcionamos 
-            Servicios Técnicos de Mantenimiento y Venta de Impresoras y Equipos Periféricos, así como el Desarrollo de Software relacionado 
-            con el Control de Inventarios y Almacenes y Venta de Bolsas de Polietileno, Cajas de Cartón, Cintas Adhesivas para empaque y 
-            Película para Emplayar de última generación.<br><br>
-            Lo invitamos a que navegue a través de nuestro Sitio para que conozca a detalle 
-            cada uno de los productos y servicios que podemos ofrecerle, es muy probable que tengamos lo que usted está buscando, de no 
-            ser así veremos cómo podemos apoyarlo.
-          </v-card-text>
+        <v-btn color="rosa" style="display: none" class="ir-arriba white--text" fab fixed bottom right>
+          <v-icon top>keyboard_arrow_up</v-icon>
+        </v-btn>
 
-          <v-card-actions>
-            <!-- <v-btn  color="green darken-4" dark outlined block>PROXIMAMENTE</v-btn> -->
-          </v-card-actions>
-        </v-card>
-      </v-col>
+        <v-row justify="center">
+          <v-col cols="9" sm="10" md="7" lg="6" xl="4">
+            <v-text-field
+                label="Buscar Producto"
+                dense
+                outlined
+                hide-details
+                v-model="search"
+                append-icon="search"
+                color="rosa"
+                clearable
+            ></v-text-field>
+          </v-col>
+          <v-col cols="1" >
+             <v-btn class="gris" icon dark @click="consultaProductos" ><v-icon>refresh</v-icon> </v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" sm="6" md="4" lg="3"  v-for="(item , i) in filterArticulos" :key="i">
+            <v-hover v-slot:default="{ hover }" >
+              <v-card class="mx-auto" max-width="350" v-ripple height="100%">
+                
+                <v-img aspect-ratio="1" contain :src="item.foto"  max-height="250px" min-height="250px" v-if="item.foto != null">
+                  <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out celeste v-card--reveal display-3 white--text"
+                        style="height: 100%;"
+                      >
+                        ${{ item.precio == 0.00 ? 'Indefinido': item.precio + ' '+ item.codmoneda }}
+                      </div>
+                    </v-expand-transition>
+                </v-img>
+
+                <v-img aspect-ratio="1" contain src="@/assets/sinfoto2.jpg"  max-height="250px" min-height="250px" v-else>
+                  <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out celeste v-card--reveal display-3 white--text"
+                        style="height: 100%;"
+                      >
+                        ${{ item.precio == 0.00 ? ' Indefinido': item.precio + ' '+ item.codmoneda }}
+                      </div>
+                    </v-expand-transition>
+                </v-img>
+
+                <v-card-text > <strong> {{ item.nombre }}</strong> </v-card-text>
+                <v-divider></v-divider>
+                <v-card-text align="left"> 
+                    <tr> <th > Proveedor: {{ item.nomprov }}</th> </tr>
+                    <tr> <th > Codigo: {{ item.codigo }}    </th> </tr>
+                    <tr> <th > Unidad: {{ item.nomunidad }}  </th> </tr>
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-text>
+                  {{ item.descripcion ? item.descripcion: 'No hay descripción.'}}
+                </v-card-text>
+              </v-card>
+              
+            </v-hover>
+          </v-col>
+        </v-row>
+    </v-col>
     </v-row>
   </v-content>
 </template>
 
-<script>
-// @ is an alias to /src
 
+<script>
+  import $ from 'jquery'
+  import {mapGetters, mapActions} from 'vuex'
 export default {
   components: {
-  }
+  },
+  data: () => ({
+      show: false,
+      articulos: [],
+      search: ''
+  }),
+
+  methods:{
+    ...mapActions('Productos',['consultaProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
+
+
+	},
+
+  computed:{
+    ...mapGetters('Productos',['Loading','getProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
+
+    filterArticulos: function(){
+      return this.getProductos.filter((art)=>{
+        var nom = art.nombre.toLowerCase();
+        return nom.match(this.search.toLowerCase());
+      })
+    },
+
+  },
+
+  filters:{
+    toUppercase(value){
+      return value.toUpperCase();
+    }
+  },
+
+  created(){
+    this.consultaProductos()// CONSULTAR PRODUCTOS A VUEX
+  },
+
+  mounted(){
+    // Jquey para activar la animacion del boton hacia arriba
+    $(document).ready(function(){
+
+      $('.ir-arriba').click(function(){
+        $('body, html').animate({
+          scrollTop: '0px'
+        }, 300);
+      });
+      
+      $(window).scroll(function(){
+        if( $(this).scrollTop() > 0 ){
+          $('.ir-arriba').slideDown(300);
+        } else {
+          $('.ir-arriba').slideUp(300);
+        }
+      });
+      
+    });
+
+  },
+
+
 }
 </script>
+<style>
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: .5;
+  position: absolute;
+  width: 100%;
+}
+</style>
