@@ -28,13 +28,15 @@
   // MONEDAS
   import CatMonedas     from '@/views/Catalogos/Monedas/CatMonedas.vue';
   import ControlMonedas from '@/views/Catalogos/Monedas/ControlMonedas.vue';
-  // // PRECIOS
-  // import CatPrecios     from '@/views/Administracion/Precios/CatPrecios.vue';
-  // import ControlPrecios from '@/views/Administracion/Precios/ControlPrecios.vue';
+
+  import Calendario from '@/views/Calendario.vue';
+
+
 
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '/calendario'				 , name: 'calendario'		     , component: Calendario },
   { path: '/'				 , name: 'Home'		     , component: Home },
   { path:'/pendientes'		 , name:'pendientes'	 , component: Pendientes},
 

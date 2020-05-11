@@ -53,7 +53,7 @@
 						></v-autocomplete>
 					</v-col>
 
-					<v-col cols="12" sm="6"> <!-- FECHA DE COMPROMISO -->
+					<v-col cols="12" sm="6"> <!-- FECHA DE INICIO -->
 						<v-dialog ref="fecha_compromiso" v-model="fechamodal" :return-value.sync="fecha" persistent width="290px">
 							<template v-slot:activator="{ on }">
 								<v-text-field
@@ -69,7 +69,7 @@
 						</v-dialog>
 					</v-col>
 
-					<v-col cols="11" sm="6"> <!-- HORA DEL COMPROMISO -->
+					<v-col cols="11" sm="6"> <!-- HORA DEL INICIO -->
 						<v-dialog ref="hora_compromiso" v-model="horamodal" :return-value.sync="hora" persistent width="290px" >
 
 							<template v-slot:activator="{ on }">
@@ -86,6 +86,41 @@
 							</v-time-picker>
 						</v-dialog>
 					</v-col>
+
+					<v-col cols="12" sm="6"> <!-- FECHA DE FIN -->
+						<v-dialog ref="fechaFin" v-model="fechaFinmodal" :return-value.sync="fecha_fin" persistent width="290px">
+							<template v-slot:activator="{ on }">
+								<v-text-field
+									v-model="fecha_fin" label="Fecha de finalización" append-icon="event" readonly v-on="on"
+									outlined dense hide-details color="celeste"
+								></v-text-field>
+							</template>
+							<v-date-picker v-model="fecha_fin" locale="es-es" color="rosa"  scrollable>
+								<v-spacer></v-spacer>
+								<v-btn text small color="gris" @click="fechaFinmodal = false">Cancelar</v-btn>
+								<v-btn dark small color="rosa" @click="$refs.fechaFin.save(fecha_fin)">OK</v-btn>
+							</v-date-picker>
+						</v-dialog>
+					</v-col>
+
+					<v-col cols="11" sm="6"> <!-- HORA DEL FIN -->
+						<v-dialog ref="horaFin" v-model="horaFinmodal" :return-value.sync="hora_fin" persistent width="290px" >
+
+							<template v-slot:activator="{ on }">
+								<v-text-field
+									v-model="hora_fin" label="Hora de finalización" append-icon="access_time" readonly v-on="on"
+									outlined dense hide-details color="celeste"
+								></v-text-field>
+							</template>
+
+							<v-time-picker v-if="horaFinmodal" locale="es-es" color="rosa" v-model="hora_fin" full-width 	>
+								<v-spacer></v-spacer>
+								<v-btn small text color="gris" @click="horaFinmodal = false">Cancel</v-btn>
+								<v-btn small dark color="rosa" @click="$refs.horaFin.save(hora_fin)">OK</v-btn>
+							</v-time-picker>
+						</v-dialog>
+					</v-col>
+					
 
 					<v-col cols="12"  > <!-- COMENARIO -->
 						<v-textarea
@@ -152,12 +187,22 @@
 				menu 						: false,
 				fechamodal 			: false,
 				fecha_compromiso: false,
+				
+				fechaFin		  : false,
+				menu3 			  : false,
+				fechaFinmodal : false,
+				fecha_fin			: new Date().toISOString().substr(0, 10),
 
 				// HORA
 				hora 					 : null,
         menu2 				 : false,
         horamodal			 : false,
 				hora_compromiso: false,
+
+				horaFin			: false,
+        menu4				: false,
+        horaFinmodal: false,
+				hora_fin    : null,
 				
 				// AUTOCOMPLETE
 				id_vendedor: null,
@@ -232,11 +277,17 @@
 			},
 
 			validaInfo(){
+				var fi = this.fecha + " " + this.hora; 
+				var ff = this.fecha_fin + " " + this.hora_fin;
+
 				if(!this.vendedor)	 			{ this.snackbar = true; this.text="No puedes omitir el VENDEDOR"   					 ; return }
 				if(!this.tipo_compromiso)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
 				if(!this.Categoria)				{ this.snackbar = true; this.text="No puedes omitir la CATEGORIA"   				 ; return }
-				if(!this.fecha)						{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
+				if(!this.fecha)						{ this.snackbar = true; this.text="No puedes omitir la FECHA"   						 ; return }
 				if(!this.hora)						{ this.snackbar = true; this.text="No puedes omitir la HORA"   							 ; return }
+				if(!this.fecha_fin)				{ this.snackbar = true; this.text="No puedes omitir la FECHA FINAL" 				 ; return }
+				if(!this.hora_fin)				{ this.snackbar = true; this.text="No puedes omitir la HORA FINAL"  			   ; return }
+				if(fi > ff){ this.snackbar=true; this.text="La FECHA y HORA FINAL no puede ser menos a la INICIAL"		 ; return}
 
 				this.PrepararPeticion()
 			},
@@ -251,11 +302,14 @@
 													id_cliente 		  : this.id_cliente,
 													fecha						: this.fecha,
 													hora	  				: this.hora,
-													comentarios      : this.comentario ? this.comentario : "",
+													comentarios     : this.comentario ? this.comentario : "",
 													id_usuario      : 1, // USUARIO QUE CREA EL REGISTRO
 													fase_venta      : 0,
 													estatus     		: 1,
-													cumplimiento    : 0
+													cumplimiento    : 0,
+													fecha_fin    		: this.fecha_fin,
+													hora_fin    		: this.hora_fin 
+
 												}
 				console.log('payload', payload)
 
@@ -299,9 +353,11 @@
 				this.Categoria 	    = ''; 
 				this.id_cliente 		= ''; 
 				this.cliente        = ''; 
-				this.fecha 					= ''; 
+				this.fecha 					= new Date().toISOString().substr(0, 10); 
+				this.fechaFin				= '', 
 				this.hora           = ''; 
-				this.comentario     = ''; 
+				this.horaFin         = ''; 
+				this.comentario      = ''; 
 				this.tipo_compromiso = '';
 			}
 		}

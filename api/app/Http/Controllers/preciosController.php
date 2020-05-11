@@ -36,7 +36,7 @@ class preciosController extends Controller
 		public function mp_producto(){
 			$mp_producto = DB::select('SELECT pr.id_producto as id, pr.precio, p.nombre,p.codigo,p.descripcion, prov.nombre as nomprov, m.codigo as moneda
 																		FROM  precios pr LEFT JOIN productos p ON pr.id_producto = p.id 
-																										 LEFT JOIN proveedores prov ON p.id_proveedor = prov.id
+																										 LEFT JOIN proveedores prov ON pr.id_proveedor = prov.id
 																										 LEFT JOIN monedas m     ON  pr.id_moneda = m.id
 																	WHERE pr.estatus = 1 AND pr.predeterminado = 1 AND p.tipo_producto = 1');
 			return $mp_producto;

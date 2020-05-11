@@ -206,6 +206,8 @@ export default {
             { text: 'Inicio'      ,icon: 'home'               ,path: '/'},
             { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
             { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
+            { text: 'Calendario'  ,icon: 'ballot'             ,path: '/calendario'},
+
             ],
         },
 
