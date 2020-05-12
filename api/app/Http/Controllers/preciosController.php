@@ -31,7 +31,6 @@ class preciosController extends Controller
 																WHERE p.id_producto = ?', [$id]);
 				return $preciosxid;
 		}
-
 		
 		public function mp_producto(){
 			$mp_producto = DB::select('SELECT pr.id_producto as id, pr.precio, p.nombre,p.codigo,p.descripcion, prov.nombre as nomprov, m.codigo as moneda
@@ -43,11 +42,11 @@ class preciosController extends Controller
 		}
 
 		public function detalle_productos($id){
-			$det_producto = DB::select('SELECT dt.id as id_key, dt.id_producto as id, p.nombre, p.codigo, p.descripcion, prov.nombre as nomprov, pr.precio 
+			$det_producto = DB::select('SELECT dt.id as id_key, dt.id_producto as id, p.nombre, p.codigo, p.descripcion, 
+																				 dt.cantidad, pr.precio 
 																		FROM det_prods dt LEFT JOIN productos p ON  dt.id_producto = p.id
-																											LEFT JOIN proveedores prov ON p.id_proveedor = prov.id
-																											LEFT JOIN precios pr ON dt.id_precio = pr.id
-																	WHERE dt.id_precio = ?',[$id]);
+																											LEFT JOIN precios pr  ON dt.id_precio = pr.id
+																	WHERE dt.id_precio = ? ',[$id]);
 			return $det_producto;
 		}
 		
@@ -63,7 +62,8 @@ class preciosController extends Controller
 
 				for($i=0 ; $i< count($request -> detalle) ; $i++):
 					$id_producto = $detalle[$i]['id']; // OBTENGO EL ID DEL PRODUCTO EN LA POSICION i 
-					$insertDetalle = $this->detalleProducto($id_precio, $id_producto); //MANDO A INSERTAR EL DETALLE
+					$cantidad    = $detalle[$i]['cantidad'];
+					$insertDetalle = $this->detalleProducto($cantidad,$id_precio, $id_producto); //MANDO A INSERTAR EL DETALLE
 					
 					if($insertDetalle != 1): 
 						 $contador++; // SI LA PETICION RESPONSE FALSO AGREGO EL PROBLEMA AL ARRAY
@@ -101,7 +101,8 @@ class preciosController extends Controller
 			
 				for($i=0 ; $i< count($detalle) ; $i++):
 					$id_producto = $detalle[$i]['id']; // OBTENGO EL ID DEL PRODUCTO EN LA POSICION i 
-					$insertDetalle = $this->detalleProducto($id, $id_producto); //MANDO A INSERTAR EL DETALLE
+					$cantidad 	 = $detalle[$i]['cantidad']; // OBTENGO LA CANTIDAD DEL PRODUCTO EN LA POSICION i 
+					$insertDetalle = $this->detalleProducto($cantidad,$id, $id_producto); //MANDO A INSERTAR EL DETALLE
 				endfor;
 				
 				return "El precio por producto se ha registrado correctamente.";
@@ -139,9 +140,9 @@ class preciosController extends Controller
 		}
 
 	//================================ FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
-		public function detalleProducto($id_precio, $id_producto){
-				$det_producto = DB::insert('INSERT INTO det_prods(id_producto, id_precio, estatus )
-														VALUES(?,?,?)', [$id_producto,$id_precio,1]);
+		public function detalleProducto($cantidad,$id_precio, $id_producto){
+				$det_producto = DB::insert('INSERT INTO det_prods(cantidad,id_producto, id_precio, estatus )
+														VALUES(?,?,?,?)', [$cantidad,$id_producto,$id_precio,1]);
 				return $det_producto;
 		}
 		

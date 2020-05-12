@@ -8,8 +8,9 @@
 			</v-snackbar>
 
   		<v-col cols="12" sm="11">
-				<v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions>
 				<v-card class="elevation-10 mt-3" >
+				<v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions>
+
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
@@ -125,7 +126,7 @@
 
 						<v-dialog persistent v-model="ModalPrecios" width="850px" >	
 							<v-card class="pt-0 pa-4">
-								<ControlPrecios 
+								<ControlPrecios2 
 									:param2="param2" 
 									:edit2="edit2" 
 									:id_art="id_art" 
@@ -146,13 +147,15 @@
 
 <script>
 	import ControlProductos from '@/views/Catalogos/Productos/ControlProductos.vue'
-	import ControlPrecios   from '@/views/Administracion/Precios/ControlPrecios.vue';
+	// import ControlPrecios   from '@/views/Administracion/Precios/ControlPrecios.vue';
+	import ControlPrecios2   from '@/views/Administracion/Precios/ControlPrecios2.vue';
 	import {mapGetters, mapActions} from 'vuex';
 
 	export default {
 		components: {
 			ControlProductos,
-			ControlPrecios
+			// ControlPrecios
+			ControlPrecios2
 		},
 		data () {
 				return {

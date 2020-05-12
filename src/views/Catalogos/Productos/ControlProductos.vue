@@ -101,7 +101,7 @@
 							dense
 						></v-select>
 					</v-col>
-
+<!-- 
 					<v-col cols="12" lg="6" >
 						<v-file-input
 							label="Imagen"
@@ -110,7 +110,7 @@
 							dense
 							v-model="foto"
 						></v-file-input>
-					</v-col>
+					</v-col> -->
 
 					<v-col cols="12" >
 						<v-textarea
@@ -239,6 +239,7 @@
 			validarModoVista(){
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
+					console.log('edit', this.edit)
 					this.codigo 				= this.edit.codigo
 					this.nombre 				= this.edit.nombre
 					this.descripcion 	  = this.edit.descripcion
