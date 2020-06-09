@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class proveedores extends Model
 {
     protected $table = "proveedores";
-    protected $fillable = array('nombre','id_zona','estatus','razon_social','tipo_prov','rfc','direccion');
+    protected $fillable = array('nombre','id_zona','estatus','razon_social','tipo_prov','rfc','direccion',
+                                'tel1','tel2','contacto');
 }

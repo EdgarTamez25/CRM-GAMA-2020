@@ -1,117 +1,183 @@
 <template>
-	<v-container>
-		<v-row justify="center">
+	<v-content class="pa-0">
+		<v-row justify="center" no-gutters>
 			<v-col cols="12">
-
+				
 				<v-snackbar top v-model="snackbar" :timeout="1000"  :color="color"> {{text}}
 					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 				</v-snackbar>
 
 				<v-card-actions class="pa-0" >
-					<h3> <strong> {{ param === 1? 'Nuevo Cliente':'Editar Cliente' }} </strong></h3> 
+					<h3> <strong> {{ param === 1? 'Nuevo Cliente':'Editar Cliente' }}  </strong></h3> 
 					<v-spacer></v-spacer>
 					<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
 
 				<v-divider class="ma-2"></v-divider>
 				<v-row>
-					<v-col cols="12" lg="6">
+					<v-col cols="12" >
 						<v-text-field
 							append-icon="person"
 							label="Nombre"
 							placeholder="Nombre del cliente"
 							hide-details
 							dense
+							filled
 							clearable
 							v-model="nombre"
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12">
 						<v-text-field
 							append-icon="domain"
 							label="Razon Social"
 							placeholder="Razon Social"
 							hide-details
 							dense
+							filled
 							clearable
 							v-model="razon_social"
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-text-field
 							append-icon="person_pin_circle"
 							label="Dirección"
 							placeholder="Dirección"
 							hide-details
 							dense
+							filled
 							clearable
 							v-model="direccion"
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-select
 							:items="zonas"
+							item-text="nombre"
+							item-value="id"
+							return-object
 							label="Zona"
 							placeholder="Zona del cliente"
 							append-icon="pin_drop"
 							dense
+							filled
 							hide-details
-							v-model="Zonas"
+							v-model="zona"
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-select
 							:items="['Nacional','Internacional']"
 							label="Tipo de Cliente"
 							placeholder="Tipo de cliente"
 							append-icon="gps_fixed"
 							dense
+							filled
 							hide-details
 							v-model="tipo_cliente"
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-select
-							:items="['A','AA','AAA']"
+							:items="niveles"
+							item-value="id"
+							item-text="nombre"
 							label="Nivel del cliente"
 							placeholder="Tipo de cliente"
 							append-icon="how_to_reg"
 							dense
+							filled
 							hide-details
 							v-model="nivel"
+							return-object
 						></v-select>
 					</v-col>
-
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-text-field
-							append-icon="email"
+							append-icon="recent_actors"
 							label="RFC"
 							placeholder="RFC perteneciente al cliente"
 							hide-details
 							dense
+							filled
 							clearable
 							v-model="rfc"
 						></v-text-field>
 					</v-col>
-
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-select
 							:items="carteras"
+							item-text ="nombre"
+							item-value ="id"
+							return-object
 							label="Carteras"
 							placeholder="Cartera al que pertenece el cliente"
 							append-icon="folder_shared"
 							dense
+							filled
 							hide-details
 							clearable
-							v-model="Cartera"
+							v-model="cartera"
 						></v-select>
 					</v-col>
-	
+
+					<v-col cols="12" sm="6">
+						<v-text-field
+							append-icon="phone"
+							label="Telefono 1"
+							placeholder="Número de contacto 1"
+							hide-details
+							dense
+							filled
+							clearable
+							v-model="tel1"
+							type="number"
+						></v-text-field>
+					</v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field
+							append-icon="phone"
+							label="Telefono 2"
+							placeholder="Número de contacto 2"
+							hide-details
+							dense
+							filled
+							clearable
+							v-model="tel2"
+							type="number"
+						></v-text-field>
+					</v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field
+							append-icon="email"
+							label="Email"
+							placeholder="Correo de contacto"
+							hide-details
+							dense
+							filled
+							clearable
+							v-model="contacto"
+						></v-text-field>
+					</v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field
+							append-icon="insert_drive_file"
+							label="Dias limite de factura"
+							placeholder="Días limite de factura"
+							hide-details
+							dense
+							filled
+							clearable
+							v-model="diasFact"
+							type="number"
+						></v-text-field>
+					</v-col>
 				</v-row>
 				
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
@@ -137,21 +203,11 @@
             <v-card color="success"  dark class="pa-3">
 							<h3><strong>{{ textCorrecto }} </strong></h3>
             </v-card>
-						
           </v-dialog>
 				</v-card-actions>
-
-				<v-layout row wrap>
-        <!-- BOTON PARA CONFIRMAR -->
-        <v-flex xs6 text-right class="pa-3 mt-0">
-         
-        </v-flex>
-      </v-layout>
-
 			</v-col>
 		</v-row>
-	</v-container>
-	
+	</v-content >
 </template>
 
 <script>
@@ -159,7 +215,6 @@
 	import {mapGetters, mapActions} from 'vuex'
 	export default {
 		mixins:[SelectMixin],
-
 	  components: {
 		},
 		props:[
@@ -179,26 +234,25 @@
 				tipo_cliente: '',
 				rfc					:	'',
 				cartera     : '',
-				nivel       : '',
+				nivel       : {id:null, nombre:''},
+				niveles     : [{id:1 , nombre:'A'},{id:2,nombre:'AA'},{id:3,nombre:'AAA'}],
 				razon_social: '',
 				direccion   : '',
+				tel1        : '',
+				tel2        : '',
+				contacto    : '',
+				diasFact    : 0 ,
 			
 			 // ALERTAS
 				snackbar: false,
 				text		: '',
 				color		: 'error',
-
 				// SELECTORES
-				id_zona     : 0,   //identificador
-				zona				: [],  //Array completo
+				zona				: {id:null , nombre:''},  //Array completo
 				zonas				: [],  //Solo nombres 
-				Zonas				: '',
-
-				id_cartera  : 0,
-				cartera     : [],
+				cartera     : {id:null,nombre:''},
 				carteras    : [],
-				Cartera     : '',
-			}
+				}
 		},
 
 		created(){
@@ -210,7 +264,6 @@
 		computed:{
 			// IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
 			...mapGetters('Clientes'  ,['getClientes']),
-
 		},
 
 		watch:{
@@ -232,17 +285,13 @@
 					this.Zonas 				= this.edit.nomzona; 
 					this.tipo_cliente = this.edit.tipo_cliente === 1? 'Nacional':'Internacional'
 					this.rfc        	= this.edit.rfc;
-					this.id_cartera   = this.edit.id_cartera;
-					this.Cartera      = this.edit.nomcartera;
-
-					
-					if(this.edit.nivel === 1){
-						this.nivel  = 'A' 
-					}else if (this.edit.nivel===2){
-						this.nivel = 'AA'
-					}else{
-						this.nivel = 'AAA'
-					}
+					this.cartera      = { id:this.edit.id_cartera, nombre: this.nomcartera };
+					this.zona         = { id:this.edit.id_zona   , nombre: this.edit.nomzona };
+					this.nivel 				= this.niveles[this.edit.nivel];
+					this.tel1 				= this.edit.tel1;
+					this.tel2 				= this.edit.tel2;
+					this.contacto     = this.edit.contacto;
+					this.diasFact     = this.edit.diasfact
 				}else{
 				this.limpiarCampos()
 				}
@@ -250,11 +299,13 @@
 
 			validaInfo(){
 				if(!this.nombre)	  	{ this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL CLIENTE"   ; return }
-				if(!this.Zonas)	  	  { this.snackbar = true; this.text="No puedes omitir la ZONA" ; return }
+				if(!this.razon_social){ this.snackbar = true; this.text="No puedes omitir la RAZON SOCIAL"; return }
+				if(!this.zona.id)	  	{ this.snackbar = true; this.text="No puedes omitir la ZONA" ; return }
 				if(!this.tipo_cliente){ this.snackbar = true; this.text="No puedes omitir el TIPO DE CLIENTE"; return }
 				if(!this.nivel)				{ this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
-				if(!this.razon_social){ this.snackbar = true; this.text="No puedes omitir la RAZON SOCIAL"; return }
-				if(!this.cartera)	    { this.snackbar = true; this.text="No puedes omitir la CARTERA"	; return }
+				if(!this.rfc)	        { this.snackbar = true; this.text="No puedes omitir el RFC"	; return }
+				if(!this.tel1)	      { this.snackbar = true; this.text="Debes de ingresar al menos un telefono"	; return }
+				if(!this.diasFact)	  { this.snackbar = true; this.text="No puedes omitir los DIAS LIMITES DE FACTURACIÓN"	; return }
 				this.PrepararPeticion() // MANDO A FORMAR EL OBJETO PARA GUARDAR
 			},
 
@@ -262,13 +313,17 @@
 				// FORMAR ARRAY A MANDAR
 				const payload = { nombre			: this.nombre,
 													direccion   : this.direccion,
-													id_zona			: this.id_zona,
+													id_zona			: this.zona.id,
 													tipo_cliente: this.tipo_cliente === 'Nacional'? 1:2,
 													rfc					: this.rfc,
-													id_cartera	: this.id_cartera ,
+													id_cartera	: this.cartera.id,
 													fuente      : 1 ,
-													nivel       : this.nivel.length,
+													nivel       : this.nivel.id,
 													razon_social: this.razon_social,
+													tel1				: this.tel1,
+													tel2				: this.tel2,
+													contacto		: this.contacto,
+													diasfact		: this.diasFact,
 													estatus     : 1
 												}
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
@@ -283,6 +338,8 @@
 				// MANDO A INSERTAR CLIENTE
 				this.$http.post('cliente', payload).then((response)=>{
 					this.TerminarProceso(response.body);					
+				}).catch(err =>{
+					console.log('err',err)
 				})
 			},
 
@@ -308,12 +365,17 @@
 			limpiarCampos(){
 				this.nombre = '';
 				this.direccion = '',
-				this.Zonas = '',
 				this.tipo_cliente = '';
 				this.nivel = '';
 				this.razon_social = '';
 				this.rfc = '';
-				this.Cartera = '';
+				this.nivel = {id:null,nombre:''};
+				this.zona = {id:null,nombre:''};
+				this.cartera = {id:null,nombre:''};
+				this.tel1 = '';
+				this.tel2 = '';
+				this.contacto = '';
+				this.diasFact = 0;
 			}
 		}
 	}

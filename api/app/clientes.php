@@ -10,12 +10,16 @@ class clientes extends Model
     protected $fillable = array('nombre',
                                 'direccion',
                                 'id_zona',
-                                'estatus',
                                 'razon_social',
                                 'fuente',
                                 'tipo_cliente',
                                 'rfc',
                                 'nivel',
                                 'id_cartera',
+                                'tel1',
+                                'tel2',
+                                'contacto',
+                                'diasfact',
+                                'estatus',
                                 ); 
 }

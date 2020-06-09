@@ -38,8 +38,8 @@
 			    </v-data-table>
 			  </v-card>
 
-				 <v-dialog persistent v-model="dialog" width="700px" >	
-		    	<v-card>
+				 <v-dialog persistent v-model="dialog" width="800px">	
+		    	<v-card  class="pa-5">
 		    		<ControlProveedor :param="param" :edit="edit" @modal="dialog = $event" />
 		    	</v-card>
 		    </v-dialog>

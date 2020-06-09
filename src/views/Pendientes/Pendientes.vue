@@ -51,7 +51,7 @@
           @click:more="verDiaActual"
           @click:date="verDiaActual"
           @change="ActualizaCompromisos"
-					short-weekdays 
+					:now="today"
 					locale="es-es"
         ></v-calendar>
       </v-sheet>

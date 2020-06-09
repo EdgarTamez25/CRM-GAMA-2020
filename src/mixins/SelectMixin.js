@@ -1,33 +1,54 @@
 
 export default {
-
-	data () {
-		return {
-			// SELECTORES
-			id_subzona  :  0,
-			subzona			: [],
-			subzonas    : [],
-			SubZona     : '',	
-		}
-	},
-
 	methods: {
+
+		traerFechaActual(){
+			var f = new Date(); 
+			return f.getFullYear() +'-'+ (f.getMonth() + 1 < 10? '0' + (f.getMonth() + 1): f.getMonth() + 1 ) +'-'+ (f.getDate()<10?'0'+f.getDate():f.getDate());
+		},
+
+		traerHoraActual(){
+			var f = new Date(); 
+			return (f.getHours()<10? '0'+f.getHours(): f.getHours()) + ':' + (f.getMinutes()<10? '0'+ f.getMinutes(): f.getMinutes())
+		},
+
+		traerMesActual(){
+			var f = new Date();
+			var primerDia = new Date(f.getFullYear(), f.getMonth(), 1).toISOString().substr(0, 10);
+			var ultimoDia = new Date(f.getFullYear(), f.getMonth() + 1, 0).toISOString().substr(0, 10);
+			const fecha = { fechaInicial: primerDia , fechaFinal: ultimoDia}
+			return fecha;
+		},
+
+		consultaChofer(){
+			this.$http.get('choferes').then(response =>{
+				this.choferes = response.body
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
 
 		consultar_Clientes(){  // AUTOCOMPLETE -> CLIENTES
 			this.$http.get('clientes').then((response)=>{
 				this.clientes = response.body //LLENNO ARRAY
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
 		consultar_Categorias(){ // CATEGORIAS
 			this.$http.get('categorias').then((response)=>{
 				this.categorias = response.body  // LLENO ARREGLO CON RESPUESTA COMPLETA
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
 		consultar_Vendedores(){  // AUTOCOMPLETE -> VENDEDORES
 			this.$http.get('vendedores').then((response)=>{
 				this.vendedores = response.body //LLENNO ARRAY
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
@@ -37,6 +58,8 @@ export default {
 				for(const i in response.body){
 					this.materias_primas.push(response.body[i].nombre)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 			
@@ -46,6 +69,8 @@ export default {
 				for(const i in response.body){
 					this.tipo_precios.push(response.body[i].nombre)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
@@ -55,6 +80,8 @@ export default {
 				for(const i in response.body){
 					this.monedas.push(response.body[i].codigo)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
@@ -64,6 +91,8 @@ export default {
 				for(const i in response.body){
 					this.unidades.push(response.body[i].nombre)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
@@ -73,6 +102,8 @@ export default {
 				for(const i in response.body){
 					this.proveedores.push(response.body[i].nombre)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
@@ -82,6 +113,8 @@ export default {
 				for(const i in response.body){
 					this.lineas.push(response.body[i].nombre)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
@@ -91,6 +124,8 @@ export default {
 				for(const i in response.body){
 					this.sucursales.push(response.body[i].nombre)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
@@ -100,33 +135,24 @@ export default {
 				for(const i in response.body){
 					this.ciudades.push(response.body[i].nombre)
 				}
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
 		consultarZonas(){ // ZONAS
 			this.$http.get('zonas').then((response)=>{
-				this.zona = response.body
-				for(const i in response.body){
-					this.zonas.push(response.body[i].nombre)
-				}
-			})
-		},
-
-		consultarSubZonas(id){ // SUBZONAS
-			this.$http.get('subzonas/'+ id).then((response)=>{
-				this.subzona = response.body
-				for(const i in response.body){
-					this.subzonas.push(response.body[i].nombre)
-				}
+				this.zonas = response.body
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		},
 
 		consultarCarteras(){ // CARTERAS
 			this.$http.get('carteras').then((response)=>{
-				this.cartera = response.body
-				for(const i in response.body){
-					this.carteras.push(response.body[i].nombre)
-				}
+				this.carteras = response.body
+			}).catch(error =>{
+				console.log('error', error)
 			})
 		}
 	},
@@ -220,31 +246,5 @@ export default {
 				}
 			}
 		},
-
-		Zonas:function(){
-			for(const i in this.zona){
-				if(this.zona[i].nombre === this.Zonas){
-					this.id_zona = this.zona[i].id
-				}
-			}
-			this.subzonas = []; // Borramos el contenido del selector de subZonas
-			this.consultarSubZonas(this.id_zona) //Mando a consultar SubZonas
-		},
-
-		SubZona:function(){
-			for(const j in this.subzona){
-				if(this.subzona[j].nombre === this.SubZona){
-					this.id_subzona = this.subzona[j].id
-				}
-			}
-		},
-
-		Cartera:function(){
-			for(const x in this.cartera){
-				if(this.cartera[x].nombre === this.Cartera){
-					this.id_cartera = this.cartera[x].id
-				}
-			}
-		}
 	},
 }

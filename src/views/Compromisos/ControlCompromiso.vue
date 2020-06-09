@@ -16,7 +16,6 @@
 				<v-divider class="ma-2"></v-divider>
 
 				<v-row>
-					
 					 <!-- SUCURSALES -->
 					<!-- <v-col cols="12" sm="6" >
 						<v-select
@@ -24,17 +23,16 @@
 							dense outlined hide-details color="celeste" append-icon="domain"
 						></v-select>
 					</v-col> -->
-
 					<v-col cols="12" sm="6" >  <!-- VENDEDORES -->
 						<v-autocomplete
-							:items="vendedores" v-model="vendedor" item-text="nombre" label="Vendedor" 
+							:items="vendedores" v-model="vendedor" item-text="nombre" label="Responsable" 
 							dense outlined hide-details color="celeste" append-icon="persons"
 						></v-autocomplete>
 					</v-col>
 
 					<v-col cols="12" sm="6" > <!-- TIPO DE COMPROMISOS -->
 						<v-select
-							:items="['Interno','Externo']" v-model="tipo_compromiso" label="Tipo de compromiso" 
+							:items="['Externo']" v-model="tipo_compromiso" label="Tipo de compromiso" 
 							 placeholder ="Tipo de compromiso" outlined dense hide-details append-icon="home_work"
 						></v-select>
 					</v-col>
@@ -191,7 +189,7 @@
 				fechaFin		  : false,
 				menu3 			  : false,
 				fechaFinmodal : false,
-				fecha_fin			: new Date().toISOString().substr(0, 10),
+				fecha_fin			: '',
 
 				// HORA
 				hora 					 : null,
@@ -239,7 +237,6 @@
 			this.consultar_Vendedores()
 			this.consultar_Categorias()
 			this.consultar_Clientes()
-			// this.consultarSucursales()
 		},
 			
 		computed:{
@@ -269,6 +266,8 @@
 					this.cliente        = this.edit.nomcli
 					this.fecha 					= this.edit.fecha
 					this.hora           = this.edit.hora
+					this.fecha_fin			= this.edit.fecha_fin 
+					this.hora_fin       = this.edit.hora_fin
 					this.comentario     = this.edit.comentarios
 					this.tipo_compromiso = this.edit.tipo_compromiso === 1? 'Interno': 'Externo'
 				}else{
@@ -287,7 +286,7 @@
 				if(!this.hora)						{ this.snackbar = true; this.text="No puedes omitir la HORA"   							 ; return }
 				if(!this.fecha_fin)				{ this.snackbar = true; this.text="No puedes omitir la FECHA FINAL" 				 ; return }
 				if(!this.hora_fin)				{ this.snackbar = true; this.text="No puedes omitir la HORA FINAL"  			   ; return }
-				if(fi > ff){ this.snackbar=true; this.text="La FECHA y HORA FINAL no puede ser menos a la INICIAL"		 ; return}
+				if(fi > ff){ this.snackbar=true; this.text="La FECHA y HORA FINAL no puede ser menor a la INICIAL"		 ; return}
 
 				this.PrepararPeticion()
 			},
@@ -304,20 +303,26 @@
 													hora	  				: this.hora,
 													comentarios     : this.comentario ? this.comentario : "",
 													id_usuario      : 1, // USUARIO QUE CREA EL REGISTRO
-													fase_venta      : 0,
+													fase_venta      : 1,
 													estatus     		: 1,
 													cumplimiento    : 0,
 													fecha_fin    		: this.fecha_fin,
-													hora_fin    		: this.hora_fin 
-
+													hora_fin    		: this.hora_fin,
+													fechaActual     : this.traerFechaActual(),
+													horaActual      : this.traerHoraActual(),
+													numorden				: '',
+													aceptado				: 0,
+													obscierre				:''
 												}
+											
+													
 				console.log('payload', payload)
 
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
-				this.param === 1 ? this.CrearProducto(payload): this.ActualizarProducto(payload);
+				this.param === 1 ? this.Crear(payload): this.Actualizar(payload);
 			},
 
-			CrearProducto(payload){
+			Crear(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
 				this.dialog = true ;
 				setTimeout(() => (this.dialog = false), 2000)
@@ -328,7 +333,7 @@
 				})
 			},
 
-			ActualizarProducto(payload){
+			Actualizar(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
 				this.dialog = true ; this.textDialog ="Actualizando Información"
 				setTimeout(() => (this.dialog = false), 2000)

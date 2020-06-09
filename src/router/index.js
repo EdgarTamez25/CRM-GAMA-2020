@@ -6,6 +6,8 @@
  
   import Compromisos from '@/views/Compromisos/CatCompromisos.vue'
   import ControlCompromiso from '@/views/Compromisos/ControlCompromiso.vue'
+  import ControldeFases from '@/views/Compromisos/controldeFases.vue'
+
 
   // USUARIO
   import CatUsuarios    from '@/views/Catalogos/Usuarios/CatUsuarios.vue';
@@ -30,6 +32,8 @@
   import ControlMonedas from '@/views/Catalogos/Monedas/ControlMonedas.vue';
 
   import Calendario from '@/views/Calendario.vue';
+  import analisisFases from '@/views/Historial/analisisFases.vue';
+
 
 
 
@@ -43,6 +47,8 @@ const routes = [
   // COMPROMISOS
   { path:'/compromisos'		    , name:'compromisos'	     , component: Compromisos},
   { path:'/control_compromiso', name:'control_compromiso', component: ControlCompromiso},
+  { path:'/control_fases', name:'control_fases', component: ControldeFases},
+
 
   //USUARIOS
   { path:'/usuarios'		    , name:'usuarios'	      , component: CatUsuarios},
@@ -65,6 +71,11 @@ const routes = [
   // MONEDAS
   { path:'/monedas'	        , name:'monedas'	       , component: CatMonedas},
   { path:'/control-monedas' , name:'control-monedas' , component: ControlMonedas},
+  // HISTORIAL
+  { path:'/analisis-fases' , name:'analisis-fases' , component: analisisFases},
+
+
+  
   // // COSTOS INDIRECTOS
   // { path:'/costos-indirectos'         , name:'costos-indirectos'	       , component: CatCostosIndirectos},
   // { path:'/control-costos-indirectos' , name:'control-costos-indirectos' , component: ControlCostosIndirectos},

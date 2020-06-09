@@ -26,6 +26,8 @@ class CreateClientesTable extends Migration
             $table->string('rfc')->nullable();
             $table->string('tel1')->nullable();
             $table->string('tel2')->nullable();
+            $table->string('contacto')->nullable();
+            $table->string('diasfact')->nullable();
             $table->integer('nivel')->nullable();
             $table->integer('id_cartera')->nullable();
             $table->integer('estatus');

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-content class="pa-0">
   	<v-row class="justify-center">
   		<v-col cols="12">
 				<v-card-actions> <h3><strong> Catálogo de Usuarios</strong></h3></v-card-actions>
@@ -29,9 +29,7 @@
 						loading-text="Cargando... Por favor espere."
 			    >
 						<template v-slot:item.nivel="{ item }">
-							<div v-if="item.nivel === 1">  Administrador </div> 
-							<div v-if="item.nivel === 2">  Supervisor 	 </div> 
-							<div v-if="item.nivel === 3">  Vendedor      </div> 
+							 {{ niveles[item.nivel-1].nombre  }} 
 						</template>
 
 			    	<template v-slot:item.action="{ item }" > 
@@ -48,7 +46,7 @@
 		    </v-dialog>
   		</v-col>
   	</v-row>
-  </v-container>
+  </v-content class="pa-0">
 </template>
 
 <script>
@@ -73,6 +71,11 @@
 						{ text: 'Sucursal' , align: 'left'  , value: 'nomsuc' },
 						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
 					],
+					niveles: [{ id:1, nombre:'Administrador'},
+										{ id:2, nombre:'Supervisor'},
+										{ id:3, nombre:'Vendedor'},
+										{ id:4, nombre:'Chofer'}
+									]
 				}
 			},
 

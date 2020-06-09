@@ -1,6 +1,6 @@
 <template>
   <v-content class="pa-0">
-    <v-row >
+    <v-row no-gutters >
       <v-col cols="12">
 
         <v-btn color="rosa" style="display: none" class="ir-arriba white--text" fab fixed bottom right>
@@ -17,15 +17,26 @@
                 v-model="search"
                 append-icon="search"
                 color="rosa"
-                clearable
             ></v-text-field>
           </v-col>
           <v-col cols="1" >
              <v-btn class="gris" icon dark @click="consultaProductos" ><v-icon>refresh</v-icon> </v-btn>
           </v-col>
         </v-row>
+
+        <v-row justify="space-around" >
+          <v-col cols="10" class="text-center" v-if="Loading" >  <!-- PROGRES -->
+            <v-progress-linear :size="100" :width="7" color="celeste" indeterminate ></v-progress-linear>
+          </v-col>
+          <v-col cols="12" sm="9" v-if="!filterArticulos.length && !Loading">
+           <v-alert color="error" dark icon="sentiment_very_dissatisfied" border="right" prominent >
+              No hay articulos o proveedores con la descripción solicitada.
+            </v-alert>
+        </v-col>	
+        </v-row>
+
         <v-row>
-          <v-col cols="12" sm="6" md="4" lg="3"  v-for="(item , i) in filterArticulos" :key="i">
+          <v-col cols="12" sm="6" md="4" lg="3"  v-for="(item , i) in filterArticulos" :key="i" v-if="item">
             <v-hover v-slot:default="{ hover }" >
               <v-card class="mx-auto" max-width="350" v-ripple height="100%">
                 
@@ -81,16 +92,16 @@
 export default {
   components: {
   },
+
   data: () => ({
       show: false,
       articulos: [],
-      search: ''
+      search: '',
+      skeletons:['1','2','3','4']
   }),
 
   methods:{
     ...mapActions('Productos',['consultaProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
-
-
 	},
 
   computed:{
@@ -98,8 +109,17 @@ export default {
 
     filterArticulos: function(){
       return this.getProductos.filter((art)=>{
-        var nom = art.nombre.toLowerCase();
-        return nom.match(this.search.toLowerCase());
+        var cod  = art.codigo                  // BUSCAR POR CODIGO
+        var nom  = art.nombre.toLowerCase();  // BUSCAR POR NOMBRE
+        var prov = art.nomprov.toLowerCase(); // BUSCAR POR PROVEDOR
+        
+        if(cod.match(this.search)){ // SI ENCUENTRO EL CODIGO LO RETORNO
+          return cod.match(this.search)
+        }else if(nom.match(this.search.toLowerCase())){ // SI NO - RETONO POR NOMBRE
+          return nom.match(this.search.toLowerCase()) // SI NO - RETORNO POR PROVEEDOR
+        }else{
+          return prov.match(this.search.toLowerCase())
+        }
       })
     },
 

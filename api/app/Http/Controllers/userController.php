@@ -51,6 +51,10 @@ class userController extends Controller
 			return "Usuario Eliminado Correctamente";
 		}
 
+		public function choferesAll(){
+			$choferes = DB::select('SELECT id, nombre, correo FROM users WHERE nivel=4');
+			return $choferes;
+		}
 	// ============================== FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
 	
 	public function validaEmail($correo){

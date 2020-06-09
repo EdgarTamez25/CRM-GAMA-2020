@@ -3,17 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -24,6 +13,7 @@ Route::get('usuarios'	    ,'userController@getAll')     -> name('getAllUsuarios'
 Route::post('usuarios'    ,'userController@add')        -> name('addUsuarios');    				 //PROBADA
 Route::put('usuarios/{id}','userController@update')  		-> name('updateUsuarios');  			 //PROBADA
 Route::delete('usuarios/{id}','userController@delete')  -> name('deleteUsuarios');  			 //PROBADA
+Route::get('choferes'	    ,'userController@choferesAll')     -> name('choferesAll');  		 //PROBADA
 
 //=================================== VENDEDORES======================================================
 Route::get('vendedores'		 ,'vendedoresController@vendedores')-> name('VendxSuc');  			 //PROBADA
@@ -110,6 +100,28 @@ Route::get('categorias'     ,'categoriasController@categorias') -> name('categor
 Route::get('compromisos'     ,'compromisosController@Compromisos')   -> name('Compromisos');
 Route::post('addcompromiso'  ,'compromisosController@addcompromiso') -> name('addcompromiso');
 Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
+Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
+Route::post('fase.venta'  ,'compromisosController@FaseVenta') -> name('FaseVenta');
+
+////================================== HISTORIAL ==================================================
+Route::get('numero.orden/{id}' ,'histrorialController@NumerodeOrden') -> name('NumerodeOrden');
+Route::get('ver.resumen/{id}' ,'histrorialController@VerResumen') -> name('VerResumen');
+Route::post('historial' ,'histrorialController@Historial') -> name('Historial');
+Route::post('historialxvend' ,'histrorialController@HistorialxVend') -> name('HistorialxVend');
+Route::post('recotización' ,'histrorialController@Recotización') -> name('recotización');
+
+
+
+
+////================================== ENTREGAS ==================================================
+Route::post('entrega.producto' ,'entregasController@EntregarProducto') -> name('EntregarProducto');
+Route::post('entrega.id','entregasController@entregabyid')-> name('Entregabyid');
+
+
+
+
+
+
 
 
 

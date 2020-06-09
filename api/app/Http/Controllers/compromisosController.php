@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-// use App\compromisos;
+use App\compromisos;
 
 class compromisosController extends Controller
 {
@@ -16,28 +16,34 @@ class compromisosController extends Controller
 																 FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
 																										LEFT JOIN categorias ca ON ca.id  = c.id_categoria
 																										LEFT JOIN clientes  cli ON cli.id = c.id_cliente
-																										LEFT JOIN users u       ON u.id   = c.id_usuario');
+																										LEFT JOIN users u       ON u.id   = c.id_usuario
+																ORDER BY c.id DESC');
 
 			return $compromisos;
 
 		}
 
-    public function addcompromiso(Request $request){
+    public function addcompromiso(Request $req){
+																				
+				$id = DB::table('compromisos')->insertGetId(
+					['id_vendedor'  => $req -> id_vendedor,  'tipo_compromiso' => $req -> tipo_compromiso,
+					 'id_categoria' => $req -> id_categoria, 'fecha' 					 => $req -> fecha,
+					 'hora' 			  => $req -> hora, 				 'fecha_fin'			 => $req -> fecha_fin,
+					 'hora_fin' 		=> $req -> hora_fin,		 'id_cliente' 		 => $req -> id_cliente,
+					 'comentarios'  => $req -> comentarios,  'fase_venta' 		 => $req -> fase_venta,
+					 'id_usuario'   => $req -> id_usuario ,  'cumplimiento' 	 =>$req -> cumplimiento,
+					 'estatus' 		  => $req -> estatus]
+				);
 
-        $addCompromiso = DB::insert('INSERT INTO compromisos( id_vendedor, tipo_compromiso, id_categoria, fecha, hora, fecha_fin, hora_fin ,
-																															id_cliente, comentarios, fase_venta, id_usuario, cumplimiento, estatus)
-																				VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
-																			[
-																			 $request -> id_vendedor,  $request -> tipo_compromiso,
-																			 $request -> id_categoria, $request -> fecha,
-																			 $request -> hora, 				 $request -> fecha_fin,
-																			 $request -> hora_fin,		 $request -> id_cliente,
-																			 $request -> comentarios,  $request -> fase_venta,
-																			 $request -> id_usuario ,  $request -> cumplimiento,
-																			 $request -> estatus
-																			]);
-
-				return "El compromiso se ha creado correctamente";															
+				$fecha 				 = $req -> fechaActual; 
+				$hora 				 = $req -> horaActual; 
+				$fase_venta 	 = $req -> fase_venta;
+				$numorden      = $req -> numorden;
+				$aceptado      = $req -> aceptado;
+				$obscierre     = $req -> obscierre;
+				
+				$hisorial = $this->Historial($id, $fecha, $hora, $fase_venta, $numorden, $aceptado,$obscierre);
+				return "El compromiso se ha creado correctamente";
 				
 		}
 
@@ -71,5 +77,28 @@ class compromisosController extends Controller
 
 				return 'El compromiso se actualizo correctamente';
 		}
-	
+
+		public function FaseVenta(Request $req){
+			$id_compromiso = $req -> id; 
+			$fecha 				 = $req -> fecha; 
+			$hora 				 = $req -> hora; 
+			$fase_venta 	 = $req -> fase_venta;
+			$numorden      = $req -> numorden;
+			$aceptado      = $req -> aceptado;
+			$obscierre     = $req -> obscierre;
+
+			if($hisorial = $this->Historial($id_compromiso, $fecha, $hora, $fase_venta, $numorden, $aceptado,$obscierre)):
+				$PutCompromiso = DB::update('UPDATE compromisos SET fase_venta=:fase_venta 
+																			WHERE id=:id',[ 'fase_venta' => $fase_venta, 'id' => $id_compromiso]);
+				return "Fase de venta actualizada";
+			endif; 
+		}
+
+
+		//================================ FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
+		public function Historial($id_compromiso, $fecha, $hora, $fase_venta, $numorden, $aceptado,$obscierre ){
+			$historial = DB::insert('INSERT INTO historial(id_compromiso,fecha,hora,fase_venta,numorden,aceptado,obscierre)
+																	VALUES(?,?,?,?,?,?,?)',[$id_compromiso, $fecha, $hora, $fase_venta,$numorden,$aceptado,$obscierre]);
+			return $historial;
+		}
 }

@@ -14,7 +14,7 @@
 
 				<v-divider class="ma-2"></v-divider>
 				<v-row>
-					<v-col cols="12" lg="8">
+					<v-col cols="12" lg="12">
 						<v-text-field
 							append-icon="person"
 							label="Nombre"
@@ -26,7 +26,7 @@
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="4" class="text-right">
+					<!-- <v-col cols="12" lg="4" class="text-right">
 						<v-avatar size="90px" tile  v-if="foto"> 
 							<v-img :src="foto" aspect-ratio="10" contain max-height="200px" min-height="200px" ></v-img>
 						</v-avatar>
@@ -34,11 +34,11 @@
 						<v-avatar size="90px" v-else> 
 							<v-img src="persona.jpg" aspect-ratio="10" contain max-height="200px" min-height="200px" ></v-img>
 						</v-avatar>
-					</v-col>
+					</v-col> -->
 
 					<v-col cols="12" lg="6">
 						<v-text-field
-							append-icon="email"
+							append-icon="email" 
 							label="Correo"
 							placeholder="Correo electronico"
 							hide-details
@@ -50,18 +50,20 @@
 
 					<v-col cols="12" lg="6">
 						<v-select
-							:items="['Administrador','Supervisor','Vendedor']"
+							v-model="nivel"
+							:items="niveles"
+							item-text="nombre" 
+							item-value="id"
 							label="Nivel"
 							placeholder="Nivel de acceso"
 							append-icon="show_chart"
 							dense
 							hide-details
-							clearable
-							v-model="nivel"
+							return-object
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" lg="6"> 
 						<v-select
 							:items="sucursales"
 							label="Sucursal"
@@ -221,7 +223,12 @@
 				id_usuario:  null,
 				nombre		: '',
 				correo		: '',
-				nivel 		: '',
+				nivel 		: {id:null, nombre:''},
+				niveles   : [ { id:1, nombre:'Administrador'},
+											{ id:2, nombre:'Supervisor'},
+											{ id:3, nombre:'Vendedor'},
+											{ id:4, nombre:'Chofer'}
+										],
 				foto      : '',
 				// SELECTORES
 				id_sucursal  : 0,
@@ -237,7 +244,7 @@
 				textDialog : "Guardando Información",
 				Correcto   : false,
 				textCorrecto: '',
-				colorDialog: '',
+				colorDialog: 'blue darken-4',
 				// BOTON DE BORRAR
 				borrarModal: false
 			}
@@ -246,13 +253,11 @@
 		created(){
 			this.consultarSucursales() //MANDO A CONSULTAR SUCURSALES A MIXINS
 			this.validarModoVista() // VALIDO EL MODO DE LA VISTA
-
 		},
 			
 		computed:{
 			// IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
 			...mapGetters('Usuarios'  ,['getUsuarios']),
-
 		},
 
 		watch:{
@@ -276,14 +281,9 @@
 					this.PasswordActual = this.edit.password
 					this.Sucursal 			= this.edit.nomsuc
 					this.foto 					= this.edit.foto
-					
-					if(this.edit.nivel === 1){
-						this.nivel = 'Administrador'
-					}else if(this.edit.nivel === 2){
-						this.nivel = 'Supervisor'
-					}else{
-						this.nivel = 'Vendedor'
-					}
+					this.nivel          = { id    : this.niveles[this.edit.nivel-1].id , 
+																	nombre: this.niveles[this.edit.nivel-1].nombre
+																}
 
 				}else{
 				this.limpiarCampos()
@@ -293,7 +293,7 @@
 			validaInfo(){
 				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL USUARIO"   ; return }
 				if(!this.correo)	 { this.snackbar = true; this.text="No puedes omitir el CORREO" ; return }
-				if(!this.nivel)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
+				if(!this.nivel.id)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
 				if(!this.Sucursal) { this.snackbar = true; this.text="No puedes omitir la SUCURSAL"; return }
 
 				if(this.param === 1){
@@ -327,21 +327,13 @@
 			},
 
 			PrepararPeticion(){
-				var nivel = 0;
-				if(this.nivel === 'Administrador'){
-					nivel = 1;
-				}else if(this.nivel === 'Supervisor'){
-					nivel = 2;
-				}else{
-					nivel = 3;
-				}
-
 				// FORMAR ARRAY A MANDAR
 				const payload = { nombre	    : this.nombre,
 													correo	    : this.correo,
 													password		: this.PasswordAEdit,
-													nivel       : nivel,
-													id_sucursal	: this.id_sucursal,
+													nivel       : this.nivel.id,
+													// id_sucursal	: this.id_sucursal,
+													id_sucursal : 1,
 													foto        : '',
 													estatus: 1 
 												}
@@ -351,12 +343,13 @@
 
 			CrearUsuario(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ;
-				setTimeout(() => (this.dialog = false), 2000)
+				this.dialog = true ;setTimeout(() => (this.dialog = false), 2000)
 				
 				// MANDO A INSERTAR CLIENTE
 				this.$http.post('usuarios', payload).then((response)=>{
 					this.TerminarProceso(response.body);					
+				}).catch(error =>{
+					console.log('error',error)
 				})
 			},
 

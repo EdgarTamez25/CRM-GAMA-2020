@@ -14,7 +14,9 @@ export default new Vuetify({
 					amarillo: '#f4e200',// AMARILLO
 					negro: '#272727',   // NEGRO
 					morado: '#894975',  // MORADO
-					gris: '#6f7170'     // GRIS
+					gris: '#6f7170',     // GRIS
+					primary: '#0096cb', // CELESTE
+
 				},
 			},
 		},

@@ -24,20 +24,20 @@
 			      :items="getClientes"
 			      :search="search"
 			      fixed-header
-				  height="500px"
-				  hide-default-footer
+						height="500px"
+						hide-default-footer
+						:loading ="Loading"
+						loading-text="Cargando... Por favor espere."
 			    >
 			    	<template v-slot:item.action="{ item }" > 
-			    		<!-- <v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> Cotizacion -->
-			    		<!-- <v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     Seguimiento -->
-			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
+			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
 				    </template>
 
 			    </v-data-table>
 			  </v-card>
 
 				 <v-dialog persistent v-model="dialog" width="700px" >	
-		    	<v-card>
+		    	<v-card class="pa-5">
 		    		<ControlClientes :param="param" :edit="edit" @modal="dialog = $event" />
 		    	</v-card>
 		    </v-dialog>
@@ -49,7 +49,6 @@
 <script>
 	import ControlClientes  from '@/views/Catalogos/Clientes/ControlClientes.vue';
 	import {mapGetters, mapActions} from 'vuex';
-
 	export default {
 		components: {
 			ControlClientes
@@ -57,6 +56,7 @@
 		data () {
 				return {
 					search: '',
+					movie:'data',
 					dialog: false,
 					param: 0,
 					edit:'',
@@ -65,7 +65,6 @@
 						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
 						{ text: 'Razon Social' , align: 'left'  , value: 'razon_social' },
 						{ text: 'RFC'				    , align: 'left' , value: 'rfc' 	},
-						// { text: 'CURP'		      , align: 'left' , value: 'curp' },
 						{ text: ''  , align: 'right' , value: 'action', sortable: false },
 					],
 				}
@@ -76,7 +75,7 @@
 			},
 
 			computed:{
-				...mapGetters('Clientes'  ,['getClientes']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+				...mapGetters('Clientes'  ,['Loading','getClientes']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
 			},
 
 			methods:{
@@ -86,9 +85,8 @@
 					this.param = action;
 					this.edit = items;
 					this.dialog = true;
+					var movie = 'Parasite'
 				},
-
-				
 				
 			}
 	}
