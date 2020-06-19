@@ -92,9 +92,8 @@
 					{{ param === 2?'PASAR A COTIZADO':'PASAR A RECOTIZAR '}}
 
 					</v-btn>
-
 					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="morado" 
-						 v-if="param === 5 || edit.fase_venta != 6 || edit.fase_venta === 7"
+						 v-if="param === 5 || edit.fase_venta === 6 || edit.fase_venta === 7"
 						 @click="validarEntrega"
 					>
 						{{  entregar }}

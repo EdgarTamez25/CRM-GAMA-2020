@@ -10,6 +10,8 @@ import Monedas from '@/modules/Monedas';
 import Proveedores from '@/modules/Proveedores';
 import Productos from '@/modules/Productos';
 import Precios from '@/modules/Precios';
+import Prospectos from '@/modules/Prospectos';
+
 
 // COMPROMISOS
 import Compromisos from '@/modules/Compromisos';
@@ -35,6 +37,7 @@ export default new Vuex.Store({
     Proveedores,
     Productos,
     Precios,
-    Compromisos
+    Compromisos,
+    Prospectos
   }
 })

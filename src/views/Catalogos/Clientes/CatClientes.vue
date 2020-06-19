@@ -1,8 +1,8 @@
 <template>
-  <v-container>
+  <v-content class="pa-0">
   	<v-row class="justify-center">
-  		<v-col cols="12">
-				<v-card-actions> <h3><strong> Catálogo de Clientes</strong></h3></v-card-actions>
+  		<v-col cols="12" sm="10">
+				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE CLIENTES </v-card-actions>
 
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
@@ -27,6 +27,7 @@
 						height="500px"
 						hide-default-footer
 						:loading ="Loading"
+						disable-pagination
 						loading-text="Cargando... Por favor espere."
 			    >
 			    	<template v-slot:item.action="{ item }" > 
@@ -43,7 +44,7 @@
 		    </v-dialog>
   		</v-col>
   	</v-row>
-  </v-container>
+  </v-content>
 </template>
 
 <script>

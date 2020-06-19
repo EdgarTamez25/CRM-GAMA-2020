@@ -31,16 +31,19 @@
   import CatMonedas     from '@/views/Catalogos/Monedas/CatMonedas.vue';
   import ControlMonedas from '@/views/Catalogos/Monedas/ControlMonedas.vue';
 
-  import Calendario from '@/views/Calendario.vue';
+  // import Calendario from '@/views/Calendario.vue';
   import analisisFases from '@/views/Historial/analisisFases.vue';
+  import Prospectos from '@/views/Catalogos/Prospectos/Prospectos.vue';
+
+  import Prueba from '@/views/Prueba.vue';
 
 
-
+  
 
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/calendario'				 , name: 'calendario'		     , component: Calendario },
+  // { path: '/calendario'				 , name: 'calendario'		     , component: Calendario },
   { path: '/'				 , name: 'Home'		     , component: Home },
   { path:'/pendientes'		 , name:'pendientes'	 , component: Pendientes},
 
@@ -48,7 +51,6 @@ const routes = [
   { path:'/compromisos'		    , name:'compromisos'	     , component: Compromisos},
   { path:'/control_compromiso', name:'control_compromiso', component: ControlCompromiso},
   { path:'/control_fases', name:'control_fases', component: ControldeFases},
-
 
   //USUARIOS
   { path:'/usuarios'		    , name:'usuarios'	      , component: CatUsuarios},
@@ -62,7 +64,7 @@ const routes = [
   // PRODUCTOS
   { path:'/productos'		    , name:'productos'	      , component: CatProductos},
   { path:'/control-producto', name:'control-producto', component: ControlProductos},
-  // ZONAS Y SUBZONAS
+  // ZONAS 
   { path:'/zonas-subzonas'	 , name:'zonas'	        , component: CatZonas},
   { path:'/control-zonas'    , name:'control-zonas' , component: ControlZonas},
   // CARTERAS
@@ -73,6 +75,12 @@ const routes = [
   { path:'/control-monedas' , name:'control-monedas' , component: ControlMonedas},
   // HISTORIAL
   { path:'/analisis-fases' , name:'analisis-fases' , component: analisisFases},
+
+  { path: '/prospectos'     ,  name: 'prospectos',  component: Prospectos },
+
+  { path: '/prueba'     ,  name: 'prueba',  component: Prueba },
+
+
 
 
   

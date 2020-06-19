@@ -5,11 +5,8 @@
 				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
 					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 				</v-snackbar>
-				<v-row>
-					<v-col cols="12" sm="6" md="3"> <!-- TITULO DE LA VISTA -->
-						<h3><strong> COMPROMISOS </strong></h3>
-					</v-col>
-				</v-row>
+			
+				<v-card-actions class="font-weight-black headline"> COMPROMISOS </v-card-actions>
 
 				<!-- CATALOGO DE COMPROMISOS -->
 				<v-card class="elevation-10 mt-3" >
@@ -35,6 +32,8 @@
 				 		height="500px"
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
+						hide-default-footer
+						disable-pagination
 			    >
 						<template v-slot:item.tipo_compromiso="{ item }" > {{ item.tipo_compromiso === 1? 'Interno': 'Externo'}}</template>
 						<template v-slot:item.fase_venta="{ item }" >
@@ -77,7 +76,8 @@
 								@click="abrirModalFases(item.fase_venta,item)"
 							>
 								<v-icon> local_shipping </v-icon>
-							</v-btn> <!-- departure_board-->
+							</v-btn> 
+							
 			    		<v-btn color="red " class="ma-1" fab small dark  v-if="item.fase_venta === 7"
 								@click="abreModal(item)"
 							>
@@ -88,7 +88,66 @@
 			    </v-data-table>
 			  </v-card>
 
-				<v-dialog v-model="confirmaModal" persistent max-width="400" > <!-- CONFIRMACION DE PROCESO  -->
+				<!-- CONTROLADOR DEL COMPROMISO  -->
+				<v-dialog persistent v-model="compromisoModal" width="700px" >	
+		    	<v-card>
+		    		<ControlCompromiso :param="param" :edit="edit" @modal="compromisoModal = $event" />
+		    	</v-card>
+		    </v-dialog>
+
+				<!-- CONTROLADOR DE FASES  -->
+				<v-dialog persistent v-model="fases" width="500px" >	
+		    	<v-card>
+		    		<ControldeFases :param="param" :edit="edit" @modal="fases = $event" />
+		    	</v-card>
+		    </v-dialog>
+
+				<!-- HISTORIAL DEL COMPROMISO -->
+				<v-dialog persistent v-model="Historial" width="650px" >	
+		    	<v-card class="pa-0">
+						<v-card-actions class="rosa white--text">
+							<v-card-title  >Fases del compromiso</v-card-title>
+							<v-spacer></v-spacer>
+							<v-btn color="white" small @click="Historial=false" text><v-icon>clear</v-icon></v-btn>
+						</v-card-actions>
+
+						<v-data-table
+							:headers="hfases"
+							:items="resumen"
+							:single-expand="singleExpand"
+							:expanded.sync="expanded"
+							item-key="id"
+							show-expand
+							hide-default-header
+							hide-default-footer
+							disable-pagination
+						>
+							<template v-slot:item.fase_venta="{ item }">
+								<span class="font-weight-bold text-left"> {{ fase_ventas[item.fase_venta-1] }} 
+										<span v-if="item.fase_venta === 8" class="overline	"> 
+											({{ item.aceptado===1?'Entregado':'Sin entregar'}}) 
+										</span>
+								</span>
+							</template>
+
+							<template v-slot:item.hora="{ item }">
+								{{ item.hora >='12:00'? item.hora +' '+'pm': item.hora+ ' '+'am' }}
+							</template>
+
+							<template v-slot:expanded-item="{ headers, item }" >
+								<td class="celeste white--text " :colspan="headers.length" v-if="item.obscierre">{{ item.obscierre }} </td>
+							</template>
+
+							<template v-slot:item.actions="{ item }" >
+								<v-btn icon small color="red"><v-icon color="red" v-if="item.obscierre">priority_high</v-icon></v-btn>
+							</template>
+
+						</v-data-table>
+		    	</v-card>
+		    </v-dialog>
+
+				<!-- CONFIRMACION DE PROCESO  -->
+				<v-dialog v-model="confirmaModal" persistent max-width="400" > 
 					<v-card color="red darken-4" dark>
 						<v-card-title class="">
 						El proyecto se cerrara para siempre.
@@ -110,55 +169,6 @@
 						</v-card-actions>
 					</v-card>
 				</v-dialog> <!-- CONFIRMACION DE PROCESO  -->
-
-				 <v-dialog persistent v-model="compromisoModal" width="700px" >	
-		    	<v-card>
-		    		<ControlCompromiso :param="param" :edit="edit" @modal="compromisoModal = $event" />
-		    	</v-card>
-		    </v-dialog>
-
-				<v-dialog persistent v-model="fases" width="500px" >	
-		    	<v-card>
-		    		<ControldeFases :param="param" :edit="edit" @modal="fases = $event" />
-		    	</v-card>
-		    </v-dialog>
-
-				<v-dialog persistent v-model="Historial" width="600px" >	
-		    	<v-card class="pa-0">
-						<v-card-actions class="rosa white--text">
-							<v-card-title  >Fases del compromiso</v-card-title>
-							<v-spacer></v-spacer>
-							<v-btn color="white" small @click="Historial=false" text><v-icon>clear</v-icon></v-btn>
-						</v-card-actions>
-
-						<v-data-table
-							:headers="hfases"
-							:items="resumen"
-							:single-expand="singleExpand"
-							:expanded.sync="expanded"
-							item-key="id"
-							show-expand
-							hide-default-header
-							hide-default-footer
-						>
-							<template v-slot:item.fase_venta="{ item }">
-								<span class="font-weight-bold text-left"> {{ fase_ventas[item.fase_venta-1] }} 
-										<span v-if="item.fase_venta === 8" class="overline	"> 
-											({{ item.aceptado===1?'Entregado':'Sin entregar'}}) 
-										</span>
-								</span>
-							</template>
-
-							<template v-slot:item.hora="{ item }">
-								{{ item.hora >='12:00'? item.hora +' '+'pm': item.hora+ ' '+'am' }}
-							</template>
-
-							<template v-slot:expanded-item="{ headers, item }">
-								<td class="celeste white--text" :colspan="headers.length">More info about {{ item.name }}</td>
-							</template>
-						</v-data-table>
-		    	</v-card>
-		    </v-dialog>
 
 				<!-- PROCESO PARA GUARDAR -->
 				<v-dialog v-model="dialog" hide-overlay persistent width="300">
@@ -209,7 +219,9 @@
 				hfases: [	{ text: 'fase venta'  , align: 'left'	 , value: 'fase_venta' },
 									{ text: 'fecha'   		, align: 'left'	 , value: 'fecha' },
 									{ text: 'hora'   		  , align: 'left'	 , value: 'hora' },
-									{ text: '', value: 'data-table-expand' }
+									{ text: ''						, value: 'data-table-expand' },
+									{ text: ''						, value: 'actions' }
+
 								],
 				headers: [
 						{ text: '#'   		, align: 'left'	 , value: 'id' },
@@ -279,7 +291,8 @@
 																fecha			: moment(response.body[i].fecha).format('LL'),
 																hora 			: response.body[i].hora,
 																aceptado	: response.body[i].aceptado,
-																id: response.body[i].id
+																id: response.body[i].id,
+																obscierre : response.body[i].obscierre
 															})
 					}
 					this.Historial = true

@@ -2,8 +2,7 @@
   <v-container>
   	<v-row class="justify-center">
   		<v-col cols="12" lg="8">
-				<v-card-actions> <h3><strong> Catálogo de Zonas</strong></h3></v-card-actions>
-
+				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE ZONAS </v-card-actions>
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
@@ -25,6 +24,7 @@
 			      fixed-header
 				  height="500px"
 				  hide-default-footer
+					disable-pagination
 			    >
 			    	<template v-slot:item.action="{ item }" > 
 			    		<!-- <v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> Cotizacion -->

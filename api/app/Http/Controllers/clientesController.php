@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\clientes;
+use App\prospectos;
 
 class clientesController extends Controller
 {
     /**
-     * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -20,7 +20,7 @@ class clientesController extends Controller
 																	 c.tel1,c.tel2,c.contacto,c.diasfact
                             FROM clientes c LEFT JOIN zonas 		z ON c.id_zona = z.id
                                             LEFT JOIN carteras ca ON c.id_cartera = ca.id 
-                            WHERE c.estatus = 1');
+                            WHERE c.estatus = 1 and c.prospecto = 0');
         return $data;
     }
 
@@ -38,7 +38,8 @@ class clientesController extends Controller
     public function update($id, Request $req){
 				$data = DB::update('UPDATE clientes SET nombre=:nombre, direccion=:direccion, id_zona=:id_zona,tipo_cliente=:tipo_cliente,
 																								rfc=:rfc, id_cartera=:id_cartera, razon_social=:razon_social, nivel=:nivel,
-																								fuente=:fuente, tel1=:tel1, tel2=:tel2, contacto=:contacto,	diasfact=:diasfact 
+																								fuente=:fuente, tel1=:tel1, tel2=:tel2, contacto=:contacto,	diasfact=:diasfact,
+																								prospecto=:prospecto
 															WHERE id=:id'
 														,['nombre'				=> $req -> nombre,  		 'direccion'    => $req -> direccion,
 															'id_zona'       => $req -> id_zona, 		 'tipo_cliente'	=> $req	-> tipo_cliente, 
@@ -46,12 +47,19 @@ class clientesController extends Controller
 															'razon_social'	=> $req	-> razon_social, 'nivel'		   	=> $req	-> nivel, 
 															'fuente'				=> $req	-> fuente,       'tel1'					=> $req -> tel1,
 															'tel2'					=> $req -> tel2,         'contacto'			=> $req -> contacto,
-															'diasfact'			=> $req -> diasfact,     'id'						=> $id
+															'diasfact'			=> $req -> diasfact,     'prospecto'    => $req -> prospecto,
+															 'id'						=> $id
 														]
 													);
 				
 				return 'El cliente se actualizo correctamente';
     }
-    
+		
+
+		// public function EliminarProspecto($id){
+		// 	$EliminaProspecto = prospectos::findOrFail($id);
+		// 	prospectos::findOrFail($id)->delete();
+		// 	return "El cliente se creo correctamente.";
+		// }
 
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 use App\User;
 
 class userController extends Controller
@@ -13,6 +15,7 @@ class userController extends Controller
         return $Usuarios;
 		}
 		
+		
 		public function getcatalogo(){
 			$data = DB::select('SELECT u.id, u.nombre, u.password, u.correo, u.nivel, u.id_sucursal, s.nombre as nomsuc, u.foto
 														FROM users u LEFT JOIN sucursales s ON u.id_sucursal = s.id');
@@ -20,12 +23,20 @@ class userController extends Controller
 		}
 		
 		public function add(Request $request){
-			//REVISO QUE EL USUARIO NO EXISTA
-			if($this->validaEmail($request -> correo)):
-				return "Lo sentimos, este usuario ya se encuentra registrado";
-			endif;
+			// $addusuario = User::create($request->all());
+				
+			// $path = Storage::disk('public')->put('images', $request->file('file'));
+			// $addusuario -> fill(['foto' => asset($path)])->save();
 
-			$addusuario = User::create($request->all());
+			// return $path;
+
+			//REVISO QUE EL USUARIO NO EXISTA
+			// if($this->validaEmail($request -> correo)):
+			// 	return "Lo sentimos, este usuario ya se encuentra registrado";
+			// endif;
+
+
+		 $addusuario = User::create($request->all());
     		if($addusuario):
 				return "El usuario se ah insertado correctamente";
 			else:

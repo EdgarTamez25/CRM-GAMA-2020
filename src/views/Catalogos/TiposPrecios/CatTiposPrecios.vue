@@ -24,6 +24,7 @@
 			      fixed-header
 				  	height="500px"
 				  	hide-default-footer
+						disable-pagination
 			    >
 			    	<template v-slot:item.action="{ item }" > 
 			    		<v-btn  class="green darken-4" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->

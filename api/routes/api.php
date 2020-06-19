@@ -7,6 +7,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
+
 //=================================== USUARIOS======================================================
 Route::get('catusuarios'  ,'userController@getcatalogo')-> name('catusuarios');   
 Route::get('usuarios'	    ,'userController@getAll')     -> name('getAllUsuarios');  			 //PROBADA
@@ -110,12 +115,28 @@ Route::post('historial' ,'histrorialController@Historial') -> name('Historial');
 Route::post('historialxvend' ,'histrorialController@HistorialxVend') -> name('HistorialxVend');
 Route::post('recotización' ,'histrorialController@Recotización') -> name('recotización');
 
-
-
-
 ////================================== ENTREGAS ==================================================
 Route::post('entrega.producto' ,'entregasController@EntregarProducto') -> name('EntregarProducto');
 Route::post('entrega.id','entregasController@entregabyid')-> name('Entregabyid');
+
+//==================================== PROSPECTOS =====================================================
+Route::get('prospectos' ,'prospectosController@Prospectos')     -> name('Prospectos');
+Route::get('prospectos.id/{id}' ,'prospectosController@ProspectosxId')     -> name('ProspectosxId');
+Route::post('add.prospecto','prospectosController@addProspecto')           -> name('addProspecto');
+Route::put('update.prospecto/{id}','prospectosController@UpdateProspecto') -> name('UpdateProspecto');
+Route::post('pasar.cliente','prospectosController@PasarACliente')           -> name('PasarACliente');
+Route::delete('delete.prospecto/{id}','clientesController@EliminarProspecto')  -> name('EliminarProspecto'); 
+
+Route::post('prueba','pruebasController@get')  -> name('get'); 
+Route::get('prueba/{id}','pruebasController@getId')  -> name('getId'); 
+Route::post('prueba.post','pruebasController@post')  -> name('post'); 
+Route::put('prueba.put','pruebasController@put')  -> name('put'); 
+
+
+
+
+
+
 
 
 

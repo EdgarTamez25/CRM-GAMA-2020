@@ -125,7 +125,7 @@ export default {
 						{id:7,nombre:'Entregas Rechazadas'},
 						{id:8,nombre:'Proyectos cerrrados'}
 					],
-		fase: { id:2 , nombre:'Por Cotizar'},
+		fase: { id:1 , nombre:'Prospecto'},
 		img: ['https://www.amcharts.com/lib/images/faces/A04.png',
 					'https://www.amcharts.com/lib/images/faces/C02.png',
 					'https://www.amcharts.com/lib/images/faces/D02.png',

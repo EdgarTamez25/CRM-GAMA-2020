@@ -2,8 +2,7 @@
   <v-container>
   	<v-row class="justify-center">
   		<v-col cols="12"  lg="8">
-				<v-card-actions> <h3><strong> Catálogo de Monedas</strong></h3></v-card-actions>
-
+				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE MONEDAS </v-card-actions>
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
@@ -27,6 +26,7 @@
 				  	height="500px"
 				  	hide-default-footer
 						:loading ="Loading"
+						disable-pagination
 						loading-text="Cargando... Por favor espere."
 			    >
 			    	<template v-slot:item.action="{ item }" > 

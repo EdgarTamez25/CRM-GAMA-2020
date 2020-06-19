@@ -30,14 +30,14 @@
 						></v-autocomplete>
 					</v-col>
 
-					<v-col cols="12" sm="6" > <!-- TIPO DE COMPROMISOS -->
+					<v-col cols="12" sm="6" > 
 						<v-select
 							:items="['Externo']" v-model="tipo_compromiso" label="Tipo de compromiso" 
 							 placeholder ="Tipo de compromiso" outlined dense hide-details append-icon="home_work"
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" sm="6" > <!-- CATEGORIA -->
+					<v-col cols="12" sm="6" > 
 						<v-select
 							:items="categorias" item-text="nombre" v-model="Categoria" label="Categoria"  
 							 placeholder ="Categorias" outlined dense hide-details append-icon="ballot"
@@ -67,7 +67,7 @@
 						</v-dialog>
 					</v-col>
 
-					<v-col cols="11" sm="6"> <!-- HORA DEL INICIO -->
+					<v-col cols="12" sm="6"> <!-- HORA DEL INICIO -->
 						<v-dialog ref="hora_compromiso" v-model="horamodal" :return-value.sync="hora" persistent width="290px" >
 
 							<template v-slot:activator="{ on }">
@@ -101,7 +101,7 @@
 						</v-dialog>
 					</v-col>
 
-					<v-col cols="11" sm="6"> <!-- HORA DEL FIN -->
+					<v-col cols="12" sm="6"> <!-- HORA DEL FIN -->
 						<v-dialog ref="horaFin" v-model="horaFinmodal" :return-value.sync="hora_fin" persistent width="290px" >
 
 							<template v-slot:activator="{ on }">
@@ -182,23 +182,19 @@
 
 				// FECHA
 				fecha						: new Date().toISOString().substr(0, 10),
-				menu 						: false,
 				fechamodal 			: false,
 				fecha_compromiso: false,
 				
 				fechaFin		  : false,
-				menu3 			  : false,
 				fechaFinmodal : false,
 				fecha_fin			: '',
 
 				// HORA
 				hora 					 : null,
-        menu2 				 : false,
         horamodal			 : false,
 				hora_compromiso: false,
 
 				horaFin			: false,
-        menu4				: false,
         horaFinmodal: false,
 				hora_fin    : null,
 				
@@ -280,8 +276,8 @@
 				var ff = this.fecha_fin + " " + this.hora_fin;
 
 				if(!this.vendedor)	 			{ this.snackbar = true; this.text="No puedes omitir el VENDEDOR"   					 ; return }
-				if(!this.tipo_compromiso)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
-				if(!this.Categoria)				{ this.snackbar = true; this.text="No puedes omitir la CATEGORIA"   				 ; return }
+				// if(!this.tipo_compromiso)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
+				// if(!this.Categoria)				{ this.snackbar = true; this.text="No puedes omitir la CATEGORIA"   				 ; return }
 				if(!this.fecha)						{ this.snackbar = true; this.text="No puedes omitir la FECHA"   						 ; return }
 				if(!this.hora)						{ this.snackbar = true; this.text="No puedes omitir la HORA"   							 ; return }
 				if(!this.fecha_fin)				{ this.snackbar = true; this.text="No puedes omitir la FECHA FINAL" 				 ; return }

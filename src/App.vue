@@ -172,7 +172,7 @@
     </div>
 
     <v-app-bar app color="rosa" dark class="elevation-0" v-ripple >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" ></v-app-bar-nav-icon>
+       <img src="logo.png" height="40" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
 
       <v-toolbar-items text-right> 
@@ -180,7 +180,6 @@
           <v-icon large>attach_money</v-icon>
         </v-btn>
       </v-toolbar-items>
-      <img src="@/assets/logoCRM.png" width="50px">
     </v-app-bar>
    
   </v-app>
@@ -206,7 +205,8 @@ export default {
             { text: 'Inicio'      ,icon: 'home'               ,path: '/'},
             { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
             { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
-            // { text: 'Pruebas'  ,icon: 'ballot'             ,path: '/calendario'},
+            // { text: 'prueba'  ,icon: 'ballot'             ,path: '/prueba'},
+
 
             ],
         },
@@ -229,6 +229,7 @@ export default {
           catalogos: [ 
             { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
             { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
+            { text: 'Prospectos'  ,icon: 'person_pin_circle'  ,path: '/prospectos'},
             { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
             { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
             { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},

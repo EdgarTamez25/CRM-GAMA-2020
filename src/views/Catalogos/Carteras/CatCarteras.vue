@@ -2,8 +2,7 @@
   <v-container>
   	<v-row class="justify-center">
   		<v-col cols="12" lg="6">
-				<v-card-actions> <h3><strong> Catálogo de Carteras</strong></h3></v-card-actions>
-
+				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE CARTERAS </v-card-actions>
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
@@ -25,6 +24,7 @@
 			      fixed-header
 				  	height="500px"
 				  	hide-default-footer
+						disable-pagination
 			    >
 			    	<template v-slot:item.action="{ item }" > 
 			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->

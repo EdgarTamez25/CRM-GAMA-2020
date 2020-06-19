@@ -13,7 +13,8 @@ class histrorialController extends Controller
 	}
 
 	public function VerResumen($id){
-			$resumen = DB::select('SELECT id,fase_venta, fecha, hora, aceptado FROM historial WHERE id_compromiso=?',[$id]);
+			$resumen = DB::select('SELECT id,fase_venta, fecha, hora, aceptado , obscierre
+															FROM historial WHERE id_compromiso=?',[$id]);
 			return $resumen;
 	}
 

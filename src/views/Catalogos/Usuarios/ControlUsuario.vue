@@ -13,6 +13,7 @@
 				</v-card-actions>
 
 				<v-divider class="ma-2"></v-divider>
+				<!-- <v-form> -->
 				<v-row>
 					<v-col cols="12" lg="12">
 						<v-text-field
@@ -25,16 +26,6 @@
 							v-model ="nombre"
 						></v-text-field>
 					</v-col>
-
-					<!-- <v-col cols="12" lg="4" class="text-right">
-						<v-avatar size="90px" tile  v-if="foto"> 
-							<v-img :src="foto" aspect-ratio="10" contain max-height="200px" min-height="200px" ></v-img>
-						</v-avatar>
-
-						<v-avatar size="90px" v-else> 
-							<v-img src="persona.jpg" aspect-ratio="10" contain max-height="200px" min-height="200px" ></v-img>
-						</v-avatar>
-					</v-col> -->
 
 					<v-col cols="12" lg="6">
 						<v-text-field
@@ -109,9 +100,9 @@
 						</v-col>
 					</template>
 
-					<v-col cols="12" lg="6"  v-show="param === 2" class="text-right pa-4"> <!-- BOTON PARA MOSTRAR CONTRASEÑAS -->
-						<v-btn small rounded color="celeste" dark  @click="cambiaPassword = !cambiaPassword" v-if="cambiaPassword"> Cambiar Contraseña	</v-btn>
-						<v-btn small rounded color="gris" dark @click="cambiaPassword = !cambiaPassword" v-else > Cancelar </v-btn>
+					<v-col cols="12"   v-show="param === 2" class="text-right pa-4"> <!-- BOTON PARA MOSTRAR CONTRASEÑAS -->
+						<v-btn small block rounded color="celeste" dark  @click="cambiaPassword = !cambiaPassword" v-if="cambiaPassword"> Cambiar Contraseña	</v-btn>
+						<v-btn small block rounded color="gris" dark @click="cambiaPassword = !cambiaPassword" v-else > Cancelar </v-btn>
 					</v-col>
 
 					<template v-if="!cambiaPassword">
@@ -144,6 +135,27 @@
 							></v-text-field>
 						</v-col>
 					</template>
+
+					<!-- <v-col cols="12">
+						<v-row>
+							<v-col cols="6" class="text-left">
+								<v-file-input
+									filled
+									dense
+									hide-details
+									v-model="file"
+									accept="image/png, image/jpeg, image/bmp"
+									placeholder="Sube una imagen*"
+									prepend-icon="mdi-camera"
+									label="Sube una imagen*"
+									@change="cargar()"
+								></v-file-input>			
+							</v-col>
+							<v-col  v-if="photo_result" cols="6" >
+								<v-img :src="photo_result" aspect-ratio="2.5" contain />
+							</v-col>
+						</v-row>
+					</v-col> -->
 				</v-row>
 
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
@@ -210,6 +222,7 @@
 	  ],
 	  data () {
 			return {
+				foto2:[],
 				titleModal: 'Usuario',
 				// VARIABLES PARA CONTRASEÑA
 				cambiaPassword: true,
@@ -229,7 +242,9 @@
 											{ id:3, nombre:'Vendedor'},
 											{ id:4, nombre:'Chofer'}
 										],
-				foto      : '',
+				file: [],
+				url:'',
+				photo_result:'',
 				// SELECTORES
 				id_sucursal  : 0,
 				sucursal     : [],
@@ -264,12 +279,35 @@
 			edit: function(){
 				this.cambiaPassword= true
 				this.validarModoVista();
+			},
+
+			foto: function(){
+				// console.log('1',this.foto)
 			}
 		},
 
 		methods:{
 			// IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 			...mapActions('Usuarios'  ,['consultaUsuarios']),
+
+			cargar(){
+        console.log(this.file)
+        if(this.file.length < 1){
+          return
+        }
+        //mandamos a ocvertir la imagen a base64 pero mandamos el docuemnto, el formdata, el nombre
+        this.getBase64(this.file)
+      },
+
+      getBase64(file) {
+        var me = this
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+          me.photo_result =  reader.result 
+          me.name_photo = file.name
+        };
+      },
 
 			validarModoVista(){
 				if(this.param === 2){
@@ -328,15 +366,20 @@
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
+        let formData = new FormData(); // creamos una variable tipo FormData
+				formData.append('file', this.file);
+
 				const payload = { nombre	    : this.nombre,
 													correo	    : this.correo,
 													password		: this.PasswordAEdit,
 													nivel       : this.nivel.id,
-													// id_sucursal	: this.id_sucursal,
+													id_sucursal	: this.id_sucursal,
 													id_sucursal : 1,
-													foto        : '',
+													// file       : formData,
+													foto       : '',
 													estatus: 1 
 												}
+											
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearUsuario(payload): this.ActualizarUsuario(payload);
 			},
@@ -347,11 +390,14 @@
 				
 				// MANDO A INSERTAR CLIENTE
 				this.$http.post('usuarios', payload).then((response)=>{
-					this.TerminarProceso(response.body);					
+					console.log('res',response.body)
+					// this.TerminarProceso(response.body);					
 				}).catch(error =>{
 					console.log('error',error)
 				})
 			},
+
+			
 
 			ActualizarUsuario(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO

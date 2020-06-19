@@ -32,6 +32,7 @@
 				    height="500px"
 				    hide-default-footer
 						:loading ="Loading"
+						disable-pagination
 						loading-text="Cargando... Por favor espere."
 			    >
 			    	<template v-slot:item.action="{ item }"  > 
