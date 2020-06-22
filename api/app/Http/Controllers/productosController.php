@@ -26,7 +26,7 @@ class productosController extends Controller
 		// }
 
 		public function getcatalogo(){
-			$CatProductos = DB::select('SELECT p.id, p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,p.cantidad,
+			return  DB::select('SELECT p.id, p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,p.cantidad,
 																				 p.id_linea, l.nombre as nomlin, p.id_unidad, u.nombre as nomunidad,
 																			IFNULL( ( SELECT pr.precio FROM precios pr WHERE predeterminado =1 AND id_producto = p.id), "0.00") AS precio,
 																			IFNULL( ( SELECT m.codigo  FROM precios pr LEFT JOIN monedas m ON pr.id_moneda = m.id 
@@ -38,8 +38,10 @@ class productosController extends Controller
 																										LEFT JOIN precios pr ON pr.id_proveedor = prov.id 
 																								WHERE pr.predeterminado = 1 AND prov.nombre = nomprov),"0") AS id_proveedor
 																	FROM productos p LEFT JOIN lineas_prods l 	ON p.id_linea 		= l.id
-																						LEFT JOIN unidades u       ON p.id_unidad    = u.id');
-			return $CatProductos;
+																						LEFT JOIN unidades u       ON p.id_unidad    = u.id') ;
+		
+			return response()->json($CatProductos);
+			// return $CatProductos;
 		}
 
 		public function add(Request $request){

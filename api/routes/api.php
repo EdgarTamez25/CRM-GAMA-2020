@@ -17,8 +17,8 @@ Route::get('catusuarios'  ,'userController@getcatalogo')-> name('catusuarios');
 Route::get('usuarios'	    ,'userController@getAll')     -> name('getAllUsuarios');  			 //PROBADA
 Route::post('usuarios'    ,'userController@add')        -> name('addUsuarios');    				 //PROBADA
 Route::put('usuarios/{id}','userController@update')  		-> name('updateUsuarios');  			 //PROBADA
-Route::delete('usuarios/{id}','userController@delete')  -> name('deleteUsuarios');  			 //PROBADA
-Route::get('choferes'	    ,'userController@choferesAll')     -> name('choferesAll');  		 //PROBADA
+Route::delete('usuarios/{id}','userController@delete')   -> name('deleteUsuarios');  			 //PROBADA
+Route::get('choferes'	    ,'userController@choferesAll') -> name('choferesAll');  		 //PROBADA
 
 //=================================== VENDEDORES======================================================
 Route::get('vendedores'		 ,'vendedoresController@vendedores')-> name('VendxSuc');  			 //PROBADA

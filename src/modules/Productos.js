@@ -21,7 +21,7 @@ export default{
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('PRODUCTOS', [])
 			Vue.http.get('catproductos').then(response=>{
-				console.log('productos',response.body)
+				console.log('productos',response)
 
 				commit('PRODUCTOS', response.body)
 			}).catch((error)=>{
