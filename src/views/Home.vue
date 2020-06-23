@@ -52,7 +52,7 @@
                     </v-expand-transition>
                 </v-img>
 
-                <v-img aspect-ratio="1" contain src="@/assets/sinfoto2.jpg"  max-height="250px" min-height="250px" v-else>
+                <v-img aspect-ratio="1" contain src="sinfoto2.jpg"  max-height="250px" min-height="250px" v-else>
                   <v-expand-transition>
                       <div
                         v-if="hover"
