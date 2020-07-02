@@ -223,7 +223,6 @@
 				const events = [];
 				this.$http.get('compromisos').then( response =>{
 					this.compromisos = response.body
-					console.log('compromisos',this.compromisos)
 					for(var i = 0; i < this.compromisos.length; i++) {
 						events.push({	name: this.compromisos[i].nomcatego,
 													start: this.compromisos[i].fecha + " " + this.compromisos[i].hora,

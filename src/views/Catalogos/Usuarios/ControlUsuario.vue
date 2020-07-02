@@ -15,15 +15,27 @@
 				<v-divider class="ma-2"></v-divider>
 				<!-- <v-form> -->
 				<v-row>
-					<v-col cols="12" lg="12">
+					<v-col cols="12" lg="6">
 						<v-text-field
 							append-icon="person"
 							label="Nombre"
-							placeholder="Nombre del usuario"
+							placeholder="Nombre del empleado"
 							hide-details
 							dense
 							clearable
 							v-model ="nombre"
+						></v-text-field>
+					</v-col>
+
+					<v-col cols="12" lg="6">
+						<v-text-field
+							append-icon="android"
+							label="Usuario"
+							placeholder="Usuario "
+							hide-details
+							dense
+							clearable
+							v-model ="usuario"
 						></v-text-field>
 					</v-col>
 
@@ -195,7 +207,7 @@
           </v-dialog>
 
 					<v-dialog v-model="Correcto" hide-overlay persistent width="350"> <!-- PROCESO CORRECTO -->
-            <v-card color="success"  dark class="pa-3">
+            <v-card :color="colorCorrecto"  dark class="pa-3">
 							<h3><strong>{{ textCorrecto }} </strong></h3>
             </v-card>
           </v-dialog>
@@ -250,6 +262,7 @@
 				sucursal     : [],
 				sucursales   : [],
 				Sucursal     : '',
+				usuario:     '',
 				
 				// ALERTAS
 				snackbar: false,
@@ -258,6 +271,7 @@
 				dialog : false,
 				textDialog : "Guardando Información",
 				Correcto   : false,
+				colorCorrecto: 'green',
 				textCorrecto: '',
 				colorDialog: 'blue darken-4',
 				// BOTON DE BORRAR
@@ -312,13 +326,13 @@
 			validarModoVista(){
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
-					console.log('edit', this.edit)
 					this.id_usuario     = this.edit.id
 					this.nombre 				= this.edit.nombre
 					this.correo 				= this.edit.correo
 					this.PasswordActual = this.edit.password
 					this.Sucursal 			= this.edit.nomsuc
 					this.foto 					= this.edit.foto
+					this.usuario        = this.edit.usuario
 					this.nivel          = { id    : this.niveles[this.edit.nivel-1].id , 
 																	nombre: this.niveles[this.edit.nivel-1].nombre
 																}
@@ -329,7 +343,8 @@
 			},
 
 			validaInfo(){
-				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL USUARIO"   ; return }
+				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL EMPLEADO"   ; return }
+				if(!this.usuario)	 { this.snackbar = true; this.text="No puedes omitir el USUARIO"   ; return }
 				if(!this.correo)	 { this.snackbar = true; this.text="No puedes omitir el CORREO" ; return }
 				if(!this.nivel.id)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
 				if(!this.Sucursal) { this.snackbar = true; this.text="No puedes omitir la SUCURSAL"; return }
@@ -375,7 +390,7 @@
 													nivel       : this.nivel.id,
 													id_sucursal	: this.id_sucursal,
 													id_sucursal : 1,
-													// file       : formData,
+													usuario     : this.usuario.toUpperCase(),
 													foto       : '',
 													estatus: 1 
 												}
@@ -390,14 +405,17 @@
 				
 				// MANDO A INSERTAR CLIENTE
 				this.$http.post('usuarios', payload).then((response)=>{
-					console.log('res',response.body)
-					// this.TerminarProceso(response.body);					
+					
+					if(response.body.error){ 
+						this.MensajeError(response.body.mensaje)
+						return;
+					}
+
+					this.TerminarProceso(response.body);					
 				}).catch(error =>{
 					console.log('error',error)
 				})
 			},
-
-			
 
 			ActualizarUsuario(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
@@ -405,16 +423,27 @@
 				setTimeout(() => (this.dialog = false), 2000)
 
 				this.$http.put('usuarios/'+ this.edit.id, payload).then((response)=>{
+					if(response.body.error){ 
+						this.MensajeError(response.body.mensaje)
+						return;
+					}
 					this.TerminarProceso(response.body);					
 				})
 			},
 
 			TerminarProceso(mensaje){
 				var me = this ;
-				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
+				this.dialog 			  = false  ; this.Correcto 		 = true; 
+				this.colorCorrecto	= "green"; this.textCorrecto = mensaje;
 				setTimeout(function(){ me.$emit('modal',false)}, 2000);
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
 				this.consultaUsuarios() //ACTUALIZAR CONSULTA DE USUARIOS
+			},
+
+			MensajeError(mensaje){
+				this.dialog			  	= false	; this.Correcto 		= true ; 
+				this.colorCorrecto	="red"	; this.textCorrecto = mensaje;
+				setTimeout(() => (this.Correcto = false), 2000)
 			},
 
 			borrar(){
@@ -438,6 +467,7 @@
 				this.password2 = '';
 				this.foto 		 = '';
 				this.Sucursal  = '';
+				this.usuario  = '';
 			}
 		}
 	}

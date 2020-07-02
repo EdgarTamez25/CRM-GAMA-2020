@@ -17,23 +17,24 @@ class userController extends Controller
 		
 		
 		public function getcatalogo(){
-			$data = DB::select('SELECT u.id, u.nombre, u.password, u.correo, u.nivel, u.id_sucursal, s.nombre as nomsuc, u.foto
+			$data = DB::select('SELECT u.id, u.nombre, u.usuario, u.password, u.correo, u.nivel, u.id_sucursal, s.nombre as nomsuc, u.foto
 														FROM users u LEFT JOIN sucursales s ON u.id_sucursal = s.id');
 			return $data;
 		}
-		
-		public function add(Request $request){
-			// $addusuario = User::create($request->all());
-				
-			// $path = Storage::disk('public')->put('images', $request->file('file'));
-			// $addusuario -> fill(['foto' => asset($path)])->save();
 
-			// return $path;
+
+		public function add(Request $request){
 
 			//REVISO QUE EL USUARIO NO EXISTA
-			// if($this->validaEmail($request -> correo)):
-			// 	return "Lo sentimos, este usuario ya se encuentra registrado";
-			// endif;
+			if($this->validaEmail($request -> correo)):
+				$error = [ "error" 	=> true,"mensaje" => "Lo sentimos, este empleado ya se encuentra registrado"];
+				return $error;
+			endif;
+			
+			if($this->validaUsuarioAdd($request -> usuario)):
+				$error = [ "error" 	=> true,"mensaje" => "Lo sentimos, este usuario ya esta en uso."];
+				return $error;
+			endif;
 
 
 		 $addusuario = User::create($request->all());
@@ -44,12 +45,24 @@ class userController extends Controller
 			endif;
 		}
 
+		
 		public function update($id, Request $req){
-			$data = DB::update('UPDATE users SET nombre=:nombre, password=:password,correo=:correo, 
+			
+			if($this->validaUsuarioUp($req -> usuario, $id)):
+				$error = [ "error" 	=> true,"mensaje" => "Lo sentimos, este usuario ya esta en uso."];
+				return $error;
+			endif;
+
+			$data = DB::update('UPDATE users SET nombre=:nombre,usuario=:usuario, password=:password,correo=:correo, 
 																					nivel=:nivel, id_sucursal=:id_sucursal, foto=:foto
 													WHERE id =:id',
-													['nombre'=> $req -> nombre,'password'=> $req -> password, 'correo'=> $req-> correo,
-													 'nivel'=>$req -> nivel, 'id_sucursal'=> $req -> id_sucursal, 'foto'=> $req-> foto, 
+													['nombre'=> $req -> nombre, 
+													 'usuario'=> $req -> usuario, 
+													 'password'=> $req -> password, 
+													 'correo'=> $req-> correo,
+													 'nivel'=>$req -> nivel, 
+													 'id_sucursal'=> $req -> id_sucursal, 
+													 'foto'=> $req-> foto, 
 													 'id'=> $id	
 													]
 												);
@@ -63,7 +76,7 @@ class userController extends Controller
 		}
 
 		public function choferesAll(){
-			$choferes = DB::select('SELECT id, nombre, correo FROM users WHERE nivel=4');
+			$choferes = DB::select('SELECT id, nombre, usuario, correo FROM users WHERE nivel=4');
 			return $choferes;
 		}
 	// ============================== FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
@@ -71,4 +84,13 @@ class userController extends Controller
 	public function validaEmail($correo){
 		return DB::select('SELECT correo FROM users WHERE correo = ?',[$correo]);
 	}
+
+	public function validaUsuarioAdd($usuario){
+		return DB::select('SELECT usuario FROM users WHERE usuario = ?',[$usuario]);
+	}
+
+	public function validaUsuarioUp($usuario, $id){
+		return DB::select('SELECT usuario FROM users WHERE usuario = ? AND id != ?',[$usuario, $id]);
+	}
+	
 }

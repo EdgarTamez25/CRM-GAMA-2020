@@ -48,7 +48,7 @@
 		    </v-dialog>
   		</v-col>
   	</v-row>
-  </v-content class="pa-0">
+  </v-content >
 </template>
 
 <script>
@@ -68,6 +68,7 @@
 					headers:[
 						{ text: '#'  			 , align: 'left'  , value: 'id'		  },
 						{ text: 'Nombre'	 , align: 'left'  , value: 'nombre' },
+						{ text: 'Usuario'	 , align: 'left'  , value: 'usuario' },
 						{ text: 'Correo'   , align: 'left'  , value: 'correo' },
 						{ text: 'Nivel'		 , align: 'left'  , value: 'nivel' 	},
 						{ text: 'Sucursal' , align: 'left'  , value: 'nomsuc' },

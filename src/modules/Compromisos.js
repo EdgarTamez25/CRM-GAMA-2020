@@ -21,7 +21,7 @@ export default{
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('COMPROMISOS', [])
 			Vue.http.get('compromisos').then(response=>{
-			console.log('compromisos', response.body)
+			// console.log('compromisos', response.body)
 
 				commit('COMPROMISOS', response.body)
 			}).catch((error)=>{
