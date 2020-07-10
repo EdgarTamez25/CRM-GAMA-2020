@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <div :class="loading">Loading&#8230;</div>
+    <!-- <div :class="loading">Loading&#8230;</div> -->
 
     <v-navigation-drawer app v-model="drawer" temporary  >
 
@@ -11,8 +11,8 @@
             </v-list-item-avatar>
 
             <v-list-item-content>
-              <v-list-item-title> Edgar Tamez </v-list-item-title>
-              <v-list-item-subtitle>Administrador</v-list-item-subtitle>
+              <v-list-item-title> {{ getdatosUsuario.nombre }} </v-list-item-title>
+              <v-list-item-subtitle> {{ niveles[getdatosUsuario.nivel-1] }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
 
@@ -116,20 +116,17 @@
       </v-list>
 
       <v-divider></v-divider>
-      <v-list-item>
-        <v-list-item-action>
-          <v-icon>mdi-exit-to-app</v-icon>
-        </v-list-item-action>
-        <v-list-item-content >
-          <v-list-item-title >
-            <h5>Salir </h5>
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+  
+      <v-card-actions>
+        <v-btn color="red" outlined block small @click="cerrar_sesion=true">Cerrar Sesión
+          <v-icon right>mdi-exit-to-app</v-icon>
+        </v-btn>
+      </v-card-actions>
 
     </v-navigation-drawer>
 
-    <v-content class="ma-3">
+    <!-- <v-content class="ma-3"> -->
+    <v-content >
       <router-view/>
     </v-content>
 
@@ -171,7 +168,7 @@
       </v-dialog>
     </div>
 
-    <v-app-bar app color="rosa" dark class="elevation-0" v-ripple >
+    <v-app-bar app color="rosa" dark class="elevation-0" v-ripple dense v-if="getLogeado">
        <img src="logo.png" height="40" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
 
@@ -181,12 +178,26 @@
         </v-btn>
       </v-toolbar-items>
     </v-app-bar>
+
+    <v-dialog v-model="cerrar_sesion" width="400px">
+      <v-card color="grey darken-4" >
+        <v-card-title class=" white--text font-weight-medium my-5">
+         ¿Quiere cerrar la sesión?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="celeste" outlined small @click="cerrar_sesion=false">Cancelar</v-btn>
+          <v-btn color="rosa" dark small @click="salir">Cerrar Sesión</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
    
   </v-app>
 </template>
 
 <script>
 import  SelectMixin from '@/mixins/SelectMixin.js';
+import store from '@/store'
 import { mapGetters,mapActions } from 'vuex';
 
 export default {
@@ -194,7 +205,8 @@ export default {
   components: {
   },
   data: () => ({
-    
+    cerrar_sesion:false,
+    niveles:['Administrador','Supervisor','Vendedor','Chofer'],
     drawer: null,
     contador: 0 ,
     color: '',
@@ -202,7 +214,7 @@ export default {
      AppControl: [
         {
           admin: [ 
-            { text: 'Inicio'      ,icon: 'home'               ,path: '/'},
+            { text: 'Inicio'      ,icon: 'home'               ,path: '/home'},
             { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
             { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
             // { text: 'prueba'  ,icon: 'ballot'             ,path: '/prueba'},
@@ -262,7 +274,7 @@ export default {
   computed:{
     // IMPORTANDO USO DE VUEX - ZONAS (GETTERS)
     ...mapGetters('Monedas' ,['getMonedas']), 
-
+    ...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
   },
 
   mounted(){
@@ -271,7 +283,14 @@ export default {
 
   methods:{
     ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
-    
+    ...mapActions('Login' ,['salirLogin']), 
+
+    salir(){
+      this.cerrar_sesion= false;
+      this.salirLogin()
+      this.$store.dispatch("salir")
+    },
+
     BuscarPredeterminado(){
       for(var i=0; i<this.getMonedas.length; i++){
         if(this.getMonedas[i].predeterminado === 1){

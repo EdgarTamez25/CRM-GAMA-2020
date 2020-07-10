@@ -1,6 +1,6 @@
 <template>
   <!-- <v-container> -->
-  <v-content class="pa-0">
+  <v-content class="pa-0 ma-3">
 
   	<v-row class="justify-center">
 			<v-snackbar top v-model="snackbar" :timeout="2000"  :color="color"> {{text}}
@@ -8,8 +8,10 @@
 			</v-snackbar>
 
   		<v-col cols="12" sm="11">
+				<v-card-actions class="font-weight-black headline"> PRODUCTOS </v-card-actions>
+
 				<v-card class="elevation-10 mt-3" >
-				<v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions>
+				<!-- <v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions> -->
 
 					<v-card-actions>
 			      <v-text-field

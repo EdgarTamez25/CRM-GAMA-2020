@@ -20,6 +20,8 @@ export default {
 			return fecha;
 		},
 
+		
+
 		consultaChofer(){
 			this.$http.get('choferes').then(response =>{
 				this.choferes = response.body
@@ -109,10 +111,10 @@ export default {
 
 		consultarLineas(){ //LINEAS
 			this.$http.get('lineas').then((response)=>{
-				this.linea = response.body
-				for(const i in response.body){
-					this.lineas.push(response.body[i].nombre)
+				for(var i = 0; i<response.body.length;i++){
+					this.lineas.push(response.body[i])
 				}
+				// this.lineas = response.body
 			}).catch(error =>{
 				console.log('error', error)
 			})
@@ -223,13 +225,13 @@ export default {
 			}
 		},
 
-		Linea:function(){
-			for(const i in this.linea){
-				if(this.linea[i].nombre === this.Linea){
-					this.id_linea = this.linea[i].id
-				}
-			}
-		},
+		// Linea:function(){
+		// 	for(const i in this.linea){
+		// 		if(this.linea[i].nombre === this.Linea){
+		// 			this.id_linea = this.linea[i].id
+		// 		}
+		// 	}
+		// },
 
 		Sucursal:function(){
 			for(const i in this.sucursal){

@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router   from '@/router'
+
+import Login     from '@/modules/AppController/Login'
 
 // CATALOGOS
 import Usuarios from '@/modules/Usuarios';
@@ -12,23 +15,68 @@ import Productos from '@/modules/Productos';
 import Precios from '@/modules/Precios';
 import Prospectos from '@/modules/Prospectos';
 
-
 // COMPROMISOS
 import Compromisos from '@/modules/Compromisos';
-
-
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+      usuario: '',
+	    token: null,   
+	    usuario: null,
+	    nivel: null,
+	    acuses:'',
+	    drawer: true,
+	    menu: true,
   },
   mutations: {
+    setToken(state, token){
+      state.token= token
+    },
+    setUsuario (state, usuario){
+      state.usuario= usuario
+    },
+    setNivel (state, nivel){
+      state.nivel=  nivel
+    }
   },
   actions: {
+    guardarToken({commit},token){
+      commit("setToken", token)
+      localStorage.setItem("tlaKey", token)
+       var UsuarioActivo = decode.id 
+       commit("setUsuario", UsuarioActivo)   // Decodifica el token para sacar usuario
+    },
+
+    guardarNivel({commit},nivel){
+      commit('setNivel', nivel)
+
+    },
+    
+    autoLogin({commit}){
+    },
+
+    salir({commit}){
+      // commit("setUsuario", '')
+      // commit("setToken", '')
+      // localStorage.removeItem("tlaKey")
+      router.push({name: 'Login'})
+    }
   },
+
+  getters:{
+		traeNomuser(state){
+			return state.usuario
+		},
+		traeNivel(state){
+			return state.nivel
+		},
+
+	},
   
   modules: {
+    Login,
     Usuarios,
     Clientes,
     Zonas,

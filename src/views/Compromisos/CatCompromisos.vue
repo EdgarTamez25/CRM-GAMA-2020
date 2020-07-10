@@ -1,5 +1,5 @@
 <template>
-  <v-content class="pa-0">
+  <v-content class="pa-0 ma-3">
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
 				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
@@ -285,7 +285,6 @@
 			verResumen(id){
 				this.$http.get('ver.resumen/'+id).then(response =>{
 					this.resumen = [];
-					console.log('response', response.body)
 					for(let i =0;i< response.body.length;i++){
 						this.resumen.push({ fase_venta: response.body[i].fase_venta,
 																fecha			: moment(response.body[i].fecha).format('LL'),

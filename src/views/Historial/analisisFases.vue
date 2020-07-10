@@ -1,5 +1,5 @@
 <template>
-	<v-content class="pa-0">
+	<v-content class="pa-0 ma-3">
 		<v-row class="justify-left" no-gutters >
 			 <v-btn color="rosa" style="display: none" class="ir-arriba white--text" fab fixed bottom right>
 				<v-icon top>keyboard_arrow_up</v-icon>

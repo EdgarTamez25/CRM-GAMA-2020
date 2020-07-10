@@ -11,6 +11,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
+
 
 //=================================== USUARIOS======================================================
 Route::get('catusuarios'  ,'userController@getcatalogo')-> name('catusuarios');   
@@ -37,6 +39,7 @@ Route::put('proveedores/{id}','proveedoresController@update') -> name('updatePro
 
 //==================================== PRODUCTOS ===================================================
 Route::get('catproductos'  ,'productosController@getcatalogo')-> name('getcatproducto');   //PROBADA
+Route::get('productosxId/{id}'  ,'productosController@getcatalogoxId')-> name('getcatalogoxId');   //PROBADA
 Route::get('productos'     ,'productosController@getAll') -> name('getAllproductos');  		 //PROBADA
 Route::post('productos'    ,'productosController@add')    -> name('addProductos');     		 //PROBADA
 Route::put('productos/{id}','productosController@update') -> name('updateProductos');  		 //PROBADA

@@ -1,5 +1,5 @@
 <template>
-  <v-row class="fill-height">
+  <v-row class="fill-height ma-3">
     <v-col>
 			<v-card-actions class="font-weight-black headline"> PENDIENTES </v-card-actions>
       <v-sheet height="70">
@@ -16,7 +16,7 @@
 <!-- BOTON PARA FILTRO DE FECHAS-->
           <v-menu bottom right> 
             <template v-slot:activator="{ on }">
-              <v-btn outlined color="celeste"  v-on="on" >
+              <v-btn outlined color="celeste" v-on="on" >
                 <span>{{ typeToLabel[type] }}</span> <v-icon right>mdi-menu-down</v-icon>
               </v-btn>
             </template>
@@ -47,7 +47,7 @@
           @click:more="verDiaActual"
           @click:date="verDiaActual"
           @change="ActualizaCompromisos"
-					:now="today"
+					now
 					locale="es-es"
         ></v-calendar>
       </v-sheet>
@@ -124,6 +124,7 @@
 			fecha        : '',
 			hora         : '',
 			comentarios  : '',
+			today:    '',
 			// ALERTAS
 			detalleModal: false,
 		}),

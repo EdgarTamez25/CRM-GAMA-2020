@@ -1,8 +1,8 @@
 <template>
-  <v-container>
+  <v-container class="pa-0 ma-3">
   	<v-row class="justify-center">
   		<v-col cols="12">
-				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE PROVEEDORES </v-card-actions>
+				<v-card-actions class="font-weight-black headline"> PROVEEDORES </v-card-actions>
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field

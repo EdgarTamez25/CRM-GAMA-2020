@@ -1,8 +1,8 @@
 <template>
-  <v-container>
+  <v-container class="pa-0 ma-3">
   	<v-row class="justify-center">
   		<v-col cols="12" lg="8">
-				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE ZONAS </v-card-actions>
+				<v-card-actions class="font-weight-black headline"> ZONAS </v-card-actions>
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
