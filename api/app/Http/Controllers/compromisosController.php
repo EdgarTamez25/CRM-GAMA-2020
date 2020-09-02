@@ -8,18 +8,59 @@ use App\compromisos;
 
 class compromisosController extends Controller
 {
-
-		public function Compromisos(){
-			$compromisos = DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
+		
+		public function Compromisos($nivel){
+			
+			// SI ES ADMINISTRADOR O SUPERVISOR
+			if($nivel === '1' || $nivel === '2'):
+				return DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
 																			  c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente, cli.nombre as nomcli, c.comentarios, 
 																				c.fase_venta, c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus
-																 FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
-																										LEFT JOIN categorias ca ON ca.id  = c.id_categoria
-																										LEFT JOIN clientes  cli ON cli.id = c.id_cliente
-																										LEFT JOIN users u       ON u.id   = c.id_usuario
-																ORDER BY c.id DESC');
+																	FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
+																											LEFT JOIN categorias ca ON ca.id  = c.id_categoria
+																											LEFT JOIN clientes  cli ON cli.id = c.id_cliente
+																											LEFT JOIN users u       ON u.id   = c.id_usuario
+																	ORDER BY c.id DESC');
+			endif;
+			// SI ES VENTAS
+			if($nivel === '6'):
+				return DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
+																			  c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente, cli.nombre as nomcli, c.comentarios, 
+																				c.fase_venta, c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus
+																	FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
+																											LEFT JOIN categorias ca ON ca.id  = c.id_categoria
+																											LEFT JOIN clientes  cli ON cli.id = c.id_cliente
+																											LEFT JOIN users u       ON u.id   = c.id_usuario
+														WHERE c.fase_venta > 1 AND c.fase_venta < 5 ORDER BY c.id DESC');
+			endif;
 
-			return $compromisos;
+			// SI ES ALMACENISTA
+			if($nivel === '5'):
+				return DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
+																			  c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente, cli.nombre as nomcli, c.comentarios, 
+																				c.fase_venta, c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus
+																	FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
+																											LEFT JOIN categorias ca ON ca.id  = c.id_categoria
+																											LEFT JOIN clientes  cli ON cli.id = c.id_cliente
+																											LEFT JOIN users u       ON u.id   = c.id_usuario
+														WHERE c.fase_venta > 4 AND c.fase_venta < 8 ORDER BY c.id DESC');
+			endif;
+			
+			// SI ES SERVICIO AL CLIENTE
+			if($nivel === '7'):
+				return DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
+																			  c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente, cli.nombre as nomcli, c.comentarios, 
+																				c.fase_venta, c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus
+																	FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
+																											LEFT JOIN categorias ca ON ca.id  = c.id_categoria
+																											LEFT JOIN clientes  cli ON cli.id = c.id_cliente
+																											LEFT JOIN users u       ON u.id   = c.id_usuario
+														WHERE c.fase_venta = 1 ORDER BY c.id DESC');
+			endif;
+
+			if(!$nivel){
+				return false;
+			}
 
 		}
 

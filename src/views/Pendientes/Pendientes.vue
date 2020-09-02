@@ -97,6 +97,8 @@
 <script>
 	import {mapGetters, mapActions} from 'vuex';
 	var moment = require('moment'); 
+	import store from '@/store'
+
   export default {
     data: () => ({
       focus: '',
@@ -222,7 +224,7 @@
 
       ActualizaCompromisos ({ start, end }) {
 				const events = [];
-				this.$http.get('compromisos').then( response =>{
+				this.$http.get('compromisos/'+ parseInt(store.state.Login.datosUsuario.nivel)).then( response =>{
 					this.compromisos = response.body
 					for(var i = 0; i < this.compromisos.length; i++) {
 						events.push({	name: this.compromisos[i].nomcatego,

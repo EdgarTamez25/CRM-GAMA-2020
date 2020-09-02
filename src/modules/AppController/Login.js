@@ -26,6 +26,9 @@ export default{
     Login({commit}, payload){
 			return new Promise((resolve, reject) => {
 			  Vue.http.post('login', payload).then(response =>{
+					
+					localStorage.setItem("KeyId",response.body[0].id)
+
 					if(response.body.length){
 						resolve(true)
             commit('DATOS_USUARIO', response.body[0]);

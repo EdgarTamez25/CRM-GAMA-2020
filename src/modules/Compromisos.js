@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import store from '@/store'
 
 export default{
 	namespaced: true,
@@ -16,13 +16,12 @@ export default{
 			state.compromisos = data
 		},
 	},
-	actions:{
+	actions:{ 
+		
 		consultaCompromisos({commit}){
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('COMPROMISOS', [])
-			Vue.http.get('compromisos').then(response=>{
-			// console.log('compromisos', response.body)
-
+			Vue.http.get('compromisos/'+ parseInt(store.state.Login.datosUsuario.nivel)).then(response=>{
 				commit('COMPROMISOS', response.body)
 			}).catch((error)=>{
 				console.log('error',error)

@@ -80,6 +80,10 @@ export default{
 
 		masProductos(state){
 			return state.masProductos;
+		},
+
+		getProductosAll(state){
+			return state.productosAll;
 		}
 
 	}

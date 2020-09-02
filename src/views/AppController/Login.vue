@@ -6,11 +6,11 @@
         <v-btn color="white" text @click="snackbar = false"> Cerrar </v-btn>
       </v-snackbar>
 
-      <v-col cols="12"  sm="7" md="6" lg="3" xl="3" style="margin-top: 125px">
+      <v-col cols="12"  sm="7" md="6" lg="4" xl="3" style="margin-top: 125px">
         <v-card class="elevation-20 pa-2" id="contenedor" v-ripple>
           <v-card-text class="mt-2 text-center" >
             <img
-              :src="`http://producciongama.com:8080/CRM-GAMA-MOVIL/img/logo2020.png`"
+              :src="`http://producciongama.com:8080/CRM-GAMA-2020/imagenes/logo2020.png`"
               :lazy-src="`https://picsum.photos/10/6?image=${1 * 5 + 10}`"
               aspect-ratio="1.5"
               class=" pa-2 mb-5"
@@ -42,7 +42,6 @@
                 outlined
                 dense 
                 color="white"
-                clearable
                 dark
                 >
               </v-text-field>
@@ -57,6 +56,7 @@
                 hint="At least 8 characters"
                 counter
                 @click:append="show1 = !show1"
+                @keyup.enter="ingresar"
                 outlined
                 dense
                 hide-details
@@ -80,7 +80,16 @@
           <v-card-actions class="mx-3">
             <!-- <v-spacer></v-spacer> -->
             <!-- <v-btn  color="white" outlined small dark :to="{name:'registro'}" >Registrarse</v-btn> -->
-            <v-btn  color="primary" block rounded  dark @click="ingresar" class="elevation-5">Iniciar Sesión</v-btn>
+            <v-btn :loading="iniciar"
+                   :disabled="iniciar" 
+                   color="primary" 
+                   block 
+                   rounded 
+                   dark 
+                   @click="ingresar" 
+                   class="elevation-5">
+              Iniciar Sesión
+            </v-btn>
           </v-card-actions>
           
           <!-- <v-card-actions>
@@ -102,7 +111,7 @@ import {mapActions , mapGetters} from 'vuex'
       return{
         contrasenia: '',
         correo:'',
-
+        iniciar: false,
         snackbar: false,
         y: 'top',
         x: null,
@@ -116,7 +125,7 @@ import {mapActions , mapGetters} from 'vuex'
 
         rules: {
           required: value => !!value || 'Requerido.',
-          min: v => v.length >= 1 || 'Minimo 8 caracteres',
+          min: v => v.length >= 1 || 'Minimo 1 caracteres',
           emailMatch: () => ('El correo y/o la contraseña no son correctos')
         },
 
@@ -126,7 +135,16 @@ import {mapActions , mapGetters} from 'vuex'
     },
 
     created(){
+      this.iniciar = false,
       this.salirLogin();
+
+      // if(typeof(Storage) !== "undefined"){
+      //   console.log('LocalStorage Disponible');
+      //   localStorage.setItem("KeyId",response.body[0].id)
+      // }else{
+      //   console.log('LocalStorage NO Disponible');
+      // }
+          
     },
 
     computed:{
@@ -137,6 +155,7 @@ import {mapActions , mapGetters} from 'vuex'
       ...mapActions('Login',['Login','salirLogin']),
 
       ingresar (){
+        this.iniciar = true;
         var md5     = require('md5')
         var usuario = { correo: this.correo, 
                         usuario : this.correo.toUpperCase(),
@@ -145,14 +164,14 @@ import {mapActions , mapGetters} from 'vuex'
 
         this.Login(usuario).then(response => {
           if(response){
-            this.$router.push({ name: 'Home' })  
+            this.$router.push({ name: 'compromisos' })  
           }else{
             this.text  = "Lo siento amiguit@ algo salio mal. Verifica tus datos";this.snackbar = true 
             return
           }
         }).catch(error =>{
           console.log(error)
-        })
+        }).finally(() => this.iniciar = false) 
 
         
       }
@@ -167,11 +186,7 @@ import {mapActions , mapGetters} from 'vuex'
   #logo{
    border-radius:25px;
   }
-/* 
-     background: #ee9ca7;  
-    background: -webkit-linear-gradient(to right, #f19fa8, #ee9ca7);  
-    background: linear-gradient(to right, #f7bdc4, #ee9ca7); 
-    border-radius:25px; */
+
   #contenedor{
     background: #eeacb5;  
     background: -webkit-linear-gradient(to right, hsla(353, 75%, 78%, 0.095), #9b646d45);  
@@ -183,8 +198,8 @@ import {mapActions , mapGetters} from 'vuex'
     background: #ee9ca7;  
     background: -webkit-linear-gradient(to right, #f3b8bf, #ee9ca7);  
     background: linear-gradient(to right, hsla(353, 22%, 63%, 0.449), #ee9ca7),url('http://producciongama.com:8080/CRM-GAMA-2020/imagenes/fondo2.jpg'); 
-    background-size: cover;
     background-attachment: fixed;
+    background-size: cover;
     padding: 0px;
     margin: 0px;
     width: auto;

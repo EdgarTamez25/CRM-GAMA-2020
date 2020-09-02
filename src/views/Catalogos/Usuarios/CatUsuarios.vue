@@ -24,11 +24,14 @@
 			      :items="getUsuarios"
 			      :search="search"
 			      fixed-header
-				    height="500px"
+				    height="550px"
 				    hide-default-footer
 						:loading ="Loading"
-						disable-pagination
 						loading-text="Cargando... Por favor espere."
+						:page.sync="page"
+      			:items-per-page="itemsPerPage"
+						@page-count="pageCount = $event"
+						dense
 			    >
 						<template v-slot:item.nivel="{ item }">
 							 {{ niveles[item.nivel-1].nombre  }} 
@@ -38,8 +41,22 @@
 			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
 
+						<template v-slot:item.estatus="{ item }" > 
+			    		<v-btn  class="green" icon dark  v-if="item.estatus===1" @click="cambiaEstatus(item)">
+								<v-icon> person </v-icon>
+							</v-btn> 
+							<v-btn  class="error" icon dark v-else @click="cambiaEstatus(item)">
+								<v-icon> mdi-account-off </v-icon>
+							</v-btn> 
+				    </template>
+
 			    </v-data-table>
 			  </v-card>
+				
+				<!-- PAGINACION -->
+				<div class="text-center pt-2">
+					<v-pagination v-model="page" :length="pageCount"></v-pagination>
+				</div>
 
 				 <v-dialog persistent v-model="dialog" width="700px" >	
 					<v-card class="pt-0 pa-4">
@@ -60,48 +77,68 @@
 			ControlUsuario
 		},
 		data () {
-				return {
-					search: '',
-					dialog: false,
-					param: 0,
-					edit:'',
-					headers:[
-						{ text: '#'  			 , align: 'left'  , value: 'id'		  },
-						{ text: 'Nombre'	 , align: 'left'  , value: 'nombre' },
-						{ text: 'Usuario'	 , align: 'left'  , value: 'usuario' },
-						{ text: 'Correo'   , align: 'left'  , value: 'correo' },
-						{ text: 'Nivel'		 , align: 'left'  , value: 'nivel' 	},
-						{ text: 'Sucursal' , align: 'left'  , value: 'nomsuc' },
-						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
-					],
-					niveles: [{ id:1, nombre:'Administrador'},
-										{ id:2, nombre:'Supervisor'},
-										{ id:3, nombre:'Vendedor'},
-										{ id:4, nombre:'Chofer'}
-									]
-				}
-			},
-
-
-			created(){
-				this.consultaUsuarios()// CONSULTAR CLIENTES A VUEX
-			},
-
-			computed:{
-				...mapGetters('Usuarios' ,['Loading','getUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
-			},
-
-			methods:{
-				...mapActions('Usuarios'  ,['consultaUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
-
-				abrirModal(action, items){
-					this.param = action;
-					this.edit = items;
-					this.dialog = true;
-				},
-
-				
-				
+			return {
+				page: 1,
+				pageCount: 0,
+				itemsPerPage: 20,
+				search: '',
+				dialog: false,
+				param: 0,
+				edit:'',
+			
+				headers:[
+					{ text: 'N°'  		 , align: 'left'  , value: 'id'		  },
+					{ text: 'Nombre'	 , align: 'left'  , value: 'nombre' },
+					{ text: 'Usuario'	 , align: 'left'  , value: 'usuario' },
+					{ text: 'Correo'   , align: 'left'  , value: 'correo' },
+					{ text: 'Nivel'		 , align: 'left'  , value: 'nivel' 	},
+					{ text: 'Sucursal' , align: 'left'  , value: 'nomsuc' },
+					{ text: 'Depto' , align: 'left'  , value: 'nomdepto' },
+					{ text: 'Puesto' , align: 'left'  , value: 'nompuesto' },
+					{ text: 'Estatus'  , align: 'left'  , value: 'estatus'},
+					{ text: ' '        , align: 'right' , value: 'action', sortable: false },
+				],
+				niveles: [{ id:1, nombre:'Administrador'},
+									{ id:2, nombre:'Supervisor'},
+									{ id:3, nombre:'Vendedor'},
+									{ id:4, nombre:'Chofer'},
+									{ id:5, nombre:'Almacén'},
+									{ id:6, nombre:'Ventas'},
+									{ id:7, nombre:'Servicio al Cliente'},
+									{ id:8, nombre:'Sin seleccionar'},
+								],
 			}
+		},
+
+		created(){
+			this.consultaUsuarios()// CONSULTAR CLIENTES A VUEX
+		},
+
+		computed:{
+			...mapGetters('Usuarios' ,['Loading','getUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+		},
+
+		methods:{
+			...mapActions('Usuarios'  ,['consultaUsuarios']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+
+			abrirModal(action, items){
+				this.param = action;
+				this.edit = items;
+				this.dialog = true;
+			},
+
+			cambiaEstatus(data){
+				const payload = { id: data.id, estatus: !data.estatus };
+				this.$http.post('estatus.user',payload).then((res)=>{
+					console.log('cambio estatus', res.body)
+					this.consultaUsuarios();
+				}).catch((err)=>{
+					console.log('err', err)
+				})
+			}
+
+			
+			
+		}
 	}
 </script>

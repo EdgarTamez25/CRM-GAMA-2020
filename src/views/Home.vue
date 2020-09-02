@@ -17,9 +17,9 @@
         </v-row>
 
         <v-row v-if="!Loading" dense>
-
           <v-col cols="12" sm="6" md="4" lg="4" xl="3" v-for="(item , i) in filterArticulos" :key="i" >
               <v-card height="100%" class="mx-auto elevation-10" v-ripple>
+
                 <v-card-title class="headline" style="word-break:normal;" >{{ item.nombre }}</v-card-title>
                 <v-divider></v-divider>
 
@@ -45,9 +45,8 @@
                     </tbody>
                   </template>
                 </v-simple-table>
-
                 <v-divider></v-divider>
-                <v-card-actions>
+                <v-card-actions v-if="getdatosUsuario.nivel != 8 ">
                   <v-spacer></v-spacer>
                     <span class="font-weight-black celeste--text" > 
                       $ {{ item.precio == 0.00 ? 'Indefinido': item.precio + ' '+ item.codmoneda }} 
@@ -159,7 +158,7 @@
     
       </v-col>   
       <v-col cols="12">
-        <v-footer color="white" height="80px"></v-footer>
+        <v-footer color="white" height="180px"></v-footer>
       </v-col>
     </v-row>
   </v-content>
@@ -179,15 +178,13 @@
         show: false,
         articulos: [],
         search: '',
-        skeletons:['1','2','3','4'],
-
         linea:{  id:0 , nombre:'TODOS'},
         lineas:[ {id:0, nombre:'TODOS'}],
     }), 
 
     methods:{
       ...mapActions('Productos',['consultaProductos','consultaProductosxId','VerMasProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
-
+      
       init(){
         this.linea.id === 0 ? this.consultaProductos(): this.consultaProductosxId(this.linea.id) 
       }
@@ -195,6 +192,8 @@
 
     computed:{
       ...mapGetters('Productos',['Loading','getProductos','masProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
+      ...mapGetters('Login' ,['getdatosUsuario']), 
+
 
       pantalla () {
           switch (this.$vuetify.breakpoint.name) {

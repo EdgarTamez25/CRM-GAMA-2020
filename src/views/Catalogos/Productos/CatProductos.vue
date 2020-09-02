@@ -28,14 +28,17 @@
 				
 			    <v-data-table
 			      :headers="headers"
-			      :items="getProductos"
+			      :items="getProductosAll"
 			      :search="search"
 			      fixed-header
-				    height="500px"
+				    height="550px"
 				    hide-default-footer
 						:loading ="Loading"
-						disable-pagination
 						loading-text="Cargando... Por favor espere."
+						:page.sync="page"
+      			:items-per-page="itemsPerPage"
+						@page-count="pageCount = $event"
+						dense
 			    >
 			    	<template v-slot:item.action="{ item }"  > 
 			    		<v-btn  class="orange darken-1 ma-1" icon dark @click="MuestraPrecios(item)"><v-icon> attach_money </v-icon></v-btn> 
@@ -56,6 +59,10 @@
 
 			    </v-data-table>
 			  </v-card>
+				<!-- PAGINACION -->
+				<div class="text-center pt-2">
+					<v-pagination v-model="page" :length="pageCount"></v-pagination>
+				</div>
 
 				 <v-dialog persistent v-model="dialog" width="700px" >	
 					<v-card class="pt-0 pa-4">
@@ -100,10 +107,11 @@
 								:items="getPreciosxId"
 								:search="search"
 								fixed-header
-								height="500px"
+								height="550px"
 								hide-default-footer
 								:loading ="Loading_precios"
 								loading-text="Cargando... Por favor espere."
+								disable-pagination
 							>
 								<template v-slot:item.action="{ item }" > 
 									<v-btn  class="celeste" icon dark @click="abrirModalPrecios(2, item)"><v-icon> create </v-icon></v-btn> 
@@ -158,10 +166,14 @@
 		components: {
 			ControlProductos,
 			// ControlPrecios
-			ControlPrecios2
+			ControlPrecios2,
+		
 		},
 		data () {
 				return {
+					page: 1,
+					pageCount: 0,
+					itemsPerPage: 200,
 					// ALERTAS
 					snackbar: false,
 					text		: '',
@@ -172,7 +184,7 @@
 					param: 0,
 					edit:'',
 					headers:[
-						// { text: '#'  		   , align: 'left'  , value: 'id'		  },
+						{ text: '#'  		   , align: 'left'  , value: 'id'		  },
 						{ text: 'Codigo'   , align: 'left'  , value: 'codigo' },
 						{ text: 'Nombre'   , align: 'left'  , value: 'nombre' },
 						{ text: 'Proveedor', align: 'left'  , value: 'nomprov' },
@@ -206,7 +218,7 @@
 			},
 
 			computed:{
-				...mapGetters('Productos',['Loading','getProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
+				...mapGetters('Productos',['Loading','getProductosAll']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
 				...mapGetters('Precios'	 ,['Loading_precios','getPreciosxId']), // IMPORTANDO USO DE VUEX - PRECIOS (GETTERS)
 			},
 

@@ -38,8 +38,9 @@
 
 			    >
 						<template v-slot:item.action="{ item }" > 
-			    		<v-btn  class="rosa ma-1" icon dark @click="validaAccion(item)"><v-icon> people </v-icon></v-btn> 
-			    		<v-btn  class="celeste ma-1" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
+			    		<!-- <v-btn  class="rosa ma-1" icon dark @click="validaAccion(item)"><v-icon> people </v-icon></v-btn>  -->
+			    		<v-btn class="rosa ma-1"    icon dark @click="abrirModalCliente(item)"><v-icon> people </v-icon></v-btn> 
+			    		<v-btn class="celeste ma-1" icon dark @click="abrirModal(2, item)"    ><v-icon> create </v-icon></v-btn> 
 				    </template>
 
 			    </v-data-table>
@@ -51,7 +52,8 @@
 		    	</v-card>
 		    </v-dialog>
 
-				<v-dialog v-model="pasarACliente" persistent max-width="400" > <!-- PROCESO PARA ELIMINAR  -->
+				<!-- PROCESO PARA ELIMINAR  -->
+				<!-- <v-dialog v-model="pasarACliente" persistent max-width="400" > 
 					<v-card color="rosa">
 						<v-card-text class="pa-4 headline white--text ">
 							¿Quiere pasar esté <span class="font-weight-black "> prospecto</span>  a 
@@ -72,8 +74,10 @@
 							<v-spacer></v-spacer>
 							<v-btn color="gris" dark small @click="pasarACliente = false">Cancelar</v-btn>
 						</v-card-actions>
+
 					</v-card>
-				</v-dialog> <!-- FIN DEL PROCESO PARA ELIMINAR  -->
+				</v-dialog>  -->
+				<!-- FIN DEL PROCESO PARA ELIMINAR  -->
 
 				<v-dialog persistent v-model="clienteModal" width="700px" >	
 		    	<v-card class="pa-5">
@@ -139,17 +143,18 @@
 					this.dialog = true;
 				},
 
-				abrirModalCliente(){
-					this.pasarACliente = false;
+				abrirModalCliente(prospecto){
+					this.prospecto = prospecto;
+					// this.pasarACliente = false;
 					this.param = 3;
 					this.edit = this.prospecto;
 					this.clienteModal = true;
 				},
 
-				validaAccion(prospecto){
-					this.prospecto = prospecto;
-					this.pasarACliente = true;
-				},
+				// validaAccion(prospecto){
+				// 	this.prospecto = prospecto;
+				// 	this.pasarACliente = true;
+				// },
 
 				convertirEnCliente(){
 					const payload = { id : this.prospecto.id, prospecto: 0 };

@@ -2,6 +2,7 @@
   <v-content class="pa-0 ma-3">
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
+
 				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
 					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 				</v-snackbar>
@@ -29,11 +30,14 @@
 			      :items="getCompromisos"
 			      :search="search"
 			      fixed-header
-				 		height="500px"
+				 		height="550"
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
 						hide-default-footer
-						disable-pagination
+						:page.sync="page"
+      			:items-per-page="itemsPerPage"
+						@page-count="pageCount = $event"
+						dense
 			    >
 						<template v-slot:item.tipo_compromiso="{ item }" > {{ item.tipo_compromiso === 1? 'Interno': 'Externo'}}</template>
 						<template v-slot:item.fase_venta="{ item }" >
@@ -88,6 +92,10 @@
 			    </v-data-table>
 			  </v-card>
 
+				<!-- PAGINACION -->
+				<div class="text-center pt-2">
+					<v-pagination v-model="page" :length="pageCount"></v-pagination>
+				</div>
 				<!-- CONTROLADOR DEL COMPROMISO  -->
 				<v-dialog persistent v-model="compromisoModal" width="700px" >	
 		    	<v-card>
@@ -197,6 +205,7 @@
 	import ControldeFases  from '@/views/Compromisos/controldeFases.vue';
 	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex';
+
 	var moment = require('moment'); 
 	export default {
 		mixins:[SelectMixin],
@@ -206,6 +215,10 @@
 		},
 		data () {
 			return {
+				page: 1,
+        pageCount: 0,
+				itemsPerPage: 20,
+				
 				expanded: [],
         singleExpand: false,
 				search: '',

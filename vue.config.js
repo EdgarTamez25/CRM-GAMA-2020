@@ -4,5 +4,6 @@ module.exports = {
     "vuetify"
   ],
 
-  publicPath: ''
+  publicPath: process.env.NODE_ENV === 'production' ? '/CRM-GAMA-2020/' : '/',
+
 }

@@ -11,31 +11,36 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
-
+Route::post('login'          ,'userController@IniciarSesion')   -> name('IniciarSesion');
+Route::post('login.permisos' ,'userController@SesionPermisos')  -> name('SesionPermisos');
 
 //=================================== USUARIOS======================================================
-Route::get('catusuarios'  ,'userController@getcatalogo')-> name('catusuarios');   
-Route::get('usuarios'	    ,'userController@getAll')     -> name('getAllUsuarios');  			 //PROBADA
-Route::post('usuarios'    ,'userController@add')        -> name('addUsuarios');    				 //PROBADA
-Route::put('usuarios/{id}','userController@update')  		-> name('updateUsuarios');  			 //PROBADA
-Route::delete('usuarios/{id}','userController@delete')   -> name('deleteUsuarios');  			 //PROBADA
-Route::get('choferes'	    ,'userController@choferesAll') -> name('choferesAll');  		 //PROBADA
+Route::get('catusuarios'     ,'userController@getcatalogo') -> name('getcatalogo');   
+Route::get('usuarios'	     ,'userController@getAll')      -> name('getAllUsuarios');  //PROBADA
+Route::post('usuarios'       ,'userController@add')         -> name('addUsuarios');    	//PROBADA
+Route::put('usuarios/{id}'   ,'userController@update')  	-> name('updateUsuarios');  //PROBADA
+Route::delete('usuarios/{id}','userController@delete')      -> name('deleteUsuarios');  //PROBADA
+Route::get('choferes'	     ,'userController@choferesAll') -> name('choferesAll');  	//PROBADA
+Route::post('estatus.user'   ,'userController@estatusUser') -> name('estatusUser');    	//PROBADA
 
 //=================================== VENDEDORES======================================================
-Route::get('vendedores'		 ,'vendedoresController@vendedores')-> name('VendxSuc');  			 //PROBADA
-Route::get('vendxsuc/{suc}','vendedoresController@vendxSuc')  -> name('VendxSuc');  			 //PROBADA
+Route::get('vendedores'		 ,'vendedoresController@vendedores') -> name('vendedores');  	 //PROBADA
+Route::get('vendxsuc/{suc}'  ,'vendedoresController@vendxSuc')   -> name('vendxSuc');  	 //PROBADA
 
 //==================================== CLIENTES=====================================================
 Route::get('clientes','clientesController@catClientes') -> name('catClientes');            //PROBADA
+Route::get('clientes.selector','clientesController@clientesSelector') -> name('clientesSelector'); //PROBADA
 Route::post('cliente','clientesController@add')         -> name('addCliente');             //PROBADA
 Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');          //PROBADA
+Route::post('cambia.estatus','clientesController@cambiaEstatus') -> name('cambiaEstatus'); //PROBADA
 
 //==================================== PROVEDORES ==================================================
 Route::get('catproveedores'  ,'proveedoresController@getcatalogo')-> name('getcatprov');   //PROBADA
 Route::get('proveedores'     ,'proveedoresController@getAll') -> name('getAllproveedores');//PROBADA
 Route::post('proveedores'    ,'proveedoresController@add')    -> name('addProveedor');     //PROBADA
 Route::put('proveedores/{id}','proveedoresController@update') -> name('updateProveedor');  //PROBADA
+Route::post('cambia.estatus.p','proveedoresController@cambiaEstatusP') -> name('cambiaEstatusP'); //PROBADA
+
 
 //==================================== PRODUCTOS ===================================================
 Route::get('catproductos'  ,'productosController@getcatalogo')-> name('getcatproducto');   //PROBADA
@@ -83,7 +88,6 @@ Route::put('lineas/{id}','lineas_prodController@update') -> name('updateLineas')
 Route::get('unidades'     ,'unidadesController@getAll') -> name('getAllunidades');         //PROBADA
 Route::post('unidades'    ,'unidadesController@add')    -> name('addUnidad');              //PROBADA
 Route::put('unidades/{id}','unidadesController@update') -> name('updateUnidad');           //PROBADA
-
 //==================================== PRECIOS =====================================================
 Route::get('catprecios'  ,'preciosController@getcatalogo')-> name('getcatprecios');
 Route::get('preciosxid/{id}' ,'preciosController@preciosxId') -> name('preciosxId');
@@ -94,34 +98,27 @@ Route::get('mp-productos','preciosController@mp_producto')-> name('get-mp_produc
 // SE USA PARA LA MODAL DE PRECIOS
 Route::get('detalle_productos/{id}','preciosController@detalle_productos')-> name('getdetalle_productos');
 Route::post('predeterminado', 'preciosController@predeterminado')  -> name('predeterminado');
-
-
 ////=============================== TIPOS PRECIOS ==================================================
 Route::get('tipos-precios'     ,'tipo_precioController@getAll') -> name('getAllTipoPrecio');
 Route::post('tipos-precios'    ,'tipo_precioController@add')    -> name('addTipoPrecio');
 Route::put('tipos-precios/{id}','tipo_precioController@update') -> name('updateTipoPrecio');
-
 ////================================== CATEGORIAS ==================================================
 Route::get('categorias'     ,'categoriasController@categorias') -> name('categorias');
-
 ////================================== COMPROMISOS ==================================================
-Route::get('compromisos'     ,'compromisosController@Compromisos')   -> name('Compromisos');
-Route::post('addcompromiso'  ,'compromisosController@addcompromiso') -> name('addcompromiso');
+Route::get('compromisos/{nivel}' ,'compromisosController@Compromisos')   -> name('Compromisos');
+Route::post('addcompromiso'      ,'compromisosController@addcompromiso') -> name('addcompromiso');
 Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
 Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
-Route::post('fase.venta'  ,'compromisosController@FaseVenta') -> name('FaseVenta');
-
+Route::post('fase.venta'         ,'compromisosController@FaseVenta') -> name('FaseVenta');
 ////================================== HISTORIAL ==================================================
 Route::get('numero.orden/{id}' ,'histrorialController@NumerodeOrden') -> name('NumerodeOrden');
 Route::get('ver.resumen/{id}' ,'histrorialController@VerResumen') -> name('VerResumen');
 Route::post('historial' ,'histrorialController@Historial') -> name('Historial');
 Route::post('historialxvend' ,'histrorialController@HistorialxVend') -> name('HistorialxVend');
 Route::post('recotización' ,'histrorialController@Recotización') -> name('recotización');
-
-////================================== ENTREGAS ==================================================
+////================================== ENTREGAS =======================================================
 Route::post('entrega.producto' ,'entregasController@EntregarProducto') -> name('EntregarProducto');
 Route::post('entrega.id','entregasController@entregabyid')-> name('Entregabyid');
-
 //==================================== PROSPECTOS =====================================================
 Route::get('prospectos' ,'prospectosController@Prospectos')     -> name('Prospectos');
 Route::get('prospectos.id/{id}' ,'prospectosController@ProspectosxId')     -> name('ProspectosxId');
@@ -134,6 +131,43 @@ Route::post('prueba','pruebasController@get')  -> name('get');
 Route::get('prueba/{id}','pruebasController@getId')  -> name('getId'); 
 Route::post('prueba.post','pruebasController@post')  -> name('post'); 
 Route::put('prueba.put','pruebasController@put')  -> name('put'); 
+
+//==================================== DEPARTAMENTOS =====================================================
+Route::get('departamentos','departamentosController@Departamentos')  -> name('Departamentos'); 
+
+//==================================== PUESTOS ===========================================================
+Route::get('puestos','puestosController@Puestos')  -> name('Puestos'); 
+
+
+//========================================================================================================
+//==================================== RUTAS GAMA EXTERNOS ===============================================
+Route::get('bususuario.rh/{id}' ,'accesosController@buscarUsuarioRH')  -> name('buscarUsuarioRH');
+Route::post('rh.acceso'         ,'accesosController@RHAcceso')         -> name('RHAcceso'); 
+Route::get('accesos/{id}'            ,'accesosController@Accesos')          -> name('Accesos');
+Route::post('accesos.all'       ,'accesosController@accesosAll')      -> name('accesosAll');
+
+Route::post('actualiza.acceso'  ,'accesosController@ActualizaAcceso')  -> name('ActualizaAcceso'); 
+
+Route::post('add.visitante'     ,'accesosController@addVisitante')     -> name('addVisitante'); 
+Route::get('visitantes/{id}'    ,'accesosController@Visitantes')       -> name('Visitantes');
+Route::post('visitantes.all'    ,'accesosController@visitantesAll')   -> name('visitantesAll');
+Route::post('marcar.salida'     ,'accesosController@MarcarSalida')     -> name('MarcarSalida'); 
+
+Route::post('permisos' 			 ,'permisosController@Permisos')  	   -> name('Permisos');
+Route::get('busca.empleado/{id}' ,'permisosController@buscaEmpleado')  -> name('buscaEmpleado');
+Route::post('permiso'            ,'permisosController@AddPermiso')     -> name('AddPermiso'); 
+Route::put('permiso/{id}'        ,'permisosController@PutPermiso')     -> name('PutPermiso'); 
+
+Route::post('add.llamada' 	     ,'llamadasController@addLLamada')    -> name('addLlamadas');
+Route::put('put.llamada/{id}'    ,'llamadasController@putLLamadas')    -> name('putLlamada'); 
+Route::get('llamadas'            ,'llamadasController@llamadas')       -> name('Llamadas');
+
+
+
+
+
+
+
 
 
 

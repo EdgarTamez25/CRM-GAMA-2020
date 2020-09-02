@@ -179,21 +179,17 @@
 				// VARIABLES PRINCIPALES
 				tipo_compromiso: 'Externo',
 				comentario 		 : '',
-
 				// FECHA
 				fecha						: new Date().toISOString().substr(0, 10),
 				fechamodal 			: false,
 				fecha_compromiso: false,
-				
 				fechaFin		  : false,
 				fechaFinmodal : false,
 				fecha_fin			: '',
-
 				// HORA
 				hora 					 : null,
         horamodal			 : false,
 				hora_compromiso: false,
-
 				horaFin			: false,
         horaFinmodal: false,
 				hora_fin    : null,
@@ -202,21 +198,17 @@
 				id_vendedor: null,
 				vendedores : [],
 				vendedor	 : '',
-
 				id_cliente: null,
 				clientes	: [],
 				cliente		: '',
-
 				// SELECTORES
 				id_sucursal  : null,
 				sucursal     : [],
 				sucursales   : [],
 				Sucursal     : '',
-
 				id_categoria : null,
 				categorias   : [],
 				Categoria    : '',
-				
 				// ALERTAS
 				snackbar: false,
 				text		: '',
@@ -238,6 +230,8 @@
 		computed:{
 			// IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
 			...mapGetters('Productos',['getProductos']),
+     ...mapGetters('Login' ,['getdatosUsuario']), 
+
 		},
 
 		watch:{
@@ -252,7 +246,7 @@
 
 			validarModoVista(){
 				if(this.param === 2){
-					console.log('entro a editar', this.edit)
+					// console.log('entro a editar', this.edit)
 					// ASIGNAR VALORES AL FORMULARIO
 					this.id_vendedor 		= this.edit.id_vendedor
 					this.vendedor 			= this.edit.nomvend
@@ -298,7 +292,7 @@
 													fecha						: this.fecha,
 													hora	  				: this.hora,
 													comentarios     : this.comentario ? this.comentario : "",
-													id_usuario      : 1, // USUARIO QUE CREA EL REGISTRO
+													id_usuario      : this.getdatosUsuario.id, // USUARIO QUE CREA EL REGISTRO
 													fase_venta      : 1,
 													estatus     		: 1,
 													cumplimiento    : 0,
@@ -310,9 +304,6 @@
 													aceptado				: 0,
 													obscierre				:''
 												}
-											
-													
-				console.log('payload', payload)
 
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.Crear(payload): this.Actualizar(payload);

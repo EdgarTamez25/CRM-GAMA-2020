@@ -19,8 +19,23 @@ export default {
 			const fecha = { fechaInicial: primerDia , fechaFinal: ultimoDia}
 			return fecha;
 		},
-
 		
+
+		consultaDeptos(){
+			this.$http.get('departamentos').then(response =>{
+				this.departamentos = response.body
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
+
+		consultaPuestos(){
+			this.$http.get('puestos').then(response =>{
+				this.puestos = response.body
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
 
 		consultaChofer(){
 			this.$http.get('choferes').then(response =>{
@@ -31,7 +46,7 @@ export default {
 		},
 
 		consultar_Clientes(){  // AUTOCOMPLETE -> CLIENTES
-			this.$http.get('clientes').then((response)=>{
+			this.$http.get('clientes.selector').then((response)=>{
 				this.clientes = response.body //LLENNO ARRAY
 			}).catch(error =>{
 				console.log('error', error)
@@ -89,10 +104,7 @@ export default {
 
 		consultarUnidades(){ //UNIDADES
 			this.$http.get('unidades').then((response)=>{
-				this.unidad = response.body
-				for(const i in response.body){
-					this.unidades.push(response.body[i].nombre)
-				}
+				this.unidades = response.body
 			}).catch(error =>{
 				console.log('error', error)
 			})
@@ -109,12 +121,11 @@ export default {
 			})
 		},
 
-		consultarLineas(){ //LINEAS
+		consultarLineas(){ //LINEAS|
 			this.$http.get('lineas').then((response)=>{
 				for(var i = 0; i<response.body.length;i++){
 					this.lineas.push(response.body[i])
 				}
-				// this.lineas = response.body
 			}).catch(error =>{
 				console.log('error', error)
 			})
@@ -122,10 +133,7 @@ export default {
 
 		consultarSucursales(){ //SUCURSALES
 			this.$http.get('sucursales').then((response)=>{
-				this.sucursal = response.body
-				for(const i in response.body){
-					this.sucursales.push(response.body[i].nombre)
-				}
+				this.sucursales = response.body
 			}).catch(error =>{
 				console.log('error', error)
 			})
@@ -133,10 +141,7 @@ export default {
 
 		consultarCiudades(){ // CIUDADES
 			this.$http.get('ciudades').then((response)=>{
-				this.ciudad = response.body
-				for(const i in response.body){
-					this.ciudades.push(response.body[i].nombre)
-				}
+				this.ciudades = response.body
 			}).catch(error =>{
 				console.log('error', error)
 			})
@@ -200,13 +205,13 @@ export default {
 			}
 		},
 
-		Unidad:function(){
-			for(const i in this.unidad){
-				if(this.unidad[i].nombre === this.Unidad){
-					this.id_unidad = this.unidad[i].id
-				}
-			}
-		},
+		// Unidad:function(){
+		// 	for(const i in this.unidad){
+		// 		if(this.unidad[i].nombre === this.Unidad){
+		// 			this.id_unidad = this.unidad[i].id
+		// 		}
+		// 	}
+		// },
 
 		Moneda:function(){
 			for(const i in this.moneda){
@@ -233,20 +238,20 @@ export default {
 		// 	}
 		// },
 
-		Sucursal:function(){
-			for(const i in this.sucursal){
-				if(this.sucursal[i].nombre === this.Sucursal){
-					this.id_sucursal = this.sucursal[i].id
-				}
-			}
-		},
+		// Sucursal:function(){
+		// 	for(const i in this.sucursal){
+		// 		if(this.sucursal[i].nombre === this.Sucursal){
+		// 			this.id_sucursal = this.sucursal[i].id
+		// 		}
+		// 	}
+		// },
 
-		Ciudad:function(){
-			for(const i in this.ciudad){
-				if(this.ciudad[i].nombre === this.Ciudad){
-					this.id_ciudad = this.ciudad[i].id
-				}
-			}
-		},
+		// Ciudad:function(){
+		// 	for(const i in this.ciudad){
+		// 		if(this.ciudad[i].nombre === this.Ciudad){
+		// 			this.id_ciudad = this.ciudad[i].id
+		// 		}
+		// 	}
+		// },
 	},
 }

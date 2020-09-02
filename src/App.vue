@@ -2,12 +2,12 @@
   <v-app id="inspire">
     <!-- <div :class="loading">Loading&#8230;</div> -->
 
-    <v-navigation-drawer app v-model="drawer" temporary  >
+    <v-navigation-drawer app v-model="drawer" temporary width="300px" >
 
         <v-list dense nav class="py-0">
           <v-list-item two-line>
             <v-list-item-avatar>
-              <img src="person.png">
+              <img src="http://producciongama.com:8080/CRM-GAMA-2020/imagenes/person.png">
             </v-list-item-avatar>
 
             <v-list-item-content>
@@ -76,6 +76,43 @@
           </v-list-group>
         </template>
       </v-list>
+
+      <!-- RODUCCION -->
+      <v-list dense>
+        <template v-for="prod in AppControl">
+
+          <v-list-group  v-if="prod.produccion" :key="prod.title" v-model="prod.model" :prepend-icon="prod.model ? prod.icon : prod['icon-alt']"
+            color="rosa"
+          >
+            <template v-slot:activator>
+              <v-list-item>
+                <v-list-item-content >
+                  <v-list-item-title > 
+                   {{ prod.title}}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="(child, i) in prod.administracion"
+              :key="i"
+              :to="child.path"
+              dense
+            >
+              <v-list-item-content >
+                <v-list-item-title >
+                  {{ child.text }}
+                </v-list-item-title>
+              </v-list-item-content>
+               <v-list-item-action v-if="child.icon">
+                <v-icon>{{ child.icon }}</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list-group>
+        </template>
+      </v-list>
+
 
       <!-- CATALOGOS -->
       <v-list dense>
@@ -169,7 +206,7 @@
     </div>
 
     <v-app-bar app color="rosa" dark class="elevation-0" v-ripple dense v-if="getLogeado">
-       <img src="logo.png" height="40" @click.stop="drawer = !drawer">
+       <img src="http://producciongama.com:8080/CRM-GAMA-2020/imagenes/logo.png" height="40" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
 
       <v-toolbar-items text-right> 
@@ -206,7 +243,16 @@ export default {
   },
   data: () => ({
     cerrar_sesion:false,
-    niveles:['Administrador','Supervisor','Vendedor','Chofer'],
+    niveles:['Administrador',
+             'Supervisor',
+             'Vendedor',
+             'Chofer',
+             'Almacenista',
+             'Ventas',
+             'Servicio al Cliente',
+             'Invitado',
+             ],
+
     drawer: null,
     contador: 0 ,
     color: '',
@@ -217,35 +263,41 @@ export default {
             { text: 'Inicio'      ,icon: 'home'               ,path: '/home'},
             { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
             { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
-            // { text: 'prueba'  ,icon: 'ballot'             ,path: '/prueba'},
-
-
             ],
         },
 
         {
           icon: 'menu_book',
           title :' Administración',
-          model: false,
+          model: true,
           administracion: [ 
-            { text: 'Productos'         ,icon: 'print'        ,path: '/productos'},
-            { text: 'Analisis de Fases' ,icon: 'assessment'        ,path: '/analisis-fases'},
+            { text: 'Productos'         ,icon: 'print'      ,path: '/productos'},
+            { text: 'Analisis de Fases' ,icon: 'assessment' ,path: '/analisis-fases'},
 
+          ],
+        },
+
+        {
+          icon: 'menu_book',
+          title :' Producción',
+          model: true,
+          produccion: [ 
+            { text: 'Ordenes de Trabajo',icon: 'print' ,path: '/o.t'},
           ],
         },
 
         {
           icon: 'account_box',
           title :' Catálogos',
-          model: false,
+          model: true,
           catalogos: [ 
             { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
             { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
             { text: 'Prospectos'  ,icon: 'person_pin_circle'  ,path: '/prospectos'},
             { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
-            { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
-            { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
-            { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
+            // { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
+            // { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
+            // { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
           ],
         },
       ],
@@ -327,125 +379,10 @@ export default {
 </script>
 
 <style scoped>
-/* Absolute Center Spinner */
-.loading {
-  position: fixed;
-  z-index: 999;
-  height: 2em;
-  width: 2em;
-  overflow: show;
-  margin: auto;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-}
 
-/* Transparent Overlay */
-.loading:before {
-  content: '';
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-    background: radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0, .8));
 
-  background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
-}
 
-/* :not(:required) hides these rules from IE9 and below */
-.loading:not(:required) {
-  /* hide "loading..." text */
-  font: 0/0 a;
-  color: transparent;
-  text-shadow: none;
-  background-color: transparent;
-  border: 0;
-}
-
-.loading:not(:required):after {
-  content: '';
-  display: block;
-  font-size: 10px;
-  width: 1em;
-  height: 1em;
-  margin-top: -0.5em;
-  -webkit-animation: spinner 150ms infinite linear;
-  -moz-animation: spinner 150ms infinite linear;
-  -ms-animation: spinner 150ms infinite linear;
-  -o-animation: spinner 150ms infinite linear;
-  animation: spinner 150ms infinite linear;
-  border-radius: 0.5em;
-  -webkit-box-shadow: rgba(255,255,255, 0.75) 1.5em 0 0 0, rgba(255,255,255, 0.75) 1.1em 1.1em 0 0, rgba(255,255,255, 0.75) 0 1.5em 0 0, rgba(255,255,255, 0.75) -1.1em 1.1em 0 0, rgba(255,255,255, 0.75) -1.5em 0 0 0, rgba(255,255,255, 0.75) -1.1em -1.1em 0 0, rgba(255,255,255, 0.75) 0 -1.5em 0 0, rgba(255,255,255, 0.75) 1.1em -1.1em 0 0;
-box-shadow: rgba(255,255,255, 0.75) 1.5em 0 0 0, rgba(255,255,255, 0.75) 1.1em 1.1em 0 0, rgba(255,255,255, 0.75) 0 1.5em 0 0, rgba(255,255,255, 0.75) -1.1em 1.1em 0 0, rgba(255,255,255, 0.75) -1.5em 0 0 0, rgba(255,255,255, 0.75) -1.1em -1.1em 0 0, rgba(255,255,255, 0.75) 0 -1.5em 0 0, rgba(255,255,255, 0.75) 1.1em -1.1em 0 0;
-}
 
 /* Animation */
 
-@-webkit-keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@-moz-keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@-o-keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
 </style>
