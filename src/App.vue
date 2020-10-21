@@ -153,7 +153,7 @@
       </v-list>
 
       <v-divider></v-divider>
-  
+
       <v-card-actions>
         <v-btn color="red" outlined block small @click="cerrar_sesion=true">Cerrar Sesión
           <v-icon right>mdi-exit-to-app</v-icon>

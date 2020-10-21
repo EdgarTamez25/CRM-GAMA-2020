@@ -165,29 +165,6 @@ export default {
 	},
 
 	watch:{
-		cliente:function(){
-			for(const i in this.clientes){
-				if(this.clientes[i].nombre === this.cliente ){
-					this.id_cliente = this.clientes[i].id
-				}
-			}
-		},
-
-		Categoria:function(){
-			for(const i in this.categorias){
-				if(this.categorias[i].nombre === this.Categoria ){
-					this.id_categoria = this.categorias[i].id
-				}
-			}
-		},
-
-		vendedor:function(){
-			for(const i in this.vendedores){
-				if(this.vendedores[i].nombre === this.vendedor ){
-					this.id_vendedor = this.vendedores[i].id
-				}
-			}
-		},
 
 		Materia_Prima:function(){
 			for(const i in this.materia_prima){
@@ -204,14 +181,6 @@ export default {
 				}
 			}
 		},
-
-		// Unidad:function(){
-		// 	for(const i in this.unidad){
-		// 		if(this.unidad[i].nombre === this.Unidad){
-		// 			this.id_unidad = this.unidad[i].id
-		// 		}
-		// 	}
-		// },
 
 		Moneda:function(){
 			for(const i in this.moneda){
@@ -230,28 +199,5 @@ export default {
 			}
 		},
 
-		// Linea:function(){
-		// 	for(const i in this.linea){
-		// 		if(this.linea[i].nombre === this.Linea){
-		// 			this.id_linea = this.linea[i].id
-		// 		}
-		// 	}
-		// },
-
-		// Sucursal:function(){
-		// 	for(const i in this.sucursal){
-		// 		if(this.sucursal[i].nombre === this.Sucursal){
-		// 			this.id_sucursal = this.sucursal[i].id
-		// 		}
-		// 	}
-		// },
-
-		// Ciudad:function(){
-		// 	for(const i in this.ciudad){
-		// 		if(this.ciudad[i].nombre === this.Ciudad){
-		// 			this.id_ciudad = this.ciudad[i].id
-		// 		}
-		// 	}
-		// },
 	},
 }

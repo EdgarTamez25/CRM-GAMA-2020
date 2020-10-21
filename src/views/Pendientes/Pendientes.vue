@@ -3,11 +3,13 @@
     <v-col>
 			<v-card-actions class="font-weight-black headline"> PENDIENTES </v-card-actions>
       <v-sheet height="70">
+      
         <v-toolbar flat color="white">
           <v-btn fab x-small color="rosa" dark class="ma-1" @click="prev"> <!--  FECHA  ANTERIOR -->
             <v-icon small>mdi-chevron-left</v-icon>
           </v-btn>
 					<v-toolbar-title class="ma-1">{{ title }}</v-toolbar-title>  <!-- FECHA ACTUAL-->
+					
           <v-btn fab x-small color="rosa" dark class="ma-1" @click="next"> <!-- SIGUIENTE FECHA -->
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
@@ -35,7 +37,7 @@
         </v-toolbar>
       </v-sheet>
 
-      <v-sheet :height="pantalla"> <!-- CALENDARIO -->
+      <v-sheet :height="tamanioPantalla"> <!-- CALENDARIO -->
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -139,15 +141,26 @@
     computed: {
 				...mapGetters('Compromisos'  ,['getCompromisos','Loading']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
 			
-      pantalla () {
-        switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return 500
-          case 'sm': return 500
-          case 'md': return 400
-          case 'lg': return 500
-          case 'xl': return 700
-        }
-      },
+			tamanioPantalla () {
+				console.log(this.$vuetify.breakpoint)
+				switch (this.$vuetify.breakpoint.name) {
+					case 'xs':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'sm': 
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'md':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'lg':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'xl':
+						return this.$vuetify.breakpoint.height -300
+					break;
+				}
+			},
 
       title () {
         const { start, end } = this
@@ -191,6 +204,7 @@
         this.focus = date
         this.type = 'day'
 			},
+
 			prev () {   // FUNCION PARA RETROCEDER FECHA
         this.$refs.calendar.prev()
       },

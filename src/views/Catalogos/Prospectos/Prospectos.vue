@@ -6,10 +6,10 @@
 				<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 			</v-snackbar>
 
-  		<v-col cols="12" sm="10">
-				<v-card-actions class="font-weight-black headline"> PROSPECTOS </v-card-actions>
+  		<v-col cols="12" sm="10" >
+				<v-card-actions class="font-weight-black headline mt-3"> PROSPECTOS </v-card-actions>
 
-				<v-card  >
+				<v-card outlined >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
@@ -30,7 +30,7 @@
 			      :items="getProspectos"
 			      :search="search"
 			      fixed-header
-						height="550"
+						:height="tamanioPantalla"
 						hide-default-footer
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
@@ -132,6 +132,26 @@
 			computed:{
 				...mapGetters('Prospectos'  ,['Loading','getProspectos']), // IMPORTANDO USO DE VUEX - Prospectos (GETTERS)
 				...mapGetters('Usuarios'    ,['getUsuarios']), // IMPORTANDO USO DE VUEX - Prospectos (GETTERS)
+				tamanioPantalla () {
+					console.log(this.$vuetify.breakpoint)
+					switch (this.$vuetify.breakpoint.name) {
+						case 'xs':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'sm': 
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'md':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'lg':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'xl':
+							return this.$vuetify.breakpoint.height -300
+						break;
+					}
+				},
 			},
 
 			methods:{

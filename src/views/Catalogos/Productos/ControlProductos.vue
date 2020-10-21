@@ -211,9 +211,9 @@
 		},
 		
 		created(){
-			this.consultarLineas() 			//MANDO A CONSULTAR SUCURSALES A MIXINS
-			this.consultarProveedores() //MANDO A CONSULTAR PROVEEDORES A MIXINS
-			this.consultarUnidades() 		//MANDO A CONSULTAR UNIDADES A MIXINS
+			this.consultarLineas() 			// MANDO A CONSULTAR SUCURSALES A MIXINS
+			this.consultarProveedores() // MANDO A CONSULTAR PROVEEDORES A MIXINS
+			this.consultarUnidades() 		// MANDO A CONSULTAR UNIDADES A MIXINS
 			this.validarModoVista() 	  // VALIDO EL MODO DE LA VISTA
 
 		},
@@ -262,9 +262,7 @@
 				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL USUARIO"   ; return }
 				if(!this.cantidad) { this.snackbar = true; this.text="No puedes omitir la CANTIDAD"   ; return }
 				if(!this.unidad.id)	 { this.snackbar = true; this.text="No puedes omitir la UNIDAD"   ; return }
-
-
-				this.PrepararPeticion()
+					this.PrepararPeticion()
 			},
 
 			PrepararPeticion(){

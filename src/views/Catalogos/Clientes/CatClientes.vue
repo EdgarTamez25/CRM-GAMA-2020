@@ -4,7 +4,7 @@
   		<v-col cols="12" >
 				<v-card-actions class="font-weight-black headline"> CLIENTES </v-card-actions>
 
-				<v-card class="elevation-10 mt-3" >
+				<v-card class="mt-3" outlined >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
@@ -24,7 +24,7 @@
 			      :items="getClientes"
 			      :search="search"
 			      fixed-header
-						height="550px"
+						:height="tamanioPantalla"
 						hide-default-footer
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
@@ -103,6 +103,26 @@
 
 			computed:{
 				...mapGetters('Clientes'  ,['Loading','getClientes']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+				tamanioPantalla () {
+					console.log(this.$vuetify.breakpoint)
+					switch (this.$vuetify.breakpoint.name) {
+						case 'xs':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'sm': 
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'md':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'lg':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'xl':
+							return this.$vuetify.breakpoint.height -300
+						break;
+					}
+				},
 			},
 
 			methods:{

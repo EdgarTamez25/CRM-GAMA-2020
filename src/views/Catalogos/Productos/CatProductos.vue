@@ -7,10 +7,10 @@
 				<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 			</v-snackbar>
 
-  		<v-col cols="12" sm="11">
+  		<v-col cols="12" >
 				<v-card-actions class="font-weight-black headline"> PRODUCTOS </v-card-actions>
 
-				<v-card class="elevation-10 mt-3" >
+				<v-card class="mt-3" outlined>
 				<!-- <v-card-actions> <h3><strong>PRODUCTOS</strong></h3></v-card-actions> -->
 
 					<v-card-actions>
@@ -31,7 +31,7 @@
 			      :items="getProductosAll"
 			      :search="search"
 			      fixed-header
-				    height="550px"
+				    :height="tamanioPantalla"
 				    hide-default-footer
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
@@ -64,6 +64,7 @@
 					<v-pagination v-model="page" :length="pageCount"></v-pagination>
 				</div>
 
+					{{ tamanioPantalla }}
 				 <v-dialog persistent v-model="dialog" width="700px" >	
 					<v-card class="pt-0 pa-4">
 		    		<ControlProductos :param="param" :edit="edit" @modal="dialog = $event" />
@@ -220,6 +221,27 @@
 			computed:{
 				...mapGetters('Productos',['Loading','getProductosAll']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
 				...mapGetters('Precios'	 ,['Loading_precios','getPreciosxId']), // IMPORTANDO USO DE VUEX - PRECIOS (GETTERS)
+
+				tamanioPantalla () {
+					console.log(this.$vuetify.breakpoint)
+					switch (this.$vuetify.breakpoint.name) {
+						case 'xs':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'sm': 
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'md':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'lg':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'xl':
+							return this.$vuetify.breakpoint.height -300
+						break;
+					}
+				},
 			},
 
 			methods:{

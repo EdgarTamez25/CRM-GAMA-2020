@@ -1,9 +1,11 @@
 <template>
   <v-container fluid class="fondo">
     <v-row justify="space-around" align="center" class="mx-2 ">
-    
-      <v-snackbar v-model="snackbar" :timeout="8000" top color="orange" dark  > {{text}}
-        <v-btn color="white" text @click="snackbar = false"> Cerrar </v-btn>
+
+      <v-snackbar v-model="snackbar" color="orange" top multi-line center > <b>{{ text }}</b>
+        <template v-slot:action="{ attrs }">
+          <v-btn color="white" text v-bind="attrs" @click="snackbar = false"> Cerrar </v-btn>
+        </template>
       </v-snackbar>
 
       <v-col cols="12"  sm="7" md="6" lg="4" xl="3" style="margin-top: 125px">
@@ -20,11 +22,7 @@
               id="logo"
             >
               <template v-slot:placeholder>
-                <v-row
-                  class="fill-height ma-0"
-                  align="center"
-                  justify="center"
-                >
+                <v-row class="fill-height ma-0" align="center" justify="center">
                   <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                 </v-row>
               </template>
@@ -40,7 +38,7 @@
                 required
                 type="text"
                 outlined
-                dense 
+                class="textos" 
                 color="white"
                 dark
                 >
@@ -58,28 +56,16 @@
                 @click:append="show1 = !show1"
                 @keyup.enter="ingresar"
                 outlined
-                dense
+                class="textos" 
                 hide-details
                 color="celeste"
                 clearable
                 dark
               ></v-text-field>
-
-              <v-col xs12>
-                <v-card v-if="error" color="red lighten-1" class=" px-2 py-2">
-                  <div class="white--text">
-                    {{ error }}
-                  </div>
-                </v-card>
-              </v-col>
-
             </v-form>
           </v-card-text>
             
-              <!-- BOTONES -->
           <v-card-actions class="mx-3">
-            <!-- <v-spacer></v-spacer> -->
-            <!-- <v-btn  color="white" outlined small dark :to="{name:'registro'}" >Registrarse</v-btn> -->
             <v-btn :loading="iniciar"
                    :disabled="iniciar" 
                    color="primary" 
@@ -91,12 +77,6 @@
               Iniciar Sesión
             </v-btn>
           </v-card-actions>
-          
-          <!-- <v-card-actions>
-            <v-spacer></v-spacer>
-
-            <v-btn color="terciario" text dark x-small :to="{name: 'olvidacontra'}">Olvide mi contraseña.</v-btn>
-          </v-card-actions> -->
         </v-card>
       </v-col>
     </v-row>
@@ -170,7 +150,8 @@ import {mapActions , mapGetters} from 'vuex'
             return
           }
         }).catch(error =>{
-          console.log(error)
+          // console.log('error type 500',error)
+          this.text="Lo siento amiguit@ algo salio mal. Verifiva tus datos"; this.snackbar= true;
         }).finally(() => this.iniciar = false) 
 
         
@@ -183,6 +164,10 @@ import {mapActions , mapGetters} from 'vuex'
 
 <style scoped>
   
+  .textos{
+    font-size: 25px
+  }
+
   #logo{
    border-radius:25px;
   }

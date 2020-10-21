@@ -16,11 +16,11 @@ class accesosController extends Controller{
 	}
 	
 	public function RHAcceso(Request $req){
-		return DB::insert('INSERT INTO rh_accesos (id_usuario,fecha1,hora1,concepto,id_sucursal)
-												VALUES(?,?,?,?,?)',[$req -> id_usuario, $req -> fecha1, $req -> hora1,$req -> concepto, $req -> id_sucursal]);
+		return DB::insert('INSERT INTO rh_accesos (id_usuario,fecha1,hora1,concepto,id_sucursal,id_cliente)
+												VALUES(?,?,?,?,?,?)',[$req -> id_usuario, $req -> fecha1, $req -> hora1,$req -> concepto, $req -> id_sucursal, $req -> id_cliente]);
 	}
 
-  public function Accesos($id){
+	public function Accesos($id){
 		$acceso = DB::select('SELECT a.id, a.id_usuario, u.nombre, p.nombre as puesto, a.concepto, a.fecha1,a.hora1, a.fecha2, a.hora2, a.estatus 
                             FROM rh_accesos a LEFT JOIN users u   ON a.id_usuario = u.id
                                               LEFT JOIN puestos p ON u.id_puesto  = p.id
@@ -29,8 +29,10 @@ class accesosController extends Controller{
 	}
 
 	public function accesosAll(Request $req){
-		$accesoall = DB::select('SELECT a.id, a.id_usuario, u.nombre, a.concepto, a.fecha1, a.fecha2, a.hora1,a.hora2
-															FROM rh_accesos a LEFT JOIN users u ON a.id_usuario = u.id 
+		$accesoall = DB::select('SELECT a.id, a.id_usuario, u.nombre, a.concepto, a.fecha1, a.fecha2, a.hora1,a.hora2,s.nombre as sucursal, c.nombre as cliente
+															FROM rh_accesos a LEFT JOIN users u      ON a.id_usuario  = u.id 
+																								LEFT JOIN sucursales s ON a.id_sucursal = s.id
+																								LEFT JOIN clientes c   ON a.id_cliente  = c.id
 														 WHERE a.id_sucursal = ? AND a.fecha1 between ? AND ? ORDER BY a.id DESC',[$req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
 		if($accesoall): return $accesoall; else: return $accesoall = []; endif;
 	}
@@ -54,12 +56,12 @@ class accesosController extends Controller{
 	}
 
 	public function addVisitante(Request $req){
-		$visitante = DB::insert('INSERT INTO rh_visitas (nombre, empresa, usuario_visita, fecha1,hora1, concepto,id_sucursal)
-												VALUES(?,?,?,?,?,?,?)',[$req -> nombre			    , $req -> empresa, 
-																								$req -> usuario_visita  , $req -> fecha1,			 
-																								$req -> hora1           , $req -> concepto,
-																								$req -> id_sucursal    
-																							]);
+		$visitante = DB::insert('INSERT INTO rh_visitas (nombre, empresa, usuario_visita, fecha1,hora1, concepto,id_sucursal,temperatura)
+												VALUES(?,?,?,?,?,?,?,?)',[$req -> nombre	        , $req -> empresa, 
+																									$req -> usuario_visita  , $req -> fecha1,			 
+																									$req -> hora1           , $req -> concepto,
+																									$req -> id_sucursal    	, $req -> temperatura
+																								]);
 		return $visitante ? $visitante: $visitante =[];
 	}
 	
@@ -67,8 +69,8 @@ class accesosController extends Controller{
 		return DB::select('SELECT * FROM rh_visitas WHERE estatus = 1 AND id_sucursal = ?',[$id_sucursal]);
 	}
 	
-	public function visitantesAll(){
-		$visitaAll = DB::select('SELECT v.id, v.nombre, v.fecha1, v.fecha2, v.hora1, v.hora2,v.empresa,v.concepto,
+	public function visitantesAll(Request $req){
+		$visitaAll = DB::select('SELECT v.id, v.nombre, v.fecha1, v.fecha2, v.hora1, v.hora2,v.empresa,v.concepto,v.temperatura,
 																		v.usuario_visita, u.nombre as nomuser
 															FROM rh_visitas v LEFT JOIN users u ON v.usuario_visita = u.id
 														WHERE v.id_sucursal =? AND v.fecha1 between ? AND ? ORDER BY v.id DESC',
