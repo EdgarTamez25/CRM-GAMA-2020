@@ -117,11 +117,43 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	Route::put('update.prospecto/{id}'	 ,'prospectosController@UpdateProspecto') -> name('UpdateProspecto');
 	Route::post('pasar.cliente'					 ,'prospectosController@PasarACliente')   -> name('PasarACliente');
 	Route::delete('delete.prospecto/{id}','clientesController@EliminarProspecto') -> name('EliminarProspecto'); 
-
 //==================================== DEPARTAMENTOS ===============================================
 	Route::get('departamentos','departamentosController@Departamentos')  -> name('Departamentos'); 
 //==================================== PUESTOS =====================================================
 	Route::get('puestos','puestosController@Puestos')  -> name('Puestos'); 
+
+
+//==================================== SOLICITUDES =================================================
+	Route::get('solicitudes'					 ,'solicitudesController@Solicitudes')  	  -> name('Solicitudes'); 
+	Route::get('detalle.solicitud/{id}','solicitudesController@DetalleSolicitud') -> name('DetalleSolicitud');
+	Route::get('modificaciones/{id}'   ,'solicitudesController@Modificaciones')   -> name('Modificaciones');
+	Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')  -> name('Caracteristicas');
+	Route::post('actualiza.modif'   	 ,'solicitudesController@ActualizaModif')   -> name('ActualizaModif');
+
+
+//==================================== MATERIALES ==================================================
+	Route::get('materiales/{dx}' 			 ,'materialesController@Materiales')  -> name('Materiales');
+//==================================== ACABADOS   ==================================================
+	Route::get('acabados/{dx}'         ,'acabadosController@Acabados')      -> name('Acabados');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //==================================================================================================

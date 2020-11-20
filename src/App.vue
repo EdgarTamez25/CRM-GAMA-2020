@@ -20,7 +20,7 @@
 
         </v-list>
       
-     <v-list dense>
+     <v-list dense shaped>
         <template v-for="control in AppControl">
           <v-list-item
             v-for="(child, i) in control.admin"
@@ -42,7 +42,7 @@
         </template>
       </v-list>
       <!-- ADMINISTRACION -->
-      <v-list dense>
+      <v-list dense shaped>
         <template v-for="admin in AppControl">
 
           <v-list-group  v-if="admin.administracion" :key="admin.title" v-model="admin.model" :prepend-icon="admin.model ? admin.icon : admin['icon-alt']"
@@ -63,6 +63,7 @@
               :key="i"
               :to="child.path"
               dense
+              
             >
               <v-list-item-content >
                 <v-list-item-title >
@@ -78,7 +79,7 @@
       </v-list>
 
       <!-- RODUCCION -->
-      <v-list dense>
+      <!-- <v-list dense>
         <template v-for="prod in AppControl">
 
           <v-list-group  v-if="prod.produccion" :key="prod.title" v-model="prod.model" :prepend-icon="prod.model ? prod.icon : prod['icon-alt']"
@@ -111,11 +112,11 @@
             </v-list-item>
           </v-list-group>
         </template>
-      </v-list>
+      </v-list> -->
 
 
       <!-- CATALOGOS -->
-      <v-list dense>
+      <v-list dense shaped>
         <template v-for="cat in AppControl">
 
           <v-list-group  v-if="cat.catalogos" :key="cat.title" v-model="cat.model" :prepend-icon="cat.model ? cat.icon : cat['icon-alt']"
@@ -262,7 +263,10 @@ export default {
           admin: [ 
             { text: 'Inicio'      ,icon: 'home'               ,path: '/home'},
             { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
-            { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
+            // { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
+            { text: 'Solicitudes' ,icon: 'ballot'             ,path: '/solicitudes'},
+
+            
             ],
         },
 
@@ -277,14 +281,14 @@ export default {
           ],
         },
 
-        {
-          icon: 'menu_book',
-          title :' Producción',
-          model: true,
-          produccion: [ 
-            { text: 'Ordenes de Trabajo',icon: 'print' ,path: '/o.t'},
-          ],
-        },
+        // {
+        //   icon: 'menu_book',
+        //   title :' Producción',
+        //   model: true,
+        //   produccion: [ 
+        //     { text: 'Ordenes de Trabajo',icon: 'print' ,path: '/o.t'},
+        //   ],
+        // },
 
         {
           icon: 'account_box',
@@ -372,6 +376,8 @@ export default {
         this.contador = 0
       }
     },
+
+    
 
 
   }

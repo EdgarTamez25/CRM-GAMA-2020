@@ -17,6 +17,7 @@ import Prospectos from '@/modules/Prospectos';
 
 // COMPROMISOS
 import Compromisos from '@/modules/Compromisos';
+import Solicitudes from '@/modules/Solicitudes';
 
 Vue.use(Vuex)
 
@@ -86,6 +87,7 @@ export default new Vuex.Store({
     Productos,
     Precios,
     Compromisos,
+    Solicitudes,
     Prospectos
   }
 })

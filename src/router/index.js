@@ -1,28 +1,32 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import store from '@/store'
-import Login from '@/views/AppController/Login.vue'
-import Home 	   from '../views/Home.vue'
-import Compromisos from '@/views/Compromisos/CatCompromisos.vue'
+import Vue            from 'vue'
+import VueRouter      from 'vue-router'
+import store          from '@/store'
+import Login          from '@/views/AppController/Login.vue'
+import Home 	        from '../views/Home.vue'
+import Compromisos    from '@/views/Compromisos/CatCompromisos.vue'
+import Solicitudes    from '@/views/Solicitudes/Solicitudes.vue'
+import DetSolicitud   from '@/views/Solicitudes/DetSolicitud.vue'
 import ControldeFases from '@/views/Compromisos/controldeFases.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  { path:'/'				       ,name: 'Login'        , component: Login         , meta: { libre:true}},
-  { path:'/home'			     ,name: 'Home'	       , component: Home          , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true, VEND:true, CHOFER:true, EXTRA:true }},
-  { path:'/compromisos'    ,name:'compromisos'   , component: Compromisos   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
-  { path:'/control_fases'  ,name:'control_fases' , component: ControldeFases, meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true }},
-  { path:'/pendientes'	   ,name:'pendientes'	   , component:()=> import('@/views/Pendientes/Pendientes.vue')               , meta: { ADMIN: true } },
-  { path:'/usuarios'       ,name:'usuarios'      , component:()=> import('@/views/Catalogos/Usuarios/CatUsuarios.vue')      , meta: { ADMIN: true, SUPER:true } },
-  { path:'/clientes'		   ,name:'clientes'	     , component:()=> import('@/views/Catalogos/Clientes/CatClientes.vue')      , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
-  { path:'/proveedores'		 ,name:'proveedores'	 , component:()=> import('@/views/Catalogos/Proveedores/CatProveedores.vue'), meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
-  { path:'/productos'		   ,name:'productos'	   , component:()=> import('@/views/Catalogos/Productos/CatProductos.vue')    , meta: { ADMIN: true, SUPER:true }},
-  { path:'/zonas-subzonas' ,name:'zonas'	       , component:()=> import('@/views/Catalogos/Zonas/CatZonas.vue')            , meta: { ADMIN: true, SUPER:true }},
-  { path:'/monedas'	       ,name:'monedas'	     , component:()=> import('@/views/Catalogos/Monedas/CatMonedas.vue')        , meta: { ADMIN: true, SUPER:true }},
-  { path:'/prospectos'     ,name:'prospectos'    , component:()=> import('@/views/Catalogos/Prospectos/Prospectos.vue' )    , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
-  { path:'/analisis-fases' ,name:'analisis-fases', component:()=> import('@/views/Historial/analisisFases.vue')             , meta: { ADMIN: true, SUPER:true }},
-  { path:'/o.t'            ,name:'o.t'           , component:()=> import('@/views/Produccion/OT/ordenesTrabajo.vue')             , meta: { ADMIN: true, SUPER:true }},
+  { path:'/'				       , name: 'Login'        , component: Login         , meta: { libre:true }},
+  { path:'/home'			     , name: 'Home'	        , component: Home          , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true, VEND:true, CHOFER:true, EXTRA:true }},
+  { path:'/compromisos'    , name:'compromisos'   , component: Compromisos   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
+  { path:'/solicitudes'    , name:'solicitudes'   , component: Solicitudes   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
+  { path:'/detsolicitud'   , name:'detsolicitud'  , component: DetSolicitud  , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true }},
+
+  { path:'/control_fases'  , name:'control_fases' , component: ControldeFases, meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true }},
+  { path:'/pendientes'	   , name:'pendientes'	  , component:()=> import('@/views/Pendientes/Pendientes.vue')               , meta: { ADMIN: true } },
+  { path:'/usuarios'       , name:'usuarios'      , component:()=> import('@/views/Catalogos/Usuarios/CatUsuarios.vue')      , meta: { ADMIN: true, SUPER:true } },
+  { path:'/clientes'		   , name:'clientes'	    , component:()=> import('@/views/Catalogos/Clientes/CatClientes.vue')      , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
+  { path:'/proveedores'		 , name:'proveedores'	  , component:()=> import('@/views/Catalogos/Proveedores/CatProveedores.vue'), meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
+  { path:'/productos'		   , name:'productos'	    , component:()=> import('@/views/Catalogos/Productos/CatProductos.vue')    , meta: { ADMIN: true, SUPER:true }},
+  { path:'/zonas-subzonas' , name:'zonas'	        , component:()=> import('@/views/Catalogos/Zonas/CatZonas.vue')            , meta: { ADMIN: true, SUPER:true }},
+  { path:'/monedas'	       , name:'monedas'	      , component:()=> import('@/views/Catalogos/Monedas/CatMonedas.vue')        , meta: { ADMIN: true, SUPER:true }},
+  { path:'/prospectos'     , name:'prospectos'    , component:()=> import('@/views/Catalogos/Prospectos/Prospectos.vue' )    , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
+  { path:'/analisis-fases' , name:'analisis-fases', component:()=> import('@/views/Historial/analisisFases.vue')             , meta: { ADMIN: true, SUPER:true }},
 
 ]
 

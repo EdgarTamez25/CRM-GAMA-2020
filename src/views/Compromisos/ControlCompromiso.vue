@@ -3,7 +3,7 @@
 		<v-row justify="center">
 			<v-col cols="12" >
 				
-				<v-snackbar v-model="snackbar" :color="color" top multi-line right > <b>{{ text }}</b> </v-snackbar>
+				<v-snackbar v-model="snackbar" :color="color" top multi-line right rounded="pill" > <b>{{ text }}</b> </v-snackbar>
 
 				<v-card-actions class="pa-0" >
 					<h3> <strong> {{ modoVista === 1? 'Nuevo Compromiso':'Editar Compromiso' }} </strong></h3> 
@@ -91,7 +91,7 @@
              Confirmar  
           </v-btn>
 					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
-             Actualizar  
+             Actualizar
           </v-btn>
 
           <v-dialog v-model="dialog" hide-overlay persistent width="300">

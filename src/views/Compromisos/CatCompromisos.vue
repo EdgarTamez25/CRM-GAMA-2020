@@ -10,9 +10,9 @@
 
 				<!-- CATALOGO DE COMPROMISOS -->
 				<v-card class="mt-3" outlined >
-				<v-card-actions class="font-weight-black headline pa-4"> COMPROMISOS </v-card-actions>
+				<v-card-actions class="font-weight-black headline  py-0 mt-1"> COMPROMISOS </v-card-actions>
 
-					<v-card-actions>
+					<v-card-actions clas="py-0 my-0">
 			      <v-text-field
 			        v-model="search"
 			        append-icon="search"
