@@ -43,7 +43,7 @@ class solicitudesController extends Controller
 
 	//! OBTENER MODIFICACIONES DE UNA SOLICITUD
 	public function Modificaciones($id){
-		return  DB::select('SELECT * FROM dx_modif WHERE id_prod_modif =?',[$id]);
+			return  DB::select('SELECT * FROM dx_modif WHERE id_prod_modif =?',[$id]);
 	}
 
 	// ! OBTENER CARACTERISTICAS POR FORMULARIO
@@ -144,8 +144,13 @@ class solicitudesController extends Controller
 																							'valor2' => $req['data'][$i]['valor2'] , 
 																							'id' 		 => $req['data'][$i]['id']  ]);
 		endfor;
+		
+		$this -> actualizaEstatusModif($req['id']);
+		return response("la información se guardo correctamente",200);
+	}
 
-		return response("la información se guardo correctamente",500);
+	public function actualizaEstatusModif($id){
+		DB::update('UPDATE prod_modif SET estatus=:estatus WHERE id=:id',['estatus' => 2, 'id' => $id]);
 	}
 
 }

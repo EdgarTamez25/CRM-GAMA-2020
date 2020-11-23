@@ -68,9 +68,11 @@
                         <td class="font-weight-black">{{ item.ft }}</td>
                         <td class="font-weight-black">{{ item.cantidad }}</td>
                         <td align="right">
-                          <v-btn text small color="gris"    class="mx-1 mt-1"   dark>   
+                          <!-- MOSTRAR BOTON SI YA SE LEASIGNO UNA ACCION O SI ES UN PRODUCTO EXISTENTE -->
+                          <v-btn text small color="green" class="mx-1 mt-1 " v-if="item.estatus === 2 || item.tipo_prod === 1">   
                             <v-icon>mdi-file-send</v-icon> 
                           </v-btn>
+
                           <v-btn text small color="celeste" class="mx-1 mt-1" dark v-if="item.tipo_prod != 1" @click="validaTipoProducto(item)">   
                             <v-icon>mdi-eye</v-icon> 
                           </v-btn>

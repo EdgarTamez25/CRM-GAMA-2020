@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col v-if="!Loading">
-      <v-snackbar v-model="snackbar" multi-line top right color="error"> {{ text }}
+      <v-snackbar v-model="snackbar" multi-line top right color="error" class="font-weight-black subtitle-1"> {{ text }}
         <template v-slot:action="{ attrs }">
           <v-btn dark text v-bind="attrs" @click="snackbar = false"> Cerrar</v-btn>
         </template>
@@ -17,6 +17,7 @@
         </div>
       </v-card-actions>
       <v-divider></v-divider>
+
       <v-simple-table  >
         <template v-slot:default>
           <thead>
@@ -108,7 +109,7 @@
       <v-footer absolute class="pa-3" >
         <v-btn color="error" outlined small @click="$emit('modal',false)" >Cancelar </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="green" dark small   @click="FormaArrayActualizar()"  >Guardar Información </v-btn>
+        <v-btn color="green" dark small   @click="valiadInformacion()"  >Guardar Información </v-btn>
       </v-footer>
 
       <!-- MODAL PARA MOSTRAR ORIENTACIONES -->
@@ -149,6 +150,7 @@
     <v-container style="height: 400px;" v-if="Loading">
       <loading/>
     </v-container>
+
   </v-row>
 </template>
 
@@ -173,7 +175,6 @@
     data:()=> ({
       id_seleccionado: 0,
       sheet: false,
-
       Loading: true,
       deptos: [],
       material     : { id:null, nombre:''},
@@ -222,43 +223,63 @@
       init(){
         this.Loading = true;
 
-        this.consultaDepartamentos()
-        this.consultaMateriales(this.depto_id).then( response1 =>{
-          this.consultaAcabados(this.depto_id).then( response3 =>{
-            this.consultaModificaciones(this.parametros.id).then(response =>{
-              for(let i=0; i<this.getModificaciones.length; i++){
+        this.consultaDepartamentos()  //! CONSULTA DEPARTAMENTOS
+        
+        this.consultaMateriales(this.depto_id).then( response1 =>{ //!CONSULTA MATERIALES
+          this.consultaAcabados(this.depto_id).then( response3 =>{ //!CONSULTA ACABADOS
+            this.consultaModificaciones(this.parametros.id).then(response =>{ //! CONSULTA LAS MODIFICACIONES QUE SE CARGARON
+              //! SE GENERA UN CICLO PARA ASIGNAR VALOR A MOSTAR DE LOS VALORES QUE RECIBO COMO "id"; 
+              //! MODIFICO EL REGISTRO EN LA POSICION "i" QUE VAYA ENCONTRANDO SEGUN LAS CONDICIONES
+              for(let i=0; i<this.getModificaciones.length; i++){ 
+               
                 if(this.getModificaciones[i].concepto === 'Material'){
                   var pos = i;
                   for(let x=0;x<this.materiales.length; x++){
                     if(this.materiales[x].id === parseInt(this.getModificaciones[pos].valor)){
                       this.getModificaciones[pos].valor  = this.materiales[x].nombre
                     }
+                    if(this.materiales[x].id === parseInt(this.getModificaciones[pos].valor2)){
+                      this.getModificaciones[pos].valor2 = { id: this.materiales[x].id }
+                    }
                   }
                 }
-
-                if(this.getModificaciones[i].concepto === 'Material Secundario'){
+                if(this.getModificaciones[i].concepto === 'Material Secundario'){ 
                   var pos2 = i;
                   for(let y=0;y<this.materiales2.length; y++){
                     if(this.materiales2[y].id === parseInt(this.getModificaciones[pos2].valor)){
                       this.getModificaciones[pos2].valor  = this.materiales2[y].nombre
                     }
+                    if(this.materiales2[y].id === parseInt(this.getModificaciones[pos2].valor2)){
+                      this.getModificaciones[pos2].valor2 = { id: this.materiales2[y].id }
+                    }
                   }  
                 }
-
                 if(this.getModificaciones[i].concepto === 'Acabado'){
                   for(let z=0;z<this.acabados.length; z++){
                     if(this.acabados[z].id === parseInt(this.getModificaciones[i].valor)){
                       this.getModificaciones[i].valor  = this.acabados[z].nombre
                     }
+                    if(this.acabados[z].id === parseInt(this.getModificaciones[i].valor2)){
+                      this.getModificaciones[i].valor2 = { id: this.acabados[z].id }
+                    }
                   }
                 }
                 if(this.getModificaciones[i].concepto === 'Orientacion' ){
-                  this.getModificaciones[i].valor =  this.flexo[parseInt(this.getModificaciones[i].valor)-1].img;
+                  this.getModificaciones[i].valor  =  this.flexo[parseInt(this.getModificaciones[i].valor)-1].img;
+                  if(this.getModificaciones[i].valor2){
+                    this.getModificaciones[i].valor2 =  { id: parseInt(this.getModificaciones[i].valor2),
+                                                      img: this.flexo[parseInt(this.getModificaciones[i].valor2)-1].img
+                                                    };
+                  }
                 }
-              
+
+                if(this.getModificaciones[i].accion === 1 || this.getModificaciones[i].accion === 2 || this.getModificaciones[i].accion === 3 ){
+                  this.getModificaciones[i].accion = this.acciones[this.getModificaciones[i].accion-1]
+                }
+                
               }
             }).catch(error =>{
-              console.log('error modif', error)
+              // console.log('error modif', error)
             }).finally( ()=> this.Loading = false )
           });
         });
@@ -282,34 +303,52 @@
         this.checkActivo = items.id; //! GUARDO EL CHECK-ACTIVO 
       },
 
-      FormaArrayActualizar(){
-        this.overlay= true; let arrayTemp = [];
-        for(let i=0; i<this.getModificaciones.length;i++){
-          if(this.getModificaciones[i].accion){
-            if(this.getModificaciones[i].accion.id === 1){
-              arrayTemp.push({ id: this.getModificaciones[i].id,
-                                accion: this.getModificaciones[i].accion.id,
-                                valor2: typeof this.getModificaciones[i].valor2 === 'object' ? 
-                                        this.getModificaciones[i].valor2.id:this.getModificaciones[i].valor2 
-                              });
-            }else{
-              arrayTemp.push({  id: this.getModificaciones[i].id,
-                                accion: this.getModificaciones[i].accion.id,
-                                valor2: '',
-                              });
+      valiadInformacion(){
+        this.overlay= true; let errores1 = 0, errores2 = 0;
+        for(let x=0; x<this.getModificaciones.length;x++){
+          if(this.getModificaciones[x].accion){         // VALIDAR SI ACCION ESTA SELECCIONADA
+            if(this.getModificaciones[x].accion.id === 1){ // VALIDAR SI ACCION ES IGUAL A 1
+              // console.log('valor2', this.getModificaciones[x].valor2)
+              if(this.getModificaciones[x].valor2 === null){     // VALIDAR SI EL VALOR 2 ESTA LLENO
+                errores2 ++;
+              }
             }
+          }else{  // SI ACCION NO ESTA SELECCIONADA ENTONCES AUMENTO ERRORES
+            errores1 ++;
+          }
+        }
+        if(errores1>0){ this.snackbar=true; this.text="Debes seleccionar una acción " ;this.overlay=false; return }
+        if(errores2>0){ this.snackbar=true; this.text="Olvidaste indicar el remplazo ";this.overlay=false; return }
+
+        this.FormaArrayActualizar()
+      },
+
+      FormaArrayActualizar(){
+        let arrayTemp = [];
+        for(let i=0; i<this.getModificaciones.length;i++){
+          if(this.getModificaciones[i].accion.id === 1){
+
+            arrayTemp.push({ id: this.getModificaciones[i].id,
+                              accion: this.getModificaciones[i].accion.id,
+                              valor2: typeof this.getModificaciones[i].valor2 === 'object' ? 
+                                      this.getModificaciones[i].valor2.id:this.getModificaciones[i].valor2 
+                            });
+
+          }else{
+            arrayTemp.push({  id: this.getModificaciones[i].id,
+                              accion: this.getModificaciones[i].accion.id,
+                              valor2: '',
+                            });
           }
         } 
-        console.log('arrayTemp', arrayTemp)
+        // console.log('arrayTemp', arrayTemp)
         this.actualizaModif(arrayTemp)
 
       },
 
       actualizaModif(data){
-        console.log('data', data)
-        console.log('tipo dato', typeof data);
-        const payload = { data }
-
+        const payload = { id: this.parametros.id, data }
+        // console.log('payload', payload)
         this.$http.post('actualiza.modif', payload).then(response =>{
           this.overlay  = false; this.colorCorrecto = 'green';
           this.Correcto = true; this.textCorrecto = response.bodyText;
@@ -323,7 +362,7 @@
 
       Terminar(status){
         var me = this;
-        status === 200? setTimeout(function(){ me.$emit('modal',false); me.$emit('put', !this.actualiza)}, 1500):
+        status === 200? setTimeout(function(){ me.$emit('modal',false); me.$emit('put', this.actualiza = !this.actualiza)}, 1500):
                         setTimeout(function(){ me.Correcto = false    }, 1500)
         
       }
