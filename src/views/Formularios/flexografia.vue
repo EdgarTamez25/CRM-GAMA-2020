@@ -1,16 +1,20 @@
 <template>
   <!-- <v-main class="pa-0"> -->
     <v-row justify="center">
+
+       <!-- OVERLAY -->
+      <overlay v-if="overlay"/>
+      <!-- LOADING -->
+      <v-container style="height: 400px;" v-if="Loading">
+        <loading/>
+      </v-container>
+
       <v-col cols="12" align="center"> 
         <v-snackbar v-model="snackbar" multi-line :timeout="2000" top color="error"> {{text}}
           <template v-slot:action="{ attrs }">
             <v-btn color="white" text @click="snackbar = false" v-bind="attrs"> Cerrar </v-btn>
           </template>
         </v-snackbar>
-
-        <v-container style="height: 400px;" v-if="Loading">
-          <loading/>
-        </v-container>
 
         <v-form ref="form"> 
           <v-row >
@@ -142,28 +146,47 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" class="my-3"/>
+      <v-col cols="12" class="my-3" v-if="!Loading"/>
 
       <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
-      <v-footer  absolute>
+      <v-footer  absolute v-if="!Loading">
+        <v-btn color="error" outlined small @click="$emit('modal',false)" >Cancelar </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="error" outlined small  @click="$emit('modal',false)"  class="ma-1">Cancelar </v-btn>
-        <!-- <v-btn color="success" small  @click="validaInformacion()">Guardar </v-btn> -->
+        <v-btn color="rosa"    class="mx-1" dark small @click="realizadoFinalizado = true, modo= 1" 
+                v-if="modalDDD && parametros.estatus_key === 1"> Realizado 
+        </v-btn>
+        <v-btn color="celeste" class="mx-1" dark small @click="realizadoFinalizado = true, modo= 2" 
+               v-if="modalDDD && parametros.estatus_key !=3"> Finalizar 
+        </v-btn>
+        <v-btn color="success" small  @click="validaInformacion()" v-if="!modalDDD">Guardar información </v-btn>
       </v-footer>
 
-      <v-dialog v-model="dialog" hide-overlay persistent width="300">
-        <v-card color="blue darken-4" dark >
-          <v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
-            <br><v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
+       <v-dialog v-model="realizadoFinalizado" width="450px">
+        <v-card class="pa-1">
+          <v-card-text class="pa-4 font-weight-black subtitle-1" >
+            <span v-if="modo===1"> LA SOLICITUD SE QUEDARA PENDIENTE DE AUTORIZAR POR EL CLIENTE </span>
+            <span v-else> LA SOLICITUD SE TOMARA COMO REALIZADA Y AUTORIZADA </span>
+          </v-card-text>
+          <v-card-subtitle class="font-weight-black" align="center">
+            ¿ ESTAS SEGURO DE CONTINUAR ?
+          </v-card-subtitle>
+          <v-card-actions>
+            <v-btn color="error" small @click="realizadoFinalizado = false">Cancelar</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="celeste" dark small @click="PrepararMovimiento()">Continuar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+
+      <v-dialog v-model="Correcto" hide-overlay persistent width="350">
+        <v-card :color="colorCorrecto" dark class="pa-3">
+          <v-card-text class="font-weight-black headline pa-3 white--text" align="center">
+            {{ textCorrecto }}
           </v-card-text>
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="Correcto" hide-overlay persistent width="350">
-        <v-card color="success"  dark class="pa-3">
-          <h3><strong>{{ textCorrecto }} </strong></h3>
-        </v-card>
-      </v-dialog>
     </v-row>
   <!-- </v-main> -->
 </template>
@@ -172,16 +195,20 @@
 	import  metodos from '@/mixins/metodos.js';
 	import {mapGetters, mapActions} from 'vuex';
   import loading     from '@/components/loading.vue'
+  import overlay     from '@/components/overlay.vue'
   
   export default {
     mixins:[metodos],
     components:{
-      loading
+      loading,
+      overlay
     },
     props:[
 			'modoVista',
       'parametros',
       'depto_id',
+      'modalDDD',
+      'actualiza',
 	  ],
     data: () => ({
       Loading        : true,
@@ -220,12 +247,15 @@
       ancho         : '',
       largo         : '',
       // AVISOS
-      snackbar      : false,
-      text          : '',
-      dialog        : false,
-      textDialog    : "Guardando Información",
-      Correcto      : false,
-      textCorrecto  : '',
+      snackbar     : false,
+      text         : '',
+      Correcto     : false,
+      colorCorrecto : 'green',
+      textCorrecto : 'La información se guardo correctamente',
+      overlay      : false,
+
+      modo: 0,
+      realizadoFinalizado: false,
     }),
 
     created(){ 
@@ -233,13 +263,15 @@
     },
     computed:{ 
       ...mapGetters('Solicitudes',['consecutivo']),  
+			...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
+
       ACTIVACAMPO(){ //! ESTA FUNCION SIRVE PARA VISUALIZAR EL FORMULARIO 
         return this.tproducto.id === 1 ?  false: true ;
       }
     },
     watch:{ 
       depto_id(){  this.validarModoVista(); } , // !SE ESCUCHAN LOS CAMBIOS DE DEPARTAMENTO
-      parametros(){ this.validarModoVista(); } , //! SE ESCUCHAN LOS CMABIOS DEL PROP PARAMETROS
+      parametros(){ this.validarModoVista();  } , //! SE ESCUCHAN LOS CMABIOS DEL PROP PARAMETROS
     }, 
 
     methods:{
@@ -313,13 +345,14 @@
       },
 
       PrepararPeticion(){
-        let payload = {};
+        this.overlay = true; let payload = {};
         if(this.tproducto.id === 1){ //! FORMO ARRAY SI ES PRODUCTO EXISTENTE
           payload = { id        : this.modoVista ===1 ? this.consecutivo: this.parametros.id,
                       dx        : 1,
                       referencia: this.referencia,
                       tproducto : this.tproducto.id,
-                      cantidad  : this.cantidad
+                      cantidad  : this.cantidad,
+                      id_dx     : this.modoVista === 2? this.parametros.id_dx: '' 
                     }
         }else if(this.tproducto.id === 2 || this.tproducto.id === 3){ //! FORMO ARRAY SI ES UNA MODIFICACION DE PRODUCTO
           payload ={  id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
@@ -338,37 +371,40 @@
                       largo          : this.largo,
                       tproducto      : this.tproducto.id,
                       cantidad       : this.cantidad,
-                      xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): ''
+                      xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): '',
+                      id_dx          : this.modoVista === 2? this.parametros.id_dx: '' 
+
                     }
         }
-       
+       console.log('payload', payload)
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
       },
 
       Crear(payload){
-        this.dialog = true ; 
         this.agregaProducto(payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se agrego a la lista"); }
         }).finally(()=>{ 
-          this.dialog = false
+          this.overlay = false
         })
       },
 
       Actualizar(payload){
-        this.dialog = true ;
-        this.actualizaProducto(payload).then( res =>{
+        this.actualizaProducto( payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se modifico correctamente"); }
+        }).catch( error =>{
+          console.log('putprod')
         }).finally(()=>{ 
-          this.dialog = false
+          this.overlay = false
         })
       },
 
 			TerminarProceso(mensaje){
         var me = this ;
-        this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
-        setTimeout(function(){ me.$emit('modal',false)}, 2000);
-        this.limpiarCampos();  //LIMPIAR FORMULARIO
+        this.Correcto = true ; this.textCorrecto = mensaje;
+        setTimeout(function(){ me.Correcto = false }, 2000);
+        // setTimeout(function(){ me.$emit('modal',false)}, 2000);
+        // this.limpiarCampos();  //LIMPIAR FORMULARIO
       },
 
       limpiarCampos(){
@@ -427,7 +463,39 @@
         }
 
         return arrayTemp;
-      }
+      },
+
+      PrepararMovimiento(){
+        this.realizadoFinalizado = false;
+        const payload = { id_key: this.parametros.id_key, 
+                          responsable2: this.getdatosUsuario.id, 
+                          estatus: this.modo === 1? 2:3,
+                          id_solicitud: this.parametros.id_solicitud,
+                          id: this.parametros.id,
+                          px: this.parametros.px
+                        }
+        this.procesarMovimiento(payload);
+      },
+
+      procesarMovimiento(payload){
+        this.overlay = true; 
+        this.$http.post('procesa.movimiento', payload).then(response =>{
+          this.overlay  = false; this.colorCorrecto = 'green';
+          this.Correcto = true; this.textCorrecto = response.bodyText; 
+          this.Terminar(200)
+        }).catch( error =>{
+          this.overlay = false; this.colorCorrecto = 'error'; this.textCorrecto = error.bodyText;
+          this.Terminar(500)
+        })
+      },
+
+      Terminar(status){
+        var me = this;
+        status === 200? setTimeout(function(){ me.$emit('modal',false); me.$emit('put', this.actualiza = !this.actualiza)}, 1500):
+                        setTimeout(function(){ me.Correcto = false    }, 1500)
+        
+      },
+
     }
   }
 </script>

@@ -17,7 +17,8 @@ class CreateMaterialesTable extends Migration
             $table->bigIncrements('id');
             $table->string('nombre',100);
             $table->integer('dx');
-            $table->integer('estatus')->default(1);
+            $table->integer('tipo')->default(1);
+            $table->integer('estatus')->default(0);
         });
     }
 

@@ -18,6 +18,13 @@ class CreateDxModifTable extends Migration
             $table->integer('id_prod_modif');
             $table->string('concepto',50);
             $table->string('valor',100);
+            $table->integer('accion')  ->nullable();
+            $table->string('valor2',100) ->nullable();
+            $table->string('ft',50) ->nullable();
+            $table->string('valor',250) ->nullable();
+
+
+
         });
     }
 

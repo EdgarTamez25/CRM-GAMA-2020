@@ -64,7 +64,7 @@
 					<v-pagination v-model="page" :length="pageCount"></v-pagination>
 				</div>
 
-					{{ tamanioPantalla }}
+					<!-- {{ tamanioPantalla }} -->
 				 <v-dialog persistent v-model="dialog" width="700px" >	
 					<v-card class="pt-0 pa-4">
 		    		<ControlProductos :param="param" :edit="edit" @modal="dialog = $event" />

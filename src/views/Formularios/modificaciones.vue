@@ -16,8 +16,9 @@
            {{ parametros.ft }}
         </div>
       </v-card-actions>
-      <v-divider></v-divider>
 
+      <v-divider></v-divider>
+      
       <v-simple-table  >
         <template v-slot:default>
           <thead>
@@ -56,7 +57,8 @@
                 v-if="item.accion && item.concepto === 'Orientacion' ||
                       item.accion && item.concepto === 'Material'    ||
                       item.accion && item.concepto === 'Acabado'     ||
-                      item.accion && item.concepto === 'Material Secundario' "
+                      item.accion && item.concepto === 'Material Secundario' ||
+                      item.accion && item.concepto === 'Estructura'"
               >
                 
                 <div v-if="item.concepto === 'Orientacion'">
@@ -91,6 +93,15 @@
                     :disabled="item.accion.id != 1? true: false"
                   ></v-select> 
                 </div>
+
+                <div v-if="item.concepto === 'Estructura'" class="mt-2">
+                  <v-select
+                     v-model="item.valor2" :items="estructuras" item-text="nombre" item-value="id"  
+                    dense hide-details label="Estructuras" return-object  
+                    :disabled="item.accion.id != 1? true: false"
+                  ></v-select>
+                </div>
+
               </td>
 
               <td v-else>
@@ -104,12 +115,18 @@
           </tbody>
         </template>
       </v-simple-table>
-
       <div class="mt-12" ></div>
+     
       <v-footer absolute class="pa-3" >
         <v-btn color="error" outlined small @click="$emit('modal',false)" >Cancelar </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="green" dark small   @click="valiadInformacion()"  >Guardar Información </v-btn>
+        <v-btn color="rosa"    class="mx-1" dark small @click="realizadoFinalizado = true, modo= 1" 
+                v-if="modalDDD && parametros.estatus_key === 1"> Realizado 
+        </v-btn>
+        <v-btn color="celeste" class="mx-1" dark small @click="realizadoFinalizado = true, modo= 2" 
+               v-if="modalDDD && parametros.estatus_key !=3"> Finalizar 
+        </v-btn>
+        <v-btn color="success" small  @click="validaInformacion()" v-if="!modalDDD">Guardar información </v-btn>
       </v-footer>
 
       <!-- MODAL PARA MOSTRAR ORIENTACIONES -->
@@ -134,12 +151,29 @@
         </v-sheet>
       </v-bottom-sheet>
 
+
+      <v-dialog v-model="realizadoFinalizado" width="450px">
+        <v-card class="pa-1">
+          <v-card-text class="pa-4 font-weight-black subtitle-1" >
+            <span v-if="modo===1"> LA SOLICITUD SE QUEDARA PENDIENTE DE AUTORIZAR POR EL CLIENTE </span>
+            <span v-else> LA SOLICITUD SE TOMARA COMO REALIZADA Y AUTORIZADA </span>
+          </v-card-text>
+          <v-card-subtitle class="font-weight-black" align="center">
+            ¿ ESTAS SEGURO DE CONTINUAR ?
+          </v-card-subtitle>
+          <v-card-actions>
+            <v-btn color="error" small @click="realizadoFinalizado = false">Cancelar</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="celeste" dark small @click="PrepararMovimiento()">Continuar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-dialog v-model="Correcto" hide-overlay persistent width="350">
         <v-card :color="colorCorrecto" dark class="pa-3">
           <v-card-text class="font-weight-black headline pa-3 white--text" align="center">
             {{ textCorrecto }}
           </v-card-text>
-          <!-- <h3><strong>{{ textCorrecto }} </strong></h3> -->
         </v-card>
       </v-dialog>
 
@@ -170,7 +204,8 @@
 			'modoVista',
       'parametros',
       'depto_id',
-      'actualiza'
+      'actualiza',
+      'modalDDD'
 	  ],
     data:()=> ({
       id_seleccionado: 0,
@@ -180,6 +215,7 @@
       material     : { id:null, nombre:''},
       materiales   : [],
       materiales2  : [],
+      estructuras   :[],
       acabado      : [],
       acabados     : [],
       acciones     : [{ id:1, nombre:'Remplazar'},{ id:2, nombre:'Agregar'},{ id:3, nombre:'Eliminar'}],
@@ -201,10 +237,13 @@
       textCorrecto : 'La información se guardo correctamente',
       overlay      : false,
 
+      modo: 0,
+      realizadoFinalizado: false,
+
     }),  
     computed:{
-      ...mapGetters('Solicitudes'  ,['getModificaciones']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
-
+      ...mapGetters('Solicitudes'  ,['getModificaciones']), // IMPORTANDO USO DE VUEX  (GETTERS)
+			...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
     },
     created(){
       this.init()
@@ -218,13 +257,13 @@
 		},
 
     methods:{
-      ...mapActions('Solicitudes'  ,['consultaModificaciones','actualizaModificaciones']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+      ...mapActions('Solicitudes'  ,['consultaModificaciones','actualizaModificaciones','consultaDetalle']), // IMPORTANDO USO DE VUEX - 
       
       init(){
         this.Loading = true;
 
-        this.consultaDepartamentos()  //! CONSULTA DEPARTAMENTOS
-        
+        this.consultaDepartamentos();  //! CONSULTA DEPARTAMENTOS
+        this.consultaEstructuras();
         this.consultaMateriales(this.depto_id).then( response1 =>{ //!CONSULTA MATERIALES
           this.consultaAcabados(this.depto_id).then( response3 =>{ //!CONSULTA ACABADOS
             this.consultaModificaciones(this.parametros.id).then(response =>{ //! CONSULTA LAS MODIFICACIONES QUE SE CARGARON
@@ -264,6 +303,18 @@
                     }
                   }
                 }
+
+                if(this.getModificaciones[i].concepto === 'Estructura'){
+                   for(let w=0;w<this.estructuras.length; w++){
+                    if(this.estructuras[w].id === parseInt(this.getModificaciones[i].valor)){
+                      this.getModificaciones[i].valor  = this.estructuras[w].nombre
+                    }
+                    if(this.estructuras[w].id === parseInt(this.getModificaciones[i].valor2)){
+                      this.getModificaciones[i].valor2 = { id: this.estructuras[w].id }
+                    }
+                  }
+                }
+
                 if(this.getModificaciones[i].concepto === 'Orientacion' ){
                   this.getModificaciones[i].valor  =  this.flexo[parseInt(this.getModificaciones[i].valor)-1].img;
                   if(this.getModificaciones[i].valor2){
@@ -303,7 +354,7 @@
         this.checkActivo = items.id; //! GUARDO EL CHECK-ACTIVO 
       },
 
-      valiadInformacion(){
+      validaInformacion(){
         this.overlay= true; let errores1 = 0, errores2 = 0;
         for(let x=0; x<this.getModificaciones.length;x++){
           if(this.getModificaciones[x].accion){         // VALIDAR SI ACCION ESTA SELECCIONADA
@@ -337,7 +388,7 @@
           }else{
             arrayTemp.push({  id: this.getModificaciones[i].id,
                               accion: this.getModificaciones[i].accion.id,
-                              valor2: '',
+                              valor2: ''
                             });
           }
         } 
@@ -347,15 +398,41 @@
       },
 
       actualizaModif(data){
-        const payload = { id: this.parametros.id, data }
+        const payload = { id: this.parametros.id, estatus: 1, data }
         // console.log('payload', payload)
         this.$http.post('actualiza.modif', payload).then(response =>{
           this.overlay  = false; this.colorCorrecto = 'green';
           this.Correcto = true; this.textCorrecto = response.bodyText;
+          this.consultaDetalle(this.parametros.id_solicitud)
           this.Terminar(200)
         }).catch( error =>{
           this.overlay = false; this.colorCorrecto = 'error';
           this.Correcto = true; this.textCorrecto = error.bodyText
+          this.Terminar(500)
+        })
+      },
+
+      PrepararMovimiento(){
+        this.realizadoFinalizado = false;
+        const payload = { id_key: this.parametros.id_key, 
+                          responsable2: this.getdatosUsuario.id, 
+                          estatus: this.modo === 1? 2:3,
+                          id_solicitud: this.parametros.id_solicitud,
+                          id: this.parametros.id,
+                          px: this.parametros.px
+                        }
+                        
+        this.procesarMovimiento(payload);
+      },
+
+      procesarMovimiento(payload){
+        this.overlay = true; 
+        this.$http.post('procesa.movimiento', payload).then(response =>{
+          this.overlay  = false; this.colorCorrecto = 'green';
+          this.Correcto = true; this.textCorrecto = response.bodyText; 
+          this.Terminar(200)
+        }).catch( error =>{
+          this.overlay = false; this.colorCorrecto = 'error'; this.textCorrecto = error.bodyText;
           this.Terminar(500)
         })
       },
@@ -365,7 +442,7 @@
         status === 200? setTimeout(function(){ me.$emit('modal',false); me.$emit('put', this.actualiza = !this.actualiza)}, 1500):
                         setTimeout(function(){ me.Correcto = false    }, 1500)
         
-      }
+      },
       
     }
   }

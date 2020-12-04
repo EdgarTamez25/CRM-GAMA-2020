@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\DB; //USAR ESCRITURA SQL
 class solicitudesController extends Controller
 {
 	// !CATALOGO DE SOLICITUDES
-	public function Solicitudes(){
+	public function Solicitudes(Request $req){
 		$solicitud = DB::select('SELECT s.id, s.id_cliente, c.nombre as nomcli, s.id_usuario, u.nombre as nomusuario, 
 																	  s.fecha, s.hora, s.nota 
 															FROM	solicitudes s LEFT JOIN clientes c ON s.id_cliente = c.id
-																									LEFT JOIN users u    ON s.id_usuario = u.id');
-		
+																									LEFT JOIN users u    ON s.id_usuario = u.id
+															WHERE s.estatus = ? AND s.fecha BETWEEN ? AND ?
+														 ORDER BY s.id DESC',[ $req -> estatus, $req -> fecha1, $req -> fecha2 ]);
 		return $solicitud ? $solicitud: $solicitud = [];
 	}
 
@@ -39,6 +40,65 @@ class solicitudesController extends Controller
 		endfor;
 		
 		return $detSol ? $detSol: $detSol = [];
+	}
+	
+	// ! CONSULTAR SOLICITUDES DESARROLLO/DIGITAL/DISEÑO
+	public function SolicitudesDDD(Request $req){
+		$movimientos = DB::select('SELECT m.id, m.id_solicitud, m.px, m.id_px, m.id_depto, m.fecha, m.hora, m.estatus,u.nombre as nomvend, 
+																			c.nombre as nomcli, us.id as id_encargado, us.usuario as encargado, us.nombre as nomencargado
+																FROM movim_sol m LEFT JOIN solicitudes s ON m.id_solicitud = s.id
+																							   LEFT JOIN users u       ON s.id_usuario   = u.id 
+																								 LEFT JOIN clientes c    ON s.id_cliente   = c.id
+																								 LEFT JOIN users us      ON m.id_encargado = us.id
+															WHERE m.estatus = ? AND m.id_depto = ? AND m.fecha BETWEEN ? AND ?', 
+															[ $req -> estatus, $req -> id_depto , $req -> fecha1 , $req -> fecha2]);
+		// return $movimientos;
+		$movimSol = [];
+
+		for($i=0;$i<count($movimientos);$i++ ):
+			if($movimientos[$i] -> px === 1):
+				$existente = $this -> consultaProdExistente($movimientos[$i] -> id_px);
+				$arrayTemp = $this -> formarObjecto($existente[0], $movimientos[$i]);
+				array_push($movimSol,  $arrayTemp);
+			endif;
+			if($movimientos[$i] -> px === 2):
+				$Modificacion = $this -> consultaProdModif($movimientos[$i] -> id_px);
+				$arrayTemp = $this -> formarObjecto($Modificacion[0], $movimientos[$i]);
+				array_push($movimSol, $arrayTemp);
+			endif;
+			if($movimientos[$i] -> px === 3):
+				$Nuevos = $this -> consultaProdNuevo($movimientos[$i] -> id_px);
+				$arrayTemp = $this -> formarObjecto($Nuevos[0], $movimientos[$i]);
+				array_push($movimSol, $arrayTemp);
+			endif; 
+		endfor;
+
+		return $movimSol ? $movimSol: $movimSol = [];
+
+	}
+
+	public function ActualizaEncargado(Request $req){
+		$actualizaEncargado = DB::update('UPDATE movim_sol SET id_encargado=:id_encargado
+																				WHERE id =:id',['id_encargado' => $req  ->  id_encargado,
+																												'id' 		 			 => $req  -> id ]);
+
+		return $actualizaEncargado? response("la información se guardo correctamente",200): 
+											          response("Ocurrio un error, intentelo de nuevo",500);
+		
+	}
+
+	public function ProcesaMovimiento(Request $req){
+
+		$procesaMovim = DB::update('UPDATE movim_sol SET responsable2=:responsable2, estatus=:estatus
+																				WHERE id =:id',['responsable2' => $req  -> responsable2,
+																												'estatus'      => $req  -> estatus,
+																												'id' 		 			 => $req  -> id_key
+																											 ]);
+		
+		$this -> validaEstatusMovim($req);
+		$this -> validaEstatusSolicitud($req);																								 
+		return $procesaMovim? response("la información se guardo correctamente",200): 
+											    response("Ocurrio un error, intentelo de nuevo",500);
 	}
 
 	//! OBTENER MODIFICACIONES DE UNA SOLICITUD
@@ -69,9 +129,31 @@ class solicitudesController extends Controller
 	public function consultaProdNuevo($id_px){
 		return DB::select('SELECT * FROM prod_nuevo WHERE id =?',[$id_px]);
 	}
+	//! FORMA OBJETO QUE SE MANDARA EN SolicitudesDDD
+	public function formarObjecto($data, $movim){
+		return $objetTemp = [ "id_key"			 => $movim -> id, 
+													"id_solicitud" => $movim -> id_solicitud,
+													"px" 					 => $movim -> px,
+													"id_px" 			 => $movim -> id_px,
+													"id_depto"     => $movim -> id_depto,
+													"fecha"        => $movim -> fecha,
+													"hora"         => $movim -> hora,
+													"estatus_key"  => $movim -> estatus,
+													"nomvend"      => $movim -> nomvend,
+													"nomcli"       => $movim -> nomcli,
+													"id_encargado" => $movim -> id_encargado,
+													"encargado"    => $movim -> encargado,
+													"nomencargado" => $movim -> nomencargado,
+													"id"       		 => $data  -> id,
+													"ft" 					 => $data  -> ft,
+													"dx"					 => $data  -> dx,
+													"id_dx"        => $movim -> px === 3 ? $data -> id_dx : 0 ,
+													"tipo_prod"    => $data  -> tipo_prod,
+													"cantidad"     => $data  -> cantidad,
+													"estatus"		   => $data  -> estatus
+												];
+	}
 	// TODO ************************************************************************
-
-
 	// TODO CARACTERISTICAS POR FORMULARIO******************************************
 	// TODO ************************************************************************
 	public function Flexografia($id_dx, $dx){
@@ -80,6 +162,7 @@ class solicitudesController extends Controller
 		$flexo    = DB::select('SELECT * FROM det_flexo WHERE id =?',[$id_dx]);
 		$pantones = $this -> obtenerPantones($flexo[0] -> det_pantones, $dx);
 		$acabados = $this -> obtenerAcabados($flexo[0] -> det_acabados, $dx);
+
 		$arrayTemporal = ["id" 					   => $flexo[0] -> id, 
 										  "id_material"    => $flexo[0] -> id_material,
 										  "det_acabados"   => $flexo[0] -> det_acabados,
@@ -103,10 +186,10 @@ class solicitudesController extends Controller
 
 	public function Digital($id_dx, $dx){
 		$arrayTemporal = [];
-
 		$digital       = DB::select('SELECT * FROM det_digital WHERE id =?',[$id_dx]);
 		$pantones      = $this -> obtenerPantones($digital[0] -> det_pantones, $dx);
 		$acabados      = $this -> obtenerAcabados($digital[0] -> det_acabados, $dx);
+
 		$arrayTemporal = ["id" 					 => $digital[0] -> id, 
 										  "id_material"  => $digital[0] -> id_material,
 										  "det_sobre"    => $digital[0] -> det_sobre,
@@ -124,18 +207,16 @@ class solicitudesController extends Controller
 	}
 	// TODO ************************************************************************
 
-
 	public function obtenerPantones($id_pantone, $dx){
-		return DB::select('SELECT * FROM det_pantone WHERE id_dx = ? AND dx', [$id_pantone, $dx]);
+		return DB::select('SELECT * FROM det_pantone WHERE id_dx = ? AND dx=?', [$id_pantone, $dx]);
 	}
 
 	public function obtenerAcabados($id_acabados , $dx){
 		return DB::select('SELECT d.id as id_key, d.id_dx, d.dx, CAST(d.id_acabado as INT) as id, a.nombre
 													FROM det_acabado d LEFT JOIN acabados a ON d.id_acabado = a.id
-												WHERE d.id_dx = ? AND d.dx', [$id_acabados , $dx]);
+												WHERE d.id_dx = ? AND d.dx = ?', [$id_acabados , $dx]);
 
 	}
-
 
 	public function ActualizaModif(Request $req){
 		for($i=0;$i<count($req['data']);$i++):
@@ -145,12 +226,225 @@ class solicitudesController extends Controller
 																							'id' 		 => $req['data'][$i]['id']  ]);
 		endfor;
 		
-		$this -> actualizaEstatusModif($req['id']);
+		$this -> actualizaEstatusModif($req);
 		return response("la información se guardo correctamente",200);
 	}
 
-	public function actualizaEstatusModif($id){
-		DB::update('UPDATE prod_modif SET estatus=:estatus WHERE id=:id',['estatus' => 2, 'id' => $id]);
+	public function actualizaEstatusModif($data){
+		DB::update('UPDATE prod_modif SET estatus=:estatus 
+									WHERE id=:id',['estatus' => $data['estatus'], 
+																 'id' 		 => $data['id'] ]);
+	}
+
+	public function actualizaEstatusProdExist($data){
+		DB::update('UPDATE prod_exist SET estatus=:estatus 
+									WHERE id=:id',['estatus' => $data['estatus'], 
+																 'id' 		 => $data['id'] ]);
+	}
+
+	public function actualizaEstatusProdNuevo($data){
+		DB::update('UPDATE prod_nuevo SET estatus=:estatus 
+									WHERE id=:id',['estatus' => $data['estatus'], 
+																 'id' 		 => $data['id'] ]);
+	}
+
+	//! ACTUALIZAR CARACTERISTICAS ***************************************************************************
+	public function ActualizaProdNuevo(Request $req){
+		// return $req;
+		switch ($req["dx"]) {
+			case 1:
+				 $this -> actualizaFlexo($req);
+				break;
+			case 3:
+				$this -> actualizaDigital($req);
+				break;
+		}
+
+		DB::update('UPDATE prod_nuevo SET ft=:ft, cantidad=:cantidad
+									WHERE id =:id',['ft' 			 => $req['referencia'] ,
+																	'cantidad' => $req['cantidad'] , 
+																	'id' 		   => $req['id']  ]);
+	}
+
+	public function actualizaFlexo($req){
+		DB::update('UPDATE det_flexo SET id_material=:id_material, etqxrollo=:etqxrollo, med_nucleo=:med_nucleo, etqxpaso=:etqxpaso, 
+																		  med_desarrollo=:med_desarrollo, med_eje=:med_eje,id_orientacion=:id_orientacion, 
+																			ancho=:ancho, largo=:largo
+									WHERE id=:id',	['id_material'   => $req['id_material'] ,
+																	'etqxrollo'      => $req['etqxrollo'] , 
+																	'med_nucleo'     => $req['med_nucleo'],
+																	'etqxpaso'       => $req['etqxpaso'],
+																	'med_desarrollo' => $req['med_desarrollo'],
+																	'med_eje'        => $req['med_eje'],
+																	'id_orientacion' => $req['id_orientacion'],
+																	'ancho'          => $req['ancho'],
+																	'largo'          => $req['largo'],
+																	'id' 		         => $req['id_dx']  ]);
+
+		$this -> eliminaAcabado($req['id_dx']);      //!ELIMINO TODOS LOS ACABADOS QUE PERTENESCAN AL id_dx
+		$this -> eliminaPantone($req['id_dx']);			 //!ELIMINO TODOS LOS PANTONES QUE PERTENESCAN AL id_dx							
+		$this -> ciclaAcabados($req['id_dx'], $req); //!GENERO CICLO PARA ACABADOS
+		$this -> ciclaPantones($req['id_dx'], $req); //!GENERO CICLO PARA PANTONES
+
+		return response("la información se guardo correctamente",200);
+	}
+
+	public function actualizaDigital($req){
+		DB::update('UPDATE det_digital SET id_material=:id_material, det_sobre=:det_sobre, estructura=:estructura, grosor=:grosor, 
+																			ancho=:ancho, largo=:largo
+									WHERE id=:id',	['id_material'   => $req['id_material'] ,
+																	'det_sobre'      => $req['id_material2'] , 
+																	'estructura'     => $req['estructura'],
+																	'grosor'         => $req['grosor'],
+																	'ancho'          => $req['ancho'],
+																	'largo'          => $req['largo'],
+																	'id' 		         => $req['id_dx']  ]);
+
+		$this -> eliminaAcabado($req['id_dx']);      //!ELIMINO TODOS LOS ACABADOS QUE PERTENESCAN AL id_dx
+		$this -> eliminaPantone($req['id_dx']);			 //!ELIMINO TODOS LOS PANTONES QUE PERTENESCAN AL id_dx							
+		$this -> ciclaAcabados($req['id_dx'], $req); //!GENERO CICLO PARA ACABADOS
+		$this -> ciclaPantones($req['id_dx'], $req); //!GENERO CICLO PARA PANTONES
+
+		return response("la información se guardo correctamente",200);
+	}
+	//! ******************************************************************************************************
+
+	public function ciclaAcabados($id_dx, $detalle){
+		for($i=0;$i<count($detalle['acabados']); $i++):  
+			$this -> insertarAcabado($id_dx, $detalle['acabados'][$i]['id'], $detalle['dx']);
+		endfor;
+	}
+
+	public function ciclaPantones($id_dx, $detalle){
+		for($i=0;$i<count($detalle['pantones']); $i++):  
+			$this -> insertarPantone($id_dx, $detalle['pantones'][$i], $detalle['dx']);
+		endfor;
+	}
+
+	public function eliminaAcabado($id_dx){
+		DB::delete('DELETE FROM det_acabado WHERE id_dx=?',[$id_dx]);
+	}
+
+	public function eliminaPantone($id_dx){
+		DB::delete('DELETE FROM det_pantone WHERE id_dx=?',[$id_dx]);
+	}
+
+	public function insertarAcabado($id_dx, $id_acabado, $dx){ 
+		$acabado = DB::table('det_acabado')->insertGetId(
+				[
+						'dx'				 => $dx,
+						'id_acabado' => $id_acabado,
+						'id_dx'      => $id_dx,
+				]
+		);
+	}
+	public function insertarPantone($id_dx, $pantone, $dx){ 
+		$pantone = DB::table('det_pantone')->insertGetId(
+				[
+						'dx'				=> $dx,
+						'pantone' 	=> $pantone,
+						'id_dx'     => $id_dx,
+				]
+		);
+	}
+
+	public function MovimSol(Request $req){
+		$movim = DB::select('SELECT * FROM movim_sol WHERE id_px =? AND px=? ORDER BY id DESC',[$req -> id_px, $req -> px]);
+		return $movim ? $movim: $movim = [];
+	}
+
+	public function EnviarSol(Request $req){
+		for($i=0;$i<count($req['deptos']); $i++):  
+			DB::table('movim_sol')->insertGetId(
+				[
+						'id_solicitud' 	=> $req['id_solicitud'],
+						'px'						=> $req['px'],
+						'id_px'    		  => $req['id_px'],
+						'id_depto'      => $req['deptos'][$i]['id'],
+						'fecha'					=> $req['fecha'],
+						'hora'					=> $req['hora'],
+						'responsable'   => $req['id_usuario']
+				]
+			);
+		endfor;
+		
+
+		if($req['px'] === 1): $this -> actualizaEstatusProdExist($req); endif;
+		if($req['px'] === 2): $this -> actualizaEstatusModif($req)    ; endif;
+		if($req['px'] === 3): $this -> actualizaEstatusProdNuevo($req); endif;
+		
+		$this -> validaEstatusSolicitud($req);
+		return response("la información se guardo correctamente",200);
+
+	}
+
+	public function EliminarMovim($id, Request $req){
+		$deleteMovim = DB::delete('DELETE FROM movim_sol WHERE id= ?',[$id]);
+	
+		$this -> validaEstatusSolicitud($req);
+		return response("la información se guardo correctamente",200);
+	}
+
+	// $data
+	public function validaEstatusMovim($data){
+		$dos=0; $tres=0;
+		$movim = DB::select('SELECT * FROM movim_sol WHERE id_solicitud =? AND id_px=? ', [$data -> id_solicitud, $data -> id]);
+	
+		for($i=0;$i<count($movim); $i++): 
+			if($movim[$i] -> estatus === 2):
+				$dos++;
+			elseif($movim[$i] -> estatus === 3):
+				$tres++;
+			endif;
+		endfor;
+
+		if($dos > 0):
+			$objetTemp = ["id" => $data -> id, "estatus" => 2];	$objetTemp2 = [ "data" => $objetTemp];
+			if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
+			if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
+			if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
+		elseif($tres > 0):
+			$objetTemp = ["id" => $data -> id, "estatus" => 3];$objetTemp2 = [ "data" => $objetTemp];
+			if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
+			if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
+			if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
+		endif;
+	}
+
+  public function	validaEstatusSolicitud($data){
+		$dos=0; $tres=0; $cuatro=0;
+	  $detalle = $this -> DetalleSolicitud($data['id_solicitud']);
+		
+		// return $detalle;
+		if(!$detalle): 
+			$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
+			return ;
+		endif;
+
+		for($i=0;$i<count($detalle); $i++): 
+			if($detalle[$i] -> estatus === 2):
+				$dos++;
+			elseif($detalle[$i] -> estatus === 3):
+				$tres++;
+			elseif($detalle[$i] -> estatus === 4):
+				$cuatro++;
+			endif;
+		endfor;
+
+		if($dos > 0):
+			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],2);
+		elseif($tres > 0):
+			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],3);
+		elseif($cuatro > 0):
+			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],4);
+		endif;
+
+	}
+
+	public function actualizaEstatusSolicitud($id_solicitud, $estatus){
+		 DB::update('UPDATE solicitudes SET estatus=:estatus 
+									WHERE id=:id',['estatus' => $estatus, 'id' => $id_solicitud]);
+		
 	}
 
 }

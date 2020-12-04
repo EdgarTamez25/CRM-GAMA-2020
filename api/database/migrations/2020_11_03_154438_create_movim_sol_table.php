@@ -16,11 +16,16 @@ class CreateMovimSolTable extends Migration
         Schema::create('movim_sol', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('id_solicitud');
-            $table->integer('id_dx');
+            $table->integer('id_px');
             $table->integer('id_depto');
-            $table->date('fecha');          // FECHA INICIO DEL COMPROMISO
+            $table->date('fecha');         
             $table->string('hora');
             $table->integer('responsable');
+            $table->integer('responsable2') ->nullable();
+            $table->integer('id_encargado') ->nullable();
+            $table->integer('estatus') ->default(1);
+
+
             $table->integer('estatus')->default(1);
         });
     }

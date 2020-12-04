@@ -261,12 +261,12 @@ export default {
      AppControl: [
         {
           admin: [ 
-            { text: 'Inicio'      ,icon: 'home'               ,path: '/home'},
-            { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
+            { text: 'Inicio'      ,icon: 'home'                       ,path: '/home'},
+            { text: 'Compromisos' ,icon: 'chrome_reader_mode'         ,path: '/compromisos'},
             // { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
-            { text: 'Solicitudes' ,icon: 'ballot'             ,path: '/solicitudes'},
+            { text: 'Solicitudes' ,icon: 'ballot'                     ,path: '/solicitudes'},
+            { text: 'Desarrollo de proyectos' ,icon: 'mdi-monitor-screenshot' ,path: '/desarrollo/proyectos'},
 
-            
             ],
         },
 
@@ -275,7 +275,10 @@ export default {
           title :' Administración',
           model: true,
           administracion: [ 
-            { text: 'Productos'         ,icon: 'print'      ,path: '/productos'},
+            { text: 'Productos'            ,icon: 'print',path: '/productos'},
+            { text: 'Productos por cliente',icon: 'print',path: '/productos/por/cliente'},
+
+            
             { text: 'Analisis de Fases' ,icon: 'assessment' ,path: '/analisis-fases'},
 
           ],

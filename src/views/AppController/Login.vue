@@ -58,7 +58,7 @@
                 outlined
                 class="textos" 
                 hide-details
-                color="celeste"
+                color="white"
                 clearable
                 dark
               ></v-text-field>

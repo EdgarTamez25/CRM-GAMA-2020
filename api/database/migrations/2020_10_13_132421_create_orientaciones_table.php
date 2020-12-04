@@ -16,7 +16,9 @@ class CreateOrientacionesTable extends Migration
         Schema::create('orientaciones', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre',100);
+            $table->integer('activo');
             $table->integer('dx');
+            $table->string('img',250);
             $table->integer('estatus')->default(1);
         });
     }

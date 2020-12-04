@@ -122,14 +122,26 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 //==================================== PUESTOS =====================================================
 	Route::get('puestos','puestosController@Puestos')  -> name('Puestos'); 
 
+//==================================== PRODUCTOS X CLIENTE==========================================
+	Route::get('productos.cliente/{id_cliente}' ,'productosxcliController@productosxCli')  -> name('productosxCli');
 
+	
 //==================================== SOLICITUDES =================================================
-	Route::get('solicitudes'					 ,'solicitudesController@Solicitudes')  	  -> name('Solicitudes'); 
+
+	Route::post('solicitudes.ddd'			 ,'solicitudesController@SolicitudesDDD')  	-> name('SolicitudesDDD'); 
+	Route::post('actualiza.encargado'	 ,'solicitudesController@ActualizaEncargado')  	-> name('ActualizaEncargado'); 
+	Route::post('procesa.movimiento'	 ,'solicitudesController@ProcesaMovimiento')  	-> name('ProcesaMovimiento'); 
+	
+	Route::post('solicitudes'					 ,'solicitudesController@Solicitudes')  	  -> name('Solicitudes'); 
 	Route::get('detalle.solicitud/{id}','solicitudesController@DetalleSolicitud') -> name('DetalleSolicitud');
 	Route::get('modificaciones/{id}'   ,'solicitudesController@Modificaciones')   -> name('Modificaciones');
 	Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')  -> name('Caracteristicas');
 	Route::post('actualiza.modif'   	 ,'solicitudesController@ActualizaModif')   -> name('ActualizaModif');
+	Route::post('actualiza.prod.nuevo' ,'solicitudesController@ActualizaProdNuevo')  -> name('ActualizaProdNuevo');
 
+	Route::post('movim.sol'   	 			,'solicitudesController@MovimSol')   -> name('MovimSol');
+	Route::post('enviar.movimiento'   ,'solicitudesController@EnviarSol')  -> name('EnviarSol');
+	Route::delete('elimina.movimiento/{id}','solicitudesController@EliminarMovim') -> name('EliminarMovim'); 
 
 //==================================== MATERIALES ==================================================
 	Route::get('materiales/{dx}' 			 ,'materialesController@Materiales')  -> name('Materiales');
@@ -137,6 +149,9 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	Route::get('acabados/{dx}'         ,'acabadosController@Acabados')      -> name('Acabados');
 
 
+	Route::post('valida'			 ,'solicitudesController@validaEstatusMovim')  	-> name('validaEstatusMovim'); 
+
+	
 
 
 

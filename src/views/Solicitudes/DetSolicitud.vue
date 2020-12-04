@@ -41,6 +41,7 @@
             <v-col cols="12" sm="4" md="5" xl="6" >
               <v-btn block color="success" outlined dark>PASAR A PRODUCCIÓN</v-btn> <br>
             </v-col>
+            <!-- {{ getDetalle }} -->
             <v-col cols="12" class="py-0"/>
             <v-col cols="12">
               <v-card outlined>
@@ -61,6 +62,7 @@
                     </thead>
                     <tbody>
                       <tr v-for="(item,i) in getDetalle" :key="i" >
+
                         <td class="font-weight-black rosa--text"    v-if="item.tipo_prod ===1"> Producto Existente</td>
                         <td class="font-weight-black orange--text"  v-if="item.tipo_prod ===2"> Modificación</td>
                         <td class="font-weight-black celeste--text" v-if="item.tipo_prod ===3"> Nuevo Producto</td>
@@ -69,7 +71,10 @@
                         <td class="font-weight-black">{{ item.cantidad }}</td>
                         <td align="right">
                           <!-- MOSTRAR BOTON SI YA SE LEASIGNO UNA ACCION O SI ES UN PRODUCTO EXISTENTE -->
-                          <v-btn text small color="green" class="mx-1 mt-1 " v-if="item.estatus === 2 || item.tipo_prod === 1">   
+                          <v-btn text small color="green" class="mx-1 mt-1 " 
+                                 v-if="item.estatus > 0 || item.tipo_prod != 2"
+                                 @click="MandarDeptoModal(item)"
+                          >   
                             <v-icon>mdi-file-send</v-icon> 
                           </v-btn>
 
@@ -77,7 +82,7 @@
                             <v-icon>mdi-eye</v-icon> 
                           </v-btn>
                           <v-btn text small c class="mx-1 mt-1"  disabled v-else > <v-icon>mdi-eye</v-icon></v-btn>
-                          <v-btn text small color="error"   class="mx-1 mt-1"  > 
+                          <v-btn text small color="error" class="mx-1 mt-1" > 
                             <v-icon>mdi-delete</v-icon> 
                           </v-btn>
                         </td>
@@ -100,6 +105,7 @@
                 ></v-select> -->
 
                 <modificaciones
+                  :modalDDD="modalDDD"
                   :depto_id="depto.id" 
                   :modoVista="modoVista"
                   :parametros="parametros"
@@ -109,6 +115,7 @@
                   v-if="tablaModificar"
                 />
                 <flexografia 
+                  :modalDDD="modalDDD"
                   :depto_id="depto.id" 
                   :modoVista="modoVista"
                   :parametros="parametros"
@@ -118,6 +125,7 @@
                   v-if="activaFormulario===1"
                 />
                 <digital     
+                  :modalDDD="modalDDD"
                   :depto_id="depto.id" 
                   :modoVista="modoVista"
                   :parametros="parametros"
@@ -128,6 +136,14 @@
                 />
               </v-card>
             </v-dialog>
+
+
+            <v-dialog v-model="enviarDeptosModal" persistent :width="550">
+              <v-card class="pa-3">
+                <enviarADeptos :informacion="informacion" @modal="enviarDeptosModal = $event" />
+              </v-card>
+            </v-dialog>
+
           </v-row>
         </v-card>
       </v-col>
@@ -142,15 +158,16 @@
   import modificaciones from '@/views/Formularios/modificaciones.vue'
   import flexografia    from '@/views/Formularios/flexografia.vue'
   import digital        from '@/views/Formularios/digital.vue'
+  import enviarADeptos  from '@/components/enviarADeptos.vue'
 
   export default {
     mixins:[metodos],
-
     components:{
       loading,
       modificaciones,
       flexografia,
       digital,
+      enviarADeptos
     },
     data:()=>({
       snack           : true,
@@ -162,10 +179,15 @@
       tablaModificar  :  false,
       parametros      : '',
       modoVista       : 1,
+			modalDDD        : false,
+
       depto           : { id:1, nombre:'FLEXOGRAFÍA'},
       deptos          : [],
 
       actualiza       : false,
+
+      informacion       :{},
+      enviarDeptosModal : false,
 
     }),
 
@@ -216,6 +238,14 @@
             this.solicitarModal   = true;    // ABRIR MODAL
             break;
         }
+      },
+
+
+      MandarDeptoModal(item){
+        // console.log('item', item);
+        this.informacion = item;
+        this.enviarDeptosModal = true;
+
       }
     }
   }

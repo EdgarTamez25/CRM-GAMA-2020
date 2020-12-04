@@ -21,6 +21,7 @@ class CreateProdNuevoTable extends Migration
             $table->string('ft',50);
             $table->integer('tipo_prod');
             $table->string('cantidad',50);
+            $table->integer('estatus') ->default(0);
 
         });
     }

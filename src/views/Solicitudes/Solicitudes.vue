@@ -8,7 +8,54 @@
 				</v-snackbar>
 				<!-- CATALOGO DE COMPROMISOS -->
 				<v-card class="mt-3" outlined >
-				<v-card-actions class="font-weight-black headline  py-0 mt-1"> SOLICITUDES DE PEDIDO </v-card-actions>
+					<v-row class="pa-1 py-0">
+
+						<v-col cols="12" sm="8" md="6">
+							<v-card-actions class="font-weight-black headline  py-0 mt-1 " > SOLICITUDES DE PEDIDO </v-card-actions>
+						</v-col>
+
+							<v-col cols="12" sm="4" md="2">
+							<v-select
+                  v-model="estatus" :items="Estatus" item-text="nombre" item-value="id"  dense
+                   hide-details  placeholder="Estatus " return-object outlined append-icon="mdi-circle-slice-5"
+                ></v-select> 
+						</v-col>
+
+						<v-col cols="6" md="2" > <!-- FECHA DE COMPROMISO -->
+							<v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
+								<template v-slot:activator="{ on }">
+									<v-text-field
+										v-model="fecha1" label="Fecha Inicio" append-icon="event" readonly v-on="on"
+										 dense hide-details color="celeste" outlined
+									></v-text-field>
+								</template>
+								<v-date-picker v-model="fecha1" locale="es-es" color="rosa"  scrollable>
+									<v-spacer></v-spacer>
+									<v-btn text small color="gris" @click="fechamodal1 = false">Cancelar</v-btn>
+									<v-btn dark small color="rosa" @click="$refs.fecha1.save(fecha1)">OK</v-btn>
+								</v-date-picker>
+							</v-dialog>
+						</v-col>
+
+						<v-col cols="6" md="2"  > <!-- FECHA DE COMPROMISO -->
+							<v-dialog ref="fecha2" v-model="fechamodal2" :return-value.sync="fecha2" persistent width="290px">
+								<template v-slot:activator="{ on }">
+									<v-text-field
+										v-model="fecha2" label="Fecha fin" append-icon="event" readonly v-on="on"
+									  dense hide-details color="celeste" outlined
+									></v-text-field>
+								</template>
+								<v-date-picker v-model="fecha2" locale="es-es" color="rosa"  scrollable>
+									<v-spacer></v-spacer>
+									<v-btn text small color="gris" @click="fechamodal2 = false">Cancelar</v-btn>
+									<v-btn dark small color="rosa" @click="$refs.fecha2.save(fecha2)">OK</v-btn>
+								</v-date-picker>
+							</v-dialog>
+						</v-col>
+
+
+					
+					</v-row>
 
 					<v-card-actions class="py-0 my-0">
 			      <v-text-field
@@ -51,7 +98,7 @@
 						</template>
 
 						<template v-slot:item.nota="{ item }" >
-							<v-btn color="blue" rounded dark small @click="abrirNota(item.nota)" v-if="item.nota"> ver nota </v-btn>
+							<v-btn color="blue"  dark small @click="abrirNota(item.nota)" v-if="item.nota"> ver nota </v-btn>
 							<v-btn outlined small v-else> sin nota </v-btn>
 
 						
@@ -80,6 +127,7 @@
 </template>
 
 <script>
+	var moment = require('moment'); moment.locale('es') /// inciar Moment 
 	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex';
 
@@ -115,6 +163,16 @@
 				compromisoModal: false,
 				fases: false,
 
+				estatus: {  id: 1, nombre:'Pendiente'},
+				Estatus:[ { id: 1, nombre:'Pendiente'},
+									{ id: 2, nombre:'Asignado' },
+									{ id: 3, nombre:'Terminado'}
+								],
+				fecha1: '',
+				fechamodal1:false,
+				fecha2: '',
+				fechamodal2:false,
+
 				snackbar: false,
 				text		: '',
 				color		: 'error',
@@ -123,16 +181,35 @@
 				textDialog : "Guardando Información",
 				Correcto   : false,
 				textCorrecto: '',
-		
+
+				mesAnteriorPrimerDia : moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
+				mesActualUltimoDia: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
+				// nextMonthLastDay: moment().add(1, 'months').endOf('month').format("YYYY-MM-DD"),
 			}
 		},
 
 		created(){
-			this.consultaSolicitudes() // CONSULTAR CLIENTES A VUEX
+			this.fecha1 = this.mesAnteriorPrimerDia;
+			this.fecha2 = this.mesActualUltimoDia;
+			this.init();
+		},
+
+		watch:{
+			estatus(){
+				this.init();
+			},
+
+			fecha1(){
+				this.init();
+			},
+
+			fecha2(){
+				this.init();
+			}
 		},
 
 		computed:{
-			...mapGetters('Solicitudes'  ,['getSolicitudes','Loading']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+			...mapGetters('Solicitudes'  ,['getSolicitudes','Loading']), // IMPORTANDO USO DE VUEX - (GETTERS)
 			tamanioPantalla () {
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':
@@ -155,7 +232,16 @@
 		},
 
 		methods:{
-			...mapActions('Solicitudes'  ,['consultaSolicitudes']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+			...mapActions('Solicitudes'  ,['consultaSolicitudes','guardaParametrosConsulta']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+
+			init(){
+				const payload = { estatus: this.estatus.id,
+													fecha1 : this.fecha1,
+													fecha2 : this.fecha2,
+												}
+					this.guardaParametrosConsulta(payload);
+					this.consultaSolicitudes()
+			},
 
 			abrirNota(nota){
 				this.nota = nota;

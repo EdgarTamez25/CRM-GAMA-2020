@@ -8,6 +8,8 @@ export default{
     loading: true,
 		detalle: [],
 		modificaciones: [],
+		parametros:[],
+		solicitudesddd:[]
 	},
 
 	mutations:{
@@ -22,6 +24,12 @@ export default{
 		},
 		MODIFICACIONES(state, data){
       state.modificaciones = data
+		},
+		PARAMETROS(state, data){
+			state.parametros = data;
+		},
+		SOLICITUDESDDD(state, data){
+			state.solicitudesddd = data;
 		}
 	},
 	actions:{ 
@@ -29,13 +37,24 @@ export default{
 		consultaSolicitudes({commit}){
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('SOLICITUDES', [])
-			Vue.http.get('solicitudes').then(response=>{
+			Vue.http.post('solicitudes', store.state.Solicitudes.parametros).then(response=>{
 				commit('SOLICITUDES', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false)) 
     },
-    
+		
+		consultaSolicitudesDDD({commit}){
+			// Limpio Arreglo y Genero Consulta
+			commit('LOADING',true); commit('SOLICITUDESDDD', [])
+			Vue.http.post('solicitudes.ddd', store.state.Solicitudes.parametros).then(response=>{
+				commit('SOLICITUDESDDD', response.body)
+			}).catch((error)=>{
+				console.log('error',error)
+			}).finally(() => commit('LOADING', false)) 
+		},
+		
+		
     consultaDetalle({commit}, id_solicitud){
       commit('LOADING',true); commit('DETALLE', []);
       Vue.http.get('detalle.solicitud/'+ id_solicitud).then(response=>{
@@ -62,7 +81,23 @@ export default{
 
 		actualizaModificaciones({commit}){
 			commit('MODIFICACIONES', []);
-		}
+		},
+
+		actualizaProducto({commit}, payload){
+			return new Promise(resolve => {
+				Vue.http.post('actualiza.prod.nuevo', payload).then(response=>{
+					// console.log('response actualiza', response.body)
+					resolve(true);
+				}).catch((error)=>{
+					console.log('error',error)
+					resolve(false)
+				})
+			})
+		},
+
+		guardaParametrosConsulta( { commit },payload){
+			commit('PARAMETROS', payload)
+		},
   },
 
 	getters:{
@@ -80,6 +115,10 @@ export default{
 
 		getModificaciones(state){
 			return state.modificaciones;
-		}
+		},
+
+		getSolicitudesDDD(state){
+			return state.solicitudesddd
+		},
 	}
 }
