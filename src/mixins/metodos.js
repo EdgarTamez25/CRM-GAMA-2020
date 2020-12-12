@@ -9,12 +9,24 @@ export default {
 	},
 	
 	methods: {
+		traerFechaActual(){
+			var f = new Date(); 
+			return f.getFullYear() +'-'+ (f.getMonth() + 1 < 10? '0' + (f.getMonth() + 1): f.getMonth() + 1 ) +'-'+ (f.getDate()<10?'0'+f.getDate():f.getDate());
+		},
+		traerHoraActual(){
+			var f = new Date(); 
+			return (f.getHours()<10? '0'+f.getHours(): f.getHours()) + ':' + (f.getMinutes()<10? '0'+ f.getMinutes(): f.getMinutes())
+		},
+		
 		consultar_Clientes(){  // AUTOCOMPLETE -> CLIENTES
-			this.$http.get('clientes').then((response)=>{
-				this.clientes = response.body //LLENNO ARRAY
-			}).catch(error =>{
-				console.log('error', error)
-			})
+			return new Promise( resolve => {
+				this.$http.get('clientes').then((response)=>{
+					this.clientes = response.body //LLENNO ARRAY
+					resolve(this.clientes);
+				}).catch(error =>{
+					console.log('error', error)
+				})
+			})	
 		},
 
 		consultar_Categorias(){ // CATEGORIAS
@@ -36,6 +48,14 @@ export default {
 											// { id:8, nombre:'TAMPOGRAFÍA'},
 											// { id:9, nombre:'UV'}
 										]
+		},
+
+		consultar_Vendedores(){  // AUTOCOMPLETE -> VENDEDORES
+			this.$http.get('vendedores').then((response)=>{
+				this.vendedores = response.body //LLENNO ARRAY
+			}).catch(error =>{
+				console.log('error', error)
+			})
 		},
 
 		consultaEstructuras(){

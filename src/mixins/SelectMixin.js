@@ -47,6 +47,8 @@ export default {
 
 		consultar_Clientes(){  // AUTOCOMPLETE -> CLIENTES
 			this.$http.get('clientes.selector').then((response)=>{
+				console.log('clientes.se', response.body)
+
 				this.clientes = response.body //LLENNO ARRAY
 			}).catch(error =>{
 				console.log('error', error)

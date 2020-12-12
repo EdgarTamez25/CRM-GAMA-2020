@@ -10,7 +10,7 @@
       </v-container>
 
       <v-col cols="12" align="center"> 
-        <v-snackbar v-model="snackbar" multi-line :timeout="2000" top color="error"> {{text}}
+        <v-snackbar v-model="snackbar" multi-line :timeout="2000" top :color="color" class="font-weight-black subtitle-1"> {{text}}
           <template v-slot:action="{ attrs }">
             <v-btn color="white" text @click="snackbar = false" v-bind="attrs"> Cerrar </v-btn>
           </template>
@@ -18,6 +18,7 @@
 
         <v-form ref="form"> 
           <v-row >
+
             <!-- <v-col cols="12" class="my-0 py-0" >
               <v-select
                 v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
@@ -29,14 +30,14 @@
             <v-card-text class="font-weight-black pa-1 subtitle-1" v-if="!Loading">{{ titulo }}</v-card-text>
              
             <!-- //! REFERENCIA DEL PRODUCTO  -->
-            <v-col cols="12" sm="6" v-if="!Loading">
+            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
               <v-text-field 
                 v-model="referencia" hide-details dense label="REFERENCIA" 
                 filled color="celeste" class=" font-weight-black" 
               />
             </v-col>
             <!-- //! CANTIDAD  -->
-            <v-col cols="12" sm="6" v-if="!Loading">
+            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
               <v-text-field 
                 v-model="cantidad" hide-details dense label="Cantidad" 
                 filled color="celeste" placeholder="Cantidad de material"
@@ -146,10 +147,15 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" class="my-3" v-if="!Loading"/>
+      <v-col cols="12" class="my-3"  v-if="!Loading && modoVista === 2"/>
+      <v-col cols="12" class="text-right" v-if="modoVista===1 || modoVista === 3">
+        <v-btn color="celeste" outlined small @click="validaEmit()" >
+          {{ modoVista === 1? "Agregar Caracteristicas": "Agregar Modificaciones" }}
+        </v-btn>
+      </v-col>
 
       <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
-      <v-footer  absolute v-if="!Loading">
+      <v-footer  absolute v-if="!Loading && modoVista === 2" >
         <v-btn color="error" outlined small @click="$emit('modal',false)" >Cancelar </v-btn>
         <v-spacer></v-spacer>
         <v-btn color="rosa"    class="mx-1" dark small @click="realizadoFinalizado = true, modo= 1" 
@@ -160,6 +166,8 @@
         </v-btn>
         <v-btn color="success" small  @click="validaInformacion()" v-if="!modalDDD">Guardar información </v-btn>
       </v-footer>
+
+     
 
        <v-dialog v-model="realizadoFinalizado" width="450px">
         <v-card class="pa-1">
@@ -177,7 +185,6 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
 
       <v-dialog v-model="Correcto" hide-overlay persistent width="350">
         <v-card :color="colorCorrecto" dark class="pa-3">
@@ -215,6 +222,7 @@
       titulo         : 'FLEXOGRAFÍA',
       tipo_producto  : '',
       valid          : true,
+      id_producto  : null,
       tproducto    : { id:1, nombre: 'Producto Existente'},
       tproductos   : [{ id:1, nombre:'Producto Existente'}, 
                       { id:2, nombre:'Modificación de producto'},
@@ -226,6 +234,8 @@
 			referencia   : '',
       acabado      : [],
       acabados     : [],
+      acabadosAEliminar: [],
+      pantonesAEliminar: [],
       pantone      : '',
       pantones     : [],
       motivo       : '',
@@ -249,6 +259,7 @@
       // AVISOS
       snackbar     : false,
       text         : '',
+      color        : 'error',
       Correcto     : false,
       colorCorrecto : 'green',
       textCorrecto : 'La información se guardo correctamente',
@@ -276,56 +287,69 @@
 
     methods:{
       ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto']), // IMPORTANDO USO DE VUEX (ACCIONES)
-      evaluaCheck(id){ //! BUSCO LA ORIENTACION SELECCIONADA
-        for(let i=0; i< this.orientacion.length;i++){ // !SI NO ES EL CHECK QUE SELECCIONO LO DEVUELVO A FALSO. 
-          id != this.orientacion[i].id? this.orientacion[i].activo=false: this.orientacion[i].activo=true;
-        }
-        this.checkActivo = id; //! GUARDO EL CHECK-ACTIVO 
-      },
-
-      agregarPantone(){ 
-        var esHexadecimal = false;
-        if( esHexadecimal = this.esHexadecimal(this.pantone) ){
-          this.pantones.push(this.pantone);
-          this.pantone = '';
-        }
-      },
-
-      esHexadecimal(pantone){ return /^#[0-9A-F]+$/i.test(pantone); },
-
-      eliminaPanton(i){ this.pantones.splice(i,1); },
-
+      
       validarModoVista(){ 
         this.consultaMateriales(this.depto_id);
         this.consultaAcabados(this.depto_id);
-        this.$http.post('caracteristicas', this.parametros).then(response =>{
-          this.tproducto    = { id: parseInt(this.parametros.tipo_prod) },
-          this.tipo_producto = this.tproductos[parseInt(this.parametros.tipo_prod) - 1].nombre.toUpperCase();
-          this.cantidad     = this.parametros.cantidad
-          this.referencia   = this.parametros.ft;
-          this.material     = { id: response.body.id_material};
-          this.checkActivo  = response.body.id_orientacion
-          this.evaluaCheck(response.body.id_orientacion)
-          this.etqxrollo     =  response.body.etqxrollo
-          this.med_nucleo    =  response.body.med_nucleo
-          this.etqxpaso      =  response.body.etqxpaso
-          this.med_desarrollo=  response.body.med_desarrollo
-          this.med_eje       =  response.body.med_eje
-          this.ancho         =  response.body.ancho
-          this.largo         =  response.body.largo
-          this.acabado      = response.body.acabados;
-          this.pantones     = response.body.pantones.map( item =>{ return item.pantone});
-        }).catch( error =>{
-          console.log('error flexo', error)
-        }).finally(()=>{
-          this.Loading = false;
-        })
+        if(this.modoVista === 2){
+
+          this.$http.post('caracteristicas', this.parametros).then(response =>{
+            this.tproducto    = { id: parseInt(this.parametros.tipo_prod) },
+            this.tipo_producto = this.tproductos[parseInt(this.parametros.tipo_prod) - 1].nombre.toUpperCase();
+            this.cantidad     = this.parametros.cantidad
+            this.referencia   = this.parametros.ft;
+            this.material     = { id: response.body.id_material};
+            this.checkActivo  = response.body.id_orientacion
+            this.evaluaCheck(response.body.id_orientacion)
+            this.etqxrollo     =  response.body.etqxrollo
+            this.med_nucleo    =  response.body.med_nucleo
+            this.etqxpaso      =  response.body.etqxpaso
+            this.med_desarrollo=  response.body.med_desarrollo
+            this.med_eje       =  response.body.med_eje
+            this.ancho         =  response.body.ancho
+            this.largo         =  response.body.largo
+            this.acabado      = response.body.acabados;
+            this.pantones     = response.body.pantones.map( item =>{ return item.pantone});
+          }).catch( error =>{
+            console.log('error flexo', error)
+          }).finally(()=>{
+            this.Loading = false;
+          })
+
+        }else if(this.modoVista === 3){
+
+          this.$http.post('caracteristicas', this.parametros).then(response =>{
+            this.id_producto  = response.body.id;
+            this.tproducto    = { id: 2 },  // solo se pone para que se habilite el formulario
+            this.material     = { id: response.body.id_material};
+            this.checkActivo  = response.body.id_orientacion
+            this.evaluaCheck(response.body.id_orientacion)
+            this.etqxrollo     =  response.body.etqxrollo
+            this.med_nucleo    =  response.body.med_nucleo
+            this.etqxpaso      =  response.body.etqxpaso
+            this.med_desarrollo=  response.body.med_desarrollo
+            this.med_eje       =  response.body.med_eje
+            this.ancho         =  response.body.ancho
+            this.largo         =  response.body.largo
+            this.acabado       = response.body.acabados;
+            this.acabadosAEliminar = response.body.acabados;
+            this.pantonesAEliminar = response.body.pantones;
+            this.pantones      = response.body.pantones.map( item =>{ return item.pantone});
+          }).catch( error =>{
+            console.log('error flexo', error)
+          }).finally(()=>{
+            this.Loading = false;
+          })
+
+        }else{
+          this.limpiarCampos();
+        }
       },
 
       validaInformacion(){
         if(this.tproducto.id === 3) {
-          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
-          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
+          if(!this.referencia){ this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"         ; return };
+          if(!this.cantidad  ){ this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL" ; return };
           if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
           if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
           if(!this.etqxrollo)      { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR ROLLO"    ; return };
@@ -342,6 +366,42 @@
           if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
         }
         this.PrepararPeticion();
+      },
+
+      // SOLO SE USA PARA LA CREACION Y ACTUALIZACION DE LOS PRODUCTOS
+      validaEmit(){
+        if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
+        if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
+        if(!this.etqxrollo)      { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR ROLLO"    ; return };
+        if(!this.med_nucleo)     { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DE NUCLEO"      ; return };
+        if(!this.etqxpaso)       { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR PASO"     ; return };
+        if(!this.med_desarrollo) { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL DESARROLLO" ; return };
+        if(!this.med_eje)        { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL EJE"        ; return };
+        if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
+        if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
+        if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
+        if(!this.checkActivo)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"      ; return };
+
+        const detalle = new Object();
+        detalle.id             = this.id_producto;
+        detalle.id_material    = this.material.id;
+        detalle.acabados       = this.acabado;
+        detalle.acabadosAEliminar = this.acabadosAEliminar;
+        detalle.pantones       = this.pantones;
+        detalle.pantonesAEliminar = this.pantonesAEliminar;
+        detalle.etqxrollo      = this.etqxrollo;
+        detalle.med_nucleo     = this.med_nucleo;
+        detalle.etqxpaso       = this.etqxpaso;
+        detalle.med_desarrollo = this.med_desarrollo;
+        detalle.med_eje        = this.med_eje;
+        detalle.ancho          = this.ancho;
+        detalle.largo          = this.largo;
+        detalle.id_orientacion = this.checkActivo;
+        detalle.dx             = 1;
+
+        this.snackbar = true; this.text ="Las caracteristicas se guardaron correctamente"; this.color ="green";
+        this.$emit('detalle',detalle); // EMITIR DETALLE A CONTROL PRODUCTOS
+
       },
 
       PrepararPeticion(){
@@ -376,7 +436,6 @@
 
                     }
         }
-       console.log('payload', payload)
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
       },
@@ -411,7 +470,7 @@
         this.referencia     = '';
         this.material       = { id:null, nombre:''};
         this.cantidad       = '';
-        this.tproducto      = { id:1 };
+        this.tproducto      =  this.modoVista != 1 ? { id:1 }: { id:2}; // solo se pone para que se habilite el formulario
         this.pantone        = '';
         this.pantones       = []
         this.acabado        = [];
@@ -424,8 +483,27 @@
         this.med_eje        = '';
         this.ancho          = '';
         this.largo          = '';
-
+        this.Loading = false;
       },
+
+      evaluaCheck(id){ //! BUSCO LA ORIENTACION SELECCIONADA
+        for(let i=0; i< this.orientacion.length;i++){ // !SI NO ES EL CHECK QUE SELECCIONO LO DEVUELVO A FALSO. 
+          id != this.orientacion[i].id? this.orientacion[i].activo=false: this.orientacion[i].activo=true;
+        }
+        this.checkActivo = id; //! GUARDO EL CHECK-ACTIVO 
+      },
+
+      agregarPantone(){ 
+        var esHexadecimal = false;
+        if( esHexadecimal = this.esHexadecimal(this.pantone) ){
+          this.pantones.push(this.pantone);
+          this.pantone = '';
+        }
+      },
+
+      esHexadecimal(pantone){ return /^#[0-9A-F]+$/i.test(pantone); },
+
+      eliminaPanton(i){ this.pantones.splice(i,1); },
 
       objetoxModificar(){
         let payload = { id: this.modoVista ===1 ? this.consecutivo: this.parametros.id,

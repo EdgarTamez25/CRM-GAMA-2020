@@ -5,6 +5,7 @@ export default{
 	namespaced: true,
 	state:{
 		productosCliente: [],
+		productosClienteDeptos: [],
 		loading: false,
 	},
 
@@ -15,7 +16,9 @@ export default{
 		PRODUCTOS_CLIENTE(state, data){
 			state.productosCliente = data;
 		},
-	
+		PRODUCTOS_CLIENTE_DEPTOS(state, data){
+			state.productosClienteDeptos = data;
+		}
 	},
 	actions:{
 
@@ -28,15 +31,31 @@ export default{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false)) 
 		},
-  },
+
+
+		consultaPxCxD({ commit}, payload){
+			commit('LOADING',true); commit('PRODUCTOS_CLIENTE_DEPTOS', []); 
+			Vue.http.post('productos.cliente.deptos', payload ).then(response=>{
+				commit('PRODUCTOS_CLIENTE_DEPTOS', response.body);
+			}).catch((error)=>{
+				console.log('error',error)
+			}).finally(() => commit('LOADING', false)) 
+		}
+	},
+	
 
 	getters:{
-		LoadingPxC(state){
-			return state.loading
+		Loading(state){
+			return state.loading;
 		},
 
 		getProductosxCli(state){
-		  return state.productosCliente
+		  return state.productosCliente;
 		},
+
+		getPxCxD(state){
+			return state.productosClienteDeptos;
+		}
+
 	}
 }

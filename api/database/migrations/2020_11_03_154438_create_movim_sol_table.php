@@ -24,8 +24,6 @@ class CreateMovimSolTable extends Migration
             $table->integer('responsable2') ->nullable();
             $table->integer('id_encargado') ->nullable();
             $table->integer('estatus') ->default(1);
-
-
             $table->integer('estatus')->default(1);
         });
     }

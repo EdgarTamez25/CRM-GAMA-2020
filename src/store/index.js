@@ -19,6 +19,9 @@ import Compromisos from '@/modules/Compromisos';
 import Solicitudes from '@/modules/Solicitudes';
 import Movimientos from '@/modules/Movimientos';
 
+import OT from '@/modules/OT';
+
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -90,6 +93,7 @@ export default new Vuex.Store({
     Solicitudes,
     Prospectos,
     Movimientos,
-    ProductosxCliente
+    ProductosxCliente,
+    OT
   }
 })

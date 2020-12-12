@@ -29,11 +29,13 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	Route::get('vendxsuc/{suc}' ,'vendedoresController@vendxSuc')   -> name('vendxSuc');  	 
 
 //==================================== CLIENTES ====================================================
-	Route::get('clientes'         ,'clientesController@catClientes')      -> name('catClientes');            
-	Route::get('clientes.selector','clientesController@clientesSelector') -> name('clientesSelector'); 
-	Route::post('cliente'         ,'clientesController@add')              -> name('addCliente');             
-	Route::put('cliente/{id}'     ,'clientesController@update')           -> name('updateCliente');          
-	Route::post('cambia.estatus'  ,'clientesController@cambiaEstatus')    -> name('cambiaEstatus'); 
+
+  Route::get('clientes.productos','clientesController@clientes')         -> name('Clientes');              
+	Route::get('clientes'          ,'clientesController@catClientes')      -> name('catClientes');            
+	Route::get('clientes.selector' ,'clientesController@clientesSelector') -> name('clientesSelector'); 
+	Route::post('cliente'          ,'clientesController@add')              -> name('addCliente');             
+	Route::put('cliente/{id}'      ,'clientesController@update')           -> name('updateCliente');          
+	Route::post('cambia.estatus'   ,'clientesController@cambiaEstatus')    -> name('cambiaEstatus'); 
 
 //==================================== PROVEDORES ==================================================
 	Route::get('catproveedores'   ,'proveedoresController@getcatalogo')     -> name('getcatprov');   
@@ -110,6 +112,7 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 ////================================== ENTREGAS ====================================================
 	Route::post('entrega.producto' ,'entregasController@EntregarProducto') -> name('EntregarProducto');
 	Route::post('entrega.id'			 ,'entregasController@entregabyid')		   -> name('Entregabyid');
+
 //==================================== PROSPECTOS ==================================================
 	Route::get('prospectos'              ,'prospectosController@Prospectos')      -> name('Prospectos');
 	Route::get('prospectos.id/{id}'      ,'prospectosController@ProspectosxId')   -> name('ProspectosxId');
@@ -117,17 +120,22 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	Route::put('update.prospecto/{id}'	 ,'prospectosController@UpdateProspecto') -> name('UpdateProspecto');
 	Route::post('pasar.cliente'					 ,'prospectosController@PasarACliente')   -> name('PasarACliente');
 	Route::delete('delete.prospecto/{id}','clientesController@EliminarProspecto') -> name('EliminarProspecto'); 
+
 //==================================== DEPARTAMENTOS ===============================================
 	Route::get('departamentos','departamentosController@Departamentos')  -> name('Departamentos'); 
 //==================================== PUESTOS =====================================================
 	Route::get('puestos','puestosController@Puestos')  -> name('Puestos'); 
 
 //==================================== PRODUCTOS X CLIENTE==========================================
-	Route::get('productos.cliente/{id_cliente}' ,'productosxcliController@productosxCli')  -> name('productosxCli');
+	Route::get('productos.cliente/{id_cliente}' ,'productosxcliController@productosxCli')     -> name('productosxCli');
+	Route::post('crear.producto.cliente'        ,'productosxcliController@crearDetalle')      -> name('crearDetalle');
+	Route::put('actualiza.producto.cliente/{id}','productosxcliController@actualizaProducto') -> name('actualizaProducto');
+	Route::post('productos.cliente.deptos'      ,'productosxcliController@PxCxD')     				-> name('PxCxD');
 
 	
-//==================================== SOLICITUDES =================================================
+	
 
+//==================================== SOLICITUDES =================================================
 	Route::post('solicitudes.ddd'			 ,'solicitudesController@SolicitudesDDD')  	-> name('SolicitudesDDD'); 
 	Route::post('actualiza.encargado'	 ,'solicitudesController@ActualizaEncargado')  	-> name('ActualizaEncargado'); 
 	Route::post('procesa.movimiento'	 ,'solicitudesController@ProcesaMovimiento')  	-> name('ProcesaMovimiento'); 
@@ -144,12 +152,27 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	Route::delete('elimina.movimiento/{id}','solicitudesController@EliminarMovim') -> name('EliminarMovim'); 
 
 //==================================== MATERIALES ==================================================
-	Route::get('materiales/{dx}' 			 ,'materialesController@Materiales')  -> name('Materiales');
+	Route::get('materiales/{dx}' ,'materialesController@Materiales')  -> name('Materiales');
 //==================================== ACABADOS   ==================================================
-	Route::get('acabados/{dx}'         ,'acabadosController@Acabados')      -> name('Acabados');
+	Route::get('acabados/{dx}'   ,'acabadosController@Acabados')      -> name('Acabados');
+
+	Route::post('ordenes.trabajo'    ,'ordenesTrabajoController@OrdenesTrabajo')  	-> name('OrdenesTrabajo'); 
+	Route::post('crear.orden.trabajo','ordenesTrabajoController@CrearOT')  					-> name('CrearOT'); 
+	Route::get('detalle.ot/{id}'     ,'ordenesTrabajoController@DetalleOT')         -> name('DetalleOT');
+	Route::put('actualiza.ot/{id}'   ,'ordenesTrabajoController@ActualizaOT')       -> name('ActualizaOT');
+	
+	Route::delete('elimina.partida.detot/{id}','ordenesTrabajoController@EliminarPartidaDetOT')     -> name('EliminarPartidaDetOT');  
+	Route::post('actualiza.partida.detot'     ,'ordenesTrabajoController@ActualizaPartidaDetOT')  	-> name('ActualizaPartidaDetOT'); 
+	Route::post('agregar.partida.detot'       ,'ordenesTrabajoController@AgregarPartidaOT')  				-> name('AgregarPartidaOT'); 
 
 
-	Route::post('valida'			 ,'solicitudesController@validaEstatusMovim')  	-> name('validaEstatusMovim'); 
+	
+
+
+	
+
+	
+
 
 	
 

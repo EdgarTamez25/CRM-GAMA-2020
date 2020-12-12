@@ -385,7 +385,6 @@ class solicitudesController extends Controller
 		return response("la información se guardo correctamente",200);
 	}
 
-	// $data
 	public function validaEstatusMovim($data){
 		$dos=0; $tres=0;
 		$movim = DB::select('SELECT * FROM movim_sol WHERE id_solicitud =? AND id_px=? ', [$data -> id_solicitud, $data -> id]);

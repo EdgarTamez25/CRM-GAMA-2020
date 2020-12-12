@@ -25,13 +25,17 @@ const routes = [
   { path:'/clientes'		   , name:'clientes'	    , component:()=> import('@/views/Catalogos/Clientes/CatClientes.vue')      , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
   { path:'/proveedores'		 , name:'proveedores'	  , component:()=> import('@/views/Catalogos/Proveedores/CatProveedores.vue'), meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
   { path:'/productos'		   , name:'productos'	    , component:()=> import('@/views/Catalogos/Productos/CatProductos.vue')    , meta: { ADMIN: true, SUPER:true }},
-  { path:'/productos/por/cliente', name:'productos/por/cliente'	    , component:()=> import('@/views/Catalogos/Productos/ProductosxCli.vue')    , meta: { ADMIN: true, SUPER:true }},
+  { path:'/productos-por-cliente', name:'productos-por-cliente'	, component:()=> import('@/views/Catalogos/Productos/ProductosxCli.vue')    , meta: { ADMIN: true, SUPER:true }},
+  { path:'/ordenes-de-trabajo'   , name:'ordenes-de-trabajo'	  , component:()=> import('@/views/OT/ordenTrabajo.vue')    , meta: { ADMIN: true, SUPER:true }},
+  { path:'/detalle-ot'           , name:'detalle-ot'	          , component:()=> import('@/views/OT/controlOT.vue')       , meta: { ADMIN: true, SUPER:true }},
+
 
   { path:'/zonas-subzonas' , name:'zonas'	        , component:()=> import('@/views/Catalogos/Zonas/CatZonas.vue')            , meta: { ADMIN: true, SUPER:true }},
   { path:'/monedas'	       , name:'monedas'	      , component:()=> import('@/views/Catalogos/Monedas/CatMonedas.vue')        , meta: { ADMIN: true, SUPER:true }},
   { path:'/prospectos'     , name:'prospectos'    , component:()=> import('@/views/Catalogos/Prospectos/Prospectos.vue' )    , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
   { path:'/analisis-fases' , name:'analisis-fases', component:()=> import('@/views/Historial/analisisFases.vue')             , meta: { ADMIN: true, SUPER:true }},
 
+  
 ]
 
 const router = new VueRouter({

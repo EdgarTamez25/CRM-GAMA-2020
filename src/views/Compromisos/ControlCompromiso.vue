@@ -121,7 +121,6 @@
 	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex'
 // import { concat } from '@amcharts/amcharts4/.internal/core/utils/Iterator';
-	
 	export default {
 		mixins:[SelectMixin],
 	  components: {

@@ -203,8 +203,8 @@
 			...mapActions('Compromisos'  ,['consultaCompromisos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 
 			NuevoCompromiso(modoVista, data){
-				console.log('modoVista', modoVista);
-				console.log('data', data);
+				// console.log('modoVista', modoVista);
+				// console.log('data', data);
 
 				this.modoVista = modoVista;
 				this.data = data;

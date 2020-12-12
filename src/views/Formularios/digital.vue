@@ -9,7 +9,7 @@
 
 
       <v-col cols="12" align="center"> 
-        <v-snackbar v-model="snackbar" multi-line :timeout="2000" top color="error"> {{text}}
+        <v-snackbar v-model="snackbar" multi-line :timeout="2000" top :color="color" class="font-weight-black subtitle-1"> {{text}}
           <template v-slot:action="{ attrs }">
             <v-btn color="white" text @click="snackbar = false" v-bind="attrs"> Cerrar </v-btn>
           </template>
@@ -27,14 +27,14 @@
             <v-card-text class="font-weight-black pa-1 subtitle-1" v-if="!Loading">{{ titulo }}</v-card-text>
              
              <!-- //! REFERENCIA DEL PRODUCTO  -->
-            <v-col cols="12" sm="6" v-if="!Loading">
+            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
               <v-text-field 
                 v-model="referencia" hide-details dense label="REFERENCIA" 
                 filled color="celeste" class=" font-weight-black" 
               />
             </v-col>
             <!-- //! CANTIDAD  -->
-            <v-col cols="12" sm="6" v-if="!Loading">
+            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
               <v-text-field 
                 v-model="cantidad" hide-details dense label="Cantidad" 
                 filled color="celeste" placeholder="Cantidad de material"
@@ -122,10 +122,15 @@
         </v-form>
       </v-col>
 
-      <v-col cols="12" class="my-3" v-if="!Loading"/>
+      <v-col cols="12" class="my-3"  v-if="!Loading && modoVista === 2"/>
+      <v-col cols="12" class="text-right" v-if="modoVista===1 || modoVista === 3">
+        <v-btn color="celeste" outlined small @click="validaEmit()" >
+          {{ modoVista === 1? "Agregar Caracteristicas": "Agregar Modificaciones" }}
+        </v-btn>
+      </v-col>
 
       <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
-      <v-footer  absolute v-if="!Loading">
+      <v-footer  absolute v-if="!Loading && modoVista === 2">
         <v-btn color="error" outlined small @click="$emit('modal',false)" >Cancelar </v-btn>
         <v-spacer></v-spacer>
         <v-btn color="rosa"    class="mx-1" dark small @click="realizadoFinalizado = true, modo= 1" 
@@ -184,7 +189,8 @@
 			'modoVista',
       'parametros',
       'depto_id',
-      'modalDDD'
+      'modalDDD',
+      'actualiza'
 	  ],
     data: () => ({
       Loading        : true,
@@ -194,6 +200,7 @@
       tproductos   : [{ id:1, nombre:'Producto Existente'}, 
                       { id:2, nombre:'Modificación de producto'},
                       { id:3, nombre:'Nuevo Producto'}],
+      id_producto  : null,
       cantidad     : '',
       material     : { id:null, nombre:''},
       materiales   : [],
@@ -202,6 +209,8 @@
 			referencia   : '',
       acabado      : [],
       acabados     : [],
+      acabadosAEliminar:[],
+      pantonesAEliminar :[],
       pantone      : '',
       pantones     : [],
       estructuras  : [],
@@ -214,6 +223,7 @@
       // AVISOS
       snackbar     : false,
       text         : '',
+      color        : 'green',
       Correcto     : false,
       colorCorrecto : 'green',
       textCorrecto : 'La información se guardo correctamente',
@@ -258,26 +268,51 @@
         this.consultaMateriales(this.depto_id);  // TRAER MATERIALES ASIGNADOS AL DEPARTAMENTO
         this.consultaAcabados(this.depto_id);    // TRAER ACABADOS ASIGNADOS AL DEPARTAMENTO
         this.consultaEstructuras();              // TRAER ESTRUCTURAS.
+       
+        if(this.modoVista === 2){
 
-        this.$http.post('caracteristicas', this.parametros).then(response =>{
-          this.tproducto    = { id: parseInt(this.parametros.tipo_prod) },
-          this.tipo_producto = this.tproductos[parseInt(this.parametros.tipo_prod) - 1].nombre.toUpperCase();
-          this.cantidad     = this.parametros.cantidad
-          this.referencia   = this.parametros.ft;
-          this.material     = { id: response.body.id_material  };
-          this.material2    = { id: response.body.det_sobre    };
-          this.ancho        = response.body.ancho;
-          this.largo        = response.body.largo;
-          this.estructura   = { id: response.body.estructura};
-          this.grosor       = response.body.grosor;
-          this.acabado      = response.body.acabados;
-          this.pantones     = response.body.pantones.map( item =>{ return item.pantone});
-        }).catch( error =>{
-          console.log('error digital', error)
-        }).finally(()=>{
-          this.Loading = false;
-        })
+          this.$http.post('caracteristicas', this.parametros).then(response =>{
+            this.tproducto    = { id: parseInt(this.parametros.tipo_prod) },
+            this.tipo_producto = this.tproductos[parseInt(this.parametros.tipo_prod) - 1].nombre.toUpperCase();
+            this.cantidad     = this.parametros.cantidad
+            this.referencia   = this.parametros.ft;
+            this.material     = { id: response.body.id_material  };
+            this.material2    = { id: response.body.det_sobre    };
+            this.ancho        = response.body.ancho;
+            this.largo        = response.body.largo;
+            this.estructura   = { id: response.body.estructura};
+            this.grosor       = response.body.grosor;
+            this.acabado      = response.body.acabados;
+            this.pantones     = response.body.pantones.map( item =>{ return item.pantone});
+          }).catch( error =>{
+            console.log('error digital', error)
+          }).finally(()=>{
+            this.Loading = false;
+          })
+        } 
 
+        if(this.modoVista === 3){
+          this.$http.post('caracteristicas', this.parametros).then(response =>{
+            this.id_producto  = response.body.id;
+            this.tproducto    = { id: 2 } // solo se pone para que se habilite el formulario
+            this.material     = { id: response.body.id_material  };
+            this.material2    = { id: response.body.det_sobre};
+            this.ancho        = response.body.ancho;
+            this.largo        = response.body.largo;
+            this.estructura   = { id: parseInt(response.body.estructura)};
+            this.grosor       = response.body.grosor;
+            this.acabado      = response.body.acabados;
+            this.pantonesAEliminar = response.body.pantones;
+            this.acabadosAEliminar = response.body.acabados;
+            this.pantones     = response.body.pantones.map( item =>{ return item.pantone});
+          }).catch( error =>{
+            console.log('error digital', error)
+          }).finally(()=>{
+            this.Loading = false;
+          })
+        }
+        
+        if(this.modoVista === 1 ){ this.limpiarCampos(); }
       },
 
       validaInformacion(){
@@ -295,6 +330,34 @@
           if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"       ; return };
         }
         this.PrepararPeticion();
+      },
+
+      // SOLO SE USA PARA LA CREACION Y ACTUALIZACION DE LOS PRODUCTOS
+      validaEmit(){
+        if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"            ; return };
+        if(!this.material2.id)   { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL SECUNDARIO" ; return };
+        if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
+        if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
+        if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
+        if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
+
+        const detalle = new Object();
+        detalle.id             = this.id_producto;
+        detalle.id_material    = this.material.id;
+        detalle.id_material2   = this.material2.id;
+        detalle.acabados       = this.acabado;
+        detalle.acabadosAEliminar = this.acabadosAEliminar;
+        detalle.pantonesAEliminar = this.pantonesAEliminar;
+        detalle.pantones       = this.pantones;
+        detalle.ancho          = this.ancho;
+        detalle.largo          = this.largo;
+        detalle.estructura     = this.estructura.id ? this.estructura.id: '';
+        detalle.grosor         = this.grosor ? this.grosor : '';
+        detalle.dx             = 3;
+
+        this.snackbar = true; this.text ="Las caracteristicas se guardaron correctamente"; this.color ="green";
+        this.$emit('detalle',detalle); // EMITIR DETALLE A CONTROL PRODUCTOS
+
       },
 
       PrepararPeticion(){
@@ -364,14 +427,15 @@
         this.material     = { id:null, nombre:''};
         this.material2    = { id:null, nombre:''};
         this.estructura   = { id:null, nombre:''};
-        this.tproducto    = { id:1};
+        this.tproducto    =  this.modoVista != 1 ? { id:1 }: { id:2};
         this.cantidad     = '';
         this.pantone      = '';
         this.pantones     = []
         this.acabado      = [];
         this.ancho        = '';
         this.largo        = '';
-        this.grosor       = ''
+        this.grosor       = '';
+        this.Loading = false;
       },
 
       objetoxModificar(){

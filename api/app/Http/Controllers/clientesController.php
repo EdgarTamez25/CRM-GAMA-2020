@@ -9,6 +9,11 @@ use App\prospectos;
 class clientesController extends Controller
 {
     /** @return \Illuminate\Http\Response */
+		
+		public function clientes(){
+			$clientes = DB::select('SELECT id, nombre, estatus FROM clientes');
+			return $clientes ? $clientes:[];
+		}
 
     public function catClientes(){
         $data = DB::select('SELECT c.id , c.nombre, c.direccion, c.id_ciudad, cty.nombre as ciudad,
