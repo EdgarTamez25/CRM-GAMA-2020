@@ -98,7 +98,7 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 ////================================== CATEGORIAS ==================================================
 	Route::get('categorias','categoriasController@categorias') -> name('categorias');
 ////================================== COMPROMISOS =================================================
-	Route::get('compromisos/{nivel}' ,'compromisosController@Compromisos')   -> name('Compromisos');
+	Route::post('compromisos' 			 ,'compromisosController@Compromisos')   -> name('Compromisos');
 	Route::post('addcompromiso'      ,'compromisosController@addcompromiso') -> name('addcompromiso');
 	Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
 	Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
@@ -136,20 +136,23 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	
 
 //==================================== SOLICITUDES =================================================
-	Route::post('solicitudes.ddd'			 ,'solicitudesController@SolicitudesDDD')  	-> name('SolicitudesDDD'); 
-	Route::post('actualiza.encargado'	 ,'solicitudesController@ActualizaEncargado')  	-> name('ActualizaEncargado'); 
-	Route::post('procesa.movimiento'	 ,'solicitudesController@ProcesaMovimiento')  	-> name('ProcesaMovimiento'); 
+	Route::post('solicitudes.ddd'			 ,'solicitudesController@SolicitudesDDD')  	  -> name('SolicitudesDDD'); 
+	Route::post('actualiza.encargado'	 ,'solicitudesController@ActualizaEncargado') -> name('ActualizaEncargado'); 
+	Route::post('procesa.movimiento'	 ,'solicitudesController@ProcesaMovimiento')  -> name('ProcesaMovimiento'); 
 	
-	Route::post('solicitudes'					 ,'solicitudesController@Solicitudes')  	  -> name('Solicitudes'); 
-	Route::get('detalle.solicitud/{id}','solicitudesController@DetalleSolicitud') -> name('DetalleSolicitud');
-	Route::get('modificaciones/{id}'   ,'solicitudesController@Modificaciones')   -> name('Modificaciones');
-	Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')  -> name('Caracteristicas');
-	Route::post('actualiza.modif'   	 ,'solicitudesController@ActualizaModif')   -> name('ActualizaModif');
-	Route::post('actualiza.prod.nuevo' ,'solicitudesController@ActualizaProdNuevo')  -> name('ActualizaProdNuevo');
+	Route::post('solicitudes'					 ,'solicitudesController@Solicitudes')  	    -> name('Solicitudes'); 
+	Route::get('detalle.solicitud/{id}','solicitudesController@DetalleSolicitud')   -> name('DetalleSolicitud');
+	Route::get('modificaciones/{id}'   ,'solicitudesController@Modificaciones')     -> name('Modificaciones');
+	Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')    -> name('Caracteristicas');
+	Route::post('actualiza.modif'   	 ,'solicitudesController@ActualizaModif')     -> name('ActualizaModif');
+	Route::post('actualiza.prod.nuevo' ,'solicitudesController@ActualizaProdNuevo') -> name('ActualizaProdNuevo');
 
-	Route::post('movim.sol'   	 			,'solicitudesController@MovimSol')   -> name('MovimSol');
-	Route::post('enviar.movimiento'   ,'solicitudesController@EnviarSol')  -> name('EnviarSol');
-	Route::delete('elimina.movimiento/{id}','solicitudesController@EliminarMovim') -> name('EliminarMovim'); 
+	Route::post('movim.sol'   	 		    ,'solicitudesController@MovimSol')   			  -> name('MovimSol');
+	Route::post('enviar.movimiento'     ,'solicitudesController@EnviarSol')  			  -> name('EnviarSol');
+	Route::post('elimina.movimiento'    ,'solicitudesController@EliminarMovim') 		 -> name('EliminarMovim'); 
+	Route::post('finaliza.prodexit'     ,'solicitudesController@FinalizaProdExist')  -> name('FinalizaProdExist');
+
+	
 
 //==================================== MATERIALES ==================================================
 	Route::get('materiales/{dx}' ,'materialesController@Materiales')  -> name('Materiales');

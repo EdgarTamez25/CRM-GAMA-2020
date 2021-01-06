@@ -10,6 +10,7 @@
                 <span class="overline font-weight-black py-0" >N° solicitud: {{ solicitud.id }} </span>
               </v-card-actions>
             </v-col>
+
             <v-col cols="12" sm="8" md="7"  xl="6" >
               <v-card outlined>
                 <v-simple-table dense >
@@ -38,9 +39,9 @@
                 </v-simple-table>
               </v-card>
             </v-col>
-            <v-col cols="12" sm="4" md="5" xl="6" >
+            <!-- <v-col cols="12" sm="4" md="5" xl="6" >
               <v-btn block color="success" outlined dark>PASAR A PRODUCCIÓN</v-btn> <br>
-            </v-col>
+            </v-col> -->
             <!-- {{ getDetalle }} -->
             <v-col cols="12" class="py-0"/>
             <v-col cols="12">
@@ -82,9 +83,9 @@
                             <v-icon>mdi-eye</v-icon> 
                           </v-btn>
                           <v-btn text small c class="mx-1 mt-1"  disabled v-else > <v-icon>mdi-eye</v-icon></v-btn>
-                          <v-btn text small color="error" class="mx-1 mt-1" > 
+                          <!-- <v-btn text small color="error" class="mx-1 mt-1" > 
                             <v-icon>mdi-delete</v-icon> 
-                          </v-btn>
+                          </v-btn> -->
                         </td>
                       </tr>
                     </tbody>
@@ -92,6 +93,7 @@
                 </v-simple-table>
               </v-card>
             </v-col>
+
             <!-- // !ESTE ES EL BUENO ECHALE GANAS PARA ENTENDERLE TE QUIERO MUCHO -->
             <v-dialog v-model="solicitarModal" persistent :width="anchoModal" height="200" >
               <v-card class="pa-4 ">
@@ -108,6 +110,7 @@
                   :modalDDD="modalDDD"
                   :depto_id="depto.id" 
                   :modoVista="modoVista"
+                  :Vista="Vista"
                   :parametros="parametros"
                   :actualiza ="actualiza"
                   @modal="solicitarModal = $event" 
@@ -118,6 +121,7 @@
                   :modalDDD="modalDDD"
                   :depto_id="depto.id" 
                   :modoVista="modoVista"
+                  :Vista="Vista"
                   :parametros="parametros"
                   :actualiza ="actualiza"
                   @modal="solicitarModal = $event" 
@@ -128,6 +132,7 @@
                   :modalDDD="modalDDD"
                   :depto_id="depto.id" 
                   :modoVista="modoVista"
+                  :Vista="Vista"
                   :parametros="parametros"
                   :actualiza ="actualiza"
                   @modal="solicitarModal = $event" 
@@ -140,7 +145,12 @@
 
             <v-dialog v-model="enviarDeptosModal" persistent :width="550">
               <v-card class="pa-3">
-                <enviarADeptos :informacion="informacion" @modal="enviarDeptosModal = $event" />
+                <enviarADeptos 
+                  :informacion="informacion" 
+                  :actualiza ="actualiza"
+                  @modal="enviarDeptosModal = $event"
+                  @put="actualiza = $event" 
+                   />
               </v-card>
             </v-dialog>
 
@@ -153,7 +163,7 @@
 
 <script>
   import {mapGetters, mapActions} from 'vuex';
-	import  metodos       from '@/mixins/metodos.js';
+	import metodos        from '@/mixins/metodos.js';
   import loading        from '@/components/loading.vue'
   import modificaciones from '@/views/Formularios/modificaciones.vue'
   import flexografia    from '@/views/Formularios/flexografia.vue'
@@ -172,7 +182,7 @@
     data:()=>({
       snack           : true,
       solicitud       : [],
-
+      Vista           :'',
       anchoModal      : 500,
       solicitarModal  : false, 
       activaFormulario: 0 ,
@@ -221,6 +231,7 @@
           case 2:
             this.anchoModal       = 800;   // ASIGNAR EL ANCHO DE LA MODAL
             this.modoVista        = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+            this.Vista            = 'SOLICITUDES'
             this.parametros       = item;  // ASIGNAR LOS PARAMETROS A MANDAR
             this.activaFormulario = 0 ;    // FORMULARIO QUE SE MOSTRARA
             this.tablaModificar   = true;  // HABILITAR TABLA DE MODIFICACIONES
@@ -231,6 +242,7 @@
           case 3:
             this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
             this.modoVista        = 2;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+            this.Vista            = 'SOLICITUDES'
             this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
             this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
             this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES

@@ -9,7 +9,9 @@ export default{
 		detalle: [],
 		modificaciones: [],
 		parametros:[],
-		solicitudesddd:[]
+		solicitudesddd:[],
+		datosFlexo: null,
+		datosDigital: null,
 	},
 
 	mutations:{
@@ -30,6 +32,11 @@ export default{
 		},
 		SOLICITUDESDDD(state, data){
 			state.solicitudesddd = data;
+		},
+		DATOS_COPIADOS(state, data){
+			if(data.dx === 1){ state.datosFlexo   = data;  };
+			if(data.dx === 3){ state.datosDigital = data;  };
+
 		}
 	},
 	actions:{ 
@@ -48,6 +55,7 @@ export default{
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('SOLICITUDESDDD', [])
 			Vue.http.post('solicitudes.ddd', store.state.Solicitudes.parametros).then(response=>{
+				// console.log('response', response.body)
 				commit('SOLICITUDESDDD', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
@@ -98,6 +106,10 @@ export default{
 		guardaParametrosConsulta( { commit },payload){
 			commit('PARAMETROS', payload)
 		},
+
+		copiarInfoDeSolicitud({ commit }, payload){
+			commit('DATOS_COPIADOS', payload)
+		}
   },
 
 	getters:{
@@ -120,5 +132,14 @@ export default{
 		getSolicitudesDDD(state){
 			return state.solicitudesddd
 		},
+
+		getDatosFlexo(state){
+			return state.datosFlexo;
+		},
+
+		getDatosDigital(state){
+			return state.datosDigital;
+		}
+		
 	}
 }

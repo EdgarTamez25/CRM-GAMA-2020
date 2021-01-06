@@ -52,8 +52,6 @@
 								</v-date-picker>
 							</v-dialog>
 						</v-col>
-
-
 					
 					</v-row>
 
@@ -67,6 +65,7 @@
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 			      <!-- <v-btn small class="celeste" dark @click="NuevoCompromiso(1)">Agregar </v-btn> -->
+						<v-btn small  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
 			      <v-btn  class="gris" icon dark @click="consultaSolicitudes()" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 					
@@ -129,14 +128,16 @@
 <script>
 	var moment = require('moment'); moment.locale('es') /// inciar Moment 
 	import  SelectMixin from '@/mixins/SelectMixin.js';
+	import  ExcelExport from '@/mixins/ExcelExport.js';
 	import {mapGetters, mapActions} from 'vuex';
 
 	export default {
-		mixins:[SelectMixin],
+		mixins:[ExcelExport,SelectMixin],
 		components: {
 		},
 		data () {
 			return {
+				titulo: 'Solicitudes',
 				page: 1,
         pageCount: 0,
 				itemsPerPage: 20,
@@ -166,7 +167,8 @@
 				estatus: {  id: 1, nombre:'Pendiente'},
 				Estatus:[ { id: 1, nombre:'Pendiente'},
 									{ id: 2, nombre:'Asignado' },
-									{ id: 3, nombre:'Terminado'}
+									{ id: 3, nombre:'Terminado'},
+									{ id: 4, nombre:'Cancelado'}
 								],
 				fecha1: '',
 				fechamodal1:false,
@@ -250,6 +252,17 @@
 
 			verSolicitud(item){
 				this.$router.push({ name:'detsolicitud' , params:{ solicitud: item }}) 
+			},
+
+			ImprimirExcel(){
+				let tHeaders=[], tValores= [];
+				for(let j =0;j< this.headers.length; j++){
+					tHeaders.push(this.headers[j].text);
+					tValores.push(this.headers[j].value);
+				}
+				let tInformacion = this.getSolicitudes
+				this.titulo = this.titulo +'_'+ this.estatus.nombre +"_"+ this.fecha1 +"-"+ this.fecha2;
+				this.manejarDescarga(this.titulo ,tHeaders,tValores,tInformacion)
 			},
 
 	

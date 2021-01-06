@@ -42,7 +42,7 @@ export default{
 		insertaMovimientos({commit}, payload ){
 			return new Promise((resolve,reject) =>{
 				Vue.http.post('enviar.movimiento', payload).then(response=>{
-					console.log('respoonse', response)
+					// console.log('respoonse', response)
 					commit('MOVIMIENTOS', response.body)
 					resolve(response)
 				}).catch((error)=>{

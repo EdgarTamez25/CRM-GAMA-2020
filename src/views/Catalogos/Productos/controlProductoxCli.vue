@@ -69,6 +69,7 @@
         :modalDDD="modalDDD"
         :depto_id="depto.id" 
         :modoVista="modoVista"
+        :Vista="Vista"
         :parametros="data"
         @modal="caracteristicasModal = $event" 
         @detalle="detalle = $event"
@@ -79,6 +80,7 @@
         :modalDDD="modalDDD"
         :depto_id="depto.id" 
         :modoVista="modoVista"
+        :Vista="Vista"
         :parametros="data"
         @modal="caracteristicasModal = $event" 
         @detalle="detalle = $event"
@@ -124,7 +126,8 @@
 		props:[
 			'modoVista',
       'data',
-      'modalDDD'
+      'modalDDD',
+      'Vista'
 	  ],
 	  data () {
 			return {

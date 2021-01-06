@@ -277,8 +277,9 @@ export default {
           administracion: [ 
             { text: 'Productos'            ,icon: 'print',path: '/productos'},
             { text: 'Productos por cliente',icon: 'mdi-printer-3d',path: '/productos-por-cliente'},
-            { text: 'Ordenes de Trabajo'   ,icon: 'mdi-printer-3d',path: '/ordenes-de-trabajo'},
-            { text: 'Analisis de Fases' ,icon: 'assessment' ,path: '/analisis-fases'},
+            { text: 'Ordenes de Trabajo'   ,icon: 'mdi-text-box-check',path: '/ordenes-de-trabajo'},
+
+            // { text: 'Analisis de Fases' ,icon: 'assessment' ,path: '/analisis-fases'},
 
           ],
         },
@@ -288,7 +289,6 @@ export default {
         //   title :' Producción',
         //   model: true,
         //   produccion: [ 
-        //     { text: 'Ordenes de Trabajo',icon: 'print' ,path: '/o.t'},
         //   ],
         // },
 

@@ -63,6 +63,7 @@
 			        hide-details
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
+						<v-btn small  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
 			      <v-btn small class="celeste" dark @click="abrirModal(1)">Agregar </v-btn>
 			      <v-btn  class="gris" icon dark @click="init()" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
@@ -81,7 +82,7 @@
 						dense
 			    >
 			    	<template v-slot:item.action="{ item }" > 
-							<v-btn  color="orange darken-4" class="ma-1"  small dark  @click="abrirModal(2,item)">
+							<v-btn  color="rosa " class="ma-1"  small dark  @click="abrirModal(2,item)">
 								<v-icon> mdi-pencil </v-icon>
 							</v-btn> 
 			    		<!-- <v-btn  color="green" class="ma-1"  small dark  @click="irDetalleOt(2,item)">
@@ -119,16 +120,18 @@
 <script>
 	var moment = require('moment'); moment.locale('es') /// inciar Moment 
 	import  metodos from '@/mixins/metodos.js';
+	import  ExcelExport from '@/mixins/ExcelExport.js';
 	import {mapGetters, mapActions} from 'vuex';
 	import controlOT from '@/views/OT/controlOT.vue';
 
 	export default {
-		mixins:[metodos],
+		mixins:[ExcelExport,metodos],
 		components: {
 			controlOT
 		},
 		data () {
 			return {
+				titulo: 'Ordenes de trabajo',
 				page: 1,
         pageCount: 0,
 				itemsPerPage: 20,
@@ -240,6 +243,25 @@
 				this.$router.push({ name:'detalle-ot' , params:{ detalle: payload }}) 
 			},
 
+			ImprimirExcel(){
+				let tHeaders=[], tValores= [];
+				let theaders = [{ text: "Id"					    , value:"id" },
+												{ text: "Responsable"     , value:"nomvend"},
+												{ text: "Cliente"         , value:"nomcli"},
+												{ text: "Orden de Compra" , value:"oc"},
+												{ text: "Referencia"      , value:"referencia"},
+												{ text: "Fecha"           , value:"fecha"},
+												{ text: "Hora"            , value:"hora"},
+											 ]
+
+				for(let j =0;j< theaders.length; j++){
+					tHeaders.push(theaders[j].text);
+					tValores.push(theaders[j].value);
+				}
+				let tInformacion = this.getOT
+				this.titulo = this.titulo +'_'+ this.depto.nombre +"_"+ this.fecha1 +"-"+ this.fecha2;
+				this.manejarDescarga(this.titulo ,tHeaders,tValores,tInformacion)
+			},
 	
 		}
 	}

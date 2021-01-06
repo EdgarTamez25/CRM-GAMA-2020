@@ -15,19 +15,19 @@
             <v-btn color="white" text @click="snackbar = false" v-bind="attrs"> Cerrar </v-btn>
           </template>
         </v-snackbar>
-
         <v-form ref="form"> 
           <v-row >
-
-            <!-- <v-col cols="12" class="my-0 py-0" >
-              <v-select
-                v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
-                dense hide-details label="Tipo de producto" return-object :disabled="modoVista===2?true:false"
-              ></v-select>
-            </v-col> -->
             <!-- //! TITULO - CARACTERISTICAS -->
-            <v-card-text class="font-weight-black pa-1 headline" v-if="!Loading">{{ tipo_producto }}</v-card-text>
+            <v-card-text class="font-weight-black pa-1 headline" v-if="!Loading">{{ tipo_producto }} </v-card-text>
             <v-card-text class="font-weight-black pa-1 subtitle-1" v-if="!Loading">{{ titulo }}</v-card-text>
+
+            <v-col cols="12" v-if=" !Loading && Vista === 'PRODUCTOS' && getDatosFlexo != null">
+             <v-btn color="rosa" dark block small @click="pegarInfo()"> PEGAR INFORMACIÓN </v-btn> 
+            </v-col>
+
+            <v-col cols="12" v-if=" !Loading && Vista === 'SOLICITUDES'">
+             <v-btn color="rosa" dark block small @click="copiarInfo()"> COPIAR INFORMACIÓN </v-btn> 
+            </v-col>
              
             <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
@@ -167,8 +167,6 @@
         <v-btn color="success" small  @click="validaInformacion()" v-if="!modalDDD">Guardar información </v-btn>
       </v-footer>
 
-     
-
        <v-dialog v-model="realizadoFinalizado" width="450px">
         <v-card class="pa-1">
           <v-card-text class="pa-4 font-weight-black subtitle-1" >
@@ -216,6 +214,7 @@
       'depto_id',
       'modalDDD',
       'actualiza',
+      'Vista'
 	  ],
     data: () => ({
       Loading        : true,
@@ -273,7 +272,7 @@
       this.validarModoVista() ;
     },
     computed:{ 
-      ...mapGetters('Solicitudes',['consecutivo']),  
+      ...mapGetters('Solicitudes',['consecutivo', 'getDatosFlexo']),  
 			...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
 
       ACTIVACAMPO(){ //! ESTA FUNCION SIRVE PARA VISUALIZAR EL FORMULARIO 
@@ -286,7 +285,7 @@
     }, 
 
     methods:{
-      ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto']), // IMPORTANDO USO DE VUEX (ACCIONES)
+      ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto','copiarInfoDeSolicitud']), // IMPORTANDO USO DE VUEX (ACCIONES)
       
       validarModoVista(){ 
         this.consultaMateriales(this.depto_id);
@@ -336,7 +335,7 @@
             this.pantonesAEliminar = response.body.pantones;
             this.pantones      = response.body.pantones.map( item =>{ return item.pantone});
           }).catch( error =>{
-            console.log('error flexo', error)
+            // console.log('error flexo', error)
           }).finally(()=>{
             this.Loading = false;
           })
@@ -552,16 +551,19 @@
                           id: this.parametros.id,
                           px: this.parametros.px
                         }
+          
         this.procesarMovimiento(payload);
       },
 
       procesarMovimiento(payload){
         this.overlay = true; 
         this.$http.post('procesa.movimiento', payload).then(response =>{
+          // console.log('response', response.body)
           this.overlay  = false; this.colorCorrecto = 'green';
           this.Correcto = true; this.textCorrecto = response.bodyText; 
           this.Terminar(200)
         }).catch( error =>{
+          console.log('error DDD', error)
           this.overlay = false; this.colorCorrecto = 'error'; this.textCorrecto = error.bodyText;
           this.Terminar(500)
         })
@@ -569,10 +571,47 @@
 
       Terminar(status){
         var me = this;
-        status === 200? setTimeout(function(){ me.$emit('modal',false); me.$emit('put', this.actualiza = !this.actualiza)}, 1500):
-                        setTimeout(function(){ me.Correcto = false    }, 1500)
+        status === 200? setTimeout(()=> { me.$emit('modal',false); me.$emit('put', this.actualiza = !this.actualiza)}, 1500):
+                        setTimeout(()=> { me.Correcto = false    }, 1500)
         
       },
+
+      copiarInfo(){
+        const payload = new Object();
+              payload.material       = this.material;
+              payload.pantones       = this.pantones;
+              payload.acabados       = this.acabado;
+              payload.etqxrollo      = this.etqxrollo;
+              payload.med_nucleo     = this.med_nucleo;
+              payload.etqxpaso       = this.etqxpaso;
+              payload.med_desarrollo = this.med_desarrollo;
+              payload.med_eje        = this.med_eje;
+              payload.ancho          = this.ancho;
+              payload.largo          = this.largo;
+              payload.checkActivo    = this.checkActivo;
+              payload.dx             = 1
+
+        this.copiarInfoDeSolicitud(payload);
+        this.snackbar = true; this.text = "La información se copio correctamente."; this.color ="green";
+      },
+
+      pegarInfo(){
+        this.material       =  this.getDatosFlexo.material
+        this.acabado        =  this.getDatosFlexo.acabados;
+        this.etqxrollo      =  this.getDatosFlexo.etqxrollo
+        this.med_nucleo     =  this.getDatosFlexo.med_nucleo
+        this.etqxpaso       =  this.getDatosFlexo.etqxpaso
+        this.med_desarrollo =  this.getDatosFlexo.med_desarrollo
+        this.med_eje        =  this.getDatosFlexo.med_eje
+        this.ancho          =  this.getDatosFlexo.ancho
+        this.largo          =  this.getDatosFlexo.largo
+        this.checkActivo    = this.getDatosFlexo.checkActivo
+        this.evaluaCheck(this.getDatosFlexo.checkActivo)
+        this.pantones       = this.getDatosFlexo.pantones; 
+        this.snackbar = true; this.text = "La información se ha pegado correctamente."; this.color ="green";
+
+      }
+      
 
     }
   }

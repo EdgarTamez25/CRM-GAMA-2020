@@ -6,6 +6,7 @@ export default{
 	state:{
 		compromisos: [],
 		loading: true,
+		parametros: {}
 	},
 
 	mutations:{
@@ -13,20 +14,29 @@ export default{
 			state.loading = data; 
 		},
 		COMPROMISOS(state, data){
-			state.compromisos = data
+			state.compromisos = data;
 		},
+		PARAMETROS(state, data){
+			state.parametros = data
+		}
 	},
 	actions:{ 
 		
 		consultaCompromisos({commit}){
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('COMPROMISOS', [])
-			Vue.http.get('compromisos/'+ parseInt(store.state.Login.datosUsuario.nivel)).then(response=>{
+			Vue.http.post('compromisos', store.state.Compromisos.parametros).then(response=>{
 				commit('COMPROMISOS', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false)) 
 		},
+
+
+		guardarParametros({ commit}, parametros){
+			commit('PARAMETROS', parametros);
+		},
+
 
   },
 

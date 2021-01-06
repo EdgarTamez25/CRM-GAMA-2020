@@ -12,17 +12,17 @@
 					 <v-row class="pa-1 py-0">
 
 						<v-col cols="12" sm="8" md=4>
-							<v-card-actions class="font-weight-black headline  py-0 mt-1 " > DESARROLLO DE PROYECTOS </v-card-actions>
+							<v-card-actions class="font-weight-black headline py-0 mt-1 " > DESARROLLO DE PROYECTOS </v-card-actions>
 						</v-col>
 
-            <v-col cols="12" sm="4" md="2">
+            <v-col cols="6" sm="4" md="2">
 							<v-select
                 v-model="departamento" :items="departamentos" item-text="nombre" item-value="id"  dense
                 hide-details  placeholder="Departamentos " return-object outlined 
               ></v-select> 
 						</v-col>
 
-						<v-col cols="12" sm="4" md="2">
+						<v-col cols="6" sm="4" md="2">
 							<v-select
                 v-model="estatus" :items="Estatus" item-text="nombre" item-value="id"  dense
                 hide-details  placeholder="Estatus " return-object outlined append-icon="mdi-circle-slice-5"
@@ -74,7 +74,6 @@
 			      <!-- <v-btn small class="celeste" dark @click="NuevoCompromiso(1)">Agregar </v-btn> -->
 			      <v-btn  class="gris" icon dark @click="init()" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
-					
 			    <v-data-table
 			      :headers="headers"
 			      :items="getSolicitudesDDD"
@@ -107,7 +106,7 @@
 							<span class="font-weight-black orange--text"  style="font-size:12px" v-if="item.tipo_prod === 2"> Modificación </span>
 							<span class="font-weight-black celeste--text" style="font-size:12px" v-if="item.tipo_prod === 3"> Nuevo Producto </span>
 						</template>	
-						<template v-slot:item.ft="{ item}">
+						<template v-slot:item.ft="{ item }">
 							<span style="font-size:12px" class="font-weight-black text-h6 "> {{ item.ft }}</span>
 						</template>
 						<template v-slot:item.cantidad="{ item}">
@@ -120,11 +119,13 @@
 							</v-btn>
 							<v-btn small dark text color="red" v-else @click="EncargadoModal= true,DatosEncargado=item"> Asignar </v-btn>
 						</template>
+
 						<template v-slot:item.action="{ item }" >
-			    		<v-btn  color="green" class="ma-1"  small dark  @click="validaTipoProducto(item)" v-if="item.tipo_prod != 1 && item.id_encargado !=null">
+			    		<v-btn  color="green" class="ma-1"  small dark  @click="validaTipoProducto(item)" v-if=" item.id_encargado !=null">
 								<v-icon> mdi-eye </v-icon>
 							</v-btn> 
 			    	</template>
+						
 			    </v-data-table>
 			  </v-card>
 
@@ -157,6 +158,15 @@
 		
 		<v-dialog v-model="solicitarModal" persistent :width="anchoModal" height="200" >
 			<v-card class="pa-4 ">
+				<prodExistente
+					:modalDDD="modalDDD"
+					:modoVista="modoVista"
+					:parametros="parametros"
+					:actualiza ="actualiza"
+					@modal="solicitarModal = $event" 
+					@put="actualiza = $event" 
+					v-if="productoExistente"
+				/>
 				<modificaciones
           :modalDDD="modalDDD"
 					:depto_id="depto.id" 
@@ -171,6 +181,7 @@
           :modalDDD="modalDDD"
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
+					:Vista="Vista"
 					:parametros="parametros"
 					:actualiza ="actualiza"
 					@modal="solicitarModal = $event" 
@@ -181,6 +192,7 @@
           :modalDDD="modalDDD"
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
+					:Vista="Vista"
 					:parametros="parametros"
 					:actualiza ="actualiza"
 					@modal="solicitarModal = $event" 
@@ -210,8 +222,9 @@
   import flexografia    from '@/views/Formularios/flexografia.vue'
   import digital        from '@/views/Formularios/digital.vue'
   import enviarADeptos  from '@/components/enviarADeptos.vue'
+	import prodExistente  from '@/views/Formularios/prodExistente.vue'
   import overlay     from '@/components/overlay.vue'
-  import Overlay from '../../components/overlay.vue';
+	
 
 	export default {
 		mixins:[SelectMixin],
@@ -220,6 +233,7 @@
       flexografia,
       digital,
 			enviarADeptos,
+			prodExistente,
 			overlay
 		},
 		data () {
@@ -228,7 +242,7 @@
         pageCount: 0,
 				itemsPerPage: 20,
 				search: '',
-				
+				Vista :'',
 				headers: [
             // { text: '#'   			, align: 'left'	 , value: 'id_key' },
             { text: '#Sol' , align: 'left'	 , value: 'id_solicitud' },
@@ -276,6 +290,7 @@
 				solicitarModal  : false, 
 				activaFormulario: 0 ,
 				tablaModificar  :  false,
+				productoExistente : false,
 				parametros      : '',
 				modoVista       : 1,
 				modalDDD				: true,
@@ -297,7 +312,7 @@
 		},
 
 		watch:{
-			actualiza: function(){
+			actualiza(){
         this.init();
       },
 			estatus(){
@@ -359,9 +374,21 @@
 
 			validaTipoProducto(item){
         switch (item.tipo_prod) {
+					case 1:
+						this.anchoModal        = 500;   // ASIGNAR EL ANCHO DE LA MODAL
+						this.modoVista         = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+						this.Vista             ='SOLICITUDESDDD';
+            this.parametros        = item;  // ASIGNAR LOS PARAMETROS A MANDAR
+            this.activaFormulario  = 0 ;    // FORMULARIO QUE SE MOSTRARA
+						this.tablaModificar    = false;  // HABILITAR TABLA DE MODIFICACIONES
+            this.productoExistente = true;  // HABILITAR TABLA DE MODIFICACIONES
+            this.solicitarModal   = true;  // ABRIR MODAL 
+
+						break;
           case 2:
             this.anchoModal       = 800;   // ASIGNAR EL ANCHO DE LA MODAL
-            this.modoVista        = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+						this.modoVista        = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+						this.Vista             ='SOLICITUDESDDD';
             this.parametros       = item;  // ASIGNAR LOS PARAMETROS A MANDAR
             this.activaFormulario = 0 ;    // FORMULARIO QUE SE MOSTRARA
             this.tablaModificar   = true;  // HABILITAR TABLA DE MODIFICACIONES
@@ -371,7 +398,8 @@
 
           case 3:
             this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
-            this.modoVista        = 2;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+						this.modoVista        = 2;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+						this.Vista             ='SOLICITUDESDDD';
             this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
             this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
             this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES

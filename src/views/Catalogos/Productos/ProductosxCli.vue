@@ -74,7 +74,11 @@
 
 			<v-dialog v-model="controlProductoModal" persistent width="700px">
 				<v-card class="pa-3">
-					<controlProductoxCli :modoVista="modoVista" :data="data" @modal="controlProductoModal = $event"/>
+					<controlProductoxCli 
+						:modoVista="modoVista" 
+						:data="data" 
+						:Vista="Vista"
+						@modal="controlProductoModal = $event"/>
 				</v-card>
 			</v-dialog>
 
@@ -105,6 +109,7 @@ import { object } from '@amcharts/amcharts4/core';
           search: '',   
 					controlProductoModal: false,
 					modoVista: 0,
+					Vista: '',
 					data:'',
 					headers:[
 						{ text: 'Codigo'   , align: 'left'  , value: 'codigo' },
@@ -167,6 +172,7 @@ import { object } from '@amcharts/amcharts4/core';
 					const payload = new Object();	payload.id_cliente = this.cliente.id ? this.cliente.id: 0 ;
 					this.modoVista = modoVista;
 					this.data = data? data: payload;
+					this.Vista    = 'PRODUCTOS';
 					this.controlProductoModal = true;
 				},
 			}

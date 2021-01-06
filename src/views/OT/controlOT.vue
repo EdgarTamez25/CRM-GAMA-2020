@@ -4,7 +4,7 @@
 			<v-col cols="12" >
 				
 				<v-snackbar v-model="snackbar" :color="color" top multi-line right rounded="pill" > <b>{{ text }}</b> </v-snackbar>
-
+        
 				<v-card-actions class="pa-0" >
 
 					<h3> <strong> {{ modoVista === 1? 'NUEVA ORDEN DE TRABJO':'EDITAR ORDEN DE TRABAJO' }} </strong></h3> 
@@ -55,13 +55,13 @@
           </v-col>
 
            <v-card-text class="font-weight-black subtitle-1 py-0" align="center"> PRODUCTOS A SOLICITAR </v-card-text>
-      
           <v-col cols="12">  <!-- PRODUCTOS -->
 						<v-autocomplete
-							:items="getPxCxD" v-model="producto" item-text="nombre" tem-value="id" label="Productos" 
+							:items="getPxCxD" v-model="producto" item-text="codigo" item-value="id" label="Productos" 
 							dense outlined hide-details color="celeste" append-icon="print" return-object
               :disabled="cliente.id && depto.id && modo ==1 ? false: true"
-						></v-autocomplete>
+						>
+            </v-autocomplete>
 					</v-col>
 
           <v-col cols="12" sm="6">
@@ -156,8 +156,15 @@
               </template>
             </v-simple-table>
           </v-col>
+
+          
 				</v-row>
+        <v-col cols="12" align="center" v-if="detalle.length && modoVista != 1">
+          <v-btn color="success" dark rounded small @click="imprimirPDF()">Imprimir</v-btn>
+        </v-col>
         <v-col cols="12" class="mt-3"/>
+        
+        
         <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
         <v-footer  absolute v-if="modoVista === 1">
           <v-spacer></v-spacer>
@@ -199,12 +206,13 @@
 
 <script>
   import {mapGetters, mapActions} from 'vuex'
-	import  metodos from '@/mixins/metodos.js';
+  import  metodos from '@/mixins/metodos.js';
+	import  jsPdf   from '@/mixins/jsPdf.js';
   import overlay     from '@/components/overlay.vue'
   import loading     from '@/components/loading.vue'
 
 	export default {
-		mixins:[metodos],
+		mixins:[metodos,jsPdf],
 	  components: {
       overlay,
       loading
@@ -350,7 +358,7 @@
       },
 
       rellenaCampos(item){
-        console.log('item', item);
+        // console.log('item', item);
         this.idEditar = item.id;
         this.producto = { id: item.id_producto, nombre: item.producto };
         this.cantidad = item.cantidad;
@@ -414,6 +422,11 @@
         }
 
         if(this.modoVista === 2){
+          // console.log('')
+          if(this.detalle.length <= 1){
+            this.snackbar=true; this.text="Debe haber al menos 1 producto en la lista."; this.color="error";
+            return;
+          }
           this.idAEliminar = id;
           this.alertaEliminar = true; 
         }
@@ -518,7 +531,28 @@
 
 			mostrarError(mensaje){
 				this.snackbar=true; this.text=mensaje; this.color = "error";
-			}
+      },
+      
+      imprimirPDF(){
+        let deptos = this.deptos.filter(item =>{ if(this.depto.id === item.id ){ return item.nombre} })
+        let info = [ { text: "Orden de trabajo", value: this.parametros.id         }, 
+                     { text: "Departamento"    , value:deptos[0].nombre }, 
+                     { text: "Responsable"     , value: this.parametros.nomvend ?  this.parametros.nomvend : '' }, 
+                     { text: "Cliente"         , value: this.parametros.nomcli    },
+                     { text: "Orden de Compra" , value: this.parametros.oc         }, 
+                     { text: "Referencia"      , value: this.parametros.referencia }, 
+                    ];
+        let columnas = [  { title: "Producto" , dataKey: "producto"        }, 
+                          { title: "Cantidad" , dataKey: "cantidad"        }, 
+                          { title: "Concepto" , dataKey: "concepto"        }, 
+                          { title: "Programado"   , dataKey: "fecha_progra"    },
+                          { title: "Entrega"  , dataKey: "fecha_entrega"   },
+                          { title: "Urgencia" , dataKey: "urgencia"        }, 
+                        ];
+        
+        this.generatePDF(columnas, this.detalle, info);
+      }
+      
 		}
 	}
 </script>

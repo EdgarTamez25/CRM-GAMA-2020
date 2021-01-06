@@ -9,14 +9,16 @@ use App\compromisos;
 class compromisosController extends Controller
 {
 		
-		public function Compromisos($nivel){
+		public function Compromisos(Request $req){
 			
 			return DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo, c.id_categoria, ca.nombre as nomcatego,
-																			c.fecha, c.hora, c.id_cliente, cli.nombre as nomcli, c.obs
+																			c.fecha, c.hora,c.fecha_cierre, c.hora_cierre,  c.id_cliente, cli.nombre as nomcli, c.obs,
+																			c.fuente, u.nombre as creador, c.obs_usuario, c.confirma_cita,c.cumplimiento, c.estatus
 													FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
 																						 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
 																						 LEFT JOIN clientes  cli ON cli.id = c.id_cliente
-												WHERE c.estatus = 0 ORDER BY c.id DESC');
+																						 LEFT JOIN users u       ON u.id   = c.fuente 
+												WHERE  c.fecha BETWEEN ? AND ? ORDER BY c.id DESC' ,[ $req -> fecha1 , $req -> fecha2]);
 		}
 
     public function addcompromiso(Request $req){

@@ -53,22 +53,23 @@ class solicitudesController extends Controller
 															WHERE m.estatus = ? AND m.id_depto = ? AND m.fecha BETWEEN ? AND ?', 
 															[ $req -> estatus, $req -> id_depto , $req -> fecha1 , $req -> fecha2]);
 		// return $movimientos;
+
 		$movimSol = [];
 
 		for($i=0;$i<count($movimientos);$i++ ):
 			if($movimientos[$i] -> px === 1):
 				$existente = $this -> consultaProdExistente($movimientos[$i] -> id_px);
-				$arrayTemp = $this -> formarObjecto($existente[0], $movimientos[$i]);
+				$arrayTemp = $this -> formarObjecto($existente, $movimientos[$i]);
 				array_push($movimSol,  $arrayTemp);
 			endif;
 			if($movimientos[$i] -> px === 2):
-				$Modificacion = $this -> consultaProdModif($movimientos[$i] -> id_px);
-				$arrayTemp = $this -> formarObjecto($Modificacion[0], $movimientos[$i]);
+				 $Modificacion = $this -> consultaProdModif($movimientos[$i] -> id_px);
+				 $arrayTemp = $this -> formarObjecto($Modificacion, $movimientos[$i]);
 				array_push($movimSol, $arrayTemp);
 			endif;
 			if($movimientos[$i] -> px === 3):
 				$Nuevos = $this -> consultaProdNuevo($movimientos[$i] -> id_px);
-				$arrayTemp = $this -> formarObjecto($Nuevos[0], $movimientos[$i]);
+				$arrayTemp = $this -> formarObjecto($Nuevos, $movimientos[$i]);
 				array_push($movimSol, $arrayTemp);
 			endif; 
 		endfor;
@@ -131,6 +132,7 @@ class solicitudesController extends Controller
 	}
 	//! FORMA OBJETO QUE SE MANDARA EN SolicitudesDDD
 	public function formarObjecto($data, $movim){
+		// return $data;
 		return $objetTemp = [ "id_key"			 => $movim -> id, 
 													"id_solicitud" => $movim -> id_solicitud,
 													"px" 					 => $movim -> px,
@@ -144,13 +146,13 @@ class solicitudesController extends Controller
 													"id_encargado" => $movim -> id_encargado,
 													"encargado"    => $movim -> encargado,
 													"nomencargado" => $movim -> nomencargado,
-													"id"       		 => $data  -> id,
-													"ft" 					 => $data  -> ft,
-													"dx"					 => $data  -> dx,
-													"id_dx"        => $movim -> px === 3 ? $data -> id_dx : 0 ,
-													"tipo_prod"    => $data  -> tipo_prod,
-													"cantidad"     => $data  -> cantidad,
-													"estatus"		   => $data  -> estatus
+													"id"       		 => $data[0] -> id,
+													"ft" 					 => $data[0] -> ft,
+													"dx"					 => $data[0] -> dx,
+													"id_dx"        => $movim -> px === 3 ? $data[0] -> id_dx : 0 ,
+													"tipo_prod"    => $data[0] -> tipo_prod,
+													"cantidad"     => $data[0] -> cantidad,
+													"estatus"		   => $data[0] -> estatus
 												];
 	}
 	// TODO ************************************************************************
@@ -178,10 +180,7 @@ class solicitudesController extends Controller
 										  "pantones" 		   => $pantones,
 										  "acabados" 		   => $acabados
 										  ];
-
 		return $arrayTemporal;
-
-
 	}
 
 	public function Digital($id_dx, $dx){
@@ -206,7 +205,7 @@ class solicitudesController extends Controller
 		return $arrayTemporal;
 	}
 	// TODO ************************************************************************
-
+	
 	public function obtenerPantones($id_pantone, $dx){
 		return DB::select('SELECT * FROM det_pantone WHERE id_dx = ? AND dx=?', [$id_pantone, $dx]);
 	}
@@ -378,26 +377,43 @@ class solicitudesController extends Controller
 
 	}
 
-	public function EliminarMovim($id, Request $req){
-		$deleteMovim = DB::delete('DELETE FROM movim_sol WHERE id= ?',[$id]);
-	
+	public function FinalizaProdExist(Request $req){
+		$this -> actualizaEstatusProdExist($req);
+	  $this -> validaEstatusSolicitud($req);
+		return response("la información se guardo correctamente",200);
+	}
+ 
+	public function EliminarMovim(Request $req){
+		$deleteMovim = DB::delete('DELETE FROM movim_sol WHERE id= ?',[$req -> id_delete]);
+
+		if($req -> px === 1): $this -> actualizaEstatusProdExist($req); endif;
+		if($req -> px === 2): $this -> actualizaEstatusModif($req)    ; endif;
+		if($req -> px === 3): $this -> actualizaEstatusProdNuevo($req); endif;
+		
 		$this -> validaEstatusSolicitud($req);
 		return response("la información se guardo correctamente",200);
 	}
 
 	public function validaEstatusMovim($data){
-		$dos=0; $tres=0;
+		$uno=0; $dos=0; $tres=0;
 		$movim = DB::select('SELECT * FROM movim_sol WHERE id_solicitud =? AND id_px=? ', [$data -> id_solicitud, $data -> id]);
 	
 		for($i=0;$i<count($movim); $i++): 
-			if($movim[$i] -> estatus === 2):
+			if($movim[$i] -> estatus === 1 ):
+				$uno++;
+			elseif($movim[$i] -> estatus === 2):
 				$dos++;
 			elseif($movim[$i] -> estatus === 3):
 				$tres++;
 			endif;
 		endfor;
-
-		if($dos > 0):
+		
+		if($uno > 0):
+			$objetTemp = ["id" => $data -> id, "estatus" => 2];	$objetTemp2 = [ "data" => $objetTemp];
+			if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
+			if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
+			if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
+		elseif($dos > 0):
 			$objetTemp = ["id" => $data -> id, "estatus" => 2];	$objetTemp2 = [ "data" => $objetTemp];
 			if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
 			if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
@@ -410,18 +426,23 @@ class solicitudesController extends Controller
 		endif;
 	}
 
-  public function	validaEstatusSolicitud($data){
-		$dos=0; $tres=0; $cuatro=0;
+  // TODO ******************** FUNCIONES PARA VALIDAR ESTATUS DE SOLICITUD ***************************
+	// TODO ********************************************************************************************
+	public function	validaEstatusSolicitud($data){
+		$cero=0;$uno=0;$dos=0; $tres=0; $cuatro=0;
 	  $detalle = $this -> DetalleSolicitud($data['id_solicitud']);
-		
-		// return $detalle;
+
 		if(!$detalle): 
 			$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
 			return ;
 		endif;
 
 		for($i=0;$i<count($detalle); $i++): 
-			if($detalle[$i] -> estatus === 2):
+			if($detalle[$i] -> estatus === 0):
+				$cero++;
+			elseif($detalle[$i] -> estatus === 1):
+				$uno++;
+			elseif($detalle[$i] -> estatus === 2):
 				$dos++;
 			elseif($detalle[$i] -> estatus === 3):
 				$tres++;
@@ -429,8 +450,12 @@ class solicitudesController extends Controller
 				$cuatro++;
 			endif;
 		endfor;
-
-		if($dos > 0):
+		
+		if($cero > 0):
+			$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
+		elseif($uno > 0):
+			$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
+		elseif($dos > 0):
 			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],2);
 		elseif($tres > 0):
 			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],3);

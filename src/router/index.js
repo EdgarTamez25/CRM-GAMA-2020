@@ -35,6 +35,8 @@ const routes = [
   { path:'/prospectos'     , name:'prospectos'    , component:()=> import('@/views/Catalogos/Prospectos/Prospectos.vue' )    , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
   { path:'/analisis-fases' , name:'analisis-fases', component:()=> import('@/views/Historial/analisisFases.vue')             , meta: { ADMIN: true, SUPER:true }},
 
+
+
   
 ]
 

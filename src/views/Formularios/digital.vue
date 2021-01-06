@@ -25,7 +25,15 @@
             </v-col> -->
             <v-card-text class="font-weight-black pa-1 headline" v-if="!Loading">{{ tipo_producto }}</v-card-text>
             <v-card-text class="font-weight-black pa-1 subtitle-1" v-if="!Loading">{{ titulo }}</v-card-text>
-             
+            
+            <v-col cols="12" v-if=" !Loading && Vista === 'PRODUCTOS' && getDatosDigital != null">
+             <v-btn color="rosa" dark block small @click="pegarInfo()"> PEGAR INFORMACIÓN </v-btn> 
+            </v-col>
+
+            <v-col cols="12" v-if=" !Loading && Vista === 'SOLICITUDES'">
+             <v-btn color="rosa" dark block small @click="copiarInfo()"> COPIAR INFORMACIÓN </v-btn> 
+            </v-col>
+
              <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
               <v-text-field 
@@ -190,7 +198,8 @@
       'parametros',
       'depto_id',
       'modalDDD',
-      'actualiza'
+      'actualiza',
+      'Vista'
 	  ],
     data: () => ({
       Loading        : true,
@@ -237,7 +246,7 @@
       this.validarModoVista() ;
     },
     computed:{ 
-      ...mapGetters('Solicitudes',['consecutivo']),  
+      ...mapGetters('Solicitudes',['consecutivo', 'getDatosDigital']),  
 			...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
 
       ACTIVACAMPO(){
@@ -250,7 +259,7 @@
     }, 
 
     methods:{
-      ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto']), // IMPORTANDO USO DE VUEX (ACCIONES)
+      ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto','copiarInfoDeSolicitud']), // IMPORTANDO USO DE VUEX (ACCIONES)
 
       agregarPantone(){
         var esHexadecimal = false;
@@ -494,6 +503,33 @@
         
       },
 
+      copiarInfo(){
+        const payload = new Object();
+              payload.material       = this.material;
+              payload.material2      = this.material2;
+              payload.ancho          = this.ancho;
+              payload.largo          = this.largo;
+              payload.estructura     = this.estructura;
+              payload.grosor         = this.grosor;
+              payload.acabados       = this.acabado;
+              payload.pantones       = this.pantones;
+              payload.dx             = 3
+
+        this.copiarInfoDeSolicitud(payload);
+        this.snackbar = true; this.text = "La información se copio correctamente."; this.color ="green";
+      },
+
+      pegarInfo(){
+        this.material       =  this.getDatosDigital.material
+        this.material2      =  this.getDatosDigital.material2
+        this.ancho          =  this.getDatosDigital.ancho
+        this.largo          =  this.getDatosDigital.largo
+        this.estructura     =  this.getDatosDigital.estructura;
+        this.grosor         =  this.getDatosDigital.grosor;
+        this.acabado        =  this.getDatosDigital.acabados;
+        this.pantones       = this.getDatosDigital.pantones; 
+        this.snackbar = true; this.text = "La información se ha pegado correctamente."; this.color ="green";
+      }
     }
   }
 </script>
