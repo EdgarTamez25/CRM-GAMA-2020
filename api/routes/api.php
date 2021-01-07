@@ -152,8 +152,6 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	Route::post('elimina.movimiento'    ,'solicitudesController@EliminarMovim') 		 -> name('EliminarMovim'); 
 	Route::post('finaliza.prodexit'     ,'solicitudesController@FinalizaProdExist')  -> name('FinalizaProdExist');
 
-	
-
 //==================================== MATERIALES ==================================================
 	Route::get('materiales/{dx}' ,'materialesController@Materiales')  -> name('Materiales');
 //==================================== ACABADOS   ==================================================

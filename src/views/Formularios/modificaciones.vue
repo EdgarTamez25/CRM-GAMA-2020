@@ -421,11 +421,13 @@
                           id: this.parametros.id,
                           px: this.parametros.px
                         }
-                        
+        console.log('payload', payload)
         this.procesarMovimiento(payload);
       },
 
       procesarMovimiento(payload){
+        console.log('payload2', payload)
+
         this.overlay = true; 
         this.$http.post('procesa.movimiento', payload).then(response =>{
           this.overlay  = false; this.colorCorrecto = 'green';

@@ -336,7 +336,6 @@
 			...mapGetters('Solicitudes'  ,['getSolicitudesDDD','Loading']), // IMPORTANDO USO DE VUEX - (GETTERS)
 			...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
 
-
 			tamanioPantalla () {
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':

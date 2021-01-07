@@ -440,6 +440,7 @@
       },
 
       Crear(payload){
+        console.log('crear', payload)
         this.agregaProducto(payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se agrego a la lista"); }
         }).finally(()=>{ 
@@ -551,11 +552,13 @@
                           id: this.parametros.id,
                           px: this.parametros.px
                         }
-          
+        // console.log('payload', payload)
         this.procesarMovimiento(payload);
       },
 
       procesarMovimiento(payload){
+        // console.log('payload2', payload)
+
         this.overlay = true; 
         this.$http.post('procesa.movimiento', payload).then(response =>{
           // console.log('response', response.body)

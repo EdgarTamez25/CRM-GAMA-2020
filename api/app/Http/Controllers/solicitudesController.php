@@ -96,8 +96,9 @@ class solicitudesController extends Controller
 																												'id' 		 			 => $req  -> id_key
 																											 ]);
 		
+		
 		$this -> validaEstatusMovim($req);
-		$this -> validaEstatusSolicitud($req);																								 
+	  $this -> validaEstatusSolicitud($req);																								 
 		return $procesaMovim? response("la información se guardo correctamente",200): 
 											    response("Ocurrio un error, intentelo de nuevo",500);
 	}
@@ -230,6 +231,7 @@ class solicitudesController extends Controller
 	}
 
 	public function actualizaEstatusModif($data){
+		// return $data;
 		DB::update('UPDATE prod_modif SET estatus=:estatus 
 									WHERE id=:id',['estatus' => $data['estatus'], 
 																 'id' 		 => $data['id'] ]);
@@ -396,8 +398,9 @@ class solicitudesController extends Controller
 
 	public function validaEstatusMovim($data){
 		$uno=0; $dos=0; $tres=0;
-		$movim = DB::select('SELECT * FROM movim_sol WHERE id_solicitud =? AND id_px=? ', [$data -> id_solicitud, $data -> id]);
-	
+		$movim = DB::select('SELECT * FROM movim_sol WHERE id_solicitud =? AND id_px=? AND px=?', 
+													[$data -> id_solicitud, $data -> id, $data -> px]);
+
 		for($i=0;$i<count($movim); $i++): 
 			if($movim[$i] -> estatus === 1 ):
 				$uno++;
@@ -409,16 +412,19 @@ class solicitudesController extends Controller
 		endfor;
 		
 		if($uno > 0):
-			$objetTemp = ["id" => $data -> id, "estatus" => 2];	$objetTemp2 = [ "data" => $objetTemp];
+			$objetTemp  = ["id" => $data -> id, "estatus" => 2];$objetTemp2 = [ "data" => $objetTemp];
 			if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
 			if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
 			if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
+
 		elseif($dos > 0):
 			$objetTemp = ["id" => $data -> id, "estatus" => 2];	$objetTemp2 = [ "data" => $objetTemp];
 			if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
 			if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
 			if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
+
 		elseif($tres > 0):
+			// return $data;
 			$objetTemp = ["id" => $data -> id, "estatus" => 3];$objetTemp2 = [ "data" => $objetTemp];
 			if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
 			if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
@@ -431,6 +437,8 @@ class solicitudesController extends Controller
 	public function	validaEstatusSolicitud($data){
 		$cero=0;$uno=0;$dos=0; $tres=0; $cuatro=0;
 	  $detalle = $this -> DetalleSolicitud($data['id_solicitud']);
+		
+		// return $detalle;
 
 		if(!$detalle): 
 			$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
@@ -452,14 +460,19 @@ class solicitudesController extends Controller
 		endfor;
 		
 		if($cero > 0):
+			// return "ACTUALIZA A UNO";
 			$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
 		elseif($uno > 0):
+			// return "ACTUALIZA A UNO DOS";
 			$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
 		elseif($dos > 0):
+			// return "ACTUALIZA A DOS";
 			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],2);
 		elseif($tres > 0):
+			// return "ACTUALIZA A TRES";
 			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],3);
 		elseif($cuatro > 0):
+			// return "ACTUALIZA A CUATRO";
 			 $this -> actualizaEstatusSolicitud($data['id_solicitud'],4);
 		endif;
 
