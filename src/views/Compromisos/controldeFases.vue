@@ -93,7 +93,7 @@
 
 					</v-btn>
 					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="morado" 
-						 v-if="param === 5 || edit.fase_venta === 6 || edit.fase_venta === 7"
+						 v-if="param === 5 || edit.fase_venta === 6 || edit.fase_venta === 7 "
 						 @click="validarEntrega"
 					>
 						{{  entregar }}
@@ -267,11 +267,12 @@
 				const payload ={ id: this.edit.id , estatus: this.edit.fase_venta === 6 ? 0:2 }
 
 				this.$http.post('entrega.id', payload).then(response =>{
+					// console.log('entregas id', response.body)
 					this.chofer = { id: response.body[0].id_chofer, nombre: response.body[0].nombre }
 					this.numfac = response.body[0].numfac;
 					this.fecha = response.body[0].fecha_entrega; 
 					this.hora = response.body[0].hora_entrega;
-					this.razonRechazo = response.body[0].obs;
+					this.razonRechazo = response.body[response.body.length-1].obs;
 					this.edit.fase_venta === 7 ? this.entregar = 'Reprogramar Entrega': this.entregar = this.entregar;
 				}).catch(err =>{
 					console.log('err', err)
@@ -280,8 +281,9 @@
 			consultaRecotización(){
 				const payload = { id_compromiso: this.id_compromiso , fase_venta: 4 }
 				this.$http.post('recotización',payload).then(response =>{
-					console.log('RECOTIZACION',response.body)
-					this.razonRecotiza = response.body[0].obscierre;
+					// console.log('RECOTIZACION',response.body)
+					var len = response.body.length
+					this.razonRecotiza = response.body[(response.body.length -1)].obscierre;
 				}).catch(err =>{
 					console.log('err', err)
 				})
@@ -300,7 +302,7 @@
 				this.ConfirmaModal = false; this.dialog = true 
 				setTimeout(() => (this.dialog = false), 2000)
 
-				this.$http.post('fase.venta/', payload).then((response)=>{
+				this.$http.post('fase.venta', payload).then((response)=>{
 					this.TerminarProceso(response.body);					
 				}).catch(error =>{
 					console.log('error',error)

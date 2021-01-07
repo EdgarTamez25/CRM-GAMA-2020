@@ -6,10 +6,10 @@
 				<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 			</v-snackbar>
 
-  		<v-col cols="12" sm="10">
-				<v-card-actions class="font-weight-black headline"> PROSPECTOS </v-card-actions>
+  		<v-col cols="12" sm="10" >
+				<v-card-actions class="font-weight-black headline mt-3"> PROSPECTOS </v-card-actions>
 
-				<v-card  >
+				<v-card outlined >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
@@ -30,7 +30,7 @@
 			      :items="getProspectos"
 			      :search="search"
 			      fixed-header
-						height="550"
+						:height="tamanioPantalla"
 						hide-default-footer
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
@@ -38,8 +38,9 @@
 
 			    >
 						<template v-slot:item.action="{ item }" > 
-			    		<v-btn  class="rosa ma-1" icon dark @click="validaAccion(item)"><v-icon> people </v-icon></v-btn> 
-			    		<v-btn  class="celeste ma-1" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
+			    		<!-- <v-btn  class="rosa ma-1" icon dark @click="validaAccion(item)"><v-icon> people </v-icon></v-btn>  -->
+			    		<v-btn class="rosa ma-1"    icon dark @click="abrirModalCliente(item)"><v-icon> people </v-icon></v-btn> 
+			    		<v-btn class="celeste ma-1" icon dark @click="abrirModal(2, item)"    ><v-icon> create </v-icon></v-btn> 
 				    </template>
 
 			    </v-data-table>
@@ -51,7 +52,8 @@
 		    	</v-card>
 		    </v-dialog>
 
-				<v-dialog v-model="pasarACliente" persistent max-width="400" > <!-- PROCESO PARA ELIMINAR  -->
+				<!-- PROCESO PARA ELIMINAR  -->
+				<!-- <v-dialog v-model="pasarACliente" persistent max-width="400" > 
 					<v-card color="rosa">
 						<v-card-text class="pa-4 headline white--text ">
 							¿Quiere pasar esté <span class="font-weight-black "> prospecto</span>  a 
@@ -72,8 +74,10 @@
 							<v-spacer></v-spacer>
 							<v-btn color="gris" dark small @click="pasarACliente = false">Cancelar</v-btn>
 						</v-card-actions>
+
 					</v-card>
-				</v-dialog> <!-- FIN DEL PROCESO PARA ELIMINAR  -->
+				</v-dialog>  -->
+				<!-- FIN DEL PROCESO PARA ELIMINAR  -->
 
 				<v-dialog persistent v-model="clienteModal" width="700px" >	
 		    	<v-card class="pa-5">
@@ -128,6 +132,26 @@
 			computed:{
 				...mapGetters('Prospectos'  ,['Loading','getProspectos']), // IMPORTANDO USO DE VUEX - Prospectos (GETTERS)
 				...mapGetters('Usuarios'    ,['getUsuarios']), // IMPORTANDO USO DE VUEX - Prospectos (GETTERS)
+				tamanioPantalla () {
+					console.log(this.$vuetify.breakpoint)
+					switch (this.$vuetify.breakpoint.name) {
+						case 'xs':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'sm': 
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'md':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'lg':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'xl':
+							return this.$vuetify.breakpoint.height -300
+						break;
+					}
+				},
 			},
 
 			methods:{
@@ -139,17 +163,18 @@
 					this.dialog = true;
 				},
 
-				abrirModalCliente(){
-					this.pasarACliente = false;
+				abrirModalCliente(prospecto){
+					this.prospecto = prospecto;
+					// this.pasarACliente = false;
 					this.param = 3;
 					this.edit = this.prospecto;
 					this.clienteModal = true;
 				},
 
-				validaAccion(prospecto){
-					this.prospecto = prospecto;
-					this.pasarACliente = true;
-				},
+				// validaAccion(prospecto){
+				// 	this.prospecto = prospecto;
+				// 	this.pasarACliente = true;
+				// },
 
 				convertirEnCliente(){
 					const payload = { id : this.prospecto.id, prospecto: 0 };

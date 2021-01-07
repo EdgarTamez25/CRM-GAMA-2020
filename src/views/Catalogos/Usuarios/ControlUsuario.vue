@@ -6,6 +6,7 @@
 				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
 					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 				</v-snackbar>
+				
 				<v-card-actions class="pa-0" >
 					<h3> <strong> {{ param === 1? 'Nuevo Usuario':'Editar Usuario' }} </strong></h3> 
 					<v-spacer></v-spacer>
@@ -15,15 +16,29 @@
 				<v-divider class="ma-2"></v-divider>
 				<!-- <v-form> -->
 				<v-row>
-					<v-col cols="12" lg="12">
+					<v-col cols="12" lg="6">
 						<v-text-field
 							append-icon="person"
 							label="Nombre"
-							placeholder="Nombre del usuario"
+							placeholder="Nombre del empleado"
 							hide-details
 							dense
 							clearable
 							v-model ="nombre"
+							outlined
+						></v-text-field>
+					</v-col>
+
+					<v-col cols="12" lg="6">
+						<v-text-field
+							append-icon="android"
+							label="Usuario"
+							placeholder="Usuario "
+							hide-details
+							dense
+							clearable
+							v-model ="usuario"
+							outlined
 						></v-text-field>
 					</v-col>
 
@@ -36,6 +51,7 @@
 							dense
 							clearable
 							v-model="correo"
+							outlined
 						></v-text-field>
 					</v-col>
 
@@ -51,20 +67,39 @@
 							dense
 							hide-details
 							return-object
+							outlined
 						></v-select>
 					</v-col>
 
 					<v-col cols="12" lg="6"> 
 						<v-select
 							:items="sucursales"
+							item-text="nombre"
+							item-value="id"
 							label="Sucursal"
 							placeholder="Sucursal"
 							append-icon="store"
 							dense
 							hide-details
 							clearable
-							v-model="Sucursal"
+							v-model="sucursal"
+							outlined
+							return-object
 						></v-select>
+					</v-col>
+
+					<v-col cols="12" lg="6">
+						<v-autocomplete
+							:items="departamentos" v-model="departamento" item-text="nombre" item-value="id" label="Departamento" 
+							dense outlined hide-details return-object color="celeste" append-icon="folder_shared"
+						></v-autocomplete>
+					</v-col>
+
+					<v-col cols="12" lg="6">
+						<v-autocomplete
+							:items="puestos" v-model="puesto" item-text="nombre" item-value="id" label="Puesto" 
+							dense outlined hide-details return-object color="celeste" append-icon="mdi-account-tie"
+						></v-autocomplete>
 					</v-col>
 
 					<template v-if="param === 1">
@@ -135,29 +170,7 @@
 							></v-text-field>
 						</v-col>
 					</template>
-
-					<!-- <v-col cols="12">
-						<v-row>
-							<v-col cols="6" class="text-left">
-								<v-file-input
-									filled
-									dense
-									hide-details
-									v-model="file"
-									accept="image/png, image/jpeg, image/bmp"
-									placeholder="Sube una imagen*"
-									prepend-icon="mdi-camera"
-									label="Sube una imagen*"
-									@change="cargar()"
-								></v-file-input>			
-							</v-col>
-							<v-col  v-if="photo_result" cols="6" >
-								<v-img :src="photo_result" aspect-ratio="2.5" contain />
-							</v-col>
-						</v-row>
-					</v-col> -->
 				</v-row>
-
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 				<v-card-actions>
 					
@@ -195,13 +208,12 @@
           </v-dialog>
 
 					<v-dialog v-model="Correcto" hide-overlay persistent width="350"> <!-- PROCESO CORRECTO -->
-            <v-card color="success"  dark class="pa-3">
+            <v-card :color="colorCorrecto"  dark class="pa-3">
 							<h3><strong>{{ textCorrecto }} </strong></h3>
             </v-card>
           </v-dialog>
 
 				</v-card-actions>
-
 			</v-col>
 		</v-row>
 	</v-container>
@@ -222,7 +234,6 @@
 	  ],
 	  data () {
 			return {
-				foto2:[],
 				titleModal: 'Usuario',
 				// VARIABLES PARA CONTRASEÑA
 				cambiaPassword: true,
@@ -237,19 +248,23 @@
 				nombre		: '',
 				correo		: '',
 				nivel 		: {id:null, nombre:''},
-				niveles   : [ { id:1, nombre:'Administrador'},
-											{ id:2, nombre:'Supervisor'},
-											{ id:3, nombre:'Vendedor'},
-											{ id:4, nombre:'Chofer'}
-										],
-				file: [],
-				url:'',
-				photo_result:'',
+				niveles: [{ id:1, nombre:'Administrador'},
+									{ id:2, nombre:'Supervisor'},
+									{ id:3, nombre:'Vendedor'},
+									{ id:4, nombre:'Chofer'},
+									{ id:5, nombre:'Almacén'},
+									{ id:6, nombre:'Ventas'},
+									{ id:7, nombre:'Servicio al Cliente'},
+									{ id:8, nombre:'Sin seleccionar'}
+								],
+
 				// SELECTORES
-				id_sucursal  : 0,
-				sucursal     : [],
+				sucursal     : { id:null, nombre: ''},
 				sucursales   : [],
-				Sucursal     : '',
+				departamentos:[],
+				departamento: { id:null, nombre: ''},
+				puestos:[],
+				puesto: {id:null, nombre:''},
 				
 				// ALERTAS
 				snackbar: false,
@@ -258,6 +273,7 @@
 				dialog : false,
 				textDialog : "Guardando Información",
 				Correcto   : false,
+				colorCorrecto: 'green',
 				textCorrecto: '',
 				colorDialog: 'blue darken-4',
 				// BOTON DE BORRAR
@@ -266,8 +282,10 @@
 		},
 		
 		created(){
-			this.consultarSucursales() //MANDO A CONSULTAR SUCURSALES A MIXINS
-			this.validarModoVista() // VALIDO EL MODO DE LA VISTA
+			this.consultarSucursales(); //MANDO A CONSULTAR SUCURSALES A MIXINS
+			this.consultaPuestos();   
+			this.consultaDeptos();
+			this.validarModoVista(); 	  // VALIDO EL MODO DE LA VISTA
 		},
 			
 		computed:{
@@ -280,48 +298,28 @@
 				this.cambiaPassword= true
 				this.validarModoVista();
 			},
-
-			foto: function(){
-				// console.log('1',this.foto)
-			}
 		},
 
 		methods:{
 			// IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 			...mapActions('Usuarios'  ,['consultaUsuarios']),
 
-			cargar(){
-        console.log(this.file)
-        if(this.file.length < 1){
-          return
-        }
-        //mandamos a ocvertir la imagen a base64 pero mandamos el docuemnto, el formdata, el nombre
-        this.getBase64(this.file)
-      },
-
-      getBase64(file) {
-        var me = this
-        var reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-          me.photo_result =  reader.result 
-          me.name_photo = file.name
-        };
-      },
-
 			validarModoVista(){
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
-					console.log('edit', this.edit)
 					this.id_usuario     = this.edit.id
 					this.nombre 				= this.edit.nombre
 					this.correo 				= this.edit.correo
 					this.PasswordActual = this.edit.password
+					this.sucursal     = { id: this.edit.id_sucursal, nombre: this.edit.nomsuc}
 					this.Sucursal 			= this.edit.nomsuc
-					this.foto 					= this.edit.foto
+					this.foto 					= ''
+					this.usuario        = this.edit.usuario
 					this.nivel          = { id    : this.niveles[this.edit.nivel-1].id , 
 																	nombre: this.niveles[this.edit.nivel-1].nombre
 																}
+					this.departamento   = { id:this.edit.id_depto, nombre: this.edit.nomdepto };
+					this.puesto 				= { id:this.edit.id_puesto, nombre: this.edit.nompuesto };
 
 				}else{
 				this.limpiarCampos()
@@ -329,10 +327,12 @@
 			},
 
 			validaInfo(){
-				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL USUARIO"   ; return }
+				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL EMPLEADO"   ; return }
+				if(!this.usuario)	 { this.snackbar = true; this.text="No puedes omitir el USUARIO"   ; return }
 				if(!this.correo)	 { this.snackbar = true; this.text="No puedes omitir el CORREO" ; return }
-				if(!this.nivel.id)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
-				if(!this.Sucursal) { this.snackbar = true; this.text="No puedes omitir la SUCURSAL"; return }
+				if(!this.nivel.id || this.nivel.id === 8)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
+				// if(this.nivel.id === 7)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
+				if(!this.sucursal.id) { this.snackbar = true; this.text="No puedes omitir la SUCURSAL"; return }
 
 				if(this.param === 1){
 					if(!this.password) { this.snackbar = true; this.text="No puedes omitir la Contraseña"; return }
@@ -373,13 +373,14 @@
 													correo	    : this.correo,
 													password		: this.PasswordAEdit,
 													nivel       : this.nivel.id,
-													id_sucursal	: this.id_sucursal,
-													id_sucursal : 1,
-													// file       : formData,
+													id_sucursal	: this.sucursal.id,
+													usuario     : this.usuario.toUpperCase(),
 													foto       : '',
+													id_depto    : this.departamento.id,
+													id_puesto   : this.puesto.id,
 													estatus: 1 
 												}
-											
+											// console.log('pay', payload)
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearUsuario(payload): this.ActualizarUsuario(payload);
 			},
@@ -390,14 +391,17 @@
 				
 				// MANDO A INSERTAR CLIENTE
 				this.$http.post('usuarios', payload).then((response)=>{
-					console.log('res',response.body)
-					// this.TerminarProceso(response.body);					
+					
+					if(response.body.error){ 
+						this.MensajeError(response.body.mensaje)
+						return;
+					}
+
+					this.TerminarProceso(response.body);					
 				}).catch(error =>{
 					console.log('error',error)
 				})
 			},
-
-			
 
 			ActualizarUsuario(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
@@ -405,16 +409,27 @@
 				setTimeout(() => (this.dialog = false), 2000)
 
 				this.$http.put('usuarios/'+ this.edit.id, payload).then((response)=>{
+					if(response.body.error){ 
+						this.MensajeError(response.body.mensaje)
+						return;
+					}
 					this.TerminarProceso(response.body);					
 				})
 			},
 
 			TerminarProceso(mensaje){
 				var me = this ;
-				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
+				this.dialog 			  = false  ; this.Correcto 		 = true; 
+				this.colorCorrecto	= "green"; this.textCorrecto = mensaje;
 				setTimeout(function(){ me.$emit('modal',false)}, 2000);
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
 				this.consultaUsuarios() //ACTUALIZAR CONSULTA DE USUARIOS
+			},
+
+			MensajeError(mensaje){
+				this.dialog			  	= false	; this.Correcto 		= true ; 
+				this.colorCorrecto	="red"	; this.textCorrecto = mensaje;
+				setTimeout(() => (this.Correcto = false), 2000)
 			},
 
 			borrar(){
@@ -437,7 +452,10 @@
 				this.password  = '',
 				this.password2 = '';
 				this.foto 		 = '';
-				this.Sucursal  = '';
+				this.sucursal  =  { id:null, nombre: '' };
+				this.usuario  = '';
+				this.departamento   = { id:null, nombre: '' };
+				this.puesto 				= { id:null, nombre: '' };
 			}
 		}
 	}

@@ -15,46 +15,43 @@
 
 				<v-divider class="ma-2"></v-divider>
 				<v-row>
+					<!-- NOMBRE DEL CLIENTE -->
 					<v-col cols="12" >
 						<v-text-field
-							append-icon="person"
-							label="Nombre"
-							placeholder="Nombre del cliente"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="nombre"
+							v-model="nombre" label="Nombre" placeholder="Nombre del cliente" append-icon="person"
+							hide-details dense filled
 						></v-text-field>
 					</v-col>
-
+					<!-- RAZON SOCIAL -->
 					<v-col cols="12">
 						<v-text-field
-							append-icon="domain"
-							label="Razon Social"
-							placeholder="Razon Social"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="razon_social"
+							v-model="razon_social" label="Razon Social" placeholder="Razon Social" append-icon="domain"
+							hide-details dense filled 
 						></v-text-field>
 					</v-col>
-
+					<!-- DIRECCION DEL CLIENTE -->
 					<v-col cols="12" sm="6">
 						<v-text-field
-							append-icon="person_pin_circle"
-							label="Dirección"
-							placeholder="Dirección"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="direccion"
+							v-model="direccion" label="Dirección" placeholder="Calle #000, Colonia" append-icon="person_pin_circle"
+							hide-details dense filled
+						></v-text-field>
+					</v-col>
+					<!--  CIUDADES -->
+					<v-col cols="12" sm="6">
+						<v-autocomplete
+							:items="ciudades" v-model="ciudad" item-text="nombre" item-value="id" label="Ciudades" placeholder="Ciudad"
+							dense filled hide-details return-object color="celeste" append-icon="location_city"
+						></v-autocomplete>
+					</v-col>
+					<!-- CODIGO POSTAL -->
+					<v-col cols="12" sm="6">
+						<v-text-field
+							v-model="cp" label="Código Postal" placeholder="C.P." append-icon="where_to_vote"
+							hide-details dense filled type="number"
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" sm="6">
+					<!-- <v-col cols="12" sm="6">
 						<v-select
 							:items="zonas"
 							item-text="nombre"
@@ -68,21 +65,16 @@
 							hide-details
 							v-model="zona"
 						></v-select>
-					</v-col>
+					</v-col> -->
 
+					<!-- TIPO DE CLIENTE -->
 					<v-col cols="12" sm="6">
 						<v-select
-							:items="['Nacional','Internacional']"
-							label="Tipo de Cliente"
-							placeholder="Tipo de cliente"
-							append-icon="gps_fixed"
-							dense
-							filled
-							hide-details
-							v-model="tipo_cliente"
+							v-model="tipo_cliente" :items="['Nacional','Internacional']" label="Tipo de Cliente" placeholder="Tipo de cliente"
+							append-icon="gps_fixed" dense filled hide-details
 						></v-select>
 					</v-col>
-
+					<!-- NIVEL DEL CLIENTE -->
 					<v-col cols="12" sm="6">
 						<v-select
 							:items="niveles"
@@ -98,19 +90,23 @@
 							return-object
 						></v-select>
 					</v-col>
+					<!-- RFC DEL CLIENTE -->
 					<v-col cols="12" sm="6">
 						<v-text-field
-							append-icon="recent_actors"
-							label="RFC"
-							placeholder="RFC perteneciente al cliente"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="rfc"
+							v-model="rfc" label="RFC" placeholder="RFC perteneciente al cliente" append-icon="recent_actors"
+							hide-details 	dense filled
 						></v-text-field>
 					</v-col>
+					<!--  DIAS DE FACTURACION -->
 					<v-col cols="12" sm="6">
+						<v-text-field
+							v-model="diasFact" label="Dias limite de factura" placeholder="Días limite de factura"	append-icon="insert_drive_file"
+							hide-details dense filled	type="number"
+						></v-text-field>
+					</v-col>
+					
+					<v-col cols="12" sm="6" />
+					<!-- <v-col cols="12" sm="6">
 						<v-select
 							:items="carteras"
 							item-text ="nombre"
@@ -122,64 +118,54 @@
 							dense
 							filled
 							hide-details
-							clearable
 							v-model="cartera"
 						></v-select>
-					</v-col>
+					</v-col> -->
 
+					<!-- TELEFONO 1 DEL CLIENTE -->
 					<v-col cols="12" sm="6">
 						<v-text-field
-							append-icon="phone"
-							label="Telefono 1"
-							placeholder="Número de contacto 1"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="tel1"
-							type="number"
+							v-model="tel1" label="Telefono 1" placeholder="Número de contacto 1" append-icon="phone"
+							hide-details dense 	outlined type="number"
 						></v-text-field>
 					</v-col>
+					<!-- EXTENCION 1 -->
 					<v-col cols="12" sm="6">
 						<v-text-field
-							append-icon="phone"
-							label="Telefono 2"
-							placeholder="Número de contacto 2"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="tel2"
-							type="number"
+							v-model="ext1" label="Extención 1" placeholder="Extención 1" append-icon="settings_phone"
+							hide-details dense outlined type="number"
 						></v-text-field>
 					</v-col>
+					<!-- TELEFONO 2 -->
 					<v-col cols="12" sm="6">
-						<v-text-field
-							append-icon="email"
-							label="Email"
-							placeholder="Correo de contacto"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="contacto"
+						<v-text-field 
+							v-model="tel2" label="Telefono 2" placeholder="Número de contacto 2" append-icon="phone"
+							hide-details dense outlined type="number" 
 						></v-text-field>
 					</v-col>
+					<!-- EXTENCION 2 -->
 					<v-col cols="12" sm="6">
 						<v-text-field
-							append-icon="insert_drive_file"
-							label="Dias limite de factura"
-							placeholder="Días limite de factura"
-							hide-details
-							dense
-							filled
-							clearable
-							v-model="diasFact"
-							type="number"
+							v-model="ext2" label="Extención 2" placeholder="Extención 2" append-icon="settings_phone"
+							hide-details dense outlined Type="number"
+						></v-text-field>
+					</v-col>
+					<!--  CONTACTO 1 -->
+					<v-col cols="12" sm="6">
+						<v-text-field
+							v-model="contacto" label="Contacto 1" Placeholder="Contacto 1" append-icon="email"
+							hide-details dense outlined
+						></v-text-field>
+					</v-col>
+					<!--  CONTACTO 2 -->
+					<v-col cols="12" sm="6">
+						<v-text-field
+							v-model="contacto2" label="Contacto 2" placeholder="Contacto 2" append-icon="email"
+							hide-details dense outlined
 						></v-text-field>
 					</v-col>
 				</v-row>
-				
+
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 				<v-card-actions>
 					<v-spacer></v-spacer>
@@ -204,6 +190,7 @@
 							<h3><strong>{{ textCorrecto }} </strong></h3>
             </v-card>
           </v-dialog>
+
 				</v-card-actions>
 			</v-col>
 		</v-row>
@@ -238,9 +225,13 @@
 				niveles     : [{id:1 , nombre:'A'},{id:2,nombre:'AA'},{id:3,nombre:'AAA'}],
 				razon_social: '',
 				direccion   : '',
+				cp          : '',
 				tel1        : '',
+				ext1        : '',
 				tel2        : '',
+				ext2				: '',
 				contacto    : '',
+				contacto2    : '',
 				diasFact    : 0 ,
 			
 			 // ALERTAS
@@ -252,12 +243,15 @@
 				zonas				: [],  //Solo nombres 
 				cartera     : {id:null,nombre:''},
 				carteras    : [],
+				ciudad     : {id:null,nombre:''},
+				ciudades    : [],
 				}
 		},
 
 		created(){
 			this.consultarZonas() //MANDO A CONSULTAR ZONAS A MIXINS
 			this.consultarCarteras() //MANDO A CONSULTAR CARTERAS A MIXINS
+			this.consultarCiudades()
 			this.validarModoVista() // VALIDO EL MODO DE LA VISTA
 		},
 			
@@ -277,22 +271,26 @@
 			...mapActions('Clientes'    ,['consultaClientes']),
 			...mapActions('Prospectos'  ,['consultaProspectos']),
 
-
 			validarModoVista(){
 				if(this.param === 2 || this.param == 3){
 					// ASIGNAR VALORES AL FORMULARIO
 					this.nombre 			= this.edit.nombre;
 					this.direccion    = this.edit.direccion;
+					this.cp    = this.edit.cp;
 					this.razon_social = this.edit.razon_social;
 					this.Zonas 				= this.edit.nomzona; 
 					this.tipo_cliente = this.edit.tipo_cliente === 1? 'Nacional':'Internacional'
 					this.rfc        	= this.edit.rfc;
 					this.cartera      = { id:this.edit.id_cartera, nombre: this.nomcartera };
 					this.zona         = { id:this.edit.id_zona   , nombre: this.edit.nomzona };
+					this.ciudad       = { id:this.edit.id_ciudad , nombre: this.edit.ciudad };
 					this.nivel 				= this.niveles[this.edit.nivel -1];
 					this.tel1 				= this.edit.tel1;
+					this.ext1 				= this.edit.ext1;
 					this.tel2 				= this.edit.tel2;
+					this.ext2 				= this.edit.ext2;
 					this.contacto     = this.edit.contacto;
+					this.contacto2    = this.edit.contacto2;
 					this.diasFact     = this.edit.diasfact
 				}else{
 				this.limpiarCampos()
@@ -301,13 +299,16 @@
 
 			validaInfo(){
 				if(!this.nombre)	  	{ this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL CLIENTE"   ; return }
-				if(!this.razon_social){ this.snackbar = true; this.text="No puedes omitir la RAZON SOCIAL"; return }
-				if(!this.zona.id)	  	{ this.snackbar = true; this.text="No puedes omitir la ZONA" ; return }
+				if(!this.direccion)	  { this.snackbar = true; this.text="No puedes omitir la DIRECCIÓN"   ; return }
+				if(!this.ciudad.id)	  { this.snackbar = true; this.text="No puedes omitir la CIUDAD"   ; return }
+				if(!this.cp)	  { this.snackbar = true; this.text="No puedes omitir el Codigo Postal"   ; return }
+				// if(!this.razon_social){ this.snackbar = true; this.text="No puedes omitir la RAZON SOCIAL"; return }
+				// if(!this.zona.id)	  	{ this.snackbar = true; this.text="No puedes omitir la ZONA" ; return }
 				if(!this.tipo_cliente){ this.snackbar = true; this.text="No puedes omitir el TIPO DE CLIENTE"; return }
-				if(!this.nivel)				{ this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
+				if(!this.nivel.id)	  { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
 				if(!this.rfc)	        { this.snackbar = true; this.text="No puedes omitir el RFC"	; return }
 				if(!this.tel1)	      { this.snackbar = true; this.text="Debes de ingresar al menos un telefono"	; return }
-				if(!this.diasFact)	  { this.snackbar = true; this.text="No puedes omitir los DIAS LIMITES DE FACTURACIÓN"	; return }
+				// if(!this.diasFact)	  { this.snackbar = true; this.text="No puedes omitir los DIAS LIMITES DE FACTURACIÓN"	; return }
 				this.PrepararPeticion() // MANDO A FORMAR EL OBJETO PARA GUARDAR
 			},
 
@@ -315,6 +316,8 @@
 				// FORMAR ARRAY A MANDAR
 				const payload = { nombre			: this.nombre,
 													direccion   : this.direccion,
+													id_ciudad   : this.ciudad.id,
+													cp    			: this.cp,
 													id_zona			: this.zona.id,
 													tipo_cliente: this.tipo_cliente === 'Nacional'? 1:2,
 													rfc					: this.rfc,
@@ -323,8 +326,11 @@
 													nivel       : this.nivel.id,
 													razon_social: this.razon_social,
 													tel1				: this.tel1,
+													ext1				: this.ext1,
 													tel2				: this.tel2,
+													ext2				: this.ext2,
 													contacto		: this.contacto,
+													contacto2		: this.contacto2,
 													diasfact		: this.diasFact,
 													estatus     : 1,
 													prospecto   : 0
@@ -335,8 +341,7 @@
 
 			CrearCliente(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ;
-				setTimeout(() => (this.dialog = false), 2000)
+				this.dialog = true ; setTimeout(() => (this.dialog = false), 2000)
 				// MANDO A INSERTAR CLIENTE
 				this.$http.post('cliente', payload).then((response)=>{
 					this.TerminarProceso(response.body);					
@@ -374,9 +379,14 @@
 				this.nivel = {id:null,nombre:''};
 				this.zona = {id:null,nombre:''};
 				this.cartera = {id:null,nombre:''};
+				this.ciudad = {id:null,nombre:''};
+				this.cp 	= '';
 				this.tel1 = '';
+				this.ext1 = '';
 				this.tel2 = '';
+				this.ext2 = '';
 				this.contacto = '';
+				this.contacto2 = '';
 				this.diasFact = 0;
 			}
 		}

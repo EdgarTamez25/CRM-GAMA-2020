@@ -1,13 +1,15 @@
 <template>
-  <v-row class="fill-height">
+  <v-row class="fill-height ma-3">
     <v-col>
 			<v-card-actions class="font-weight-black headline"> PENDIENTES </v-card-actions>
       <v-sheet height="70">
+      
         <v-toolbar flat color="white">
           <v-btn fab x-small color="rosa" dark class="ma-1" @click="prev"> <!--  FECHA  ANTERIOR -->
             <v-icon small>mdi-chevron-left</v-icon>
           </v-btn>
 					<v-toolbar-title class="ma-1">{{ title }}</v-toolbar-title>  <!-- FECHA ACTUAL-->
+					
           <v-btn fab x-small color="rosa" dark class="ma-1" @click="next"> <!-- SIGUIENTE FECHA -->
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
@@ -16,7 +18,7 @@
 <!-- BOTON PARA FILTRO DE FECHAS-->
           <v-menu bottom right> 
             <template v-slot:activator="{ on }">
-              <v-btn outlined color="celeste"  v-on="on" >
+              <v-btn outlined color="celeste" v-on="on" >
                 <span>{{ typeToLabel[type] }}</span> <v-icon right>mdi-menu-down</v-icon>
               </v-btn>
             </template>
@@ -35,7 +37,7 @@
         </v-toolbar>
       </v-sheet>
 
-      <v-sheet :height="pantalla"> <!-- CALENDARIO -->
+      <v-sheet :height="tamanioPantalla"> <!-- CALENDARIO -->
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -47,7 +49,7 @@
           @click:more="verDiaActual"
           @click:date="verDiaActual"
           @change="ActualizaCompromisos"
-					:now="today"
+					now
 					locale="es-es"
         ></v-calendar>
       </v-sheet>
@@ -97,6 +99,8 @@
 <script>
 	import {mapGetters, mapActions} from 'vuex';
 	var moment = require('moment'); 
+	import store from '@/store'
+
   export default {
     data: () => ({
       focus: '',
@@ -124,6 +128,7 @@
 			fecha        : '',
 			hora         : '',
 			comentarios  : '',
+			today:    '',
 			// ALERTAS
 			detalleModal: false,
 		}),
@@ -136,15 +141,26 @@
     computed: {
 				...mapGetters('Compromisos'  ,['getCompromisos','Loading']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
 			
-      pantalla () {
-        switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return 500
-          case 'sm': return 500
-          case 'md': return 400
-          case 'lg': return 500
-          case 'xl': return 700
-        }
-      },
+			tamanioPantalla () {
+				console.log(this.$vuetify.breakpoint)
+				switch (this.$vuetify.breakpoint.name) {
+					case 'xs':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'sm': 
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'md':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'lg':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'xl':
+						return this.$vuetify.breakpoint.height -300
+					break;
+				}
+			},
 
       title () {
         const { start, end } = this
@@ -188,6 +204,7 @@
         this.focus = date
         this.type = 'day'
 			},
+
 			prev () {   // FUNCION PARA RETROCEDER FECHA
         this.$refs.calendar.prev()
       },
@@ -221,9 +238,8 @@
 
       ActualizaCompromisos ({ start, end }) {
 				const events = [];
-				this.$http.get('compromisos').then( response =>{
+				this.$http.get('compromisos/'+ parseInt(store.state.Login.datosUsuario.nivel)).then( response =>{
 					this.compromisos = response.body
-					console.log('compromisos',this.compromisos)
 					for(var i = 0; i < this.compromisos.length; i++) {
 						events.push({	name: this.compromisos[i].nomcatego,
 													start: this.compromisos[i].fecha + " " + this.compromisos[i].hora,

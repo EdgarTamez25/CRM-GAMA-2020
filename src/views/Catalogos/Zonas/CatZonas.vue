@@ -1,8 +1,8 @@
 <template>
-  <v-container>
-  	<v-row class="justify-center">
+  <v-container class="pa-0 ">
+  	<v-row justify="center">
   		<v-col cols="12" lg="8">
-				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE ZONAS </v-card-actions>
+				<v-card-actions class="font-weight-black headline"> ZONAS </v-card-actions>
 				<v-card class="elevation-10 mt-3" >
 					<v-card-actions>
 			      <v-text-field
@@ -27,15 +27,13 @@
 					disable-pagination
 			    >
 			    	<template v-slot:item.action="{ item }" > 
-			    		<!-- <v-btn  class="orange darken-4" icon dark ><v-icon> chrome_reader_mode </v-icon></v-btn> Cotizacion -->
-			    		<!-- <v-btn  class="blue darken-4" icon dark><v-icon  > directions_run  </v-icon></v-btn>     Seguimiento -->
 			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
 
 			    </v-data-table>
 			  </v-card>
 
-				 <v-dialog persistent v-model="dialog" width="700px" >	
+				 <v-dialog persistent v-model="dialog" width="400px" >	
 		    	<v-card>
 		    		<ControlZonas :param="param" :edit="edit" @modal="dialog = $event" />
 		    	</v-card>

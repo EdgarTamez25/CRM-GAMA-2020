@@ -3,12 +3,10 @@
 		<v-row justify="center">
 			<v-col cols="12" >
 				
-				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
-					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
-				</v-snackbar>
+				<v-snackbar v-model="snackbar" :color="color" top multi-line right rounded="pill" > <b>{{ text }}</b> </v-snackbar>
 
 				<v-card-actions class="pa-0" >
-					<h3> <strong> {{ param === 1? 'Nuevo Compromiso':'Editar Compromiso' }} </strong></h3> 
+					<h3> <strong> {{ modoVista === 1? 'Nuevo Compromiso':'Editar Compromiso' }} </strong></h3> 
 					<v-spacer></v-spacer>
 					<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
@@ -16,38 +14,31 @@
 				<v-divider class="ma-2"></v-divider>
 
 				<v-row>
-					 <!-- SUCURSALES -->
-					<!-- <v-col cols="12" sm="6" >
-						<v-select
-							:items="sucursales" v-model="Sucursal" label="Sucursal" placeholder ="Sucursal" 
-							dense outlined hide-details color="celeste" append-icon="domain"
-						></v-select>
-					</v-col> -->
-					<v-col cols="12" sm="6" >  <!-- VENDEDORES -->
+					<v-col cols="12" sm="12" >  <!-- VENDEDORES -->
 						<v-autocomplete
-							:items="vendedores" v-model="vendedor" item-text="nombre" label="Responsable" 
-							dense outlined hide-details color="celeste" append-icon="persons"
+							:items="vendedores" v-model="vendedor" item-text="nombre" tem-value="id" label="Responsable" 
+							dense outlined hide-details color="celeste" append-icon="persons" return-object
 						></v-autocomplete>
 					</v-col>
 
 					<v-col cols="12" sm="6" > 
 						<v-select
-							:items="['Externo']" v-model="tipo_compromiso" label="Tipo de compromiso" 
-							 placeholder ="Tipo de compromiso" outlined dense hide-details append-icon="home_work"
+							 v-model="tipo" :items="tipos" item-text="nombre" item-value="id" outlined
+							dense hide-details  label="Tipo de compromiso" return-object placeholder ="Tipo de compromiso"
 						></v-select>
-					</v-col>
+					</v-col> 
 
 					<v-col cols="12" sm="6" > 
 						<v-select
-							:items="categorias" item-text="nombre" v-model="Categoria" label="Categoria"  
-							 placeholder ="Categorias" outlined dense hide-details append-icon="ballot"
+							v-model="categoria" :items="categorias" item-text="nombre" item-value="id" label="Categoria"  
+							 placeholder ="Categorias" outlined dense hide-details append-icon="ballot" return-object
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" sm="6" > <!-- CLIENTE -->
+					<v-col cols="12" > <!-- CLIENTE -->
 						<v-autocomplete
-							:items="clientes" v-model="cliente" item-text="nombre" label="Clientes" 
-							dense outlined hide-details color="celeste" append-icon="people"
+							:items="clientes" v-model="cliente" item-text="nombre" item-value="id" label="Clientes" 
+							dense outlined hide-details color="celeste" append-icon="people" return-object
 						></v-autocomplete>
 					</v-col>
 
@@ -69,7 +60,6 @@
 
 					<v-col cols="12" sm="6"> <!-- HORA DEL INICIO -->
 						<v-dialog ref="hora_compromiso" v-model="horamodal" :return-value.sync="hora" persistent width="290px" >
-
 							<template v-slot:activator="{ on }">
 								<v-text-field
 									v-model="hora" label="Hora del compromiso" append-icon="access_time" readonly v-on="on"
@@ -85,44 +75,9 @@
 						</v-dialog>
 					</v-col>
 
-					<v-col cols="12" sm="6"> <!-- FECHA DE FIN -->
-						<v-dialog ref="fechaFin" v-model="fechaFinmodal" :return-value.sync="fecha_fin" persistent width="290px">
-							<template v-slot:activator="{ on }">
-								<v-text-field
-									v-model="fecha_fin" label="Fecha de finalización" append-icon="event" readonly v-on="on"
-									outlined dense hide-details color="celeste"
-								></v-text-field>
-							</template>
-							<v-date-picker v-model="fecha_fin" locale="es-es" color="rosa"  scrollable>
-								<v-spacer></v-spacer>
-								<v-btn text small color="gris" @click="fechaFinmodal = false">Cancelar</v-btn>
-								<v-btn dark small color="rosa" @click="$refs.fechaFin.save(fecha_fin)">OK</v-btn>
-							</v-date-picker>
-						</v-dialog>
-					</v-col>
-
-					<v-col cols="12" sm="6"> <!-- HORA DEL FIN -->
-						<v-dialog ref="horaFin" v-model="horaFinmodal" :return-value.sync="hora_fin" persistent width="290px" >
-
-							<template v-slot:activator="{ on }">
-								<v-text-field
-									v-model="hora_fin" label="Hora de finalización" append-icon="access_time" readonly v-on="on"
-									outlined dense hide-details color="celeste"
-								></v-text-field>
-							</template>
-
-							<v-time-picker v-if="horaFinmodal" locale="es-es" color="rosa" v-model="hora_fin" full-width 	>
-								<v-spacer></v-spacer>
-								<v-btn small text color="gris" @click="horaFinmodal = false">Cancel</v-btn>
-								<v-btn small dark color="rosa" @click="$refs.horaFin.save(hora_fin)">OK</v-btn>
-							</v-time-picker>
-						</v-dialog>
-					</v-col>
-					
-
 					<v-col cols="12"  > <!-- COMENARIO -->
 						<v-textarea
-							v-model ="comentario" filled label="Comentario" placeholder="Agregar un comentario..."
+							v-model ="obs" filled label="Comentario" placeholder="Agregar un comentario ..."
 							rows="2" hide-details dense
 						></v-textarea>
 					</v-col>
@@ -132,11 +87,11 @@
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
+					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="modoVista === 1">
              Confirmar  
           </v-btn>
 					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
-             Actualizar  
+             Actualizar
           </v-btn>
 
           <v-dialog v-model="dialog" hide-overlay persistent width="300">
@@ -165,65 +120,47 @@
 <script>
 	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex'
-	
+// import { concat } from '@amcharts/amcharts4/.internal/core/utils/Iterator';
 	export default {
 		mixins:[SelectMixin],
 	  components: {
 		},
 		props:[
-			'param',
-			'edit',
+			'modoVista',
+			'data',
 	  ],
 	  data () {
 			return {
 				// VARIABLES PRINCIPALES
-				tipo_compromiso: 'Externo',
-				comentario 		 : '',
-
+				tipo: {id:null, nombre:''},
+				tipos:[{id:1, nombre:'Cliente'},{id:2, nombre:'Prospectos'}],
+				obs 		 : '',
 				// FECHA
 				fecha						: new Date().toISOString().substr(0, 10),
 				fechamodal 			: false,
 				fecha_compromiso: false,
 				
-				fechaFin		  : false,
-				fechaFinmodal : false,
-				fecha_fin			: '',
-
 				// HORA
 				hora 					 : null,
         horamodal			 : false,
 				hora_compromiso: false,
-
-				horaFin			: false,
-        horaFinmodal: false,
-				hora_fin    : null,
 				
 				// AUTOCOMPLETE
-				id_vendedor: null,
 				vendedores : [],
-				vendedor	 : '',
+				vendedor	 : {id:null, nombre:''},
 
-				id_cliente: null,
 				clientes	: [],
-				cliente		: '',
-
+				cliente		: {id:null, nombre:''},
 				// SELECTORES
-				id_sucursal  : null,
-				sucursal     : [],
-				sucursales   : [],
-				Sucursal     : '',
-
-				id_categoria : null,
+				categoria    : { id:null, nombre:''},
 				categorias   : [],
-				Categoria    : '',
-				
 				// ALERTAS
-				snackbar: false,
-				text		: '',
-				color		: 'error',
-				dialog : false,
-				textDialog : "Guardando Información",
-				Correcto   : false,
+				snackbar    : false,
+				text		    : '',
+				color		    : 'error',
+				dialog      : false,
+				textDialog  :'',
+				Correcto    : false,
 				textCorrecto: '',
 			}
 		},
@@ -238,107 +175,76 @@
 		computed:{
 			// IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
 			...mapGetters('Productos',['getProductos']),
+      ...mapGetters('Login'    ,['getdatosUsuario']), 
 		},
 
-		watch:{
-			edit: function(){
-				this.validarModoVista();
-			}
-		},
+		watch:{ data: function(){ this.validarModoVista(); 	} },
 
 		methods:{
 			// IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
 			...mapActions('Compromisos',['consultaCompromisos']),
 
 			validarModoVista(){
-				if(this.param === 2){
-					console.log('entro a editar', this.edit)
+				if(this.modoVista === 2){
+					console.log('entro a editar', this.data)
 					// ASIGNAR VALORES AL FORMULARIO
-					this.id_vendedor 		= this.edit.id_vendedor
-					this.vendedor 			= this.edit.nomvend
-					this.id_categoria   = this.edit.id_categoria
-					this.Categoria 	    = this.edit.nomcatego
-					this.id_cliente 		= this.edit.id_cliente
-					this.cliente        = this.edit.nomcli
-					this.fecha 					= this.edit.fecha
-					this.hora           = this.edit.hora
-					this.fecha_fin			= this.edit.fecha_fin 
-					this.hora_fin       = this.edit.hora_fin
-					this.comentario     = this.edit.comentarios
-					this.tipo_compromiso = this.edit.tipo_compromiso === 1? 'Interno': 'Externo'
+					this.vendedor    = { id: this.data.id_vendedor , nombre: this.data.nomvend }
+					this.tipo        = { id: this.data.tipo        , nombre: this.tipos[this.data.tipo-1].nombre}
+					this.categoria   = { id: this.data.id_categoria, nombre: this.data.nomcatego }
+					this.cliente     = { id: this.data.id_cliente  , nombre: this.nomcli}
+					this.fecha 			 = this.data.fecha
+					this.hora        = this.data.hora
+					this.obs     	   = this.data.obs
 				}else{
 				this.limpiarCampos()
 				}
 			},
 
 			validaInfo(){
-				var fi = this.fecha + " " + this.hora; 
-				var ff = this.fecha_fin + " " + this.hora_fin;
-
-				if(!this.vendedor)	 			{ this.snackbar = true; this.text="No puedes omitir el VENDEDOR"   					 ; return }
-				// if(!this.tipo_compromiso)	{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
-				// if(!this.Categoria)				{ this.snackbar = true; this.text="No puedes omitir la CATEGORIA"   				 ; return }
-				if(!this.fecha)						{ this.snackbar = true; this.text="No puedes omitir la FECHA"   						 ; return }
-				if(!this.hora)						{ this.snackbar = true; this.text="No puedes omitir la HORA"   							 ; return }
-				if(!this.fecha_fin)				{ this.snackbar = true; this.text="No puedes omitir la FECHA FINAL" 				 ; return }
-				if(!this.hora_fin)				{ this.snackbar = true; this.text="No puedes omitir la HORA FINAL"  			   ; return }
-				if(fi > ff){ this.snackbar=true; this.text="La FECHA y HORA FINAL no puede ser menor a la INICIAL"		 ; return}
-
+				var fi = this.fecha + " " + this.hora;  // fecha de compromiso
+				var ff = this.traerFechaActual()+ " " + this.traerHoraActual(); // fecha actual
+				if(!this.vendedor.id)	 	{ this.snackbar = true; this.text="No puedes omitir el VENDEDOR"   					 ; return }
+				if(!this.tipo.id)				{ this.snackbar = true; this.text="No puedes omitir el TIPO DE COMPROMISO"   ; return }
+				if(!this.categoria.id)	{ this.snackbar = true; this.text="No puedes omitir la CATEGORIA"   				 ; return }
+				if(!this.fecha)					{ this.snackbar = true; this.text="No puedes omitir la FECHA"   						 ; return }
+				if(!this.hora)					{ this.snackbar = true; this.text="No puedes omitir la HORA"   							 ; return }
+				if(fi < ff)							{ this.snackbar=true; this.text="La FECHA y HORA NO PUEDEN SER MENORES A LA ACTUAL."		 ; return}
 				this.PrepararPeticion()
 			},
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
-				var tipocompromiso = this.tipo_compromiso === 'Interno' ? 1 : 2;
-
-				const payload = { id_vendedor 		: this.id_vendedor,
-													tipo_compromiso	: tipocompromiso,
-													id_categoria		: this.id_categoria,
-													id_cliente 		  : this.id_cliente,
-													fecha						: this.fecha,
-													hora	  				: this.hora,
-													comentarios     : this.comentario ? this.comentario : "",
-													id_usuario      : 1, // USUARIO QUE CREA EL REGISTRO
-													fase_venta      : 1,
-													estatus     		: 1,
-													cumplimiento    : 0,
-													fecha_fin    		: this.fecha_fin,
-													hora_fin    		: this.hora_fin,
-													fechaActual     : this.traerFechaActual(),
-													horaActual      : this.traerHoraActual(),
-													numorden				: '',
-													aceptado				: 0,
-													obscierre				:''
+				const payload = { id_vendedor 		: this.vendedor.id,
+													tipo						: this.tipo.id,
+													id_categoria		: this.categoria.id,
+													id_cliente 		  : this.cliente.id,
+													fecha			      : this.fecha,
+													hora			      : this.hora,
+													obs     				: this.obs ? this.obs : "",
+													fuente      	  : this.getdatosUsuario.id, // USUARIO QUE CREA EL REGISTRO
 												}
-											
-													
-				console.log('payload', payload)
-
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
-				this.param === 1 ? this.Crear(payload): this.Actualizar(payload);
+				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
 			},
 
 			Crear(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ;
-				setTimeout(() => (this.dialog = false), 2000)
-				
-				// MANDO A INSERTAR CLIENTE
+				this.dialog = true ; this.textDialog =  "Guardando Información";
 				this.$http.post('addcompromiso', payload).then((response)=>{
-					this.TerminarProceso(response.body);					
-				})
+					this.TerminarProceso(response.bodyText);					
+				}).catch(error =>{
+					this.mostrarError(error.bodyText)
+				}).finally(() => this.dialog = false) 
 			},
 
 			Actualizar(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
 				this.dialog = true ; this.textDialog ="Actualizando Información"
-				setTimeout(() => (this.dialog = false), 2000)
-
-				this.$http.put('putcompromiso/'+ this.edit.id, payload).then((response)=>{
-					this.TerminarProceso(response.body);					
-				})
+				this.$http.put('putcompromiso/'+ this.data.id, payload).then((response)=>{
+					this.TerminarProceso(response.bodyText);					
+				}).catch(error =>{
+					this.mostrarError(error.bodyText)
+				}).finally(() => this.dialog = false)
 			},
-
+	
 			TerminarProceso(mensaje){
 				var me = this ;
 				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
@@ -348,18 +254,17 @@
 			},
 
 			limpiarCampos(){
-				this.id_vendedor 		= ''; 
-				this.vendedor 			= ''; 
-				this.id_categoria   = ''; 
-				this.Categoria 	    = ''; 
-				this.id_cliente 		= ''; 
-				this.cliente        = ''; 
-				this.fecha 					= new Date().toISOString().substr(0, 10); 
-				this.fechaFin				= '', 
-				this.hora           = ''; 
-				this.horaFin         = ''; 
-				this.comentario      = ''; 
-				this.tipo_compromiso = '';
+				this.vendedor  = { id: null, nombre:''};
+				this.categoria = { id: null, nombre:''};
+				this.cliente   = { id: null, nombre:''};
+				this.fecha 		 = new Date().toISOString().substr(0, 10); 
+				this.hora      = ''; 
+				this.obs       = ''; 
+				this.tipo      = '';
+			},
+
+			mostrarError(mensaje){
+				this.snackbar=true; this.text=mensaje;
 			}
 		}
 	}

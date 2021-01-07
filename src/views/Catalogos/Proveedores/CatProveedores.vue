@@ -1,9 +1,9 @@
 <template>
-  <v-container>
-  	<v-row class="justify-center">
+  <v-content class="pa-0 ma-3">
+  	<v-row justify="center">
   		<v-col cols="12">
-				<v-card-actions class="font-weight-black headline"> CATÁLOGO DE PROVEEDORES </v-card-actions>
-				<v-card class="elevation-10 mt-3" >
+				<v-card-actions class="font-weight-black headline"> PROVEEDORES </v-card-actions>
+				<v-card class="mt-3" outlined >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
@@ -21,31 +21,54 @@
 			      :headers="headers"
 			      :items="getProveedores"
 			      :search="search"
+						dense
 			      fixed-header
-						height="500px"
+						:height="tamanioPantalla"
 						hide-default-footer
 						:loading ="Loading"
-						disable-pagination
 						loading-text="Cargando... Por favor espere."
+						:page.sync="page"
+      			:items-per-page="itemsPerPage"
+						@page-count="pageCount = $event"
 			    >
 			    	<template v-slot:item.action="{ item }" > 
 			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
 				    </template>
+
 						<template v-slot:item.tipo_prov="{ item }" > 
 							 {{  item.tipo_prov === 1 ? 'NACIONAL':'INTERNACIONAL'}} 
+
+				    </template>
+
+						<!-- <template v-slot:item.direccion="{ item }" > 
+							 {{ item.direccion +', '+item.cp +', '+item.ciudad+', '+item.estado+', '+ item.pais}} 
+				    </template> -->
+
+						<template v-slot:item.estatus="{ item }" > 
+			    		<v-btn  class="green" icon dark  v-if="item.estatus==='1'" @click="cambiaEstatus(item)">
+								<v-icon> person </v-icon>
+							</v-btn> 
+							<v-btn  class="error" icon dark v-else @click="cambiaEstatus(item)">
+								<v-icon> mdi-account-off </v-icon>
+							</v-btn> 
 				    </template>
 
 			    </v-data-table>
 			  </v-card>
+				<!-- PAGINACION -->
+				<div class="text-center pt-2">
+					<v-pagination v-model="page" :length="pageCount"></v-pagination>
+				</div>
 
-				 <v-dialog persistent v-model="dialog" width="800px">	
+				 <v-dialog persistent v-model="dialog" width="600px">	
 		    	<v-card  class="pa-5">
 		    		<ControlProveedor :param="param" :edit="edit" @modal="dialog = $event" />
 		    	</v-card>
 		    </v-dialog>
+
   		</v-col>
   	</v-row>
-  </v-container>
+  </v-content>
 </template>
 
 <script>
@@ -58,6 +81,9 @@
 		},
 		data () {
 				return {
+					page: 0,
+					pageCount: 0,
+					itemsPerPage: 100,
 					search: '',
 					dialog: false,
 					param: 0,
@@ -66,10 +92,14 @@
 						{ text: '#'  					 , align: 'left'  , value: 'id'		  },
 						{ text: 'Nombre'			 , align: 'left'  , value: 'nombre' },
 						{ text: 'Razon Social' , align: 'left'  , value: 'razon_social' },
+						{ text: 'Dirección' 	 , align: 'left'  , value: 'direccion' },
+						{ text: 'Ciudad ' 		 , align: 'left'  , value: 'ciudad' },
+						{ text: 'Estado ' 		 , align: 'left'  , value: 'estado' },
+						{ text: 'Pais ' 		   , align: 'left'  , value: 'pais' },
+						{ text: 'C.P. ' 		   , align: 'left'  , value: 'cp' },
 						{ text: 'RFC'				   , align: 'left'  , value: 'rfc' 	},
-						// { text: 'CURP'		     , align: 'left'  , value: 'curp' },
 						{ text: 'Tipo Proveedor', align: 'left'  , value: 'tipo_prov' },
-
+						{ text: 'Estatus'				, align: 'left'  , value: 'estatus' },
 						{ text: ''  					 , align: 'right' , value: 'action', sortable: false },
 					],
 				}
@@ -81,6 +111,26 @@
 
 			computed:{
 				...mapGetters('Proveedores',['Loading','getProveedores']), // IMPORTANDO USO DE VUEX - PROVEEDORES (GETTERS)
+				tamanioPantalla () {
+					console.log(this.$vuetify.breakpoint)
+					switch (this.$vuetify.breakpoint.name) {
+						case 'xs':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'sm': 
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'md':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'lg':
+							return this.$vuetify.breakpoint.height -300
+						break;
+						case 'xl':
+							return this.$vuetify.breakpoint.height -300
+						break;
+					}
+				},
 			},
 
 			methods:{
@@ -92,6 +142,14 @@
 					this.dialog = true;
 				},
 
+				cambiaEstatus(data){
+					const payload = { id: data.id, estatus: data.estatus === '1'? 0:1};
+					this.$http.post('cambia.estatus.p',payload).then((res)=>{
+						this.consultaProveedores();
+					}).catch((err)=>{
+						console.log('err', err)
+					})
+				}
 				
 				
 			}

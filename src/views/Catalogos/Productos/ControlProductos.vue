@@ -85,7 +85,10 @@
 							dense
 							hide-details
 							clearable
-							v-model="Unidad"
+							v-model="unidad"
+							item-text="nombre" 
+							item-value="id"
+							return-object
 						></v-select>
 					</v-col>
 
@@ -98,6 +101,9 @@
 							hide-details
 							clearable
 							v-model="Linea"
+							item-text="nombre" 
+							item-value="id"
+							return-object
 							dense
 						></v-select>
 					</v-col>
@@ -123,7 +129,6 @@
 							v-model ="obs"
 						></v-textarea>
 					</v-col>
-
 				</v-row>
 
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
@@ -183,20 +188,16 @@
 				cantidad     : 0 , 
 
 				// SELECTORES
-				id_linea  : 0,
-				linea     : [],
 				lineas    : [],
-				Linea     : '',
+				Linea     : { id: null, nombre:''},
 
 				id_proveedor  : 0,
 				proveedor     : [],
 				proveedores   : [],
 				Proveedor     : '',
 
-				id_unidad  : 0,
-				unidad     : [],
 				unidades   : [],
-				Unidad     : '',
+				unidad     : { id:null, nombre:''},
 				
 				// ALERTAS
 				snackbar: false,
@@ -210,9 +211,9 @@
 		},
 		
 		created(){
-			this.consultarLineas() 			//MANDO A CONSULTAR SUCURSALES A MIXINS
-			this.consultarProveedores() //MANDO A CONSULTAR PROVEEDORES A MIXINS
-			this.consultarUnidades() 		//MANDO A CONSULTAR UNIDADES A MIXINS
+			this.consultarLineas() 			// MANDO A CONSULTAR SUCURSALES A MIXINS
+			this.consultarProveedores() // MANDO A CONSULTAR PROVEEDORES A MIXINS
+			this.consultarUnidades() 		// MANDO A CONSULTAR UNIDADES A MIXINS
 			this.validarModoVista() 	  // VALIDO EL MODO DE LA VISTA
 
 		},
@@ -227,9 +228,9 @@
 				this.validarModoVista();
 			},
 
-			foto: function(){
-				console.log('foto', this.foto)
-			}
+			// foto: function(){
+			// 	console.log('foto', this.foto)
+			// }
 		},
 
 		methods:{
@@ -239,17 +240,16 @@
 			validarModoVista(){
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
-					console.log('edit', this.edit)
 					this.codigo 				= this.edit.codigo
 					this.nombre 				= this.edit.nombre
 					this.descripcion 	  = this.edit.descripcion
-					this.id_linea       = this.edit.id_linea
-					this.Linea 					= this.edit.nomlin
+					this.Linea          = { id: this.edit.id_linea, nombre: this.edit.nomlin };
+
 					this.tipo_producto  = this.edit.tipo_producto === 1 ? 'Materia Prima' :'Producto Final'
 					this.id_proveedor   = this.edit.id_proveedor
 					this.Proveedor 			= this.edit.nomprov
-					this.id_unidad      = this.edit.id_unidad
-					this.Unidad         = this.edit.nomunidad
+
+					this.unidad 				= { id: this.edit.id, nombre: this.edit.nomprov }
 					this.cantidad       = this.edit.cantidad
 					this.obs       			= this.edit.obs
 				}else{
@@ -261,10 +261,8 @@
 				if(!this.codigo)	 { this.snackbar = true; this.text="No puedes omitir el CODIGO DEL PRODUCTO"   ; return }
 				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL USUARIO"   ; return }
 				if(!this.cantidad) { this.snackbar = true; this.text="No puedes omitir la CANTIDAD"   ; return }
-				if(!this.Unidad)	 { this.snackbar = true; this.text="No puedes omitir la UNIDAD"   ; return }
-
-
-				this.PrepararPeticion()
+				if(!this.unidad.id)	 { this.snackbar = true; this.text="No puedes omitir la UNIDAD"   ; return }
+					this.PrepararPeticion()
 			},
 
 			PrepararPeticion(){
@@ -272,9 +270,9 @@
 				const payload = { codigo      : this.codigo,
 													nombre	    : this.nombre,
 													descripcion	: this.descripcion,
-													id_linea 		: this.id_linea,
+													id_linea 		: this.Linea.id,
 													id_proveedor: this.id_proveedor,
-													id_unidad	  : this.id_unidad,
+													id_unidad	  : this.unidad.id,
 													cantidad    : this.cantidad,
 													// tipo_producto: this.tipo_producto === 'Materia Prima'? 1: 2,
 													tipo_producto: 1,
@@ -319,10 +317,10 @@
 				this.codigo    			= '';
 				this.nombre    			= '';
 				this.descripcion  	= '',
-				this.Linea     			= '',
+				this.Linea     			= { id:null, nombre:''},
 				this.tipo_producto  = '',
 				this.Proveedor		  = '';
-				this.Unidad 		    = '';
+				this.unidad 		    = {id:null, nombre:''};
 				this.cantidad       = 0 ;
 				this.obs  					= '';
 			}

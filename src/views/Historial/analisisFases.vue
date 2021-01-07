@@ -1,5 +1,5 @@
 <template>
-	<v-content class="pa-0">
+	<v-content class="pa-0 ma-3">
 		<v-row class="justify-left" no-gutters >
 			 <v-btn color="rosa" style="display: none" class="ir-arriba white--text" fab fixed bottom right>
 				<v-icon top>keyboard_arrow_up</v-icon>
@@ -165,7 +165,6 @@ export default {
 
 	watch:{
 		fase:function(){
-			console.log('fase', this.fase)
 			this.consultarxFase()
 		},
 	},
@@ -200,7 +199,6 @@ export default {
 
 			this.$http.post('historialxvend',payload).then(response =>{
 				// this.HistorialxVend = response.body
-				console.log('response', response.body)
 				for(let i=0; i< response.body.length;i++){
 
 					// this.HistorialxVend = response.body
@@ -208,7 +206,7 @@ export default {
 																			cantidad: response.body[i].cantidad,
 																			color: this.colores2[i],
 																			bullet: this.img[i]})
-					console.log('array', this.HistorialxVend)
+					// console.log('array', this.HistorialxVend)
 				}
 				this.grafica2();
 
@@ -281,7 +279,7 @@ export default {
 			// chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
 
 			// chart.paddingRight =800;
-			console.log('historiaxvend', this.HistorialxVend)
+			// console.log('historiaxvend', this.HistorialxVend)
 			chart.data = this.HistorialxVend
 
 			// Create axes

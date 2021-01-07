@@ -8,26 +8,26 @@
 				</v-snackbar>
 
 				<v-card-actions class="pa-0" >
-					<h3> <strong> {{ param === 1? 'Nuevo Zona':'Editar Zona' }} </strong></h3> 
+					<h3> <strong> {{ param === 1? 'Nueva Zona':'Editar Zona' }} </strong></h3> 
 					<v-spacer></v-spacer>
 					<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
 
 				<v-divider class="ma-2"></v-divider>
 				<v-row>
-					<v-col cols="12" lg="6">
+					<v-col cols="12" >
 						<v-text-field
 							append-icon="pin_drop"
 							label="Zona"
 							placeholder="Nombre de la zona"
 							hide-details
 							dense
-							clearable
 							v-model="nombre"
+							filled
 						></v-text-field>
 					</v-col>
-					<v-col cols="12" lg="6">
-						<v-select
+					<v-col cols="12" >
+						<!-- <v-select
 							:items="ciudades"
 							label="Ciudad"
 							placeholder="Ciudad correspondiente"
@@ -35,11 +35,16 @@
 							dense
 							hide-details
 							v-model="Ciudad"
-						></v-select>
+							filled
+						></v-select> -->
+
+						<v-autocomplete
+							:items="ciudades" v-model="ciudad" item-text="nombre" item-value="id" label="Ciudad correspondiente" 
+							dense filled hide-details return-object color="celeste" append-icon="not_listed_location"
+						></v-autocomplete>
 					</v-col>
 	
 				</v-row>
-				
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 				<v-card-actions>
 					<v-spacer></v-spacer>
@@ -106,10 +111,9 @@
 				text		: '',
 				color		: 'error',
 				// SELECTORES
-				id_ciudad   :  0,
-				ciudad      : [],
-				ciudades    : [],
-				Ciudad      : ''
+
+				ciudad   : { id:null, nombre: '' },
+				ciudades : [],
 			}
 		},
 
@@ -138,8 +142,7 @@
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
 					this.nombre 		= this.edit.nombre;
-					this.id_ciudad  = this.edit.id_ciudad;
-					this.Ciudad			= this.edit.nomciudad;
+					this.ciudad     = { id: this.edit.id_ciudad , nombre: this.edit.nomciudad }
 				}else{
 				this.limpiarCampos()
 				}
@@ -147,7 +150,7 @@
 
 			validaInfo(){
 				if(!this.nombre) { this.snackbar = true; this.text="No puedes omitir el NOMBRE DE LA ZONA"   ; return }
-				if(!this.Ciudad) { this.snackbar = true; this.text="No puedes omitir la CIUDAD" ; return }
+				if(!this.ciudad.id) { this.snackbar = true; this.text="No puedes omitir la CIUDAD" ; return }
 				
 				this.PrepararPeticion()
 			},
@@ -156,7 +159,7 @@
 				// FORMAR ARRAY A MANDAR
 				const payload = { 
 													nombre			: this.nombre,
-													id_ciudad	  : this.id_ciudad,
+													id_ciudad	  : this.ciudad.id,
 													estatus     : 1
 												}
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
@@ -194,8 +197,7 @@
 
 			limpiarCampos(){
 				this.nombre = '';
-				this.id_ciudad = 0;
-				this.Ciudad = '';
+				this.ciudad = { id:null, nombre: '' }
 			}
 		}
 	}
