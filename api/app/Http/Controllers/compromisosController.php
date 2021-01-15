@@ -13,7 +13,7 @@ class compromisosController extends Controller
 			
 			return DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo, c.id_categoria, ca.nombre as nomcatego,
 																			c.fecha, c.hora,c.fecha_cierre, c.hora_cierre,  c.id_cliente, cli.nombre as nomcli, c.obs,
-																			c.fuente, u.nombre as creador, c.obs_usuario, c.confirma_cita,c.cumplimiento, c.estatus
+																			c.fuente, u.nombre as creador, c.obs_usuario, c.confirma_cita,c.cumplimiento
 													FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
 																						 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
 																						 LEFT JOIN clientes  cli ON cli.id = c.id_cliente

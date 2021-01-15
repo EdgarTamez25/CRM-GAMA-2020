@@ -16,8 +16,8 @@
           tHeaders.push(headers[i].text);
           tValores.push(headers[i].value);
         }
-        console.log('tHeaders', tHeaders)
-        console.log('tValores', tValores)
+        // console.log('tHeaders', tHeaders)
+        // console.log('tValores', tValores)
         
         this.manejarDescarga(titulo,tHeaders,tValores,datosVista)
       },

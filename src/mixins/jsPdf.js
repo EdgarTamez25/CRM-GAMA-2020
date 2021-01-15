@@ -1,3 +1,6 @@
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable'
+
 export default {
   data:()=>({
     heading: "ORDEN DE TRABAJO",
@@ -17,8 +20,14 @@ export default {
         unit: "in",               // UNIDAD
         format: "letter"          // FORMATO - CARTA
       });
+
+      console.log('doc', doc)
+
       // EL TEXTO SE COLOCANDO USANDO CORDENADAS X & Y 
-      doc.setFontSize(16).setFontStyle("italic").setFontStyle("black").text(this.heading, 0.5, 1.0);
+      doc.setFontSize(16)
+        //  .setFontStyle("italic")
+        // .setFontStyle("black")
+        .text(this.heading, 0.5, 1.0);
       doc.setFontSize(12).text(this.traerFechaActual(), 7, 1.0);
       // CREAR UNA LINEA DEBAJO DEL ENCABEZADO
       doc.setLineWidth(0.01).line(0.5, 1.1, 8.0, 1.1);
@@ -55,7 +64,8 @@ export default {
       doc
         .setFont("times")
         .setFontSize(11)
-        .setFontStyle("italic")
+        // .setFontStyle("italic")
+        // .setFontType("italic")
         .setTextColor(191,28,127)
         .text("Todos los derechos reservador por Gama Etiquetas S.A. DE C.V.", 0.5, doc.internal.pageSize.height - 0.5 )
         .save(`${this.heading}.pdf`);

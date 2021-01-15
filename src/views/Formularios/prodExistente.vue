@@ -8,11 +8,31 @@
       </v-snackbar>
 
       <v-card-actions >
-        
-        <v-card-text class="font-weight-black headline " >
-          {{ parametros.ft }}
-        </v-card-text>
+        <!-- <v-card-text class="font-weight-black headline " > -->
+          <!-- {{ parametros.ft }} -->
+          <!-- {{ parametros }} -->
+        <!-- </v-card-text> -->
+
+         <v-simple-table dense>
+          <template v-slot:default>
+            <tbody>
+              <tr><td>Solicitud</td> <td>{{ parametros.id_solicitud }} </td></tr>
+              <tr><td>Cliente  </td> <td>{{ parametros.nomcli }}       </td></tr>
+              <tr><td>Vendedor </td> <td>{{ parametros.nomvend }}      </td></tr>
+              <tr><td>Tipo  </td> 
+                <td class="font-weight-black rosa--text" v-if="parametros.tipo_prod === 1"> Producto Existente </td>
+                <td class="font-weight-black orange--text" v-if="parametros.tipo_prod === 2"> Modificación </td>
+                <td class="font-weight-black celeste--text" v-if="parametros.tipo_prod === 3"> Nuevo Producto </td>
+              </tr>
+              <tr><td class="font-weight-black">Referencia </td> <td class="font-weight-black">{{ parametros.ft }}</td></tr>
+              <tr><td class="font-weight-black">Cantidad   </td> <td class="font-weight-black">{{ parametros.cantidad }}</td></tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+
       </v-card-actions>
+
+
 
       
 

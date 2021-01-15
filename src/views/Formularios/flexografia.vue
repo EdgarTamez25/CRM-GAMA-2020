@@ -307,8 +307,9 @@
             this.med_eje       =  response.body.med_eje
             this.ancho         =  response.body.ancho
             this.largo         =  response.body.largo
-            this.acabado      = response.body.acabados;
-            this.pantones     = response.body.pantones.map( item =>{ return item.pantone});
+            this.acabado       = response.body.acabados;
+            this.pantones      = response.body.pantones.map( item =>{ return item.pantone });
+            
           }).catch( error =>{
             console.log('error flexo', error)
           }).finally(()=>{
@@ -614,8 +615,6 @@
         this.snackbar = true; this.text = "La información se ha pegado correctamente."; this.color ="green";
 
       }
-      
-
     }
   }
 </script>

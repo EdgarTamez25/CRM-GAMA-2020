@@ -99,8 +99,6 @@
 						<template v-slot:item.nota="{ item }" >
 							<v-btn color="blue"  dark small @click="abrirNota(item.nota)" v-if="item.nota"> ver nota </v-btn>
 							<v-btn outlined small v-else> sin nota </v-btn>
-
-						
 						</template>
 			    </v-data-table>
 			  </v-card>

@@ -12,7 +12,7 @@ Route::get('/', function () {
 });
 
 Route::post('login'          ,'userController@IniciarSesion')           -> name('IniciarSesion');
-Route::post('login.permisos' ,'userController@SesionPermisos')  	    -> name('SesionPermisos');
+Route::post('login.permisos' ,'userController@SesionPermisos')  	      -> name('SesionPermisos');
 Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');   
 
 //===================================  USUARIOS ====================================================
@@ -151,6 +151,11 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 	Route::post('enviar.movimiento'     ,'solicitudesController@EnviarSol')  			  -> name('EnviarSol');
 	Route::post('elimina.movimiento'    ,'solicitudesController@EliminarMovim') 		 -> name('EliminarMovim'); 
 	Route::post('finaliza.prodexit'     ,'solicitudesController@FinalizaProdExist')  -> name('FinalizaProdExist');
+
+	Route::post('valida.cancelacion'         ,'solicitudesController@ValidaCancelacion')  -> name('ValidaCancelacion');
+	Route::post('valida.cancelacion.partida' ,'solicitudesController@ValidaCancelacionPartida')  -> name('ValidaCancelacionPartida');
+	Route::post('cancelar.movimiento'        ,'solicitudesController@CancelarMovimiento')  -> name('CancelarMovimiento');
+	
 
 //==================================== MATERIALES ==================================================
 	Route::get('materiales/{dx}' ,'materialesController@Materiales')  -> name('Materiales');

@@ -3,8 +3,11 @@
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
 
-				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
-					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+				<v-snackbar v-model="alerta.snackbar" :vertical="alerta.vertical" top right :color="alerta.color" class="subtitle-1" > 
+					{{ alerta.text }} 
+						<v-btn dark text  @click="alerta.snackbar = false">
+							Cerrar
+						</v-btn>
 				</v-snackbar>
 
 				<!-- CATALOGO DE COMPROMISOS -->
@@ -72,6 +75,7 @@
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 			      <!-- <v-btn small class="celeste" dark @click="NuevoCompromiso(1)">Agregar </v-btn> -->
+						<v-btn small  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
 			      <v-btn  class="gris" icon dark @click="init()" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 			    <v-data-table
@@ -114,18 +118,26 @@
 						</template>
 
 						<template v-slot:item.encargado ="{ item }">
-							<v-btn small dark text color="indigo" v-if="item.id_encargado != null" @click="EncargadoModal= true,DatosEncargado=item"> 
+							<v-btn small  text color="indigo" 
+										 v-if="item.id_encargado != null" 
+										 @click="EncargadoModal= true,DatosEncargado=item"
+										 :disabled="estatus.id !=4? false:true"> 
 								{{ item.encargado }}
 							</v-btn>
-							<v-btn small dark text color="red" v-else @click="EncargadoModal= true,DatosEncargado=item"> Asignar </v-btn>
+							<v-btn small dark text color="red" v-else 
+										@click="EncargadoModal= true,DatosEncargado=item"
+							      :disabled="estatus.id !=4? false:true"> Asignar </v-btn>
 						</template>
 
-						<template v-slot:item.action="{ item }" >
+						<template v-slot:item.action="{ item }" v-if="estatus.id !=4">
 			    		<v-btn  color="green" class="ma-1"  small dark  @click="validaTipoProducto(item)" v-if=" item.id_encargado !=null">
 								<v-icon> mdi-eye </v-icon>
 							</v-btn> 
+							<v-btn text small color="error" class="mx-1 mt-1" 
+											@click="modalCancelar = true; partidaAEditar= item">
+								<v-icon>mdi-close-thick</v-icon> 
+							</v-btn>
 			    	</template>
-						
 			    </v-data-table>
 			  </v-card>
 
@@ -209,6 +221,21 @@
 				</v-card-text>
 			</v-card>
 		</v-dialog>
+
+		<v-dialog v-model="modalCancelar" persistent max-width="500">
+			<v-card >
+				<v-card-title class="subtitle-1 font-weight-black"> LA SOLICITUD SE CANCELARA  </v-card-title>
+				<v-card-subtitle class="subtitle-2 font-weight-black">¿ ESTA SEGURO DE QUERER CONTINUAR ?</v-card-subtitle>
+				<v-divider class="my-0 py-3" ></v-divider>
+				<v-card-subtitle align="center" class="red--text font-weight-bold "> SE CANCELARA DE FORMA DEFINITIVA </v-card-subtitle>
+				<v-divider class="my-0 py-2 " ></v-divider>
+				<v-card-actions>
+					<v-spacer/>
+					<v-btn dark outlined color="gris" @click="modalCancelar = false">Regresar</v-btn>
+					<v-btn dark color="error" @click="cancelarMovimiento()"  >Continuar</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
 		
 		<overlay v-if="overlay"/>
   </v-content>
@@ -217,6 +244,7 @@
 <script>
 	var moment = require('moment'); moment.locale('es') /// inciar Moment 
 	import  SelectMixin from '@/mixins/SelectMixin.js';
+	import  ExcelExport from '@/mixins/ExcelExport.js';
 	import {mapGetters, mapActions} from 'vuex';
   import modificaciones from '@/views/Formularios/modificaciones.vue'
   import flexografia    from '@/views/Formularios/flexografia.vue'
@@ -227,7 +255,7 @@
 	
 
 	export default {
-		mixins:[SelectMixin],
+		mixins:[SelectMixin,ExcelExport],
 		components: {
       modificaciones,
       flexografia,
@@ -238,6 +266,7 @@
 		},
 		data () {
 			return {
+				titulo:'DESARROLLO DE PROYECTOS',
 				page: 1,
         pageCount: 0,
 				itemsPerPage: 20,
@@ -253,29 +282,37 @@
 						{ text: 'Ref'				, align: 'left'	 , value: 'ft' },
 						{ text: 'Cantidad'  , align: 'left'	 , value: 'cantidad' },
 						{ text: 'Encargado' , align: 'center'	 , value: 'encargado' },
-
-						{ text: '', value: 'action' , sortable: false },
+						{ text: '',  align: 'right', value: 'action' , sortable: false },
 				],
 
 				estatus: {  id: 1, nombre:'Pendiente'},
 				Estatus:[ { id: 1, nombre:'Pendiente'},
 									{ id: 2, nombre:'Realizado' },
-									{ id: 3, nombre:'Terminado'}
+									{ id: 3, nombre:'Terminado'},
+									{ id: 4, nombre:'Cancelado'},
+
                 ],
         departamento: { id:1, nombre:'DESARROLLO'},
         departamentos:[{ id: 1, nombre:'DESARROLLO'}, 
                 { id: 2, nombre:'DIGITAL'   }, 
                 { id: 3, nombre:'DISEÑO'    }   
-              ],
+							],
+				
+				tipos:['Producto Existente','Modificación de Producto','Nuevo Producto'],
 
 				fecha1: '',
 				fechamodal1:false,
 				fecha2: '',
 				fechamodal2:false,
 
-				snackbar: false,
-				text		: '',
-				color		: 'error',
+				alerta: { 
+					snackbar: false,
+					text: '',
+					color: 'error',
+					vertical: true
+				},
+
+
 				Historial: false,
 				dialog: false,
 				textDialog : "Guardando Información",
@@ -285,6 +322,7 @@
 				mesAnteriorPrimerDia : moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
 				mesActualUltimoDia: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
 				// nextMonthLastDay: moment().add(1, 'months').endOf('month').format("YYYY-MM-DD"),
+
 				actualiza       : false,
 				anchoModal      : 500,
 				solicitarModal  : false, 
@@ -301,7 +339,9 @@
 				overlay : false,
 				Correcto: false,
 				colorCorrecto : 'error',
-				textCorrecto  : ''
+				textCorrecto  : '',
+				modalCancelar:false,
+				partidaAEditar: {},
 
 			}
 		},
@@ -391,6 +431,7 @@
             this.parametros       = item;  // ASIGNAR LOS PARAMETROS A MANDAR
             this.activaFormulario = 0 ;    // FORMULARIO QUE SE MOSTRARA
             this.tablaModificar   = true;  // HABILITAR TABLA DE MODIFICACIONES
+            this.productoExistente = false;  // HABILITAR TABLA DE MODIFICACIONES
             this.depto = { id: item.dx }
             this.solicitarModal   = true;  // ABRIR MODAL 
             break;
@@ -402,6 +443,7 @@
             this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
             this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
             this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
+            this.productoExistente = false;  // HABILITAR TABLA DE MODIFICACIONES
             this.depto = { id: item.dx }
             this.solicitarModal   = true;    // ABRIR MODAL
             break;
@@ -425,6 +467,65 @@
 					var me = this; this.overlay = false;
 					setTimeout(()=>{ me.Correcto = false }, 1500)
 			 })
+			},
+
+			cancelarMovimiento(){
+				this.modalCancelar=false; this.overlay = true; 
+        const payload = new Object();
+              payload.estatus      = 4
+              payload.id           = this.partidaAEditar.id_key
+        
+        console.log('partidaAEditar', this.partidaAEditar)
+        
+        this.$http.post('cancelar.movimiento', payload).then( response =>{
+          this.alerta.snackbar = true; this.alerta.text = response.bodyText; this.alerta.color="green";  
+          this.init()     
+        }).catch(error =>{
+          this.alerta.snackbar = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";          
+        }).finally(()=>{  
+          this.overlay = false; 
+        })
+			},
+
+			ImprimirExcel(){
+				if(!this.getSolicitudesDDD.length){
+					this.alerta.snackbar = true; this.alerta.text="No hay información que exportar"; this.alerta.color="red darken-4";
+					return
+				}
+
+				let tHeaders=[], tValores= [], tInformacion = [];
+				let theaders = [{ text: "Solicitud"			  , value:"id_solicitud" },
+												{ text: "Cliente"         , value:"nomcli"},
+												{ text: "Responsable"     , value:"nomvend"},
+												{ text: "Fecha"           , value:"fecha"},
+												{ text: "Hora"            , value:"hora"},
+												{ text: "Tipo Producto"   , value:"tipo_prod"},
+												{ text: "Referencia"      , value:"ft"},
+												{ text: "Cantidad"        , value:"cantidad"},
+												{ text: "Encargado"       , value:"nomencargado"},
+												{ text: "Estatus"         , value:"estatus_key"},
+											 ]
+
+				for(let j =0;j< theaders.length; j++){
+					tHeaders.push(theaders[j].text);
+					tValores.push(theaders[j].value);
+				}
+
+				for(let x=0;x<this.getSolicitudesDDD.length;x++){
+					tInformacion.push({ id_solicitud: this.getSolicitudesDDD[x].id_solicitud,
+															nomcli      : this.getSolicitudesDDD[x].nomcli,
+															nomvend     : this.getSolicitudesDDD[x].nomvend,
+															fecha 			: this.getSolicitudesDDD[x].fecha,
+															hora        : this.getSolicitudesDDD[x].hora,
+															tipo_prod   : this.tipos[this.getSolicitudesDDD[x].tipo_prod-1],
+															ft          :	this.getSolicitudesDDD[x].ft,
+															cantidad    : this.getSolicitudesDDD[x].cantidad,
+															nomencargado: this.getSolicitudesDDD[x].nomencargado,
+															estatus_key : this.Estatus[ this.getSolicitudesDDD[x].estatus_key-1].nombre })
+				}
+
+				this.titulo = this.titulo +'_'+ this.departamento.nombre +'_'+this.estatus.nombre +"_"+ this.fecha1 +"-"+ this.fecha2;
+				this.manejarDescarga(this.titulo ,tHeaders,tValores,tInformacion)
 			},
 	
 		}

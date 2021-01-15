@@ -63,6 +63,7 @@
                 <span v-if="item.estatus === 1"> ASIGNADO  </span>
                 <span v-if="item.estatus === 2"> REALIZADO</span>
                 <span v-if="item.estatus === 3"> TERMINADO </span>
+                <span v-if="item.estatus === 4"> CANCELADO </span>
               </v-card-text>
             </v-col>
             <v-col>
@@ -80,6 +81,9 @@
                 </v-btn>
                 <v-btn color="green" dark fab small v-if="item.estatus === 3"  > 
                   <v-icon>mdi-account-check</v-icon> 
+                </v-btn>
+                <v-btn color="error" dark fab small v-if="item.estatus === 4"  > 
+                  <v-icon>mdi-account-cancel</v-icon> 
                 </v-btn>
               </v-card-actions>
             </v-col>
@@ -164,7 +168,10 @@
       depto:[],
       deptos:[{ id: 1, nombre:'DESARROLLO'}, 
               { id: 2, nombre:'DIGITAL'   }, 
-              { id: 3, nombre:'DISEÑO'    }   
+              { id: 3, nombre:'DISEÑO'    },
+              { id: 4, nombre:'CANCELADO'    },
+
+                 
             ],
 
       overlay : false,

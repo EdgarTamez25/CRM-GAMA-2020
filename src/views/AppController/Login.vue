@@ -144,7 +144,7 @@ import {mapActions , mapGetters} from 'vuex'
 
         this.Login(usuario).then(response => {
           if(response){
-            this.$router.push({ name: 'compromisos' })  
+            this.$router.push({ name: 'Home' })  
           }else{
             this.text  = "Lo siento amiguit@ algo salio mal. Verifica tus datos";this.snackbar = true 
             return

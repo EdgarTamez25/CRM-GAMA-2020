@@ -1,12 +1,18 @@
 <template>
-  <v-content class="pa-0 ma-3" >
-    <v-row no-gutters >
-      <v-col cols="12">
-        <v-btn color="rosa" style="display: none" class="ir-arriba white--text mt-12" small fab fixed bottom top right >
+  <v-content class="pa-0 ma-1" fluid >
+    <v-card flat >
+      
+    <v-row no-gutters justify="center">
+      <v-col cols="12" sm="12" md="9" xl="10">
+        
+        <video  controls width="100%" autoplay muted>
+          <source src="http://producciongama.com:8080/CRM-GAMA-2020/VIDEOS/gama_etiquetas.mp4" type="video/mp4">
+        </video>
+        <!-- <v-btn color="rosa" style="display: none" class="ir-arriba white--text mt-12" small fab fixed bottom top right >
           <v-icon top>keyboard_arrow_up</v-icon>
         </v-btn>
         <v-row justify="space-around" >
-          <v-col cols="10" class="text-center" v-if="Loading" >  <!-- PROGRES -->
+          <v-col cols="10" class="text-center" v-if="Loading" >  
             <v-progress-linear :size="100" :width="7" color="celeste" indeterminate ></v-progress-linear>
           </v-col>
           <v-col cols="12" sm="9" v-if="!filterArticulos.length && !Loading">
@@ -14,10 +20,10 @@
               No hay articulos o proveedores con la descripción solicitada.
             </v-alert>
         </v-col>	
-        </v-row>
+        </v-row> -->
 
-        <v-row v-if="!Loading" dense>
-          <v-col cols="12" sm="6" md="4" lg="4" xl="3" v-for="(item , i) in filterArticulos" :key="i" >
+        <!-- <v-row v-if="!Loading" dense> -->
+          <!-- <v-col cols="12" sm="6" md="4" lg="4" xl="3" v-for="(item , i) in filterArticulos" :key="i" >
               <v-card height="100%" class="mx-auto elevation-10" v-ripple>
 
                 <v-card-title class="headline" style="word-break:normal;" >{{ item.nombre }}</v-card-title>
@@ -59,7 +65,7 @@
                 </v-card-subtitle>
 
               </v-card>
-          </v-col>
+          </v-col> -->
           <!-- <v-col cols="12" sm="6" md="4" lg="3"  v-for="(item , i) in filterArticulos" :key="i" v-if="item">
             <v-hover v-slot:default="{ hover }" >
               <v-card class="mx-auto elevation-10" max-width="350" v-ripple height="100%" >
@@ -102,9 +108,9 @@
               
             </v-hover>
           </v-col> -->
-        </v-row>
-      </v-col>
-     <v-col cols="12">
+        <!-- </v-row> -->
+      <!-- </v-col> -->
+     <!-- <v-col cols="12">
         <v-footer small padless top fixed class="pb-2 pt-2 footer">
           <v-row justify="center" class="mx-1">
 
@@ -141,14 +147,12 @@
                 color="white"
             ></v-text-field>
           </v-col>
-          <!-- <v-col cols="1" >
-            <v-btn class="rosa" icon dark @click="init()" ><v-icon>refresh</v-icon> </v-btn>
-          </v-col> -->
+        
           </v-row>
         </v-footer>
-      </v-col>
+      </v-col> -->
 
-      <v-col cols="12" align="center" class="mt-5" v-if="masProductos === true && search==='' && !Loading ">
+      <!-- <v-col cols="12" align="center" class="mt-5" v-if="masProductos === true && search==='' && !Loading ">
         <span class="font-weight-bold"> CARGAR MAS PRODUCTOS </span><br>
         <v-btn color="rosa" outlined dark small fab @click="VerMasProductos()"> 
           <v-icon>expand_more</v-icon>
@@ -159,8 +163,10 @@
       </v-col>   
       <v-col cols="12">
         <v-footer color="white" height="180px"></v-footer>
+      </v-col> -->
       </v-col>
     </v-row>
+    </v-card>
   </v-content>
 </template>
 
@@ -230,8 +236,8 @@
     },
 
     created(){
-      this.consultarLineas();
-      this.init();
+      // this.consultarLineas();
+      // this.init();
     },
 
     mounted(){

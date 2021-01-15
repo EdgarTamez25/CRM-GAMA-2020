@@ -3,10 +3,12 @@
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
 
-				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
-					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+				<v-snackbar v-model="alerta.snackbar" :vertical="alerta.vertical" top right :color="alerta.color" class="subtitle-1" > 
+					{{ alerta.text }} 
+						<v-btn dark text  @click="alerta.snackbar = false">
+							Cerrar
+						</v-btn>
 				</v-snackbar>
-			
 
 				<!-- CATALOGO DE COMPROMISOS -->
 				<v-card class="mt-3" outlined >
@@ -244,9 +246,12 @@
 				compromisoModal: false,
 				fases: false,
 
-				snackbar: false,
-				text		: '',
-				color		: 'error',
+				alerta: { 
+					snackbar: false,
+					text: '',
+					color: 'error',
+					vertical: true
+				},
 				Historial: false,
 				dialog: false,
 				textDialog : "Guardando Información",
@@ -330,6 +335,11 @@
 			},
 
 			ImprimirExcel(){
+				if(!this.getCompromisos.length){
+					this.alerta.snackbar = true; this.alerta.text="No hay información que exportar"; this.alerta.color="red darken-4";
+					return
+				}
+
 				let tHeaders=[], tValores= [];
 				let theaders = [
 												{ text: 'Id'   						, value: 'id' },

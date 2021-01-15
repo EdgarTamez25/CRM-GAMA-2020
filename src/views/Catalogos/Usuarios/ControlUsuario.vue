@@ -255,7 +255,9 @@
 									{ id:5, nombre:'Almacén'},
 									{ id:6, nombre:'Ventas'},
 									{ id:7, nombre:'Servicio al Cliente'},
-									{ id:8, nombre:'Sin seleccionar'}
+									{ id:8, nombre:'Sin seleccionar'},
+									{ id:9, nombre:'Desarrollo de Proyectos'},
+
 								],
 
 				// SELECTORES

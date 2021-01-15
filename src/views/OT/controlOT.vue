@@ -208,8 +208,8 @@
   import {mapGetters, mapActions} from 'vuex'
   import  metodos from '@/mixins/metodos.js';
 	import  jsPdf   from '@/mixins/jsPdf.js';
-  import overlay     from '@/components/overlay.vue'
-  import loading     from '@/components/loading.vue'
+  import overlay     from '@/components/overlay.vue';
+  import loading     from '@/components/loading.vue';
 
 	export default {
 		mixins:[metodos,jsPdf],

@@ -14,29 +14,26 @@ Vue.use(VueRouter)
 
 const routes = [
   { path:'/'				       , name: 'Login'        , component: Login         , meta: { libre:true }},
-  { path:'/home'			     , name: 'Home'	        , component: Home          , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true, VEND:true, CHOFER:true, EXTRA:true }},
+  { path:'/home'			     , name: 'Home'	        , component: Home          , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true, VEND:true, CHOFER:true, EXTRA:true, DDD:true  }},
   { path:'/compromisos'    , name:'compromisos'   , component: Compromisos   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
   { path:'/solicitudes'    , name:'solicitudes'   , component: Solicitudes   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
-  { path:'/detsolicitud'   , name:'detsolicitud'  , component: DetSolicitud  , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true }},
-  { path:'/desarrollo/proyectos' , name:'desarrollo/proyectos'   , component: SolicitudesDDD   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
+  { path:'/detsolicitud'   , name:'detsolicitud'  , component: DetSolicitud  , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
+  { path:'/desarrollo/proyectos' , name:'desarrollo/proyectos'   , component: SolicitudesDDD   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true, DDD:true }},
   { path:'/control_fases'  , name:'control_fases' , component: ControldeFases, meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true }},
-  { path:'/pendientes'	   , name:'pendientes'	  , component:()=> import('@/views/Pendientes/Pendientes.vue')               , meta: { ADMIN: true } },
+  // { path:'/pendientes'	   , name:'pendientes'	  , component:()=> import('@/views/Pendientes/Pendientes.vue')               , meta: { ADMIN: true } },
   { path:'/usuarios'       , name:'usuarios'      , component:()=> import('@/views/Catalogos/Usuarios/CatUsuarios.vue')      , meta: { ADMIN: true, SUPER:true } },
   { path:'/clientes'		   , name:'clientes'	    , component:()=> import('@/views/Catalogos/Clientes/CatClientes.vue')      , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
   { path:'/proveedores'		 , name:'proveedores'	  , component:()=> import('@/views/Catalogos/Proveedores/CatProveedores.vue'), meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
   { path:'/productos'		   , name:'productos'	    , component:()=> import('@/views/Catalogos/Productos/CatProductos.vue')    , meta: { ADMIN: true, SUPER:true }},
-  { path:'/productos-por-cliente', name:'productos-por-cliente'	, component:()=> import('@/views/Catalogos/Productos/ProductosxCli.vue')    , meta: { ADMIN: true, SUPER:true }},
-  { path:'/ordenes-de-trabajo'   , name:'ordenes-de-trabajo'	  , component:()=> import('@/views/OT/ordenTrabajo.vue')    , meta: { ADMIN: true, SUPER:true }},
-  { path:'/detalle-ot'           , name:'detalle-ot'	          , component:()=> import('@/views/OT/controlOT.vue')       , meta: { ADMIN: true, SUPER:true }},
+  { path:'/productos-por-cliente', name:'productos-por-cliente'	, component:()=> import('@/views/Catalogos/Productos/ProductosxCli.vue')    , meta: { ADMIN: true, SUPER:true, SCLIENTE:true, }},
+  { path:'/ordenes-de-trabajo'   , name:'ordenes-de-trabajo'	  , component:()=> import('@/views/OT/ordenTrabajo.vue')    , meta: { ADMIN: true, SUPER:true,  SCLIENTE:true }},
+  { path:'/detalle-ot'           , name:'detalle-ot'	          , component:()=> import('@/views/OT/controlOT.vue')       , meta: { ADMIN: true, SUPER:true,  SCLIENTE:true }},
 
 
   { path:'/zonas-subzonas' , name:'zonas'	        , component:()=> import('@/views/Catalogos/Zonas/CatZonas.vue')            , meta: { ADMIN: true, SUPER:true }},
   { path:'/monedas'	       , name:'monedas'	      , component:()=> import('@/views/Catalogos/Monedas/CatMonedas.vue')        , meta: { ADMIN: true, SUPER:true }},
   { path:'/prospectos'     , name:'prospectos'    , component:()=> import('@/views/Catalogos/Prospectos/Prospectos.vue' )    , meta: { ADMIN: true, SUPER:true, SCLIENTE:true }},
-  { path:'/analisis-fases' , name:'analisis-fases', component:()=> import('@/views/Historial/analisisFases.vue')             , meta: { ADMIN: true, SUPER:true }},
-
-
-
+  // { path:'/analisis-fases' , name:'analisis-fases', component:()=> import('@/views/Historial/analisisFases.vue')             , meta: { ADMIN: true, SUPER:true }},
   
 ]
 
@@ -84,6 +81,10 @@ router.beforeEach( (to, from, next) => {
     }
   }else if(store.state.Login.datosUsuario.nivel === 8){
     if(to.matched.some(record => record.meta.EXTRA)){
+      next()
+    }
+  }else if(store.state.Login.datosUsuario.nivel === 9){
+    if(to.matched.some(record => record.meta.DDD)){
       next()
     }
   }else{
