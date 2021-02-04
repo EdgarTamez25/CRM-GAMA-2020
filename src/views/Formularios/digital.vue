@@ -417,7 +417,7 @@
         this.actualizaProducto( payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se modifico correctamente"); }
         }).catch( error =>{
-          console.log('putprod')
+          console.log('putprod',error)
         }).finally(()=>{ 
           this.overlay = false
         })

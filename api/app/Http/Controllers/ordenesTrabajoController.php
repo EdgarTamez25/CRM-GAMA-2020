@@ -19,7 +19,7 @@ class ordenesTrabajoController extends Controller
 	}
 
 	public function DetalleOT($id){
-		$detalleOT = DB::select('SELECT d.id, d.id_ot, d.id_producto, p.nombre as producto, d.cantidad, d.fecha_progra, d.fecha_entrega,
+		$detalleOT = DB::select('SELECT d.id, d.id_ot, d.id_producto, p.codigo as producto, d.cantidad, d.fecha_progra, d.fecha_entrega,
 																		d.concepto, d.urgencia, d.razon, d.estatus 
 																FROM det_ot d LEFT JOIN prodxcli p ON d.id_producto = p.id
 														 WHERE d.id_ot = ?', [ $id]);
@@ -30,6 +30,7 @@ class ordenesTrabajoController extends Controller
 		$id_ot = DB::table('ot')->insertGetId(
 			[
 					'id_depto'	  => $req -> id_depto,
+					'id_vendedor' => $req -> id_vendedor,
 					'id_cliente' 	=> $req -> id_cliente,
 					'oc' 					=> $req -> oc,
 					'referencia' 	=> $req -> referencia,

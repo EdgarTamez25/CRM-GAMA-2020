@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Storage;
 class permisosController extends Controller{		
 	
 	public function buscaEmpleado($id){
-		$empleado = DB::select('SELECT u.id, u.nombre,  d.nombre as departamento, p.nombre as puesto
-										
-																					 LEFT JOIN departamentos d ON u.id_depto  = d.id
+		$empleado = DB::select('SELECT u.id, u.nombre, d.nombre as departamento, p.nombre as puesto
+															FROM users u LEFT JOIN departamentos d ON u.id_depto  = d.id
+																					 LEFT JOIN puestos p       ON u.id_puesto = p.id
 														WHERE u.id = ?', [$id]);
-		if($empleado): return $empleado; else: return $empleado = []; endif;
+		return $empleado ? $empleado : $empleado=[];
 	}
 
 	public function AddPermiso(Request $req){

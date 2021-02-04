@@ -21,11 +21,12 @@
               transparent
               id="logo"
             >
-              <template v-slot:placeholder>
+            
+              <!-- <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
                   <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                 </v-row>
-              </template>
+              </template> -->
             </img>
            
 
@@ -144,10 +145,10 @@ import {mapActions , mapGetters} from 'vuex'
 
         this.Login(usuario).then(response => {
           if(response){
-            this.$router.push({ name: 'Home' })  
+            this.$router.push({ name: 'Inicio' })  
           }else{
             this.text  = "Lo siento amiguit@ algo salio mal. Verifica tus datos";this.snackbar = true 
-            return
+            return;
           }
         }).catch(error =>{
           // console.log('error type 500',error)

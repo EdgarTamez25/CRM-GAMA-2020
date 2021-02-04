@@ -518,6 +518,8 @@
         return payload;
       },
 
+    
+
       agregaConceptos(){
         let arrayTemp = [];
         this.material.id     ? arrayTemp.push( { tipo:1 , concepto:'Material'   ,valor: this.material.id    }): '';

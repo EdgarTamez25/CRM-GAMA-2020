@@ -215,7 +215,7 @@
 			validarInfomracion(){
 				if(!this.cliente.id){ this.snackbar = true; this.text="NO PUEDES OMITIR EL CLIENTE"   		                ; return }
 				if(!this.codigo)	  { this.snackbar = true; this.text="NO PUEDES OMITIR EL CÓDIGO"   	                    ; return }
-				if(!this.revision)  { this.snackbar = true; this.text="NO PUEDES OMITIR EL N° DE REVISION"                ; return }
+				if(this.revision < 0)  { this.snackbar = true; this.text="LA REVISIÓN NO PUEDE SER MENOR A CERO"          ; return }
         if(!this.url)			  { this.snackbar = true; this.text="DEBES AGREGAR LA DIRECCIÓN DE LA FICHA TÉCNICA"    ; return }
         if(!this.detalle)   { this.snackbar = true; this.text ="NO HAZ GUARDADO LAS CARACTERISTICAS DEL PRODUCTO" ; return }
 				this.PrepararPeticion()

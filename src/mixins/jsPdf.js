@@ -21,7 +21,7 @@ export default {
         format: "letter"          // FORMATO - CARTA
       });
 
-      console.log('doc', doc)
+      // console.log('doc', doc)
 
       // EL TEXTO SE COLOCANDO USANDO CORDENADAS X & Y 
       doc.setFontSize(16)
@@ -50,6 +50,7 @@ export default {
         margin: { left: 0.5, top: 3.0 }  // MARGENES DE LAS COLUMNAS 1.25
       });
       
+      // console.log('informacion', informacion);
       // USO DE UN CONJUNTO DE ORACIONES
       let x = 0.5, y = 1.25;
       for(const i in informacion){

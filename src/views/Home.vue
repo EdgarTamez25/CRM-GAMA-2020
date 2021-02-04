@@ -3,11 +3,16 @@
     <v-card flat >
       
     <v-row no-gutters justify="center">
-      <v-col cols="12" sm="12" md="9" xl="10">
-        
-        <video  controls width="100%" autoplay muted>
-          <source src="http://producciongama.com:8080/CRM-GAMA-2020/VIDEOS/gama_etiquetas.mp4" type="video/mp4">
+       <video  controls width="100%" autoplay muted>
+          <source src="http://producciongama.com:8080/CRM-GAMA-2020/VIDEOS2/gama_etiquetas.mp4" type="video/mp4">
         </video>
+      <v-col cols="12" sm="12" md="9" xl="10">
+     
+        <video  controls width="100%" autoplay muted>
+          <source src="http://producciongama.com:8080/CRM-GAMA-2020/VIDEOS2/gama_etiquetas.mp4" type="video/mp4">
+        </video>
+          <!-- <source src="http://producciongama.com:8080/CRM-GAMA-2020/VIDEOS/Somos_Gama.mp4" type="video/mp4"> -->
+        
         <!-- <v-btn color="rosa" style="display: none" class="ir-arriba white--text mt-12" small fab fixed bottom top right >
           <v-icon top>keyboard_arrow_up</v-icon>
         </v-btn>
@@ -158,7 +163,7 @@
           <v-icon>expand_more</v-icon>
         </v-btn>
     
-    
+
     
       </v-col>   
       <v-col cols="12">
@@ -169,14 +174,15 @@
     </v-card>
   </v-content>
 </template>
+  
 
 
 <script>
-  import $ from 'jquery'
-  import {mapGetters, mapActions} from 'vuex'
-  import  SelectMixin from '@/mixins/SelectMixin.js';
+  // import $ from 'jquery';
+  // import {mapGetters, mapActions} from 'vuex';
+  // import  SelectMixin from '@/mixins/SelectMixin.js';
   export default {
-    mixins:[SelectMixin],
+    // mixins:[SelectMixin],
     components: {
     },
 
@@ -186,81 +192,83 @@
         search: '',
         linea:{  id:0 , nombre:'TODOS'},
         lineas:[ {id:0, nombre:'TODOS'}],
+        video: 'http://producciongama.com:8080/CRM-GAMA-2020/VIDEOS/gama_etiquetas.mp4'
     }), 
 
     methods:{
-      ...mapActions('Productos',['consultaProductos','consultaProductosxId','VerMasProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
+      // ...mapActions('Productos',['consultaProductos','consultaProductosxId','VerMasProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
       
-      init(){
-        this.linea.id === 0 ? this.consultaProductos(): this.consultaProductosxId(this.linea.id) 
-      }
+      // init(){
+      //   this.linea.id === 0 ? this.consultaProductos(): this.consultaProductosxId(this.linea.id) 
+      // }
     },
 
-    computed:{
-      ...mapGetters('Productos',['Loading','getProductos','masProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
-      ...mapGetters('Login' ,['getdatosUsuario']), 
+    // computed:{
+    //   ...mapGetters('Productos',['Loading','getProductos','masProductos']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
+    //   ...mapGetters('Login' ,['getdatosUsuario']), 
 
 
-      pantalla () {
-          switch (this.$vuetify.breakpoint.name) {
-            case 'xs': return 'xs'
-            case 'sm': return 'sm'
-            case 'md': return 'md'
-            case 'lg': return 'lg'
-            case 'xl': return 'xl'
-          }
-        },
+    //   pantalla () {
+    //       switch (this.$vuetify.breakpoint.name) {
+    //         case 'xs': return 'xs'
+    //         case 'sm': return 'sm'
+    //         case 'md': return 'md'
+    //         case 'lg': return 'lg'
+    //         case 'xl': return 'xl'
+    //       }
+    //     },
 
-      filterArticulos: function(){
-        return this.getProductos.filter((art)=>{
-          var cod  = art.codigo                  // BUSCAR POR CODIGO
-          var nom  = art.nombre.toLowerCase();  // BUSCAR POR NOMBRE
-          var prov = art.nomprov.toLowerCase(); // BUSCAR POR PROVEDOR
+    //   filterArticulos: function(){
+    //     return this.getProductos.filter((art)=>{
+    //       var cod  = art.codigo                  // BUSCAR POR CODIGO
+    //       var nom  = art.nombre.toLowerCase();  // BUSCAR POR NOMBRE
+    //       var prov = art.nomprov.toLowerCase(); // BUSCAR POR PROVEDOR
           
-          if(cod.match(this.search)){ // SI ENCUENTRO EL CODIGO LO RETORNO
-            return cod.match(this.search)
-          }else if(nom.match(this.search.toLowerCase())){ // SI NO - RETONO POR NOMBRE
-            return nom.match(this.search.toLowerCase()) // SI NO - RETORNO POR PROVEEDOR
-          }else{
-            return prov.match(this.search.toLowerCase())
-          }
-        })
-      },
+    //       if(cod.match(this.search)){ // SI ENCUENTRO EL CODIGO LO RETORNO
+    //         return cod.match(this.search)
+    //       }else if(nom.match(this.search.toLowerCase())){ // SI NO - RETONO POR NOMBRE
+    //         return nom.match(this.search.toLowerCase()) // SI NO - RETORNO POR PROVEEDOR
+    //       }else{
+    //         return prov.match(this.search.toLowerCase())
+    //       }
+    //     })
+    //   },
 
-    },
+    // },
 
-    filters:{
-      toUppercase(value){
-        return value.toUpperCase();
-      }
-    },
+    // filters:{
+    //   toUppercase(value){
+    //     return value.toUpperCase();
+    //   }
+    // },
 
     created(){
       // this.consultarLineas();
       // this.init();
+      
     },
 
-    mounted(){
-      // Jquey para activar la animacion del boton hacia arriba
-      $(document).ready(function(){
+    // mounted(){
+    //   // Jquey para activar la animacion del boton hacia arriba
+    //   $(document).ready(function(){
 
-        $('.ir-arriba').click(function(){
-          $('body, html').animate({
-            scrollTop: '0px'
-          }, 300);
-        });
+    //     $('.ir-arriba').click(function(){
+    //       $('body, html').animate({
+    //         scrollTop: '0px'
+    //       }, 300);
+    //     });
         
-        $(window).scroll(function(){
-          if( $(this).scrollTop() > 0 ){
-            $('.ir-arriba').slideDown(300);
-          } else {
-            $('.ir-arriba').slideUp(300);
-          }
-        });
+    //     $(window).scroll(function(){
+    //       if( $(this).scrollTop() > 0 ){
+    //         $('.ir-arriba').slideDown(300);
+    //       } else {
+    //         $('.ir-arriba').slideUp(300);
+    //       }
+    //     });
         
-      });
+    //   });
 
-    },
+    // },
 
 
   }
@@ -289,3 +297,7 @@
   }
 
 </style>
+
+
+<template>
+  

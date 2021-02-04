@@ -261,7 +261,7 @@ export default {
      AppControl: [
         {
           admin: [ 
-            { text: 'Inicio'      ,icon: 'home'                       ,path: '/home'},
+            { text: 'Inicio'      ,icon: 'home'                       ,path: '/inicio'},
             { text: 'Compromisos' ,icon: 'chrome_reader_mode'         ,path: '/compromisos'},
             // { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
             { text: 'Solicitudes' ,icon: 'ballot'                     ,path: '/solicitudes'},

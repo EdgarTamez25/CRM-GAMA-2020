@@ -13,7 +13,9 @@ Route::get('/', function () {
 
 Route::post('login'          ,'userController@IniciarSesion')           -> name('IniciarSesion');
 Route::post('login.permisos' ,'userController@SesionPermisos')  	      -> name('SesionPermisos');
-Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');   
+Route::get('gama.
+
+'  ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');   
 
 //===================================  USUARIOS ====================================================
 	Route::get('catusuarios'     ,'userController@getcatalogo') -> name('getcatalogo');   
@@ -221,7 +223,7 @@ Route::get('gama.etiquetas'  ,'gamaEtiquetasController@modulosActivos') -> name(
 //==================================== LLAMADAS-RH =================================================
 	Route::post('add.llamada' 	     ,'llamadasController@addLLamada')    -> name('addLlamadas');
 	Route::put('put.llamada/{id}'    ,'llamadasController@putLLamadas')    -> name('putLlamada'); 
-	Route::get('llamadas'            ,'llamadasController@llamadas')       -> name('Llamadas');
+	Route::post('llamadas'            ,'llamadasController@llamadas')       -> name('Llamadas');
 
 	Route::post('add.junta'          ,'juntasController@addJuntas')       -> name('addJuntas');
 	Route::put('put.junta/{id}'      ,'juntasController@putJuntas')       -> name('putJuntas');
