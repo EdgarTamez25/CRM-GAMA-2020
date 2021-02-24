@@ -11,11 +11,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('login'          ,'userController@IniciarSesion')           -> name('IniciarSesion');
-Route::post('login.permisos' ,'userController@SesionPermisos')  	      -> name('SesionPermisos');
-Route::get('gama.
-
-'  ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');   
+Route::post('login'                    ,'userController@IniciarSesion')           -> name('IniciarSesion');
+Route::post('login.permisos'           ,'userController@SesionPermisos')  	      -> name('SesionPermisos');
+Route::get('gama.etiquetas'            ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');   
+Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo') -> name('SesionProgramacionFlexo');
 
 //===================================  USUARIOS ====================================================
 	Route::get('catusuarios'     ,'userController@getcatalogo') -> name('getcatalogo');   
@@ -133,8 +132,6 @@ Route::get('gama.
 	Route::post('crear.producto.cliente'        ,'productosxcliController@crearDetalle')      -> name('crearDetalle');
 	Route::put('actualiza.producto.cliente/{id}','productosxcliController@actualizaProducto') -> name('actualizaProducto');
 	Route::post('productos.cliente.deptos'      ,'productosxcliController@PxCxD')     				-> name('PxCxD');
-
-	
 	
 
 //==================================== SOLICITUDES =================================================
@@ -148,7 +145,12 @@ Route::get('gama.
 	Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')    -> name('Caracteristicas');
 	Route::post('actualiza.modif'   	 ,'solicitudesController@ActualizaModif')     -> name('ActualizaModif');
 	Route::post('actualiza.prod.nuevo' ,'solicitudesController@ActualizaProdNuevo') -> name('ActualizaProdNuevo');
+	Route::post('actualiza.prod.existente' ,'solicitudesController@ActualizaProdExistente') -> name('ActualizaProdExistente');
+	Route::post('actualiza.prod.modif'     ,'solicitudesController@ActualizaProdModif') -> name('ActualizaProdModif');
+	Route::post('crear.nueva.solicitud'    ,'solicitudesController@CrearNuevaSolicitud') -> name('CrearNuevaSolicitud');
 
+	
+	
 	Route::post('movim.sol'   	 		    ,'solicitudesController@MovimSol')   			  -> name('MovimSol');
 	Route::post('enviar.movimiento'     ,'solicitudesController@EnviarSol')  			  -> name('EnviarSol');
 	Route::post('elimina.movimiento'    ,'solicitudesController@EliminarMovim') 		 -> name('EliminarMovim'); 
@@ -157,6 +159,9 @@ Route::get('gama.
 	Route::post('valida.cancelacion'         ,'solicitudesController@ValidaCancelacion')  -> name('ValidaCancelacion');
 	Route::post('valida.cancelacion.partida' ,'solicitudesController@ValidaCancelacionPartida')  -> name('ValidaCancelacionPartida');
 	Route::post('cancelar.movimiento'        ,'solicitudesController@CancelarMovimiento')  -> name('CancelarMovimiento');
+
+	Route::post('agregar.producto.solicitud' ,'solicitudesController@agregaProductoSol')  -> name('agregaProductoSol');
+	
 	
 
 //==================================== MATERIALES ==================================================
@@ -175,31 +180,6 @@ Route::get('gama.
 
 
 	
-
-
-	
-
-	
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //==================================================================================================
@@ -232,17 +212,34 @@ Route::get('gama.
 
 
 
+//==================================================================================================
+//==================================== RUTAS PROGRAMACION FLEXO=====================================
 
+//==================================== LLAMADAS-RH =================================================
 
+	Route::get('obtener.operadores'          ,'userController@obtenerOperadores')       -> name('obtenerOperadores');
 
+	Route::post('agregar.programacion'               ,'programacionFlexoController@programacionFlexo')        -> name('programacionFlexo');
+	Route::put('actualizar.programacion/{id}'        ,'programacionFlexoController@actualizaProgramacion')    -> name('actualizaProgramacion');
+	Route::post('obtener.programaciones'             ,'programacionFlexoController@obtenerProgramacion')      -> name('obtenerProgramacion');
+	Route::get('obtener.detalle.programacion/{id}'   ,'programacionFlexoController@DetalleProgramacion')      -> name('DetalleProgramacion');
+	Route::post('iniciaizar.ot.flexo'         			 ,'programacionFlexoController@InicializarProgramacion')  -> name('InicializarProgramacion');
+	Route::put('actualizar.detalle.orden.flexo/{id}' ,'programacionFlexoController@actualizarDetalle')   			-> name('actualizarDetalle');
+	Route::put('finalizar.orden.flexo/{id}'          ,'programacionFlexoController@FinalizarOTFlexo')   			-> name('FinalizarOTFlexo');
+	Route::put('cancelar.orden.trabajo/{id}'         ,'programacionFlexoController@cancelarOTFlexo')   			-> name('cancelarOTFlexo');
 
-
-
-
-
-
-
-
+	Route::post('agregar.maquina.operador'    ,'maquinasController@AgregarMaquinasxOP')     -> name('AgregarMaquinasxOP');
+	Route::post('editar.maquina.operador'     ,'maquinasController@EditarMaquinasxOP')      -> name('EditarMaquinasxOP');
+	Route::post('obtener.maquina.operador'    ,'maquinasController@ObtenerMaquinasxOp')     -> name('ObtenerMaquinasxOp');
+	Route::get('obtener.maquinas'   					,'maquinasController@Maquinas') 							-> name('Maquinas');  
+	Route::delete('eliminar.asignacion.maquina/{id}','maquinasController@EliminarAsignacion')     -> name('EliminarAsignacion');  
+	Route::post('valida.conservacion.asignación'   ,'maquinasController@ValidaConservacion')      -> name('ValidaConservacion');
+	
+	Route::post('obtener.maquina.asignada'                   ,'maquinasController@MaquinaAsignada')     -> name('MaquinaAsignada');
+	Route::get('obtener.programaciones.maquina/{id_maquina}' ,'maquinasController@ProgramacionMaquina')          -> name('ProgramacionMaquina');
+	
+	Route::get('obtener.plecas'    ,'plecasController@Plecas')     -> name('Plecas');   
+	Route::get('obtener.suajes'    ,'suajesController@Suajes')     -> name('Suajes');   
 
 
 

@@ -387,10 +387,18 @@ export default {
 </script>
 
 <style scoped>
+  
+  /* .fondo{
+    background: #ee9ca7;  
+    background: -webkit-linear-gradient(to right, #f3b8bf, #ee9ca7);  
+    background: linear-gradient(to right, hsla(353, 22%, 63%, 0.449), #ee9ca7),url('http://producciongama.com:8080/CRM-GAMA-2020/imagenes/fondo2.jpg'); 
+    background-attachment: fixed;
+    background-size: cover;
+    padding: 0px;
+    margin: 0px;
+    width: auto;
+    height: 100%;
+  } */
 
-
-
-
-/* Animation */
-
+ 
 </style>

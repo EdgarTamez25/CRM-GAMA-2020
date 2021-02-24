@@ -40,7 +40,7 @@ export default {
 		consultaDepartamentos(){
 			this.deptos = [	{ id:1, nombre:'FLEXOGRAFÍA'},
 											// { id:2, nombre:'BORDADOS'},
-											{ id:3, nombre:'DIGITAL'},
+											// { id:3, nombre:'DIGITAL'},
 											// { id:4, nombre:'OFFSET'},
 											// { id:5, nombre:'SERIGRAFÍA'},
 											// { id:6, nombre:'EMPAQUE'},

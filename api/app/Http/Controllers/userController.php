@@ -51,7 +51,17 @@ class userController extends Controller
 
 	}
 
-	
+	public function SesionProgramacionFlexo(Request $req){
+		$correo 	   = $req -> correo;
+		$usuario 	   = $req -> usuario;
+		$contrasenia = $req -> contrasenia;
+
+		$Usuario = DB::select('SELECT u.id, u.nombre, u.usuario, u.flexo_prog FROM users u 
+																WHERE u.correo = ? AND u.password = ? OR 
+																		 u.usuario = ? AND u.password = ? AND u.estatus = 1 AND u.flexo_prog > 0'
+													,[$correo,$contrasenia,$usuario,$contrasenia]);
+		return $Usuario ? $Usuario: [];
+	}
 
 	public function getAll() {
 			return $Usuarios = User::all();
@@ -68,7 +78,6 @@ class userController extends Controller
 	}
 
 	public function add(Request $request){
-
 		//REVISO QUE EL USUARIO NO EXISTA
 		if($this->validaEmail($request -> correo)):
 			$error = [ "error" 	=> true,"mensaje" => "Lo sentimos, este empleado ya se encuentra registrado"];
@@ -140,6 +149,11 @@ class userController extends Controller
 
 	public function validaUsuarioUp($usuario, $id){
 		return DB::select('SELECT usuario FROM users WHERE usuario = ? AND id != ?',[$usuario, $id]);
+	}
+
+	public function obtenerOperadores(Request $req){
+		$operadores = DB::select('SELECT u.id, u.nombre, u.usuario, u.flexo_prog FROM users u WHERE u.flexo_prog = 2 AND u.estatus = 1');
+		return $operadores? $operadores : [];
 	}
 	
 }

@@ -47,7 +47,8 @@
               </v-card>
             </v-col>
             <v-col cols="12" sm="4" md="5" xl="6" >
-              <v-btn block color="gris" @click="modalCancelar = true; accion=1" dark v-if="solicitud.estatus != 4">CANCELAR SOLICITUD </v-btn>
+              <v-btn block color="gris" outlined @click="modalCancelar = true; accion=1" dark v-if="solicitud.estatus != 4">CANCELAR SOLICITUD </v-btn>
+              <v-btn block color="celeste" @click="agregarProducto(1,[])" class="mt-2" dark v-if="solicitud.estatus != 4">AGREGAR PRODUCTO </v-btn>
               <v-btn block color="red darken-4" dark v-else>SOLICITUD CANCELADA  </v-btn>
             </v-col>
             <!-- {{ getDetalle }} -->
@@ -80,17 +81,26 @@
                         <td align="right">
                           <!-- MOSTRAR BOTON SI YA SE LEASIGNO UNA ACCION O SI ES UN PRODUCTO EXISTENTE -->
                         <template v-if ="solicitud.estatus != 4 && item.estatus != 4">
-                          <v-btn text small color="green" class="mx-1 mt-1 " 
+                          <v-btn outlined rounded small color="green" class="mx-1 mt-1 " 
                                  v-if="item.estatus > 0 || item.tipo_prod != 2"
                                  @click="MandarDeptoModal(item)"
                           >   
                             <v-icon>mdi-file-send</v-icon> 
                           </v-btn>
 
-                          <v-btn text small color="celeste" class="mx-1 mt-1" dark v-if="item.tipo_prod != 1" @click="validaTipoProducto(item)">   
+                           <v-btn outlined rounded small color="celeste" class="mx-1 mt-1" dark 
+                                  v-if="item.estatus == 0 && item.tipo_prod === 2"  
+                                  @click="validaTipoProducto(item)">   
                             <v-icon>mdi-eye</v-icon> 
                           </v-btn>
-                          <v-btn text small c class="mx-1 mt-1"  disabled v-else > <v-icon>mdi-eye</v-icon></v-btn>
+                          <v-btn text small color="celeste" class="mx-1 mt-1" dark v-else  @click="validaTipoProducto(item)">   
+                            <v-icon>mdi-eye</v-icon> 
+                          </v-btn>
+
+                          <v-btn text small color="rosa" class="mx-1 mt-1" v-if="item.tipo_prod === 2" @click="modifProd(item)">   
+                            <v-icon>create</v-icon> 
+                          </v-btn>
+                          <!-- <v-btn text small c class="mx-1 mt-1"  disabled v-else > <v-icon>mdi-eye</v-icon></v-btn> -->
 
                           <v-btn text small color="error" class="mx-1 mt-1" 
                                  @click="modalCancelar = true; accion=2; partidaAEditar= item">
@@ -109,6 +119,33 @@
               </v-card>
             </v-col>
 
+            <v-dialog v-model="crudSolicitud" persistent max-width="700">
+              <v-card class="pa-4 ">
+                <v-card-text class="font-weight-black my-1 " align="center">SOLICITUD DE PEDIDO</v-card-text>
+                <!-- //! SELECCION DEL DEPARTAMENTO  -->
+                <v-select
+                    v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
+                    dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
+                    v-if="modoVista === 1 || modoVista === 3"
+                ></v-select> 
+                  <v-select
+                    v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" v-else 
+                    dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled 
+                ></v-select> 
+                
+                <!-- //! FORMULARIOS  -->
+                <crudflexografia 
+                  :depto_id="depto.id" 
+                  :modoVista="modoVista"
+                  :parametros="parametros"
+                  :solicitud="solicitud"
+                  @modal="crudSolicitud = $event" 
+                />
+                  <!-- v-if="activaFormulario===1" -->
+
+              </v-card>
+            </v-dialog>
+    
             <!-- // !ESTE ES EL BUENO ECHALE GANAS PARA ENTENDERLE TE QUIERO MUCHO -->
             <v-dialog v-model="solicitarModal" persistent :width="anchoModal" height="200" >
               <v-card class="pa-4 ">
@@ -198,13 +235,14 @@
 
 <script>
   import {mapGetters, mapActions} from 'vuex';
-	import metodos        from '@/mixins/metodos.js';
-  import loading        from '@/components/loading.vue'
-  import overlay     from '@/components/overlay.vue'
-  import modificaciones from '@/views/Formularios/modificaciones.vue'
-  import flexografia    from '@/views/Formularios/flexografia.vue'
-  import digital        from '@/views/Formularios/digital.vue'
-  import enviarADeptos  from '@/components/enviarADeptos.vue'
+	import metodos         from '@/mixins/metodos.js';
+  import loading         from '@/components/loading.vue'
+  import overlay         from '@/components/overlay.vue'
+  import modificaciones  from '@/views/Formularios/modificaciones.vue'
+  import flexografia     from '@/views/Formularios/flexografia.vue'
+  import crudflexografia from '@/views/Formularios/CRUD/crud_flexografia.vue'
+  import digital         from '@/views/Formularios/digital.vue'
+  import enviarADeptos   from '@/components/enviarADeptos.vue'
 
   export default {
     mixins:[metodos],
@@ -213,6 +251,7 @@
       overlay,
       modificaciones,
       flexografia,
+      crudflexografia,
       digital,
       enviarADeptos
     },
@@ -221,7 +260,10 @@
       solicitud       : [],
       Vista           :'',
       anchoModal      : 500,
-      solicitarModal  : false, 
+      solicitarModal  : false,
+      crudSolicitud   : false,
+      
+      
       activaFormulario: 0 ,
       tablaModificar  :  false,
       parametros      : '',
@@ -273,9 +315,20 @@
         this.consultaDetalle(this.solicitud.id);
         this.consultaDepartamentos();
       },
-
-      validaTipoProducto(item){
+      
+      validaTipoProducto(item = []){
         switch (item.tipo_prod) {
+          case 1:
+            this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
+            this.modoVista        = 2;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+            this.Vista            = 'SOLICITUDES'
+            this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
+            this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
+            this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
+            this.depto = { id: item.dx }
+            this.solicitarModal   = true;    // ABRIR MODAL
+            break;
+
           case 2:
             this.anchoModal       = 800;   // ASIGNAR EL ANCHO DE LA MODAL
             this.modoVista        = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
@@ -300,6 +353,17 @@
         }
       },
 
+      modifProd(item){
+        // console.log('item', item)
+        this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
+        this.modoVista        = 4;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+        this.Vista            = 'SOLICITUDES'
+        this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
+        this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
+        this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
+        this.depto = { id: item.dx }
+        this.solicitarModal   = true;    // ABRIR MODAL
+      },
       cancelarSolicitud(){
         this.modalCancelar=false; this.overlay = true; 
         const payload = new Object();
@@ -346,7 +410,16 @@
         this.informacion = item;
         this.enviarDeptosModal = true;
 
+      },
+
+      agregarProducto(modoVista, items = []){
+        this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
+        this.modoVista        = modoVista;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+        this.parametros       = items;    // ASIGNAR LOS PARAMETROS A MANDAR
+        this.depto            = { id: 1 }
+        this.crudSolicitud   = true;    // ABRIR MODAL
       }
+      
     }
   }
 </script>

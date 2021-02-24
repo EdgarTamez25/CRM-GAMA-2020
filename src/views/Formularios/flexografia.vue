@@ -25,33 +25,33 @@
              <v-btn color="rosa" dark block small @click="pegarInfo()"> PEGAR INFORMACIÓN </v-btn> 
             </v-col>
 
-            <v-col cols="12" v-if=" !Loading && Vista === 'SOLICITUDES'">
+            <v-col cols="12" v-if=" !Loading && Vista === 'SOLICITUDES' && parametros.tipo_prod != 1 && modoVista != 4">
              <v-btn color="rosa" dark block small @click="copiarInfo()"> COPIAR INFORMACIÓN </v-btn> 
             </v-col>
              
             <!-- //! REFERENCIA DEL PRODUCTO  -->
-            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
+            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2 || modoVista === 4">
               <v-text-field 
                 v-model="referencia" hide-details dense label="REFERENCIA" 
                 filled color="celeste" class=" font-weight-black" 
               />
             </v-col>
             <!-- //! CANTIDAD  -->
-            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2">
+            <v-col cols="12" sm="6" v-if="!Loading && modoVista === 2 || modoVista === 4">
               <v-text-field 
                 v-model="cantidad" hide-details dense label="Cantidad" 
                 filled color="celeste" placeholder="Cantidad de material"
               />
             </v-col>
-             <!-- // !SELETOR DE MATERIALES  -->
-            <v-col cols="12" sm="6" v-if="ACTIVACAMPO">
-              <v-select
-                v-model="material" :items="materiales" item-text="nombre" item-value="id" outlined color="celeste"
-                dense hide-details label="Materiales" return-object placeholder="Materiales" 
-              ></v-select> 
+              <!-- // !SELETOR DE MATERIALES  -->
+            <v-col cols="12" sm="6" class="text-right my-0 py-0" v-if="ACTIVACAMPO">
+              <v-autocomplete
+                :items="materiales" v-model="material" item-text="nombre" item-value="id" label="Materiales" 
+                dense outlined hide-details return-object color="celeste" 
+              ></v-autocomplete>
             </v-col>
 
-            <v-col cols="12" sm="6">
+            <v-col cols="12" sm="6" class="my-0 py-0">
               <v-row>
                 <!-- // !INPUT PARA PANTONE  -->
                 <v-col cols="8"  align="center" class="my-0 py-0" v-if="ACTIVACAMPO">
@@ -67,14 +67,14 @@
                 <!-- // !CHIPS DE PANTONES   -->
                 <v-col cols="12" class="my-0 py-0 text-left">
                   <v-chip v-for="(item, i) in pantones" :key="i"
-                    class="ma-2" close :color="item" dark  @click:close="eliminaPanton(i)">
+                    class="ma-2" close color="rosa" outlined dark  @click:close="eliminaPanton(i)">
                     {{ item }}
                   </v-chip>
                 </v-col>
               </v-row>
             </v-col>
              <!-- // !SELECTOR DE ACABADOS    -->
-            <v-col cols="12" v-if="ACTIVACAMPO">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-select
                 v-model="acabado" :items="acabados" item-text="nombre" item-value="id" outlined color="celeste" 
                 dense hide-details label="Acabados" return-object multiple :menu-props="{ maxHeight: '400' }"
@@ -147,7 +147,8 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" class="my-3"  v-if="!Loading && modoVista === 2"/>
+      <v-col cols="12" class="my-3"  v-if="!Loading && modoVista === 2 || modoVista === 4"/>
+
       <v-col cols="12" class="text-right" v-if="modoVista===1 || modoVista === 3">
         <v-btn color="celeste" outlined small @click="validaEmit()" >
           {{ modoVista === 1? "Agregar Caracteristicas": "Agregar Modificaciones" }}
@@ -155,7 +156,7 @@
       </v-col>
 
       <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
-      <v-footer  absolute v-if="!Loading && modoVista === 2" >
+      <v-footer  absolute v-if="!Loading && modoVista === 2 || modoVista === 4" >
         <v-btn color="error" outlined small @click="$emit('modal',false)" >Cancelar </v-btn>
         <v-spacer></v-spacer>
         <v-btn color="rosa"    class="mx-1" dark small @click="realizadoFinalizado = true, modo= 1" 
@@ -219,6 +220,7 @@
     data: () => ({
       Loading        : true,
       titulo         : 'FLEXOGRAFÍA',
+      id_partida: null,
       tipo_producto  : '',
       valid          : true,
       id_producto  : null,
@@ -266,6 +268,7 @@
 
       modo: 0,
       realizadoFinalizado: false,
+      conceptosAEliminar:[],
     }),
 
     created(){ 
@@ -285,13 +288,24 @@
     }, 
 
     methods:{
-      ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto','copiarInfoDeSolicitud']), // IMPORTANDO USO DE VUEX (ACCIONES)
+      ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto','copiarInfoDeSolicitud','consultaDetalle']), // IMPORTANDO USO DE VUEX (ACCIONES)
       
       validarModoVista(){ 
+        // console.log('param', this.parametros)
+        this.limpiarCampos();
+
+        if( this.parametros.tipo_prod === 1){
+          this.tproducto  = { id: parseInt(this.parametros.tipo_prod) },
+          this.referencia = this.parametros.ft;
+          this.cantidad   = this.parametros.cantidad;
+          this.Loading    = false;
+          return
+        }
+
         this.consultaMateriales(this.depto_id);
         this.consultaAcabados(this.depto_id);
+        
         if(this.modoVista === 2){
-
           this.$http.post('caracteristicas', this.parametros).then(response =>{
             this.tproducto    = { id: parseInt(this.parametros.tipo_prod) },
             this.tipo_producto = this.tproductos[parseInt(this.parametros.tipo_prod) - 1].nombre.toUpperCase();
@@ -341,6 +355,34 @@
             this.Loading = false;
           })
 
+        }else if(this.modoVista === 4){
+            this.id_partida = this.parametros.id,
+            this.tproducto  = { id: this.parametros.tipo_prod };
+            this.cantidad   = this.parametros.cantidad;
+            this.referencia = this.parametros.ft;
+
+            this.$http.get('modificaciones/'+ this.parametros.id).then(res =>{
+              // console.log('consulta', res.body)
+              this.conceptosAEliminar  = []; let acabados = [], pantones =[]; 
+              for(let i=0; i< res.body.length; i++){
+                this.conceptosAEliminar.push(res.body[i].id);
+                res.body[i].concepto === 'Material'            ? this.material       = { id: parseInt(res.body[i].valor)}: '';
+                res.body[i].concepto === 'Etiqueta por rollo'  ? this.etqxrollo      = res.body[i].valor: ''
+                res.body[i].concepto === 'Medida del nucleo'   ? this.med_nucleo     = res.body[i].valor: ''     
+                res.body[i].concepto === 'Etiqueta al paso'    ? this.etqxpaso       = res.body[i].valor: ''      
+                res.body[i].concepto === 'Medida de desarrollo'? this.med_desarrollo = res.body[i].valor: '' 
+                res.body[i].concepto === 'Medida del eje'      ? this.med_eje        = res.body[i].valor: '' 
+                res.body[i].concepto === 'Ancho'               ? this.ancho          = res.body[i].valor: ''
+                res.body[i].concepto === 'Largo'               ? this.largo          = res.body[i].valor: ''
+                res.body[i].concepto === 'Orientacion'         ? this.checkActivo    = parseInt(res.body[i].valor): '';
+                res.body[i].concepto === 'Orientacion'         ? this.evaluaCheck(res.body[i].valor)   : '';
+                if(res.body[i].concepto === 'Pantone' ){ pantones.push( res.body[i].valor) }
+                if(res.body[i].concepto === 'Acabado' ){ acabados.push({id: parseInt(res.body[i].valor)})}
+              }
+                this.pantones = pantones; this.acabado  = acabados;
+            }).catch(error =>{
+              console.log('error', error)
+            })
         }else{
           this.limpiarCampos();
         }
@@ -383,21 +425,21 @@
         if(!this.checkActivo)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"      ; return };
 
         const detalle = new Object();
-        detalle.id             = this.id_producto;
-        detalle.id_material    = this.material.id;
-        detalle.acabados       = this.acabado;
-        detalle.acabadosAEliminar = this.acabadosAEliminar;
-        detalle.pantones       = this.pantones;
-        detalle.pantonesAEliminar = this.pantonesAEliminar;
-        detalle.etqxrollo      = this.etqxrollo;
-        detalle.med_nucleo     = this.med_nucleo;
-        detalle.etqxpaso       = this.etqxpaso;
-        detalle.med_desarrollo = this.med_desarrollo;
-        detalle.med_eje        = this.med_eje;
-        detalle.ancho          = this.ancho;
-        detalle.largo          = this.largo;
-        detalle.id_orientacion = this.checkActivo;
-        detalle.dx             = 1;
+              detalle.id             = this.id_producto;
+              detalle.id_material    = this.material.id;
+              detalle.acabados       = this.acabado;
+              detalle.acabadosAEliminar = this.acabadosAEliminar;
+              detalle.pantones       = this.pantones;
+              detalle.pantonesAEliminar = this.pantonesAEliminar;
+              detalle.etqxrollo      = this.etqxrollo;
+              detalle.med_nucleo     = this.med_nucleo;
+              detalle.etqxpaso       = this.etqxpaso;
+              detalle.med_desarrollo = this.med_desarrollo;
+              detalle.med_eje        = this.med_eje;
+              detalle.ancho          = this.ancho;
+              detalle.largo          = this.largo;
+              detalle.id_orientacion = this.checkActivo;
+              detalle.dx             = 1;
 
         this.snackbar = true; this.text ="Las caracteristicas se guardaron correctamente"; this.color ="green";
         this.$emit('detalle',detalle); // EMITIR DETALLE A CONTROL PRODUCTOS
@@ -407,7 +449,7 @@
       PrepararPeticion(){
         this.overlay = true; let payload = {};
         if(this.tproducto.id === 1){ //! FORMO ARRAY SI ES PRODUCTO EXISTENTE
-          payload = { id        : this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+          payload = { id        : this.modoVista === 1 ? this.consecutivo: this.parametros.id,
                       dx        : 1,
                       referencia: this.referencia,
                       tproducto : this.tproducto.id,
@@ -432,10 +474,14 @@
                       tproducto      : this.tproducto.id,
                       cantidad       : this.cantidad,
                       xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): '',
-                      id_dx          : this.modoVista === 2? this.parametros.id_dx: '' 
-
+                      id_dx          : this.modoVista === 2? this.parametros.id_dx: '', 
+                      conceptosAEliminar : this.conceptosAEliminar,
+                      pantonesAEliminar  : this.pantonesAEliminar,
+                      acabadosAEliminar  : this.acabadosAEliminar,
+                      id_partida         : this.id_partida
                     }
         }
+
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
       },
@@ -450,10 +496,13 @@
       },
 
       Actualizar(payload){
-        this.actualizaProducto( payload).then( res =>{
-          if(res){ this.TerminarProceso("El producto se modifico correctamente"); }
+        this.actualizaProducto(payload).then( res =>{
+          if(res){ 
+            this.TerminarProceso("El producto se modifico correctamente"); 
+          }
         }).catch( error =>{
-          console.log('putprod')
+          console.log('error',error)
+          // this.snackbar=true; this.text= error;
         }).finally(()=>{ 
           this.overlay = false
         })
@@ -462,9 +511,10 @@
 			TerminarProceso(mensaje){
         var me = this ;
         this.Correcto = true ; this.textCorrecto = mensaje;
-        setTimeout(function(){ me.Correcto = false }, 2000);
-        // setTimeout(function(){ me.$emit('modal',false)}, 2000);
-        // this.limpiarCampos();  //LIMPIAR FORMULARIO
+        setTimeout(() => { me.Correcto = false;  me.$emit('modal',false) }, 2000);
+        this.consultaDetalle(this.parametros.id_solicitud)
+        // setTimeout(() => { me.$emit('modal',false)}, 2000);
+        this.limpiarCampos();  //LIMPIAR FORMULARIO
       },
 
       limpiarCampos(){
@@ -495,11 +545,11 @@
       },
 
       agregarPantone(){ 
-        var esHexadecimal = false;
-        if( esHexadecimal = this.esHexadecimal(this.pantone) ){
+        // var esHexadecimal = false;
+        // if( esHexadecimal = this.esHexadecimal(this.pantone) ){
           this.pantones.push(this.pantone);
           this.pantone = '';
-        }
+        // }
       },
 
       esHexadecimal(pantone){ return /^#[0-9A-F]+$/i.test(pantone); },
@@ -516,9 +566,7 @@
                       }
                       // SE TIENE QUE METER A UN ARRAY EL OBJ DE CONCEPTO Y VALOR
         return payload;
-      },
-
-    
+      }, 
 
       agregaConceptos(){
         let arrayTemp = [];

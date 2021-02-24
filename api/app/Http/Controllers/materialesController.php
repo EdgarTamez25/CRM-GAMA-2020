@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB; //USAR ESCRITURA SQL
 class materialesController extends Controller
 {
     public function Materiales($dx){
-        $materiales = DB::select('SELECT * FROM materiales WHERE dx=?',[$dx]);
-        return $materiales ? $materiales : [];
+    	return $materiales = DB::select('SELECT * FROM materiales WHERE dx=?',[$dx]);
     } 
 }

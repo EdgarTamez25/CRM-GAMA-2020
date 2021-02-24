@@ -55,19 +55,29 @@
 					
 					</v-row>
 
-					<v-card-actions class="py-0 my-0">
-			      <v-text-field
-			        v-model="search"
-			        append-icon="search"
-			        label="Buscar solicitud"
-			        single-line
-			        hide-details
-			      ></v-text-field>
+					<!-- <v-card-actions class="py-0 my-0">
+			      
 			      <v-spacer></v-spacer>
-			      <!-- <v-btn small class="celeste" dark @click="NuevoCompromiso(1)">Agregar </v-btn> -->
-						<v-btn small  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
-			      <v-btn  class="gris" icon dark @click="consultaSolicitudes()" ><v-icon>refresh</v-icon> </v-btn>
-			    </v-card-actions>
+						
+			    </v-card-actions> -->
+
+					<v-row class="pa-1">
+						<v-col cols="12" sm="6" class="py-0 my-0">
+							<v-text-field
+								v-model="search"
+								append-icon="search"
+								label="Buscar solicitud"
+								single-line
+								hide-details
+							></v-text-field>
+						</v-col>
+
+						<v-col cols="12" sm="6" class="py-0 my-0  text-right">
+							<v-btn small class="ma-1" dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
+			      	<v-btn small class=" ma-1 celeste" dark      @click="nuevaSol.modalSolicitud = true">Agregar </v-btn>
+			      	<v-btn small class=" ma-1 gris" icon dark    @click="consultaSolicitudes()" ><v-icon>refresh</v-icon> </v-btn>
+						</v-col>
+					</v-row>
 					
 			    <v-data-table
 			      :headers="headers"
@@ -103,14 +113,42 @@
 			    </v-data-table>
 			  </v-card>
 
-					<v-dialog v-model="verNota"  hide-overlay width="500px">
-						<v-card	 class="pa-2" outlined>
-							<v-card-text class="font-weight-black  pa-2 subtitle-1" > {{ nota }} </v-card-text>
-							<v-card-text align="right" class="py-0">
-								<v-btn  outlined small color="red" @click="verNota = false"> Cerrar </v-btn>
-							</v-card-text>
-						</v-card>
-					</v-dialog>
+		    <overlay v-if="overlay"/>
+
+				<v-dialog v-model="verNota"  hide-overlay width="500px">
+					<v-card	 class="pa-2" outlined>
+						<v-card-text class="font-weight-black  pa-2 subtitle-1" > {{ nota }} </v-card-text>
+						<v-card-text align="right" class="py-0">
+							<v-btn  outlined small color="red" @click="verNota = false"> Cerrar </v-btn>
+						</v-card-text>
+					</v-card>
+				</v-dialog>
+
+				<v-dialog v-model="nuevaSol.modalSolicitud" persistent width="500px">
+					<v-card class="pa-2">
+						<v-card-text class="font-weight-black  pa-2 subtitle-1" >SOLICITUD </v-card-text>
+
+						<v-col cols="12" > <!-- CLIENTE -->
+							<v-autocomplete
+								:items="clientes" v-model="cliente" item-text="nombre" item-value="id" label="Clientes" 
+								dense outlined hide-details color="celeste" append-icon="people" return-object
+							></v-autocomplete>
+						</v-col>
+
+						<v-col>
+							<v-textarea
+								v-model="comentario" label="Nota"	rows="3" placeholder="Escribe aquí tus comentarios..." >
+							</v-textarea>
+						</v-col>
+
+						<v-card-actions>
+							<v-btn outlined small color="error" @click="nuevaSol.modalSolicitud = false">Cancelar</v-btn>
+							<v-spacer></v-spacer>
+							<v-btn v-if="nuevaSol.modo === 1" small color="success" @click="Preparar_Objeto()">Crear Solicitud</v-btn>
+							<v-btn v-if="nuevaSol.modo === 2" small color="success" @click="Preparar_Objeto()">Actualizar Solicitud</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
 
 
 				<!-- PAGINACION -->
@@ -128,10 +166,13 @@
 	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import  ExcelExport from '@/mixins/ExcelExport.js';
 	import {mapGetters, mapActions} from 'vuex';
+  import overlay         from '@/components/overlay.vue'
+
 
 	export default {
 		mixins:[ExcelExport,SelectMixin],
 		components: {
+      overlay,
 		},
 		data () {
 			return {
@@ -173,10 +214,19 @@
 				fecha2: '',
 				fechamodal2:false,
 
+				nuevaSol: { modalSolicitud: false,
+										modo: 1,
+									},
+				clientes	: [],
+				cliente		: {id:null, nombre:''},
+				comentario: '',
+				overlay   : false,
+
+
 				snackbar: false,
 				text		: '',
 				color		: 'error',
-				Historial: false,
+
 				dialog: false,
 				textDialog : "Guardando Información",
 				Correcto   : false,
@@ -191,6 +241,7 @@
 		created(){
 			this.fecha1 = this.mesAnteriorPrimerDia;
 			this.fecha2 = this.mesActualUltimoDia;
+			this.consultar_Clientes();
 			this.init();
 		},
 
@@ -210,6 +261,8 @@
 
 		computed:{
 			...mapGetters('Solicitudes'  ,['getSolicitudes','Loading']), // IMPORTANDO USO DE VUEX - (GETTERS)
+      ...mapGetters('Login' ,['getdatosUsuario']), 
+
 			tamanioPantalla () {
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':
@@ -241,6 +294,29 @@
 												}
 					this.guardaParametrosConsulta(payload);
 					this.consultaSolicitudes()
+			},
+
+			Preparar_Objeto(){
+
+				if(!this.cliente.id){ this.snackbar = true; this.text="NO PUEDES OMITIR EL CLIENTE"; this.color="green" ; return  };
+				this.overlay = true; this.nuevaSol.modalSolicitud = false;
+
+				const payload = new Object()
+							payload.id_cliente = this.cliente.id
+							payload.id_usuario = this.getdatosUsuario.id
+							payload.fecha      = this.traerFechaActual();
+							payload.hora       = this.traerHoraActual();
+							payload.nota       = this.comentario ? this.comentario : '';
+				
+				this.$http.post('crear.nueva.solicitud', payload).then( response =>{
+					this.snackbar = true; this.text= response.bodyText; this.color="green";
+					this.init();
+				}).catch( error =>{
+					this.snackbar = true; this.text= error.bodyText; this.color="error";
+				}).finally( ()=> { 
+					this.overlay = false;
+				})
+
 			},
 
 			abrirNota(nota){
