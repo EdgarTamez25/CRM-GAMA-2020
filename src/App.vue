@@ -78,43 +78,6 @@
         </template>
       </v-list>
 
-      <!-- RODUCCION -->
-      <!-- <v-list dense>
-        <template v-for="prod in AppControl">
-
-          <v-list-group  v-if="prod.produccion" :key="prod.title" v-model="prod.model" :prepend-icon="prod.model ? prod.icon : prod['icon-alt']"
-            color="rosa"
-          >
-            <template v-slot:activator>
-              <v-list-item>
-                <v-list-item-content >
-                  <v-list-item-title > 
-                   {{ prod.title}}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-
-            <v-list-item
-              v-for="(child, i) in prod.administracion"
-              :key="i"
-              :to="child.path"
-              dense
-            >
-              <v-list-item-content >
-                <v-list-item-title >
-                  {{ child.text }}
-                </v-list-item-title>
-              </v-list-item-content>
-               <v-list-item-action v-if="child.icon">
-                <v-icon>{{ child.icon }}</v-icon>
-              </v-list-item-action>
-            </v-list-item>
-          </v-list-group>
-        </template>
-      </v-list> -->
-
-
       <!-- CATALOGOS -->
       <v-list dense shaped>
         <template v-for="cat in AppControl">
@@ -164,13 +127,19 @@
     </v-navigation-drawer>
 
     <!-- <v-content class="ma-3"> -->
-    <v-content >
-      <router-view/>
-    </v-content>
+    <v-main >
+      <v-slide-y-transition mode="out-in">
+       <router-view/>
+      </v-slide-y-transition>
+    </v-main>
 
-    <v-snackbar top v-model="snackbar" :timeout="2000"  :color="color"> {{text}}
-      <v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+    <v-snackbar v-model="alerta.activo" multi-line :vertical="alerta.vertical" top right :color="alerta.color" > 
+      <strong> {{alerta.texto}} </strong>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+      </template>
     </v-snackbar>
+
 
     <!-- MODAL PARA LA MONEDA PREDETERMINADA -->
     <div class="text-center">
@@ -206,7 +175,8 @@
       </v-dialog>
     </div>
 
-    <v-app-bar app color="rosa" dark class="elevation-0" v-ripple dense v-if="getLogeado">
+       <!-- v-if="getLogeado" -->
+    <v-app-bar app color="rosa" dark class="elevation-0" v-ripple dense >
        <img src="http://producciongama.com:8080/CRM-GAMA-2020/imagenes/logo.png" height="40" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
 
@@ -229,6 +199,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-overlay v-if="blocked">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
    
   </v-app>
 </template>
@@ -261,12 +238,10 @@ export default {
      AppControl: [
         {
           admin: [ 
-            { text: 'Inicio'      ,icon: 'home'                       ,path: '/inicio'},
+            // { text: 'Inicio'      ,icon: 'home'                       ,path: '/inicio'},
             { text: 'Compromisos' ,icon: 'chrome_reader_mode'         ,path: '/compromisos'},
-            // { text: 'Pendientes'  ,icon: 'ballot'             ,path: '/Pendientes'},
             { text: 'Solicitudes' ,icon: 'ballot'                     ,path: '/solicitudes'},
             { text: 'Desarrollo de proyectos' ,icon: 'mdi-monitor-screenshot' ,path: '/desarrollo/proyectos'},
-
             ],
         },
 
@@ -278,19 +253,10 @@ export default {
             { text: 'Productos'            ,icon: 'print',path: '/productos'},
             { text: 'Productos por cliente',icon: 'mdi-printer-3d',path: '/productos-por-cliente'},
             { text: 'Ordenes de Trabajo'   ,icon: 'mdi-text-box-check',path: '/ordenes-de-trabajo'},
-
-            // { text: 'Analisis de Fases' ,icon: 'assessment' ,path: '/analisis-fases'},
-
           ],
         },
 
-        // {
-        //   icon: 'menu_book',
-        //   title :' Producción',
-        //   model: true,
-        //   produccion: [ 
-        //   ],
-        // },
+       
 
         {
           icon: 'account_box',
@@ -316,23 +282,50 @@ export default {
 				monedas    : [],
         Moneda     : '',
         // SNACKBAR
-        snackbar: false,
-				text		: '',
-        color		: 'green',
+        alerta: { activo: false, texto:'', color:'error', vertical:true },
         loading: true,
+        blocked: true,
   }),
 
   created(){
+     // this.overlay = true;
+    if (typeof(Storage) !== "undefined") {
+        // VERIFICO SI EXISTE UN USUARIO ACTIVO 
+        if(localStorage.getItem("KeyLogger") != null){
+          this.validaSession().then( response =>{ // VERIFICO SI LA SESSION DEL KEYLOGGER ESTA ACTIVA
+            this.ObtenerDatosUsuario(response.id_usuario).then(response =>{
+              this.alerta = { activo: true, texto: `HOLA DE NUEVO ${ response[0].nombre }`, color :'success', vertical:true  };
+              this.blocked = false;  // DESACTIVO BLOCKEO
+            }).catch( error=>{      // OBTENGO LA INFORMACION DEL USUARIO
+              this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
+            });  
+          }).catch( error =>{
+            console.log('Error validacion', error.bodyText)
+            // window.location.href = "http://localhost:8081/";
+          })
+          if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
+            this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
+          }
+        }else{ 
+            console.log('NO HAY KEYLOG')
+          // window.location.href = "http://localhost:8081/";
+        }
+    } else {
+      console.log('NO ES COMPATIBLE LOCAL')
+      // window.location.href = "http://localhost:8081/";
+    }
+    
     // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
-    this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
-    this.consultaMonedas()  // CONSULTAR MONEDAS VUEX
-    this.ActualizaMoneda()  // CONSULTO LA MONEDA PREDETERMINADA
+    // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
+    // this.consultaMonedas()  // CONSULTAR MONEDAS VUEX
+    // this.ActualizaMoneda()  // CONSULTO LA MONEDA PREDETERMINADA
   },
 
   computed:{
     // IMPORTANDO USO DE VUEX - ZONAS (GETTERS)
     ...mapGetters('Monedas' ,['getMonedas']), 
     ...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
+
   },
 
   mounted(){
@@ -341,12 +334,13 @@ export default {
 
   methods:{
     ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
-    ...mapActions('Login' ,['salirLogin']), 
+    ...mapActions('Login' ,['salirLogin','ObtenerDatosUsuario','validaSession']), 
 
     salir(){
       this.cerrar_sesion= false;
       this.salirLogin()
       this.$store.dispatch("salir")
+      
     },
 
     BuscarPredeterminado(){
@@ -363,7 +357,7 @@ export default {
       this.guardarMonedaPredeterminada(this.id_moneda).then(response =>{
         if(response){
           this.dialogMoneda = false; 
-          this.snackbar = true ; this.text = "MONEDA ACTUALIZADA CORRECTAMENTE";
+          this.alerta = { activo: true, texto: "MONEDA ACTUALIZADA CORRECTAMENTE", color:'error', vertical:true }
         }
       })
     },

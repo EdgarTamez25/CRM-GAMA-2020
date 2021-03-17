@@ -1,7 +1,7 @@
 import Vue            from 'vue'
 import VueRouter      from 'vue-router'
 import store          from '@/store'
-import Login          from '@/views/AppController/Login.vue'
+// import Login          from '@/views/AppController/Login.vue'
 import Home 	        from '@/views/Home.vue'
 import Inicio 	      from '@/views/Inicio.vue'
 
@@ -15,8 +15,8 @@ import ControldeFases from '@/views/Compromisos/controldeFases.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  { path:'/'				       , name: 'Login'        , component: Login         , meta: { libre:true }},
-  { path:'/inicio'				 , name: 'Inicio'       , component: Inicio        , meta: { libre:true }},
+  // { path:'/:id'				       , name: 'Login'        , component: Login         , meta: { libre:true }},
+  { path:'/'				 , name: 'Inicio'       , component: Inicio        , meta: { libre:true }},
   // { path:'/home'			     , name: 'Home'	        , component: Home          , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true, VEND:true, CHOFER:true, EXTRA:true, DDD:true  }},
   { path:'/compromisos'    , name:'compromisos'   , component: Compromisos   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
   { path:'/solicitudes'    , name:'solicitudes'   , component: Solicitudes   , meta: { ADMIN:true, SUPER:true, ALMACEN:true, VENTAS:true, SCLIENTE:true }},
@@ -91,9 +91,7 @@ router.beforeEach( (to, from, next) => {
       next()
     }
   }else{
-    next({
-      name: 'Login'
-    })
+    next({ name: 'Inicio'   })
   }
 })
 

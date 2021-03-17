@@ -17,7 +17,7 @@ class solicitudesController extends Controller
 						'hora'		   =>  $req -> hora ,
 						'nota'       =>  $req -> nota
 				]
-		);
+			);
 			return $crearSolicitud ? response('Se creo correctamente', 200) : 
 															 response('Ocurrio un error',500);   //!RETORNO ID ENCONTRADO O FALSO SI HAY UN ERROR
 		}

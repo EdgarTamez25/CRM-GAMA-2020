@@ -1,5 +1,5 @@
 <template>
-  <v-content class="pa-0 ma-1" fluid>
+  <v-main class="pa-0 ma-1" fluid>
     <v-card flat >
 
       <v-row no-gutters justify="center">
@@ -10,5 +10,6 @@
         </v-col>
       </v-row>
     </v-card>
-  </v-content>
+    
+  </v-main>
 </template>

@@ -19,7 +19,45 @@ export default {
 			const fecha = { fechaInicial: primerDia , fechaFinal: ultimoDia}
 			return fecha;
 		},
-		
+
+		traerNivelxSistema(id_sistema = 1, niveles){
+			// console.log('niveles', niveles)
+			// console.log('id_sistema', id_sistema)
+			if(!niveles.length){ return };
+			this.nivelesxsistema = [];
+			const sistemas = [ 
+				{ id: 1, niveles:[ 1,2,3,4,5,6,13] }, // CRM-GAMA-2020
+				{ id: 2, niveles:[ 3,,12,13 ] },  		// CRM-GAMA-MOVIL 
+				{ id: 3, niveles:[ 1,7,13 ] },  		  // REGISTRO ENTRADA Y SALIDA 
+				{ id: 4, niveles:[ 1,10,13 ] },  		  // MEJORA CONTINUA 
+				{ id: 5, niveles:[ 1,2,9,13 ] }   		// PROGRAMACION FLEXO 
+			]
+			
+			for(let i=0; i< sistemas[id_sistema-1].niveles.length; i++){
+				for( let j=0; j< niveles.length ; j++ ){
+					if(sistemas[id_sistema-1].niveles[i] === niveles[j].id ){
+						this.nivelesxsistema.push(niveles[j])
+					}
+				}
+			}
+
+		},
+
+		consultaNiveles(){
+			this.$http.get('niveles').then(response =>{
+				this.niveles = response.body
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
+
+		consultaSistemas(){
+			this.$http.get('sistemas').then(response =>{
+				this.sistemas = response.body
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
 
 		consultaDeptos(){
 			this.$http.get('departamentos').then(response =>{

@@ -1,5 +1,5 @@
 <template>
-  <v-content class="pa-0 ma-3">
+  <v-main class="pa-0 ma-3">
   	<v-row class="justify-center">
   		<v-col cols="12">
 				<v-card-actions class="font-weight-black headline"> USUARIOS </v-card-actions>
@@ -65,7 +65,7 @@
 		    </v-dialog>
   		</v-col>
   	</v-row>
-  </v-content >
+  </v-main >
 </template>
 
 <script>

@@ -3,8 +3,11 @@
 		<v-row justify="center">
 			<v-col cols="12" >
 				
-				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
-					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+				<v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+					<strong> {{alerta.texto}} </strong>
+					<template v-slot:action="{ attrs }">
+						<v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+					</template>
 				</v-snackbar>
 				
 				<v-card-actions class="pa-0" >
@@ -16,7 +19,7 @@
 				<v-divider class="ma-2"></v-divider>
 				<!-- <v-form> -->
 				<v-row>
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-text-field
 							append-icon="person"
 							label="Nombre"
@@ -29,7 +32,7 @@
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-text-field
 							append-icon="android"
 							label="Usuario"
@@ -42,7 +45,7 @@
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-text-field
 							append-icon="email" 
 							label="Correo"
@@ -55,23 +58,7 @@
 						></v-text-field>
 					</v-col>
 
-					<v-col cols="12" lg="6">
-						<v-select
-							v-model="nivel"
-							:items="niveles"
-							item-text="nombre" 
-							item-value="id"
-							label="Nivel"
-							placeholder="Nivel de acceso"
-							append-icon="show_chart"
-							dense
-							hide-details
-							return-object
-							outlined
-						></v-select>
-					</v-col>
-
-					<v-col cols="12" lg="6"> 
+					<v-col cols="12" sm="6"> 
 						<v-select
 							:items="sucursales"
 							item-text="nombre"
@@ -88,23 +75,79 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-autocomplete
 							:items="departamentos" v-model="departamento" item-text="nombre" item-value="id" label="Departamento" 
 							dense outlined hide-details return-object color="celeste" append-icon="folder_shared"
 						></v-autocomplete>
 					</v-col>
 
-					<v-col cols="12" lg="6">
+					<v-col cols="12" sm="6">
 						<v-autocomplete
 							:items="puestos" v-model="puesto" item-text="nombre" item-value="id" label="Puesto" 
 							dense outlined hide-details return-object color="celeste" append-icon="mdi-account-tie"
 						></v-autocomplete>
 					</v-col>
 
+					<v-col cols="12" sm="6">
+						<v-autocomplete
+							:items="sistemas" v-model="sistema" item-text="nombre" item-value="id" label="Sistemas" 
+							dense outlined hide-details return-object color="celeste" append-icon="smi-desktop-classic"
+						></v-autocomplete>
+					</v-col>
+
+					<v-col cols="12"  sm="6">
+						<v-autocomplete
+							:items="nivelesxsistema" v-model="nivel" item-text="nombre" item-value="id" label="Niveles" 
+							dense outlined hide-details return-object color="celeste" append-icon="show_chart"
+						></v-autocomplete>
+					</v-col>
+
+					<v-col cols="12" class="py-0 text-right" v-if="!editarAcceso">
+						<v-btn small block color="celeste" dark @click="sistemaUsuario(modo=1)"> Agregar acceso <v-icon>add</v-icon>  </v-btn>
+					</v-col>
+
+					<v-col  cols="6"   class="py-0" v-if="editarAcceso">
+						<v-btn small block  color="error" dark @click="editarAcceso= false"> Cancelar <v-icon right>mdi-close</v-icon> </v-btn>
+					</v-col>
+					<v-col  cols="6"   class="py-0" v-if="editarAcceso">
+						<v-btn small block color="celeste" dark @click="sistemaUsuario(modo=2)"> Editar acceso <v-icon>add</v-icon>  </v-btn>
+						<!-- <v-btn small block  color="celeste" dark @click="actualizaAcceso(item)"> Editar <v-icon right>edit</v-icon>  </v-btn> -->
+					</v-col>
+<!-- {{ getSistemasUsuario }} -->
+					<v-col cols="12">
+						<v-card outlined >
+							<v-simple-table fixed-header  dense v-if="getSistemasUsuario.length">
+								<template v-slot:default>
+									<thead>
+										<tr> 
+												<th class="text-left"> Sistema </th>
+												<th class="text-left"> Nivel    </th>
+												<th class="text-left"> Acción   </th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in getSistemasUsuario" :key="item.id">
+											<td>{{ item.nomsistema }}</td>
+											<td>{{ item.nomnivel }}</td>
+											<td> 
+												<v-btn small text color="success" @click="ediarAcceso(item)"> <v-icon> edit </v-icon>  </v-btn> 
+												<v-btn small text color="error"   @click="eliminar_sistema_usuario(item.id)"> <v-icon> delete </v-icon>  </v-btn> 
+											</td>
+										</tr>
+									</tbody>
+									
+								</template>
+							</v-simple-table>
+							<v-card-text v-if="!getSistemasUsuario.length"> No ha agregado ningun elemento.</v-card-text>
+						</v-card>
+					</v-col>
+					
+
+
 					<template v-if="param === 1">
-						<v-col cols="12" lg="6"/>
-						<v-col cols="12" lg="6">
+						<!-- <v-col cols="12" sm="6"/> -->
+						<v-col cols="12" sm="6">
 							<v-text-field
 								v-model="password"
 								:append-icon="show1 ? 'visibility_off' : 'visibility'"
@@ -119,7 +162,7 @@
 							></v-text-field>
 						</v-col>
 
-						<v-col cols="12" lg="6">
+						<v-col cols="12" sm="6">
 							<v-text-field
 								v-model="password2"
 								:append-icon="show2 ? 'visibility_off' : 'visibility'"
@@ -135,13 +178,13 @@
 						</v-col>
 					</template>
 
-					<v-col cols="12"   v-show="param === 2" class="text-right pa-4"> <!-- BOTON PARA MOSTRAR CONTRASEÑAS -->
-						<v-btn small block rounded color="celeste" dark  @click="cambiaPassword = !cambiaPassword" v-if="cambiaPassword"> Cambiar Contraseña	</v-btn>
-						<v-btn small block rounded color="gris" dark @click="cambiaPassword = !cambiaPassword" v-else > Cancelar </v-btn>
+					<v-col cols="12" sm="6" offset-sm="6" v-show="param === 2" class="text-right pa-4"> <!-- BOTON PARA MOSTRAR CONTRASEÑAS -->
+						<v-btn small block  color="rosa" dark  @click="cambiaPassword = !cambiaPassword" v-if="cambiaPassword"> Cambiar Contraseña	</v-btn>
+						<v-btn small block  color="gris" dark @click="cambiaPassword = !cambiaPassword" v-else > Cancelar </v-btn>
 					</v-col>
 
 					<template v-if="!cambiaPassword">
-						<v-col cols="12" lg="6">
+						<v-col cols="12" sm="6">
 							<v-text-field
 								v-model="password"
 								:append-icon="show1 ? 'visibility_off' : 'visibility'"
@@ -155,7 +198,7 @@
 								@click:append="show1 = !show1"
 							></v-text-field>
 						</v-col>
-						<v-col cols="12" lg="6">
+						<v-col cols="12" sm="6">
 							<v-text-field
 								v-model="password2"
 								:append-icon="show2 ? 'visibility_off' : 'visibility'"
@@ -172,50 +215,35 @@
 					</template>
 				</v-row>
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
-				<v-card-actions>
-					
-					<v-dialog v-model="borrarModal" persistent max-width="400" v-if="param === 2"> <!-- PROCESO PARA ELIMINAR  -->
-            <template v-slot:activator="{ on }" >
-              <v-btn small outlined color="red darken-4" dark v-on="on">Eliminar</v-btn>
-            </template>
-            <v-card>
-              <v-col cols="12"  class="pa-4">
-                <strong >¿ ESTAS SEGURO DE ELIMINAR A ESTÉ USUARIO ?</strong>
-              </v-col>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="red darken-1"   text small @click="borrarModal = false">Cancelar</v-btn>
-                <v-btn color="green darken-1" dark small @click="borrar">Eliminar </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog> <!-- FIN DEL PROCESO PARA ELIMINAR  -->
-
+				
+				<div class="mt-5"></div>
+				<v-footer absolute >		
 					<v-spacer></v-spacer>
-					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
-             Confirmar  
+					 <v-btn  :disabled="overlay" persistent :loading="overlay" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
+             Guardar Información 
           </v-btn>
-					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
+					<v-btn  :disabled="overlay" persistent :loading="overlay" dark center class="white--text" color="success" @click="validaInfo" v-else>
              Actualizar  
           </v-btn>
-
-          <v-dialog v-model="dialog" hide-overlay persistent width="300"> <!-- PROCESO DE ESPERA -->
-            <v-card :color="colorDialog" dark >
-              <v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
-                <br>
-                <v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-
-					<v-dialog v-model="Correcto" hide-overlay persistent width="350"> <!-- PROCESO CORRECTO -->
-            <v-card :color="colorCorrecto"  dark class="pa-3">
-							<h3><strong>{{ textCorrecto }} </strong></h3>
-            </v-card>
-          </v-dialog>
-
-				</v-card-actions>
+				</v-footer>
 			</v-col>
 		</v-row>
+		<overlay v-if="overlay"/>
+		<!-- <v-dialog v-model="borrarModal" persistent max-width="400" v-if="param === 2"> 
+					<template v-slot:activator="{ on }" >
+						<v-btn small outlined color="red darken-4" dark v-on="on">Eliminar</v-btn>
+					</template>
+					<v-card>
+						<v-col cols="12"  class="pa-4">
+							<strong >¿ ESTAS SEGURO DE ELIMINAR A ESTÉ USUARIO ?</strong>
+						</v-col>
+						<v-card-actions>
+							<v-spacer></v-spacer>
+							<v-btn color="red darken-1"   text small @click="borrarModal = false">Cancelar</v-btn>
+							<v-btn color="green darken-1" dark small @click="borrar">Eliminar </v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>  -->
 	</v-container>
 	
 </template>
@@ -223,10 +251,13 @@
 <script>
 	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex'
+	import overlay         from '@/components/overlay.vue'
+	var md5 = require('md5'); 
 	
 	export default {
 		mixins:[SelectMixin],
 	  components: {
+			overlay,
 		},
 		props:[
 			'param',
@@ -248,17 +279,16 @@
 				nombre		: '',
 				correo		: '',
 				nivel 		: {id:null, nombre:''},
-				niveles: [{ id:1, nombre:'Administrador'},
-									{ id:2, nombre:'Supervisor'},
-									{ id:3, nombre:'Vendedor'},
-									{ id:4, nombre:'Chofer'},
-									{ id:5, nombre:'Almacén'},
-									{ id:6, nombre:'Ventas'},
-									{ id:7, nombre:'Servicio al Cliente'},
-									{ id:8, nombre:'Sin seleccionar'},
-									{ id:9, nombre:'Desarrollo de Proyectos'},
+				niveles   :[],
+				nivelesxsistema: [],
 
-								],
+				idAEditar: null,
+				accesosAEdit:{},
+				editarAcceso: false,
+				accesosAEditar:[],
+
+				sistema: { id: null, nombre:'' },
+				sistemas:[],
 
 				// SELECTORES
 				sucursal     : { id:null, nombre: ''},
@@ -269,15 +299,9 @@
 				puesto: {id:null, nombre:''},
 				
 				// ALERTAS
-				snackbar: false,
-				text		: '',
-				color		: 'error',
-				dialog : false,
-				textDialog : "Guardando Información",
-				Correcto   : false,
-				colorCorrecto: 'green',
-				textCorrecto: '',
-				colorDialog: 'blue darken-4',
+        alerta: { activo: false, texto:'', color:'error', vertical:true },
+				overlay    : false,
+				correcto   : true,
 				// BOTON DE BORRAR
 				borrarModal: false
 			}
@@ -287,12 +311,15 @@
 			this.consultarSucursales(); //MANDO A CONSULTAR SUCURSALES A MIXINS
 			this.consultaPuestos();   
 			this.consultaDeptos();
+			this.consultaNiveles();
+			this.consultaSistemas();
 			this.validarModoVista(); 	  // VALIDO EL MODO DE LA VISTA
 		},
 			
 		computed:{
 			// IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
-			...mapGetters('Usuarios'  ,['getUsuarios']),
+      ...mapGetters('Login' ,['getdatosUsuario']), 
+			...mapGetters('Usuarios'  ,['getUsuarios','getSistemasUsuario','SistemasUsuarioAEdit']),
 		},
 
 		watch:{
@@ -300,140 +327,124 @@
 				this.cambiaPassword= true
 				this.validarModoVista();
 			},
+
+			sistema: function(){
+				if(this.sistema.id != null){
+					this.traerNivelxSistema(this.sistema.id, this.niveles);
+				}
+			}
 		},
 
 		methods:{
 			// IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
-			...mapActions('Usuarios'  ,['consultaUsuarios']),
+			...mapActions('Usuarios'  ,['consultaUsuarios',
+																	'agregar_sistema_usuario',
+																	'editar_sistema_usuario',
+																	'eliminar_sistema_usuario',
+																	'limpiar_sistema_usuario',
+																	'accesos_usuario_consulta',
+																]),
 
 			validarModoVista(){
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
 					this.id_usuario     = this.edit.id
 					this.nombre 				= this.edit.nombre
-					this.correo 				= this.edit.correo
-					this.PasswordActual = this.edit.password
-					this.sucursal     = { id: this.edit.id_sucursal, nombre: this.edit.nomsuc}
-					this.Sucursal 			= this.edit.nomsuc
-					this.foto 					= ''
 					this.usuario        = this.edit.usuario
-					this.nivel          = { id    : this.niveles[this.edit.nivel-1].id , 
-																	nombre: this.niveles[this.edit.nivel-1].nombre
-																}
-					this.departamento   = { id:this.edit.id_depto, nombre: this.edit.nomdepto };
-					this.puesto 				= { id:this.edit.id_puesto, nombre: this.edit.nompuesto };
-
+					this.correo 				= this.edit.correo
+					this.PasswordActual = this.edit.password 
+					this.sucursal       = { id:this.edit.id_sucursal  };
+					this.departamento   = { id:this.edit.id_depto     };
+					this.puesto 				= { id:this.edit.id_puesto    };
+					this.accesos_usuario_consulta(this.edit.id).then( response =>{
+						this.accesosAEdit = response.map( item => { return item.id	})
+					});
+					// this.accesosAEditar = this.getSistemasUsuario 
 				}else{
 				this.limpiarCampos()
 				}
 			},
 
 			validaInfo(){
-				if(!this.nombre)	 { this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL EMPLEADO"   ; return }
-				if(!this.usuario)	 { this.snackbar = true; this.text="No puedes omitir el USUARIO"   ; return }
-				if(!this.correo)	 { this.snackbar = true; this.text="No puedes omitir el CORREO" ; return }
-				if(!this.nivel.id || this.nivel.id === 8)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
-				// if(this.nivel.id === 7)    { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
-				if(!this.sucursal.id) { this.snackbar = true; this.text="No puedes omitir la SUCURSAL"; return }
+				if(!this.nombre)	    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL NOMBRE DEL EMPLEADO' , color:'error'} ; return };
+				if(!this.usuario)	    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL NOMBRE DE USUARIO'   , color:'error'} ; return };
+				if(!this.correo)	    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL CORREO ELECTRONIO'   , color:'error'} ; return };
+				if(!this.sucursal.id) { this.alerta = { activo: true, texto:'NO PUEDES OMITIR LA SUCURSAL'  				  , color:'error'} ; return };
+				if(!this.departamento.id) { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL DEPARTAMENTO'	  , color:'error'} ; return };
+				if(!this.puesto.id)   { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL PUESTO'  				    , color:'error'} ; return };
 
-				if(this.param === 1){
-					if(!this.password) { this.snackbar = true; this.text="No puedes omitir la Contraseña"; return }
+
+				if(this.param === 1){ // SE EJECUTA SI ESTA LA VISTA EN MODO "CREAR" => 1
+					if(!this.password) { this.alerta = { activo: true, texto:'NO PUEDES OMITIR LA CONTRASEÑA' , color:'error'} ; return }
 					if(this.password.localeCompare(this.password2) ){
-						this.snackbar = true; this.text="Las contraseñas no coinciden"; return
+						this.alerta = { activo: true, texto:'LAS CONTRASEÑAS NO COINCIDEN' , color:'error'}; return;
 					}
-					var md5 = require('md5');
 					this.PasswordAEdit = md5(this.password)
 					this.PrepararPeticion()
 				}
 				
-				if(this.param === 2){
+				if(this.param === 2){ // SE EJECUTA SI ESTA LA VISTA EN MODO "EDITAR" => 2
 					if(!this.cambiaPassword){
-						// COMPARO LAS CONTRASEÑAS => TIENEN QUE SER IGUAL
-						if(this.password.localeCompare(this.password2) ){
-							this.snackbar = true ; this.text = "Las contraseñas no coinciden"
-							return
+						if(this.password.localeCompare(this.password2) ){ // COMPARO LAS CONTRASEÑAS => TIENEN QUE SER IGUAL
+							this.alerta = { activo: true, texto:'LAS CONTRASEÑAS NO COINCIDEN' , color:'error'}; return;
 						}else if(this.password){
-							// ASIGNO LA NUEVA CONTRASEÑA A VARIABLE PARA GRABAR
-							var md5 = require('md5');
-							this.PasswordAEdit = md5(this.password)
-							this.PrepararPeticion()
+							this.PasswordAEdit = md5(this.password) // ASIGNO LA NUEVA CONTRASEÑA A VARIABLE PARA GRABAR
+							this.PrepararPeticion() // MANDO A PREPARAR EL OBJETO.
 						}
 					}else{
-						// SI NO SE MODIFICO LA CONTRASEÑA CONSERVO LA ACTUAL
-						this.PasswordAEdit = this.PasswordActual
-						this.PrepararPeticion()
+						this.PasswordAEdit = this.PasswordActual // SI NO SE MODIFICO LA CONTRASEÑA CONSERVO LA ACTUAL
+						this.PrepararPeticion() // MANDO A PREPARAR EL OBJETO.
 					}
 				}
 			},
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
-        let formData = new FormData(); // creamos una variable tipo FormData
-				formData.append('file', this.file);
+				const payload = new Object();
+							payload.nombre       = this.nombre;
+							payload.usuario      = this.usuario.toUpperCase();
+							payload.correo       = this.correo,
+							payload.id_sucursal  = this.sucursal.id,
+							payload.id_depto     = this.departamento.id
+							payload.id_puesto    = this.puesto.id,
+							payload.password     = this.PasswordAEdit,
+							payload.accesosAEdit = this.accesosAEdit
+							payload.accesos      = this.getSistemasUsuario
 
-				const payload = { nombre	    : this.nombre,
-													correo	    : this.correo,
-													password		: this.PasswordAEdit,
-													nivel       : this.nivel.id,
-													id_sucursal	: this.sucursal.id,
-													usuario     : this.usuario.toUpperCase(),
-													foto       : '',
-													id_depto    : this.departamento.id,
-													id_puesto   : this.puesto.id,
-													estatus: 1 
-												}
-											// console.log('pay', payload)
+				console.log('pay', payload)
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearUsuario(payload): this.ActualizarUsuario(payload);
 			},
 
 			CrearUsuario(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ;setTimeout(() => (this.dialog = false), 2000)
-				
-				// MANDO A INSERTAR CLIENTE
-				this.$http.post('usuarios', payload).then((response)=>{
-					
-					if(response.body.error){ 
-						this.MensajeError(response.body.mensaje)
-						return;
-					}
-
-					this.TerminarProceso(response.body);					
+				this.overlay = true;								
+				this.$http.post('usuarios', payload).then((response)=>{  // MANDO A INSERTAR CLIENTE
+					 this.alerta = { activo: true, texto: response.bodyText , color:'success'}
+					this.TerminarProceso();					
 				}).catch(error =>{
 					console.log('error',error)
-				})
+					 this.alerta = { activo: true, texto: error.bodyText , color:'error'}
+				}).finally(()=>{ this.overlay = false })
 			},
 
 			ActualizarUsuario(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ; this.textDialog ="Actualizando Información" ; this.colorDialog ="blue darken-4"
-				setTimeout(() => (this.dialog = false), 2000)
-
+				this.overlay = true;								
 				this.$http.put('usuarios/'+ this.edit.id, payload).then((response)=>{
-					if(response.body.error){ 
-						this.MensajeError(response.body.mensaje)
-						return;
-					}
-					this.TerminarProceso(response.body);					
-				})
+					this.alerta = { activo: true, texto: response.bodyText , color:'success'}
+					this.TerminarProceso();						
+				}).catch(error =>{
+					console.log('error',error)
+					 this.alerta = { activo: true, texto: error.bodyText , color:'error'}
+				}).finally(()=>{ this.overlay = false })
 			},
 
-			TerminarProceso(mensaje){
-				var me = this ;
-				this.dialog 			  = false  ; this.Correcto 		 = true; 
-				this.colorCorrecto	= "green"; this.textCorrecto = mensaje;
-				setTimeout(function(){ me.$emit('modal',false)}, 2000);
+			TerminarProceso(){
+				let that = this;
+				// setTimeout(() => { that.correcto = false    }, 2000);
+				setTimeout(() => { that.$emit('modal',false)}, 2000);
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
 				this.consultaUsuarios() //ACTUALIZAR CONSULTA DE USUARIOS
 			},
-
-			MensajeError(mensaje){
-				this.dialog			  	= false	; this.Correcto 		= true ; 
-				this.colorCorrecto	="red"	; this.textCorrecto = mensaje;
-				setTimeout(() => (this.Correcto = false), 2000)
-			},
-
 			borrar(){
 				this.borrarModal = false; // DESACTIVA LA ALERTA 
 				this.dialog = true ; // ACTIVA EL MODAL DE ESPERA 
@@ -447,17 +458,91 @@
 				})
 			},
 
+			sistemaUsuario(modo){
+				if(!this.sistema.id){ this.alerta = { activo: true, texto:'Olvidaste seleccionar un sistema', color:'error', vertical:true  }; return } ;
+				if(!this.nivel.id)  { this.alerta = { activo: true, texto:'Olvidaste seleccionar un nivel', color:'error', vertical:true    }; return } ;
+				
+				if(this.validaSistemaUsuario(this.sistema.id, modo)){
+						this.alerta = { activo: true, texto:'Este sistema ya se encuentra en la lista.', color:'error', vertical:true }; 
+						return; 
+				}
+				
+				switch (modo) {
+					case 1:
+						console.log('modo', modo)
+						const data1 = new Object();
+									data1.id_sistema =  this.sistema.id;
+									data1.nomsistema =  this.sistema.nombre;
+									data1.id_nivel   =  this.nivel.id;
+									data1.nomnivel   =  this.nivel.nombre;
+
+						this.agregar_sistema_usuario(data1).then( response =>{
+							this.sistema = { id: null, nombre:'' }; this.nivel   = { id: null, nombre:'' };
+							this.alerta  = { activo: true, texto: response , color:'success', vertical:true   }
+						});
+						break;
+
+					case 2:
+						console.log('modo', modo)
+						const data2 = new Object();
+									data2.id         =  this.accesosAEdit.id;
+									data2.id_sistema =  this.sistema.id;
+									data2.nomsistema =  this.sistema.nombre;
+									data2.id_nivel   =  this.nivel.id;
+									data2.nomnivel   =  this.nivel.nombre;
+
+						this.editar_sistema_usuario(data2).then( response =>{
+							this.sistema = { id: null, nombre:'' }; this.nivel = { id: null, nombre:'' }; this.editarAcceso = false;
+							this.alerta = { activo: true, texto: response , color:'success', vertical:true   }
+						});
+						break;
+				}
+				// this.accesos.push({ sistema: this.sistema.id , nivel: this.nivel.id })
+			},
+
+			validaSistemaUsuario(id, modo){
+				let error = false;
+				if(modo === 1){
+					for(let i = 0; i< this.getSistemasUsuario.length;i++){
+						if(this.getSistemasUsuario[i].id_sistema === id){
+							error = true;
+						}
+					}
+				}
+
+				if(modo === 2){
+					for(let i = 0; i< this.getSistemasUsuario.length;i++){
+						if(this.getSistemasUsuario[i].id_sistema === id && this.getSistemasUsuario[i].id != this.idAEditar){
+							error = true;
+						}
+					}
+				}
+				
+				return error;
+				
+			},
+
+			ediarAcceso(item){
+				console.log('item', item)
+				this.accesosAEdit = item;
+				this.idAEditar    = item.id
+				this.sistema  = { id:item.id_sistema, nombre:item.nomsistema }
+				this.nivel    = { id:item.id_nivel  , nombre: item.nomnivel }
+				this.editarAcceso = true;
+			},
+
 			limpiarCampos(){
 				this.nombre    = '';
+				this.usuario   = '';
 				this.correo    = '',
-				this.nivel     = '',
-				this.password  = '',
+				this.nivel     = { id:null, nombre: '' };
+				this.sistema   = { id:null, nombre: '' };
+				this.password  = '';
 				this.password2 = '';
-				this.foto 		 = '';
 				this.sucursal  =  { id:null, nombre: '' };
-				this.usuario  = '';
 				this.departamento   = { id:null, nombre: '' };
 				this.puesto 				= { id:null, nombre: '' };
+				this.limpiar_sistema_usuario();
 			}
 		}
 	}

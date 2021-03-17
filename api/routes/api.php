@@ -7,9 +7,22 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function () { return view('welcome'); });
+
+Route::post('iniciar.sesion.integral'      ,'userController@IniciarSesionIntegral') -> name('IniciarSesionIntegral');
+Route::post('valida.sesion.activa'         ,'userController@validaSesionActiva')    -> name('validaSesionActiva');
+Route::get('obtener.datos.usuario/{id}'    ,'userController@obtenerDatosUsuario')   -> name('obtenerDatosUsuario');
+Route::post('cerrar.sesion'                ,'userController@CerrarSesion')          -> name('CerrarSesion');
+
+
+// NIVELES
+Route::get('niveles','nivelController@obtenerNiveles')   -> name('obtenerNiveles');
+Route::get('sistemas','sistemasController@obtenerSistemas')   -> name('obtenerSistemas');
+Route::get('consulta.accesos.usuario/{id}' ,'sistemasController@AccesosASistemas')          -> name('AccesosASistemas');
+
+
+
+
 
 Route::post('login'                    ,'userController@IniciarSesion')           -> name('IniciarSesion');
 Route::post('login.permisos'           ,'userController@SesionPermisos')  	      -> name('SesionPermisos');
@@ -17,10 +30,12 @@ Route::get('gama.etiquetas'            ,'gamaEtiquetasController@modulosActivos'
 Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo') -> name('SesionProgramacionFlexo');
 
 //===================================  USUARIOS ====================================================
-	Route::get('catusuarios'     ,'userController@getcatalogo') -> name('getcatalogo');   
+	Route::post('usuarios'       ,'userController@agregarUsuario')      -> name('agregarUsuario');    	
+	Route::get('catusuarios'     ,'userController@catalogoUsuarios') 	-> name('catalogoUsuarios');   
+	Route::put('usuarios/{id}'   ,'userController@actualizarUsuario')  	-> name('actualizarUsuario');  
+	
+
 	Route::get('usuarios'	       ,'userController@getAll')      -> name('getAllUsuarios');  
-	Route::post('usuarios'       ,'userController@add')         -> name('addUsuarios');    	
-	Route::put('usuarios/{id}'   ,'userController@update')  	  -> name('updateUsuarios');  
 	Route::delete('usuarios/{id}','userController@delete')      -> name('deleteUsuarios');  
 	Route::get('choferes'	       ,'userController@choferesAll') -> name('choferesAll');  	
 	Route::post('estatus.user'   ,'userController@estatusUser') -> name('estatusUser');    	

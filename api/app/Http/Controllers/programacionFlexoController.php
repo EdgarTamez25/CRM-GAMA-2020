@@ -10,12 +10,11 @@ class programacionFlexoController extends Controller
 		public function obtenerProgramacion(Request $req){
 			$programaciones = DB::select('SELECT f.id, f.fecha_prog,f.id_maquina, m.nombre as maquina, f.ot, f.num_partida,
 																					 f.id_cliente, c.nombre as nomcli, f.id_producto, p.codigo as producto, f.cantidad,
-																					 f.finalizacion,f.id_pleca, pl.dientes as pleca, f.id_suaje, s.dientes as suaje, 
+																					 f.finalizacion,f.id_pleca, f.id_suaje, s.dientes as suaje, 
 																					 f.hora_inicio, f.hora_fin, f.urgencia, f.estatus FROM flexo_ot f 
 																			LEFT JOIN maquinas m  ON f.id_maquina  = m.id
 																			LEFT JOIN clientes c  ON f.id_cliente  = c.id 
 																			LEFT JOIN prodxcli p  ON f.id_producto = p.id
-																			LEFT JOIN plecas   pl ON f.id_pleca    = pl.id
 																			LEFT JOIN suajes   s  ON f.id_suaje    = s.id
 																		WHERE f.estatus = ? AND f.fecha_prog BETWEEN ? AND ? ORDER BY f.urgencia DESC, f.id DESC ',
 																		[$req -> estatus , $req -> fecha1 , $req -> fecha2 ]);
@@ -86,24 +85,24 @@ class programacionFlexoController extends Controller
 		public function actualizarDetalle($id, Request $req){
 			$putDetalle = DB::update('UPDATE det_flexo_ot SET dificultad=:dificultad, velocidad=:velocidad, id_material=:id_material, bobinas=:bobinas,
                                                    mtsxbobina=:mtsxbobina,mts_fabricados=:mts_fabricados, scrap=:scrap,ancho_bobina=:ancho_bobina,
-																									 largo_bobina=:largo_bobina, est1=:est1, cant1=:cant1, 
-																									 												     est2=:est2, cant2=:cant2,
-																																							 est3=:est3, cant3=:cant3,
-																																							 est4=:est4, cant4=:cant4,
-																																							 comentario=:comentario
-                                	WHERE id=:id',
-                              [ 'dificultad'	=> $req -> dificultad   , 'velocidad'	     => $req -> velocidad,
-                                'id_material' => $req -> id_material  , 'bobinas' 		   => $req -> bobinas,
-                                'mtsxbobina' => $req -> mtsxbobina  , 'mts_fabricados' => $req -> mts_fabricados,
-                                'scrap'       => $req -> scrap        , 'ancho_bobina'   => $req -> ancho_bobina,
-                                'largo_bobina'=> $req -> largo_bobina , 
-																'est1' 				=> $req -> est1         , 'cant1'          => $req -> cant1, 
-																'est2' 				=> $req -> est2         , 'cant2'          => $req -> cant2, 
-																'est3' 				=> $req -> est3         , 'cant3'          => $req -> cant3, 
-																'est4'		 		=> $req -> est4         , 'cant4'          => $req -> cant4, 
-																'comentario'  => $req -> comentario   ,	'id'             => $id	
-                              ]
-												);
+																									 largo_bobina=:largo_bobina, id_pleca=:id_pleca, est1=:est1, cant1=:cant1, 
+																																			 												     est2=:est2, cant2=:cant2,
+																																																	 est3=:est3, cant3=:cant3,
+																																																	 est4=:est4, cant4=:cant4,
+																																																	 comentario=:comentario
+										         		WHERE id=:id',
+		                              [ 'dificultad'	=> $req -> dificultad   , 'velocidad'	     => $req -> velocidad,
+		                                'id_material' => $req -> id_material  , 'bobinas' 		   => $req -> bobinas,
+		                                'mtsxbobina' => $req -> mtsxbobina    , 'mts_fabricados' => $req -> mts_fabricados,
+		                                'scrap'       => $req -> scrap        , 'ancho_bobina'   => $req -> ancho_bobina,
+		                                'largo_bobina'=> $req -> largo_bobina , 'id_pleca'			 => $req -> id_pleca,
+																		'est1' 				=> $req -> est1         , 'cant1'          => $req -> cant1, 
+																		'est2' 				=> $req -> est2         , 'cant2'          => $req -> cant2, 
+																		'est3' 				=> $req -> est3         , 'cant3'          => $req -> cant3, 
+																		'est4'		 		=> $req -> est4         , 'cant4'          => $req -> cant4, 
+																		'comentario'  => $req -> comentario   ,	'id'             => $id	
+		                              ]
+														);
     	return $putDetalle ? response("Se actualizo correctamente",200):
 												   response("Ocurrio un error intentelo de nuevo", 500);
 		}
