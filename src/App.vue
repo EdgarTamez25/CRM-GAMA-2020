@@ -12,7 +12,7 @@
 
             <v-list-item-content>
               <v-list-item-title> {{ getdatosUsuario.nombre }} </v-list-item-title>
-              <v-list-item-subtitle> {{ niveles[getdatosUsuario.nivel-1] }}</v-list-item-subtitle>
+              <!-- <v-list-item-subtitle> {{ niveles[getdatosUsuario.nivel-1] }}</v-list-item-subtitle> -->
             </v-list-item-content>
           </v-list-item>
 
@@ -220,16 +220,19 @@ export default {
   components: {
   },
   data: () => ({
+    syster_number: 1,
+    urlSistemaPrincipal: 'http://producciongama.com:8080/',
+
     cerrar_sesion:false,
-    niveles:['Administrador',
-             'Supervisor',
-             'Vendedor',
-             'Chofer',
-             'Almacenista',
-             'Ventas',
-             'Servicio al Cliente',
-             'Invitado',
-             ],
+    // niveles:['Administrador',
+    //          'Supervisor',
+    //          'Vendedor',
+    //          'Chofer',
+    //          'Almacenista',
+    //          'Ventas',
+    //          'Servicio al Cliente',
+    //          'Invitado',
+    //          ],
 
     drawer: null,
     contador: 0 ,
@@ -250,7 +253,7 @@ export default {
           title :' Administración',
           model: true,
           administracion: [ 
-            { text: 'Productos'            ,icon: 'print',path: '/productos'},
+            // { text: 'Productos'            ,icon: 'print',path: '/productos'},
             { text: 'Productos por cliente',icon: 'mdi-printer-3d',path: '/productos-por-cliente'},
             { text: 'Ordenes de Trabajo'   ,icon: 'mdi-text-box-check',path: '/ordenes-de-trabajo'},
           ],
@@ -293,26 +296,31 @@ export default {
         // VERIFICO SI EXISTE UN USUARIO ACTIVO 
         if(localStorage.getItem("KeyLogger") != null){
           this.validaSession().then( response =>{ // VERIFICO SI LA SESSION DEL KEYLOGGER ESTA ACTIVA
-            this.ObtenerDatosUsuario(response.id_usuario).then(response =>{
-              this.alerta = { activo: true, texto: `HOLA DE NUEVO ${ response[0].nombre }`, color :'success', vertical:true  };
+            const payload = new Object();
+                  payload.id       = response.id_usuario
+                  payload.sistema  = this.syster_number
+
+            this.ObtenerDatosUsuario(payload).then(response =>{
+              this.alerta = { activo: true, texto: `HOLA DE NUEVO ${ response.nombre }`, color :'success', vertical:true  };
               this.blocked = false;  // DESACTIVO BLOCKEO
             }).catch( error=>{      // OBTENGO LA INFORMACION DEL USUARIO
               this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
+              window.location.href = this.urlSistemaPrincipal;
             });  
           }).catch( error =>{
             console.log('Error validacion', error.bodyText)
-            // window.location.href = "http://localhost:8081/";
+            window.location.href = this.urlSistemaPrincipal;
           })
           if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
             this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
           }
         }else{ 
-            console.log('NO HAY KEYLOG')
-          // window.location.href = "http://localhost:8081/";
+         console.log('NO HAY KEYLOG')
+         window.location.href = this.urlSistemaPrincipal;
         }
     } else {
       console.log('NO ES COMPATIBLE LOCAL')
-      // window.location.href = "http://localhost:8081/";
+      window.location.href = this.urlSistemaPrincipal;
     }
     
     // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
@@ -337,10 +345,10 @@ export default {
     ...mapActions('Login' ,['salirLogin','ObtenerDatosUsuario','validaSession']), 
 
     salir(){
+      this.alerta = { activo: true, texto: `HASTA PRONTO ${ this.getdatosUsuario.nombre }`, color :'success' , vertical:true  };
       this.cerrar_sesion= false;
       this.salirLogin()
       this.$store.dispatch("salir")
-      
     },
 
     BuscarPredeterminado(){

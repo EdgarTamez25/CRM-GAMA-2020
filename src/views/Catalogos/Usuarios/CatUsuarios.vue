@@ -33,9 +33,9 @@
 						@page-count="pageCount = $event"
 						dense
 			    >
-						<template v-slot:item.nivel="{ item }">
+						<!-- <template v-slot:item.nivel="{ item }">
 							 {{ niveles[item.nivel-1].nombre  }} 
-						</template>
+						</template> -->
 
 			    	<template v-slot:item.action="{ item }" > 
 			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> <!-- Editar -->
@@ -91,24 +91,24 @@
 					{ text: 'Nombre'	 , align: 'left'  , value: 'nombre' },
 					{ text: 'Usuario'	 , align: 'left'  , value: 'usuario' },
 					{ text: 'Correo'   , align: 'left'  , value: 'correo' },
-					{ text: 'Nivel'		 , align: 'left'  , value: 'nivel' 	},
+					// { text: 'Nivel'		 , align: 'left'  , value: 'nivel' 	},
 					{ text: 'Sucursal' , align: 'left'  , value: 'nomsuc' },
 					{ text: 'Depto' , align: 'left'  , value: 'nomdepto' },
 					{ text: 'Puesto' , align: 'left'  , value: 'nompuesto' },
 					{ text: 'Estatus'  , align: 'left'  , value: 'estatus'},
 					{ text: ' '        , align: 'right' , value: 'action', sortable: false },
 				],
-				niveles: [{ id:1, nombre:'Administrador'},
-									{ id:2, nombre:'Supervisor'},
-									{ id:3, nombre:'Vendedor'},
-									{ id:4, nombre:'Chofer'},
-									{ id:5, nombre:'Almacén'},
-									{ id:6, nombre:'Ventas'},
-									{ id:7, nombre:'Servicio al Cliente'},
-									{ id:8, nombre:'Sin seleccionar'},
-									{ id:9, nombre:'Desarrollo de Proyectos'},
+				// niveles: [{ id:1, nombre:'Administrador'},
+				// 					{ id:2, nombre:'Supervisor'},
+				// 					{ id:3, nombre:'Vendedor'},
+				// 					{ id:4, nombre:'Chofer'},
+				// 					{ id:5, nombre:'Almacén'},
+				// 					{ id:6, nombre:'Ventas'},
+				// 					{ id:7, nombre:'Servicio al Cliente'},
+				// 					{ id:8, nombre:'Sin seleccionar'},
+				// 					{ id:9, nombre:'Desarrollo de Proyectos'},
 
-								],
+				// 				],
 			}
 		},
 

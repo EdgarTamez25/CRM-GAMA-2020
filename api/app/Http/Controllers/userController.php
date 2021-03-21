@@ -40,8 +40,8 @@ class userController extends Controller
 	}
 
 	public function consultaAccesosASistemas($id){
-		return DB::select('SELECT a.id, a.id_sistema, pa.nombre, pa.foto, pa.path, pa.estatus  
-												FROM accesos a LEFT JOIN pagina_arranque pa ON a.id_sistema = pa.id    
+		return DB::select('SELECT a.id, a.id_sistema, s.nombre, s.foto, s.path, s.estatus  
+												FROM accesos a LEFT JOIN sistemas s ON a.id_sistema = s.id    
 											WHERE a.id_usuario = ? AND a.estatus = 1',[$id]);
 	}
 
@@ -60,12 +60,26 @@ class userController extends Controller
 		return DB::select('SELECT * FROM users WHERE id=?',[$id]);
 	}
 
-	public function obtenerDatosUsuario($id){
+	public function consultaNivelSistema($dataUsuario){
+		return DB::select('SELECT * FROM accesos WHERE id_usuario = ? AND id_sistema=?',[$dataUsuario['id'], $dataUsuario['sistema'] ]);
+	}
+
+	public function obtenerDatosUsuario(Request $req){
 		$Data = [];
-		$usuario  = $this -> consultaInfoUsuario($id);
-		$sistemas = $this -> consultaAccesosASistemas($id);
-		array_push($Data, $usuario, $sistemas); // FORMAR ARRAY A RETORNAR
-		return  $Data ? $Data: response("Ocurrio un error intentelo mas tarde",200);
+		$usuario      = $this -> consultaInfoUsuario($req -> id);
+		if($req -> sistema != 0):
+			$nivelSistema = $this -> consultaNivelSistema($req);
+		endif;
+		$sistemas     = $this -> consultaAccesosASistemas($req -> id);
+		$datosUsuario = ["id"     => $usuario[0] -> id, 
+										 "nombre" => $usuario[0] -> nombre, 
+										 "correo" => $usuario[0] -> correo,
+										 "id_sucursal" => $usuario[0] -> id_sucursal,
+										 "nivel"  => $req -> sistema != 0 ? $nivelSistema[0] -> id_nivel : []
+										];
+		$Data = ["datosUsuario" => $datosUsuario, "sistemas" => $sistemas  ];
+		// array_push($Data, $usuario, $sistemas); // FORMAR ARRAY A RETORNAR
+		return  $Data ? $Data: response("Ocurrio un error intentelo mas tarde",500);
 
 	}
 
@@ -261,8 +275,6 @@ class userController extends Controller
 	public function validaEmail($correo){
 		return DB::select('SELECT correo FROM users WHERE correo = ?',[$correo]);
 	}
-
-
 
 	public function validaUsuarioAdd($usuario){
 		return DB::select('SELECT usuario FROM users WHERE usuario = ?',[$usuario]);

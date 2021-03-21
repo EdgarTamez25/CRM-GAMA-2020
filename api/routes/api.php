@@ -11,7 +11,7 @@ Route::get('/', function () { return view('welcome'); });
 
 Route::post('iniciar.sesion.integral'      ,'userController@IniciarSesionIntegral') -> name('IniciarSesionIntegral');
 Route::post('valida.sesion.activa'         ,'userController@validaSesionActiva')    -> name('validaSesionActiva');
-Route::get('obtener.datos.usuario/{id}'    ,'userController@obtenerDatosUsuario')   -> name('obtenerDatosUsuario');
+Route::post('obtener.datos.usuario'        ,'userController@obtenerDatosUsuario')   -> name('obtenerDatosUsuario');
 Route::post('cerrar.sesion'                ,'userController@CerrarSesion')          -> name('CerrarSesion');
 
 

@@ -50,7 +50,7 @@ export default{
 				const payload = new Object();
               payload.id = localStorage.getItem("KeyLogger")
 				Vue.http.post('valida.sesion.activa', payload).then(response =>{
-					console.log('VALIDACION', response.body)
+					// console.log('VALIDACION', response.body)
 					resolve(response.body[0])
 				}).catch( error =>{
 					console.log('valida error', error)
@@ -59,13 +59,14 @@ export default{
 			});
 		},
 
-		ObtenerDatosUsuario({commit},id_usuario){
+		ObtenerDatosUsuario({commit},payload){
 			return new Promise((resolve, reject) => {
-				Vue.http.get('obtener.datos.usuario/'+ id_usuario ).then(response =>{
-					// console.log('user', response.body)
-					resolve(response.body[0])
-					commit('DATOS_USUARIO', response.body[0][0]);
-					commit('SISTEMAS'     , response.body[1]);
+				Vue.http.post('obtener.datos.usuario',payload ).then(response =>{
+					resolve(response.body.datosUsuario)
+					commit('DATOS_USUARIO', response.body.datosUsuario );
+					commit('SISTEMAS'     , response.body.sistemas);
+					commit('LOGEADO', true);
+
 				}).catch( error =>{
 					console.log('valida error', error.body)
 					reject(error)
@@ -76,8 +77,14 @@ export default{
 
 
 		salirLogin({commit}){
-			// this.$store.dispatch("salir")
-			commit('SALIR')
+			commit('AUTHENTICAR', true)
+			commit('SALIR');
+
+			const payload = new Object();
+						payload.id = localStorage.getItem("KeyLogger");
+			Vue.http.post('cerrar.sesion', payload ).then( res =>{
+				console.log('SE CERRO CON EXITO');
+			})
 		},
 	},
 
