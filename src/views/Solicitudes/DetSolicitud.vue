@@ -1,5 +1,5 @@
 <template>
-  <v-content class="pa-0 ma-3">
+  <v-main class="pa-0 ma-3">
     <v-snackbar v-model="alerta.snackbar" :vertical="alerta.vertical" top right :color="alerta.color" class="subtitle-1" > 
       {{ alerta.text }} 
         <v-btn dark text  @click="alerta.snackbar = false">
@@ -25,21 +25,21 @@
                     <tbody >
                       <tr >
                         <td class="font-weight-black">CLIENTE</td>
-                        <td class="text-h1"  align="left"> {{ solicitud.nomcli }}</td>
+                        <td class="subtitle-1"  align="left"> {{ solicitud.nomcli }}</td>
                       </tr>
                       <tr>
                         <td class="font-weight-black">RESPONSABLE</td>
-                        <td class="text-h1">{{ solicitud.nomusuario }}</td>
+                        <td class="subtitle-1">{{ solicitud.nomusuario }}</td>
                       </tr>
                       <tr>
                         <td class="font-weight-black">FECHA Y HORA</td>
-                        <td class="text-h1">
+                        <td class="subtitle-1">
                           {{ solicitud.fecha}} ** {{ solicitud.hora >='12:00'? solicitud.hora +' '+'pm': solicitud.hora+ ' '+'am' }}
                         </td>
                       </tr>
                       <tr>
                         <td class="font-weight-black">NOTA</td>
-                        <td class="text-h1"> {{ solicitud.nota }}</td>
+                        <td class="subtitle-1"> {{ solicitud.nota }}</td>
                       </tr>
                     </tbody>
                   </template>
@@ -230,7 +230,7 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-content>
+  </v-main>
 </template>
 
 <script>

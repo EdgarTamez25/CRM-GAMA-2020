@@ -1,5 +1,5 @@
 <template>
-  <v-content class="pa-0 ma-3">
+  <v-main class="pa-0 ma-3">
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
 
@@ -111,10 +111,10 @@
 							<span class="font-weight-black celeste--text" style="font-size:12px" v-if="item.tipo_prod === 3"> Nuevo Producto </span>
 						</template>	
 						<template v-slot:item.ft="{ item }">
-							<span style="font-size:12px" class="font-weight-black text-h6 "> {{ item.ft }}</span>
+							<span style="font-size:12px" class="font-weight-black "> {{ item.ft }}</span>
 						</template>
 						<template v-slot:item.cantidad="{ item}">
-							<span style="font-size:12px" class="font-weight-black text-h6 "> {{ item.cantidad }}</span>
+							<span style="font-size:12px" class="font-weight-black "> {{ item.cantidad }}</span>
 						</template>
 
 						<template v-slot:item.encargado ="{ item }">
@@ -238,7 +238,7 @@
 		</v-dialog>
 		
 		<overlay v-if="overlay"/>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
