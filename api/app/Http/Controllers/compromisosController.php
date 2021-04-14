@@ -8,64 +8,74 @@ use App\compromisos;
 
 class compromisosController extends Controller
 {
-		
-		public function Compromisos(Request $req){
-			
-			return DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo, c.id_categoria, ca.nombre as nomcatego,
-																			c.fecha, c.hora,c.fecha_cierre, c.hora_cierre,  c.id_cliente, cli.nombre as nomcli, c.obs,
-																			c.fuente, u.nombre as creador, c.obs_usuario, c.confirma_cita,c.cumplimiento
-													FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
-																						 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
-																						 LEFT JOIN clientes  cli ON cli.id = c.id_cliente
-																						 LEFT JOIN users u       ON u.id   = c.fuente 
-												WHERE  c.fecha BETWEEN ? AND ? ORDER BY c.id DESC' ,[ $req -> fecha1 , $req -> fecha2]);
+
+		public function Compromisos(){
+			$compromisos = DB::select('SELECT c.id,c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
+																			  c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente, cli.nombre as nomcli, c.comentarios, 
+																				c.fase_venta, c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus
+																 FROM compromisos c LEFT JOIN users v   	  ON v.id   = c.id_vendedor
+																										LEFT JOIN categorias ca ON ca.id  = c.id_categoria
+																										LEFT JOIN clientes  cli ON cli.id = c.id_cliente
+																										LEFT JOIN users u       ON u.id   = c.id_usuario
+																ORDER BY c.id DESC');
+
+			return $compromisos;
+
 		}
 
     public function addcompromiso(Request $req){
 																				
-			$id = DB::table('compromisos')->insertGetId(
-				[ 'id_vendedor'  => $req -> id_vendedor , 'tipo' 			 => $req -> tipo ,
-					'id_categoria' => $req -> id_categoria, 'id_cliente' => $req -> id_cliente, 
-					'fecha' 			 => $req -> fecha			  , 'hora' 		 	 => $req -> hora,		   
-					'obs'  			   => $req -> obs				  , 'fuente'     => $req -> fuente
-				]
-			);
+				$id = DB::table('compromisos')->insertGetId(
+					['id_vendedor'  => $req -> id_vendedor,  'tipo_compromiso' => $req -> tipo_compromiso,
+					 'id_categoria' => $req -> id_categoria, 'fecha' 					 => $req -> fecha,
+					 'hora' 			  => $req -> hora, 				 'fecha_fin'			 => $req -> fecha_fin,
+					 'hora_fin' 		=> $req -> hora_fin,		 'id_cliente' 		 => $req -> id_cliente,
+					 'comentarios'  => $req -> comentarios,  'fase_venta' 		 => $req -> fase_venta,
+					 'id_usuario'   => $req -> id_usuario ,  'cumplimiento' 	 =>$req -> cumplimiento,
+					 'estatus' 		  => $req -> estatus]
+				);
 
-			if($id):
-				return response("El compromiso se creo correctamente",200);
-			else:
-				return response("Ocurrio un problema. Intentelo nuevamente.",500);
-			endif;
-
-		
+				$fecha 				 = $req -> fechaActual; 
+				$hora 				 = $req -> horaActual; 
+				$fase_venta 	 = $req -> fase_venta;
+				$numorden      = $req -> numorden;
+				$aceptado      = $req -> aceptado;
+				$obscierre     = $req -> obscierre;
+				
+				$hisorial = $this->Historial($id, $fecha, $hora, $fase_venta, $numorden, $aceptado,$obscierre);
+				return "El compromiso se ha creado correctamente";
+				
 		}
 
 		public function putcompromiso($id, Request $req){
-			$updateCompromiso = DB::update('UPDATE compromisos SET  id_vendedor=:id_vendedor,
-																															tipo=:tipo,
+			$updateCompromiso = DB::update('UPDATE compromisos SET id_vendedor=:id_vendedor,
+																															tipo_compromiso=:tipo_compromiso,
 																															id_categoria=:id_categoria,
-																															id_cliente=:id_cliente, 
 																															fecha=:fecha,
 																															hora=:hora,
-																															obs=:obs,
-																															fuente=:fuente
+																															fecha_fin=:fecha_fin,
+																															hora_fin=:hora_fin,
+																															id_cliente=:id_cliente, 
+																															comentarios=:comentarios,
+																															id_usuario=:id_usuario,
+																															estatus=:estatus
 																			WHERE id=:id'
 																						,['id_vendedor'				=> $req -> id_vendedor, 
-																							'tipo'   						=> $req -> tipo,
+																							'tipo_compromiso'   => $req -> tipo_compromiso,
 																							'id_categoria'      => $req -> id_categoria,
-																							'id_cliente'				=> $req	-> id_cliente, 
 																							'fecha'							=> $req	-> fecha,
 																							'hora'							=> $req	-> hora, 
-																							'obs'								=> $req	-> obs , 
-																							'fuente'						=> $req	-> fuente, 
+																							'fecha_fin'         => $req -> fecha_fin,
+																							'hora_fin'					=> $req -> hora_fin,
+																							'id_cliente'				=> $req	-> id_cliente, 
+																							'comentarios'				=> $req	-> comentarios , 
+																							'id_usuario'				=> $req	-> id_usuario, 
+																							'estatus' 				  => $req -> estatus,
 																							'id'								=> $id
 																							]
 																			);
-			if($updateCompromiso):
-				return response("El compromiso se actualizo correctamente",200);
-			else:
-				return response("Ocurrio un problema. Intentalo nuevamente.",500);
-			endif;
+
+				return 'El compromiso se actualizo correctamente';
 		}
 
 		public function FaseVenta(Request $req){

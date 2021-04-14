@@ -7,6 +7,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+<<<<<<< HEAD
 Route::get('/', function () { return view('welcome'); });
 
 Route::post('iniciar.sesion.integral'      ,'userController@IniciarSesionIntegral') -> name('IniciarSesionIntegral');
@@ -43,9 +44,26 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 //===================================  VENDEDORES===================================================
 	Route::get('vendedores'		  ,'vendedoresController@vendedores') -> name('vendedores');  	 
 	Route::get('vendxsuc/{suc}' ,'vendedoresController@vendxSuc')   -> name('vendxSuc');  	 
+=======
+Route::get('/', function () {
+    return view('welcome');
+});
 
-//==================================== CLIENTES ====================================================
 
+//=================================== USUARIOS======================================================
+Route::get('catusuarios'  ,'userController@getcatalogo')-> name('catusuarios');   
+Route::get('usuarios'	    ,'userController@getAll')     -> name('getAllUsuarios');  			 //PROBADA
+Route::post('usuarios'    ,'userController@add')        -> name('addUsuarios');    				 //PROBADA
+Route::put('usuarios/{id}','userController@update')  		-> name('updateUsuarios');  			 //PROBADA
+Route::delete('usuarios/{id}','userController@delete')   -> name('deleteUsuarios');  			 //PROBADA
+Route::get('choferes'	    ,'userController@choferesAll') -> name('choferesAll');  		 //PROBADA
+>>>>>>> parent of 63191fd... Actualizacion General
+
+//=================================== VENDEDORES======================================================
+Route::get('vendedores'		 ,'vendedoresController@vendedores')-> name('VendxSuc');  			 //PROBADA
+Route::get('vendxsuc/{suc}','vendedoresController@vendxSuc')  -> name('VendxSuc');  			 //PROBADA
+
+<<<<<<< HEAD
   Route::get('clientes.productos','clientesController@clientes')         -> name('Clientes');              
 	Route::get('clientes'          ,'clientesController@catClientes')      -> name('catClientes');            
 	Route::get('clientes.selector' ,'clientesController@clientesSelector') -> name('clientesSelector'); 
@@ -191,11 +209,59 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::delete('elimina.partida.detot/{id}','ordenesTrabajoController@EliminarPartidaDetOT')     -> name('EliminarPartidaDetOT');  
 	Route::post('actualiza.partida.detot'     ,'ordenesTrabajoController@ActualizaPartidaDetOT')  	-> name('ActualizaPartidaDetOT'); 
 	Route::post('agregar.partida.detot'       ,'ordenesTrabajoController@AgregarPartidaOT')  				-> name('AgregarPartidaOT'); 
+=======
+//==================================== CLIENTES=====================================================
+Route::get('clientes','clientesController@catClientes') -> name('catClientes');            //PROBADA
+Route::post('cliente','clientesController@add')         -> name('addCliente');             //PROBADA
+Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');          //PROBADA
 
+//==================================== PROVEDORES ==================================================
+Route::get('catproveedores'  ,'proveedoresController@getcatalogo')-> name('getcatprov');   //PROBADA
+Route::get('proveedores'     ,'proveedoresController@getAll') -> name('getAllproveedores');//PROBADA
+Route::post('proveedores'    ,'proveedoresController@add')    -> name('addProveedor');     //PROBADA
+Route::put('proveedores/{id}','proveedoresController@update') -> name('updateProveedor');  //PROBADA
 
+//==================================== PRODUCTOS ===================================================
+Route::get('catproductos'  ,'productosController@getcatalogo')-> name('getcatproducto');   //PROBADA
+Route::get('productos'     ,'productosController@getAll') -> name('getAllproductos');  		 //PROBADA
+Route::post('productos'    ,'productosController@add')    -> name('addProductos');     		 //PROBADA
+Route::put('productos/{id}','productosController@update') -> name('updateProductos');  		 //PROBADA
+
+//==================================== SUCURSALES ==================================================
+Route::get('sucursales'	,'sucursalesController@getAll')			-> name('getAllSuc');         //PROBADA
+Route::post('sucursales'		,'sucursalesController@add')    -> name('addsuc');         		//PROBADA
+Route::put('sucursales/{id}','sucursalesController@update') -> name('updatesuc');      		//PROBADA
+
+//==================================== ZONAS =======================================================
+Route::get('zonas'			,'zonasController@getAll')     -> name('getAllZonas');             //PROBADA
+Route::get('catzonas'		,'zonasController@getcatalogo')-> name('getcatalogo');             //PROBADA
+Route::post('zonas'			,'zonasController@add')        -> name('addZonas');                //PROBADA
+Route::put('zonas/{id}'	,'zonasController@update')   	 -> name('updateZonas');             //PROBADA
+
+////================================== SUB ZONAS ===================================================
+Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');      //PROBADA
+>>>>>>> parent of 63191fd... Actualizacion General
+
+////================================== CARTERAS ====================================================
+Route::get('carteras'     ,'carterasController@getAll') -> name('getAllCarteras');         //PROBADA
+Route::post('carteras'    ,'carterasController@add')    -> name('addCartera');             //PROBADA
+Route::put('carteras/{id}','carterasController@update') -> name('updateCartera');          //PROBADA
+
+<<<<<<< HEAD
 	
+=======
+//==================================== CIUDADES ====================================================
+Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');               //PROBADA
+>>>>>>> parent of 63191fd... Actualizacion General
 
+//==================================== MONEDAS =====================================================
+Route::get('monedas'     ,'monedasController@getAll')     -> name('getAllmonedas');        //PROBADA
+Route::post('monedas'    ,'monedasController@add')        -> name('addMoneda');            //PROBADA
+Route::put('monedas/{id}','monedasController@update')     -> name('updateMoneda');         //PROBADA
+Route::put('predeterminado/{id}', 'monedasController@predeterminado')  -> name('moneda_predeterminado');
+Route::get('monedaPredeterminada','monedasController@getPredeterminada')->name('get_moneda_predeterminada');
 
+<<<<<<< HEAD
 //==================================================================================================
 //==================================== RUTAS GAMA EXTERNOS =========================================
 //==================================== ACCESOS-RH ==================================================
@@ -218,30 +284,63 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::post('add.llamada' 	     ,'llamadasController@addLLamada')    -> name('addLlamadas');
 	Route::put('put.llamada/{id}'    ,'llamadasController@putLLamadas')    -> name('putLlamada'); 
 	Route::post('llamadas'            ,'llamadasController@llamadas')       -> name('Llamadas');
+=======
+>>>>>>> parent of 63191fd... Actualizacion General
 
-	Route::post('add.junta'          ,'juntasController@addJuntas')       -> name('addJuntas');
-	Route::put('put.junta/{id}'      ,'juntasController@putJuntas')       -> name('putJuntas');
-	Route::post('sala.juntas'        ,'juntasController@salaJuntas')      -> name('salaJuntas');
+//==================================== LINEAS ======================================================
+Route::get('lineas'     ,'lineas_prodController@getAll') -> name('getAlllineas');          //PROBADA
+Route::post('lineas'    ,'lineas_prodController@add')    -> name('addLineas');             //PROBADA
+Route::put('lineas/{id}','lineas_prodController@update') -> name('updateLineas');          //PROBADA
+
+//==================================== UNIDADES ====================================================
+Route::get('unidades'     ,'unidadesController@getAll') -> name('getAllunidades');         //PROBADA
+Route::post('unidades'    ,'unidadesController@add')    -> name('addUnidad');              //PROBADA
+Route::put('unidades/{id}','unidadesController@update') -> name('updateUnidad');           //PROBADA
+
+//==================================== PRECIOS =====================================================
+Route::get('catprecios'  ,'preciosController@getcatalogo')-> name('getcatprecios');
+Route::get('preciosxid/{id}' ,'preciosController@preciosxId') -> name('preciosxId');
+Route::get('precios'     ,'preciosController@getAll') -> name('getAllprecios');
+Route::post('precios'    ,'preciosController@add')    -> name('addPrecios');     
+Route::put('precios/{id}','preciosController@update') -> name('updatePrecios'); 
+Route::get('mp-productos','preciosController@mp_producto')-> name('get-mp_producto');
+// SE USA PARA LA MODAL DE PRECIOS
+Route::get('detalle_productos/{id}','preciosController@detalle_productos')-> name('getdetalle_productos');
+Route::post('predeterminado', 'preciosController@predeterminado')  -> name('predeterminado');
 
 
-
-
+<<<<<<< HEAD
 //==================================================================================================
 //==================================== RUTAS PROGRAMACION FLEXO=====================================
+=======
+////=============================== TIPOS PRECIOS ==================================================
+Route::get('tipos-precios'     ,'tipo_precioController@getAll') -> name('getAllTipoPrecio');
+Route::post('tipos-precios'    ,'tipo_precioController@add')    -> name('addTipoPrecio');
+Route::put('tipos-precios/{id}','tipo_precioController@update') -> name('updateTipoPrecio');
 
-//==================================== LLAMADAS-RH =================================================
+////================================== CATEGORIAS ==================================================
+Route::get('categorias'     ,'categoriasController@categorias') -> name('categorias');
+>>>>>>> parent of 63191fd... Actualizacion General
 
-	Route::get('obtener.operadores'          ,'userController@obtenerOperadores')       -> name('obtenerOperadores');
+////================================== COMPROMISOS ==================================================
+Route::get('compromisos'     ,'compromisosController@Compromisos')   -> name('Compromisos');
+Route::post('addcompromiso'  ,'compromisosController@addcompromiso') -> name('addcompromiso');
+Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
+Route::put('putcompromiso/{id}'  ,'compromisosController@putcompromiso') -> name('putcompromiso');
+Route::post('fase.venta'  ,'compromisosController@FaseVenta') -> name('FaseVenta');
 
-	Route::post('agregar.programacion'               ,'programacionFlexoController@programacionFlexo')        -> name('programacionFlexo');
-	Route::put('actualizar.programacion/{id}'        ,'programacionFlexoController@actualizaProgramacion')    -> name('actualizaProgramacion');
-	Route::post('obtener.programaciones'             ,'programacionFlexoController@obtenerProgramacion')      -> name('obtenerProgramacion');
-	Route::get('obtener.detalle.programacion/{id}'   ,'programacionFlexoController@DetalleProgramacion')      -> name('DetalleProgramacion');
-	Route::post('iniciaizar.ot.flexo'         			 ,'programacionFlexoController@InicializarProgramacion')  -> name('InicializarProgramacion');
-	Route::put('actualizar.detalle.orden.flexo/{id}' ,'programacionFlexoController@actualizarDetalle')   			-> name('actualizarDetalle');
-	Route::put('finalizar.orden.flexo/{id}'          ,'programacionFlexoController@FinalizarOTFlexo')   			-> name('FinalizarOTFlexo');
-	Route::put('cancelar.orden.trabajo/{id}'         ,'programacionFlexoController@cancelarOTFlexo')   			-> name('cancelarOTFlexo');
+////================================== HISTORIAL ==================================================
+Route::get('numero.orden/{id}' ,'histrorialController@NumerodeOrden') -> name('NumerodeOrden');
+Route::get('ver.resumen/{id}' ,'histrorialController@VerResumen') -> name('VerResumen');
+Route::post('historial' ,'histrorialController@Historial') -> name('Historial');
+Route::post('historialxvend' ,'histrorialController@HistorialxVend') -> name('HistorialxVend');
+Route::post('recotización' ,'histrorialController@Recotización') -> name('recotización');
 
+////================================== ENTREGAS ==================================================
+Route::post('entrega.producto' ,'entregasController@EntregarProducto') -> name('EntregarProducto');
+Route::post('entrega.id','entregasController@entregabyid')-> name('Entregabyid');
+
+<<<<<<< HEAD
 	Route::post('agregar.maquina.operador'    ,'maquinasController@AgregarMaquinasxOP')     -> name('AgregarMaquinasxOP');
 	Route::post('editar.maquina.operador'     ,'maquinasController@EditarMaquinasxOP')      -> name('EditarMaquinasxOP');
 	Route::post('obtener.maquina.operador'    ,'maquinasController@ObtenerMaquinasxOp')     -> name('ObtenerMaquinasxOp');
@@ -255,6 +354,26 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::get('obtener.plecas'    ,'plecasController@Plecas')     -> name('Plecas');   
 	Route::get('obtener.suajes'    ,'suajesController@Suajes')     -> name('Suajes');   
 
+=======
+//==================================== PROSPECTOS =====================================================
+Route::get('prospectos' ,'prospectosController@Prospectos')     -> name('Prospectos');
+Route::get('prospectos.id/{id}' ,'prospectosController@ProspectosxId')     -> name('ProspectosxId');
+Route::post('add.prospecto','prospectosController@addProspecto')           -> name('addProspecto');
+Route::put('update.prospecto/{id}','prospectosController@UpdateProspecto') -> name('UpdateProspecto');
+Route::post('pasar.cliente','prospectosController@PasarACliente')           -> name('PasarACliente');
+Route::delete('delete.prospecto/{id}','clientesController@EliminarProspecto')  -> name('EliminarProspecto'); 
+
+Route::post('prueba','pruebasController@get')  -> name('get'); 
+Route::get('prueba/{id}','pruebasController@getId')  -> name('getId'); 
+Route::post('prueba.post','pruebasController@post')  -> name('post'); 
+Route::put('prueba.put','pruebasController@put')  -> name('put'); 
+
+
+
+
+
+
+>>>>>>> parent of 63191fd... Actualizacion General
 
 
 

@@ -15,10 +15,9 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id'); //Big Increments crea la tabla como Big integer y autoincremental, se puede agregar tambien como bigInteger('id',true) y pasarle true para que sea autoincremental
-            $table->string('nombre',200);
-            $table->string('usuario',50);
+            $table->string('nombre');
             $table->string('password');
-            $table->string('correo',50)->unique();
+            $table->string('correo')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->integer('nivel');
