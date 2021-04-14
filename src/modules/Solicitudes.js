@@ -12,6 +12,7 @@ export default{
 		solicitudesddd:[],
 		datosFlexo: null,
 		datosDigital: null,
+		filtros:{}
 	},
 
 	mutations:{
@@ -37,14 +38,26 @@ export default{
 			if(data.dx === 1){ state.datosFlexo   = data;  };
 			if(data.dx === 3){ state.datosDigital = data;  };
 
+		},
+		SOLICITUDES_AUTOMATICAS(state, data){
+			if(state.solicitudes.length != data.length){
+				state.solicitudes = data
+				console.log('SI HAY CAMBIOS')
+			}else{
+				console.log('NO HAY CAMBIOS')
+			}
+		},
+		PARAMETROS2(state, data){
+			state.filtros = data
 		}
+		
 	},
 	actions:{ 
 		
-		consultaSolicitudes({commit}){
-			// Limpio Arreglo y Genero Consulta
+		consultaSolicitudes({commit}, payload){
+			commit('PARAMETROS2', payload);
 			commit('LOADING',true); commit('SOLICITUDES', [])
-			Vue.http.post('solicitudes', store.state.Solicitudes.parametros).then(response=>{
+			Vue.http.post('solicitudes', payload).then(response=>{
 				commit('SOLICITUDES', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
@@ -145,6 +158,14 @@ export default{
 			})
 		},
 
+		consultaAutomatica({commit}){
+			Vue.http.post('solicitudes', store.state.Solicitudes.parametros).then(response=>{
+				commit('SOLICITUDES_AUTOMATICAS', response.body)
+			}).catch((error)=>{
+				console.log('error',error)
+			}).finally(() => commit('LOADING', false)) 
+		}
+
 
   },
 
@@ -175,7 +196,10 @@ export default{
 
 		getDatosDigital(state){
 			return state.datosDigital;
-		}
+		},
+		Parametros(state){
+			return state.filtros
+		},
 		
 	}
 }

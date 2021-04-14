@@ -147,7 +147,6 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::post('crear.producto.cliente'        ,'productosxcliController@crearDetalle')      -> name('crearDetalle');
 	Route::put('actualiza.producto.cliente/{id}','productosxcliController@actualizaProducto') -> name('actualizaProducto');
 	Route::post('productos.cliente.deptos'      ,'productosxcliController@PxCxD')     				-> name('PxCxD');
-	
 
 //==================================== SOLICITUDES =================================================
 	Route::post('solicitudes.ddd'			 ,'solicitudesController@SolicitudesDDD')  	  -> name('SolicitudesDDD'); 

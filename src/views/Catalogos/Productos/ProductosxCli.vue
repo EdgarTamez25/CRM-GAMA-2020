@@ -55,12 +55,17 @@
 								<v-icon> mdi-alert-circle-outline </v-icon>
 							</v-btn>
 				    </template> -->
+						<template v-slot:item.dx="{ item }"  > 
+			    		<span class="font-weight-black ">{{ deptos[item.dx-1].nombre  }}</span>
+				    </template>
 						<template v-slot:item.codigo="{ item }"  > 
 			    		<span class="font-weight-black rosa--text">{{ item.codigo  }}</span>
 				    </template>
 						<template v-slot:item.action="{ item }"  > 
 			    		<v-btn class="celeste ma-1" icon dark @click="abrirModal(3, item)"><v-icon> mdi-pencil </v-icon></v-btn> 
 				    </template>
+
+						
 
 
 			    </v-data-table>
@@ -70,6 +75,8 @@
 					<v-pagination v-model="page" :length="pageCount"></v-pagination>
 				</div>
   		</v-col>
+
+			{{ getProductosxCli}}
 
 
 			<v-dialog v-model="controlProductoModal" persistent width="700px">
@@ -90,9 +97,10 @@
 <script>
 	import controlProductoxCli from '@/views/Catalogos/Productos/controlProductoxCli.vue'
 	import {mapGetters, mapActions} from 'vuex';
-import { object } from '@amcharts/amcharts4/core';
-
+  // import { object } from '@amcharts/amcharts4/core';
+	import  metodos from '@/mixins/metodos.js';
 	export default {
+		mixins:[metodos],
 		components: {
 			controlProductoxCli,
 		},
@@ -112,20 +120,22 @@ import { object } from '@amcharts/amcharts4/core';
 					Vista: '',
 					data:'',
 					headers:[
+						{ text: 'Departamento'    , align: 'left'  , value: 'dx' },
 						{ text: 'Codigo'   , align: 'left'  , value: 'codigo' },
 						{ text: 'Nombre'   , align: 'left'  , value: 'nombre' },
 						{ text: 'Desc '    , align: 'left'  , value: 'descripcion' },
-						{ text: 'Fecha'    , align: 'center'  , value: 'fecha' },
 						// { text: 'estatus'  , align: 'center'  , value: 'estatus' },
 						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
 					],
 					cliente: { id:null, nombre:'' },
+					deptos:[],
 				}
 			},
 
 			created(){
         // this.consultaProductos()// CONSULTAR PRODUCTOS A VUEX
-        this.consultaClienteProductos()
+        this.consultaClienteProductos();
+				this.consultaDepartamentos();
 			},
 
 			computed:{

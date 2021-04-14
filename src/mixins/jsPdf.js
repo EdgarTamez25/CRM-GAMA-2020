@@ -69,7 +69,7 @@ export default {
         // .setFontType("italic")
         .setTextColor(191,28,127)
         .text("Todos los derechos reservador por Gama Etiquetas S.A. DE C.V.", 0.5, doc.internal.pageSize.height - 0.5 )
-        .save(`${this.heading}.pdf`);
+        .save(`${this.heading}-${this.traerFechaActual()}.pdf`);
     }
   }
 }

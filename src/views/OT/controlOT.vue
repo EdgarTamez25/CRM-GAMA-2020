@@ -3,7 +3,12 @@
 		<v-row justify="center">
 			<v-col cols="12" >
 				
-				<v-snackbar v-model="snackbar" :color="color" top multi-line right rounded="pill" > <b>{{ text }}</b> </v-snackbar>
+				<v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+          <strong> {{alerta.texto}} </strong>
+          <template v-slot:action="{ attrs }">
+            <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+          </template>
+        </v-snackbar>
         
 				<v-card-actions class="pa-0" >
 
@@ -25,7 +30,7 @@
 
 					<v-col cols="12" sm="8" >  <!-- VENDEDORES -->
 						<v-autocomplete
-							:items="vendedores" v-model="vendedor" item-text="nombre" tem-value="id" label="Responsable" 
+							:items="usuarios" v-model="usuario" item-text="nombre" tem-value="id" label="Responsable" 
 							dense filled hide-details color="celeste" append-icon="persons" return-object
 						></v-autocomplete>
 					</v-col>
@@ -50,66 +55,79 @@
             ></v-text-field>
           </v-col>
 
-          <v-col class="text-right" v-if="modoVista===2">
-            <v-btn color="rosa" dark  @click="PrepararPeticion()" >  Actualizar Orden de trabajo </v-btn>
+          <v-col cols="12" class="text-right" >
+            <v-btn v-if="modoVista===2" color="rosa" dark @click="PrepararPeticion()">  Actualizar Orden de trabajo </v-btn>
           </v-col>
 
-           <v-card-text class="font-weight-black subtitle-1 py-0" align="center"> PRODUCTOS A SOLICITAR </v-card-text>
-          <v-col cols="12">  <!-- PRODUCTOS -->
-						<v-autocomplete
-							:items="getPxCxD" v-model="producto" item-text="codigo" item-value="id" label="Productos" 
-							dense outlined hide-details color="celeste" append-icon="print" return-object
-              :disabled="cliente.id && depto.id && modo ==1 ? false: true"
-						>
-            </v-autocomplete>
-					</v-col>
-
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="cantidad" label="Cantidad" hide-details dense outlined clearable
-            ></v-text-field>
+          <v-col cols="12" sm="8" class="py-0">
+            <v-card-text class="font-weight-black subtitle-1 py-0" > 
+              PRODUCTOS A SOLICITAR 
+            </v-card-text>
+          </v-col>
+          <v-col cols="12" sm="4" class="py-0 text-right">
+            <v-btn v-if="modoVista===2" color="gris" dark block small @click="FormularioProductos = !FormularioProductos"> 
+              {{ FormularioProductos ? 'Esconder Formulario': 'Habilitar Formulario' }}  
+            </v-btn>
           </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-select
-              v-model="concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
-              dense hide-details  label="Conceptos" return-object outlined
-            ></v-select> 
-          </v-col>
+          <template v-if="FormularioProductos">
+            <v-col cols="12">  <!-- PRODUCTOS -->
+              <v-autocomplete
+                :items="getPxCxD" v-model="producto" item-text="codigo" item-value="id" label="Productos" 
+                dense outlined hide-details color="celeste" append-icon="print" return-object
+                :disabled="cliente.id && depto.id && modo ==1 ? false: true"
+              >
+              </v-autocomplete>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="cantidad" label="Cantidad" hide-details dense outlined clearable
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
+                dense hide-details  label="Conceptos" return-object outlined
+              ></v-select> 
+            </v-col>
+            
+            <v-col cols="12" sm="6"  > <!-- FECHA DE COMPROMISO -->
+              <v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="fecha1" label="Fecha entrega" append-icon="event" readonly v-on="on"
+                      dense hide-details color="celeste" outlined
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="fecha1" locale="es-es" color="rosa"  scrollable>
+                  <v-spacer></v-spacer>
+                  <v-btn text small color="gris" @click="fechamodal1 = false">Cancelar</v-btn>
+                  <v-btn dark small color="rosa" @click="$refs.fecha1.save(fecha1)">OK</v-btn>
+                </v-date-picker>
+              </v-dialog>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="urgencia" :items="urgencias" item-text="nombre" item-value="id" outlined color="celeste" 
+                dense hide-details  label="Urgencia" return-object 
+              ></v-select> 
+            </v-col>
+
+            <v-col cols="12"  v-if="urgencia.id != 1 && urgencia.id"> <!-- RAZON -->
+              <v-textarea
+                v-model ="razon" outlined label="Razon de la urgencia" rows="2" hide-details dense
+              ></v-textarea>
+            </v-col>
+
+            <v-col cols="12" class="py-0 text-right" v-if="modo === 1"> 
+              <v-btn color="celeste" dark  @click="validarPartida(1) "> Agregar partida</v-btn> 
+            </v-col>
+          </template>
+
           
-          <v-col cols="12" sm="6"  > <!-- FECHA DE COMPROMISO -->
-            <v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="fecha1" label="Fecha entrega" append-icon="event" readonly v-on="on"
-                    dense hide-details color="celeste" outlined
-                ></v-text-field>
-              </template>
-              <v-date-picker v-model="fecha1" locale="es-es" color="rosa"  scrollable>
-                <v-spacer></v-spacer>
-                <v-btn text small color="gris" @click="fechamodal1 = false">Cancelar</v-btn>
-                <v-btn dark small color="rosa" @click="$refs.fecha1.save(fecha1)">OK</v-btn>
-              </v-date-picker>
-            </v-dialog>
-          </v-col>
-
-          <v-col cols="12" sm="6">
-            <v-select
-              v-model="urgencia" :items="urgencias" item-text="nombre" item-value="id" outlined color="celeste" 
-              dense hide-details  label="Urgencia" return-object 
-            ></v-select> 
-          </v-col>
-
-					<v-col cols="12"  v-if="urgencia.id != 1 && urgencia.id"> <!-- RAZON -->
-						<v-textarea
-							v-model ="razon" outlined label="Razon de la urgencia" rows="2" hide-details dense
-						></v-textarea>
-					</v-col>
-
-          <v-col cols="12" class="py-0 text-right" v-if="modo === 1"> 
-            <v-btn color="celeste" dark  @click="validarPartida(1) "> Agregar partida</v-btn> 
-          </v-col>
-
           <v-col cols="6" class="py-0" v-if="modo === 2"> 
             <v-btn color="gris" dark block @click="limpiarCamposPartida()"> CANCELAR</v-btn>
            </v-col>
@@ -119,44 +137,44 @@
 
           <v-col cols="12">
             <loading v-if="!detalle.length && modoVista != 1"/>
-
-            <v-simple-table fixed-header height="auto" v-else>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left"> Producto  </th>
-                    <th class="text-left"> Cantidad  </th>
-                    <th class="text-left"> Concepto  </th>
-                    <th class="text-left"> Entrega </th>
-                    <th class="text-left"> Urgencia  </th>
-                    <th class="text-left"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, i) in detalle" :key="i">
-                    <td>{{ item.producto }}</td>
-                    <td>{{ item.cantidad }}</td>
-                     <td>
-                      <span v-if="item.concepto === 1"> PRODUCCION </span>
-                      <span v-if="item.concepto === 2"> STOCK </span>
-                    </td>
-                    <td>{{ item.fecha_entrega }}</td>
-                    <td>
-                      <span v-if="item.urgencia === 1"> NORMAL</span>
-                      <span v-if="item.urgencia === 2"> URGENTE</span>
-                      <span v-if="item.urgencia === 3"> PRIORIDAD</span>
-                    </td>
-                    <td>
-                      <v-btn color="success" class="ma-1" icon @click="rellenaCampos(item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
-                      <v-btn color="error"   class="ma-1" icon @click="eliminaPartida(item.id)"> <v-icon>mdi-delete</v-icon> </v-btn>
-                    </td>
-                    
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
+            <v-card outlined v-else>
+              <v-simple-table fixed-header height="auto" >
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left"> Producto  </th>
+                      <th class="text-left"> Cantidad  </th>
+                      <th class="text-left"> Concepto  </th>
+                      <th class="text-left"> Entrega </th>
+                      <th class="text-left"> Urgencia  </th>
+                      <th class="text-left"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, i) in detalle" :key="i">
+                      <td>{{ item.producto }}</td>
+                      <td>{{ item.cantidad }}</td>
+                      <td>
+                        <span v-if="item.concepto === 1"> PRODUCCION </span>
+                        <span v-if="item.concepto === 2"> STOCK </span>
+                      </td>
+                      <td>{{ item.fecha_entrega }}</td>
+                      <td>
+                        <span v-if="item.urgencia === 1"> NORMAL</span>
+                        <span v-if="item.urgencia === 2"> URGENTE</span>
+                        <span v-if="item.urgencia === 3"> PRIORIDAD</span>
+                      </td>
+                      <td>
+                        <v-btn color="success" class="ma-1" icon @click="rellenaCampos(item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
+                        <v-btn color="error"   class="ma-1" icon @click="eliminaPartida(item.id)"> <v-icon>mdi-delete</v-icon> </v-btn>
+                      </td>
+                      
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card>
           </v-col>
-
           
 				</v-row>
         <v-col cols="12" align="center" v-if="detalle.length && modoVista != 1">
@@ -227,6 +245,7 @@
         idEditar: null,
         idAEliminar: null,
         alertaEliminar: false,
+        FormularioProductos: true,
 
         orden_compra:'',
         referencia:'',
@@ -246,17 +265,16 @@
         urgencias:[{id:1, nombre:'NORMAL'},{id:2, nombre:'URGENTE'},{ id:3, nombre:'PRIORIDAD'}],
         urgencia: { id:null, nombre:''},
 				// AUTOCOMPLETE
-				vendedores : [],
-				vendedor	 : {id:null, nombre:''},
+				usuarios : [],
+				usuario	 : {id:null, nombre:''},
 				clientes	: [],
 				cliente		: {id:null, nombre:''},
 				// SELECTORES
 				producto    : { id:null, nombre:''},
 				productos   : [],
 				// ALERTAS
-				snackbar    : false,
-				text		    : '',
-        color		    : 'error',
+				alerta: { activo: false, texto:'', color:'error'},
+
         overlay     : false,
 				textDialog  :'',
 				Correcto    : false,
@@ -266,16 +284,19 @@
 		},
 		
 		created(){
-			this.consultar_Vendedores()
-      this.consultar_Clientes()
-      this.consultaDepartamentos()
-			this.validarModoVista() 	  // VALIDO EL MODO DE LA VISTA
+      this.consultar_Usuarios();
+			// this.consultar_Vendedores();
+      this.consultar_Clientes();
+      this.consultaDepartamentos();
+			this.validarModoVista(); 	  // VALIDO EL MODO DE LA VISTA
 		},
 			
 		computed:{
 			// IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
       ...mapGetters('Login'    ,['getdatosUsuario']), 
       ...mapGetters('ProductosxCliente' ,['Loading','getPxCxD']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
+			...mapGetters('OT'    ,['Parametros']), // IMPORTANDO USO DE VUEX - (GETTERS)
+
 		},
 
 		watch:{ 
@@ -297,8 +318,8 @@
         if(!this.depto.id){ this.depto = { id:1, nombre:'FLEXOGRAFÍA'} }
         if(this.cliente.id){ 
           const payload = new Object();
-          payload.id_depto   = this.depto.id 
-          payload.id_cliente = this.cliente.id
+            payload.id_depto   = this.depto.id 
+            payload.id_cliente = this.cliente.id
           this.consultaPxCxD(payload) 
         }
       }
@@ -313,45 +334,45 @@
       validarPartida(modo){
         this.modo = modo;
         
-        if(!this.producto.id)	{ this.snackbar = true; this.text="DEBES SELECCIONAR UN PRODUCTO" ;this.color="error"; return }
-        if(!this.cantidad)		{ this.snackbar = true; this.text="DEBES ESPECIFICAR UNA CANTIDAD";this.color="error"; return }
-        if(!this.concepto.id) { this.snackbar = true; this.text="DEBES SELECCIONAR UN CONCEPTO" ;this.color="error"; return }
-        if(!this.fecha1)			{ this.snackbar = true; this.text="DEBES SELECCIONAR UN PRODUCTO" ;this.color="error"; return }
-        if(!this.urgencia.id) { this.snackbar = true; this.text="DEBES SELECCIONAR LA URGENCIA DE LA ORDEN" ;this.color="error"; return }
+        if(!this.producto.id)	{ this.alerta = { activo: true, texto:'DEBES SELECCIONAR UN PRODUCTO' , color:'error'}; return }
+        if(!this.cantidad)		{ this.alerta = { activo: true, texto:'DEBES ESPECIFICAR UNA CANTIDAD', color:'error'}; return }
+        if(!this.concepto.id) { this.alerta = { activo: true, texto:'DEBES SELECCIONAR UN CONCEPTO' , color:'error'}; return }
+        if(!this.fecha1)			{ this.alerta = { activo: true, texto:'DEBES SELECCIONAR UN PRODUCTO' , color:'error'}; return }
+        if(!this.urgencia.id) { this.alerta = { activo: true, texto:'DEBES SELECCIONAR LA URGENCIA DE LA O.T.' , color:'error'}; return }
         if(this.urgencia.id != 1 && !this.razon) { 
-            this.snackbar = true; this.text="TIENES QUE ESCRIBIR LA RAZON DE LA URGENCIA."   ; return 
+            this.alerta = { activo: true, texto:'TIENES QUE ESCRIBIR LA RAZON DE LA URGENCIA.' , color:'error'}; return;
         }
         let error = false
         if(this.modo === 1){ for(let i=0; i<this.detalle.length; i++){ if(this.detalle[i].id_producto === this.producto.id){ error = true } } };
-        if(error){ this.snackbar = true; this.text="ESTE PRODUCTO YA EXISTE EN LA LISTA" ;this.color="error"; return }
+        if(error){ this.alerta = { activo: true, texto:'ESTE PRODUCTO YA EXISTE EN LA LISTA' , color:'error'}; return; }
         
         this.modo === 1 ? this.agregarPartida(): this.editaPartida();
       },
 
       agregarPartida(){
         const partida = new Object();
-        partida.id            = this.detalle.length + 1 ;
-        partida.id_ot         = this.modoVista === 2 ? this.parametros.id: '';
-        partida.id_producto   = this.producto.id;
-        partida.producto      = this.producto.nombre;
-        partida.cantidad      = this.cantidad;
-        partida.concepto      = this.concepto.id;
-        partida.fecha_progra  = this.traerFechaActual();
-        partida.fecha_entrega = this.fecha1;
-        partida.urgencia      = this.urgencia.id;
-        partida.razon         = this.razon? this.razon:'';
+              partida.id            = this.detalle.length + 1 ;
+              partida.id_ot         = this.modoVista === 2 ? this.parametros.id: '';
+              partida.id_producto   = this.producto.id;
+              partida.producto      = this.producto.nombre;
+              partida.cantidad      = this.cantidad;
+              partida.concepto      = this.concepto.id;
+              partida.fecha_progra  = this.traerFechaActual();
+              partida.fecha_entrega = this.fecha1;
+              partida.urgencia      = this.urgencia.id;
+              partida.razon         = this.razon? this.razon:'';
         
         if(this.modoVista === 1){
           this.detalle.push(partida);
           this.limpiarCamposPartida();
-          this.snackbar=true; this.text='LA PARTIDA SE AGREGO CORRECTAMENTE'; this.color='success';
+          this.alerta = { activo: true, texto:'LA PARTIDA SE AGREGO CORRECTAMENTE' , color:'success'}; 
         }
 
         if(this.modoVista === 2 ){
           this.$http.post('agregar.partida.detot', partida).then(response =>{
             this.consultaDetalle(this.parametros.id)
             this.limpiarCamposPartida();
-            this.snackbar=true; this.text= response.bodyText; this.color='success';
+            this.alerta = { activo: true, texto:response.bodyText , color:'success'}; 
           }).catch(error =>{ console.log('error', error)})
         }
 
@@ -359,6 +380,7 @@
 
       rellenaCampos(item){
         // console.log('item', item);
+        this.FormularioProductos = true;
         this.idEditar = item.id;
         this.producto = { id: item.id_producto, nombre: item.producto };
         this.cantidad = item.cantidad;
@@ -387,17 +409,17 @@
 
         if(this.modoVista === 2){
           const payload = new Object();
-          payload.id            = this.idEditar;
-          payload.id_producto   = this.producto.id;
-          payload.cantidad      = this.cantidad;
-          payload.concepto      = this.concepto.id;
-          payload.fecha_entrega = this.fecha1;
-          payload.urgencia     = this.urgencia.id;
-          payload.razon         = this.razon? this.razon:'';
+                payload.id            = this.idEditar;
+                payload.id_producto   = this.producto.id;
+                payload.cantidad      = this.cantidad;
+                payload.concepto      = this.concepto.id;
+                payload.fecha_entrega = this.fecha1;
+                payload.urgencia     = this.urgencia.id;
+                payload.razon         = this.razon? this.razon:'';
 
           this.$http.post('actualiza.partida.detot',payload).then(response =>{
-          this.consultaDetalle(this.parametros.id)
-           this.snackbar=true; this.text= response.bodyText; this.color='success';
+            this.consultaDetalle(this.parametros.id)
+            this.alerta = { activo: true, texto:response.bodyText , color:'success'}; 
           }).catch(error =>{ console.log('error', error)})
         }
         
@@ -406,6 +428,7 @@
       },
 
       limpiarCamposPartida(){
+        this.FormularioProductos = true; 
         this.producto = { id:null, nombre:'' };
         this.cantidad = '';
         this.concepto = { id:null, nombre:'' };
@@ -418,13 +441,13 @@
       eliminaPartida(id){
         if(this.modoVista === 1){
           this.detalle = this.detalle.filter( item => { if(item.id != id){ return item; }; });  
-          this.snackbar=true; this.text='LA PARTIDA SE ELIMINO CORRECTAMENTE'; this.color='success';
+          this.alerta = { activo: true, texto:'LA PARTIDA SE ELIMINO CORRECTAMENTE' , color:'success'}; 
         }
 
         if(this.modoVista === 2){
           // console.log('')
           if(this.detalle.length <= 1){
-            this.snackbar=true; this.text="Debe haber al menos 1 producto en la lista."; this.color="error";
+            this.alerta = { activo: true, texto:'Debe haber al menos 1 producto en la lista.' , color:'error'}; 
             return;
           }
           this.idAEliminar = id;
@@ -437,21 +460,22 @@
         this.$http.delete('elimina.partida.detot/'+ this.idAEliminar).then( response =>{
           this.consultaDetalle(this.parametros.id)
           this.alertaEliminar = false;
-          this.snackbar=true; this.text= response.bodyText; this.color='success';
+          this.alerta = { activo: true, texto:response.bodyText , color:'success'}; 
         }).catch( error => { console.log('error', error)})
       },
 
 			validarModoVista(){
 				if(this.modoVista === 2){
+          this.FormularioProductos = false;
           // ASIGNAR VALORES AL FORMULARIO
           this.depto        = { id: this.parametros.id_depto }
-          this.vendedor     = { id: this.parametros.id_vendedor , nombre: this.parametros.nomvend }
+          this.usuario     = { id: this.parametros.id_usuario , nombre: this.parametros.nomusuario }
 					this.cliente      = { id: this.parametros.id_cliente  , nombre: this.nomcli}
           this.orden_compra = this.parametros.oc;
           this.referencia   = this.parametros.referencia;
           this.consultaDetalle(this.parametros.id);
 				}else{
-				this.limpiarCampos()
+				  this.limpiarCampos()
 				}
       },
       
@@ -462,8 +486,8 @@
       },
 
 			validaInformacion(){
-				if(!this.depto.id)	 	    { this.snackbar = true; this.text="DEBES AGREGAR EL DEPARTAMENTO"   				  ; this.color = "error"; return }
-				if(!this.vendedor.id)		  { this.snackbar = true; this.text="DEBES AGREGAR EL RESPONSABLE DEL PEDIDO"   ; this.color = "error"; return }
+				if(!this.depto.id)	 	    { this.alerta = { activo: true, texto:'DEBES AGREGAR EL DEPARTAMENTO'           , color:'error'}; return }
+				if(!this.usuario.id)		  { this.alerta = { activo: true, texto:'DEBES AGREGAR EL RESPONSABLE DEL PEDIDO' , color:'error'}; return }
 				if(!this.cliente.id)	    { this.snackbar = true; this.text="DEBES AGREGAR EL CLIENTE QUE SOLICITA EL PRODUCTO" ; this.color = "error"; return }
 				if(!this.detalle.length)	{ this.snackbar = true; this.text="DEBES AGREGAR AL MENOS 1 PRODUCTO" ; this.color = "error"; return }
 				this.PrepararPeticion()
@@ -473,15 +497,17 @@
         this.overlay = true; 
         // FORMAR ARRAY A MANDAR
         const payload = new Object();
-        payload.id_depto     = this.depto.id,
-        payload.id_vendedor  = this.vendedor.id,
-        payload.id_cliente   = this.cliente.id,
-        payload.oc			     = this.orden_compra? this.orden_compra: 'SIN O.C.',
-        payload.referencia   = this.referencia ? this.referencia : 'SIN REFERENCIA',
-        payload.fecha        = this.traerFechaActual(),
-        payload.hora			   = this.traerHoraActual(),
-        payload.id_usuario   = this.getdatosUsuario.id,
-        payload.detalle      = this.detalle
+              payload.id_depto     = this.depto.id,
+              payload.id_sucursal  = this.getdatosUsuario.id_sucursal,
+              payload.id_usuario   = this.usuario.id,
+              payload.id_cliente   = this.cliente.id,
+              payload.oc			     = this.orden_compra? this.orden_compra: 'SIN O.C.',
+              payload.referencia   = this.referencia ? this.referencia : 'SIN REFERENCIA',
+              payload.fecha        = this.traerFechaActual(),
+              payload.hora			   = this.traerHoraActual(),
+              payload.creacion     = this.traerFechaActual() + ' '+ this.traerHoraActual(),
+              payload.id_creador   = this.getdatosUsuario.id,
+              payload.detalle      = this.detalle
 
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
@@ -505,15 +531,16 @@
 			},
 	
 			TerminarProceso(mensaje){
-				var me = this ;
+				var that = this ;
         this.Correcto = true ; this.textCorrecto = mensaje;
-				this.consultaOT() //ACTUALIZAR CONSULTA DE CLIENTES
-        setTimeout(function(){ me.$emit('modal',false)}, 2000);
-				setTimeout(function(){ me.$limpiarCampos()}, 2000);
+				this.consultaOT(this.Parametros) //ACTUALIZAR CONSULTA DE CLIENTES
+        setTimeout(function(){ that.$emit('modal',false)}, 2000);
+				setTimeout(function(){ that.limpiarCampos()}, 2000);
         
 			},
 
 			limpiarCampos(){
+        this.FormularioProductos = true;
         this.producto = { id:null, nombre:'' };
         this.cantidad = '';
         this.concepto = { id:null, nombre:'' };
@@ -521,12 +548,12 @@
         this.urgencia = { id:null, nombre:''};
         this.razon    = '';
         this.modo     = 1;
-        this.vendedor = { id: null, nombre:''};
+        this.usuario = { id: null, nombre:''};
         this.depto    = { id: null, nombre:''};
         this.cliente  = { id: null, nombre:''};
         this.orden_compra = '';
         this.referencia   = '';
-        this.detalle      = []
+        this.detalle      = [];
 			},
 
 			mostrarError(mensaje){
@@ -537,7 +564,7 @@
         let deptos = this.deptos.filter(item =>{ if(this.depto.id === item.id ){ return item.nombre} })
         let info = [ { text: "Orden de trabajo", value: this.parametros.id         }, 
                      { text: "Departamento"    , value:deptos[0].nombre }, 
-                     { text: "Responsable"     , value: this.parametros.nomvend ?  this.parametros.nomvend : '' }, 
+                     { text: "Responsable"     , value: this.parametros.nomusuario ?  this.parametros.nomusuario : '' }, 
                      { text: "Cliente"         , value: this.parametros.nomcli    },
                      { text: "Orden de Compra" , value: this.parametros.oc         }, 
                      { text: "Referencia"      , value: this.parametros.referencia }, 

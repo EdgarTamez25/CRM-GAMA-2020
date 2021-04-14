@@ -39,20 +39,28 @@ export default {
 
 		consultaDepartamentos(){
 			this.deptos = [	{ id:1, nombre:'FLEXOGRAFÍA'},
-											// { id:2, nombre:'BORDADOS'},
-											// { id:3, nombre:'DIGITAL'},
-											// { id:4, nombre:'OFFSET'},
-											// { id:5, nombre:'SERIGRAFÍA'},
-											// { id:6, nombre:'EMPAQUE'},
-											// { id:7, nombre:'SUBLIMACIÓN'},
-											// { id:8, nombre:'TAMPOGRAFÍA'},
-											// { id:9, nombre:'UV'}
+											{ id:2, nombre:'BORDADOS'},
+											{ id:3, nombre:'DIGITAL'},
+											{ id:4, nombre:'OFFSET'},
+											{ id:5, nombre:'SERIGRAFÍA'},
+											{ id:6, nombre:'EMPAQUE'},
+											{ id:7, nombre:'SUBLIMACIÓN'},
+											{ id:8, nombre:'TAMPOGRAFÍA'},
+											{ id:9, nombre:'UV'}
 										]
 		},
 
 		consultar_Vendedores(){  // AUTOCOMPLETE -> VENDEDORES
 			this.$http.get('vendedores').then((response)=>{
 				this.vendedores = response.body //LLENNO ARRAY
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
+
+		consultar_Usuarios(){  // AUTOCOMPLETE -> VENDEDORES
+			this.$http.get('catusuarios').then((response)=>{
+				this.usuarios = response.body //LLENNO ARRAY
 			}).catch(error =>{
 				console.log('error', error)
 			})
@@ -94,6 +102,17 @@ export default {
 				})
 			})
 			
+		},
+
+		consultaProdxClientexDepto( data){
+			return new Promise( (resolve, reject) => {
+				this.$http.post('productos.cliente.deptos',data).then((response)=>{
+					resolve(response.body)
+				}).catch(error =>{
+					reject('No se encontraron productos en esté departamento.')
+					console.log('error clixdpto', error)
+				})
+			})
 		},
 		
 		evualuaRetorno(){

@@ -1,15 +1,17 @@
 <template>
-  <v-content class="pa-0 ma-3">
+  <v-main class="pa-0 ma-3">
     <v-row>
       
-      <v-snackbar v-model="snackbar" multi-line :timeout="2000" top :color="color" class="font-weight-black subtitle-1"> {{text}}
+      <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+        <strong> {{alerta.texto}} </strong>
         <template v-slot:action="{ attrs }">
-          <v-btn color="white" text @click="snackbar = false" v-bind="attrs"> Cerrar </v-btn>
+          <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
         </template>
       </v-snackbar>
 
+
       <v-col cols="9" sm="10" align="left">
-        <v-card-text class="font-weight-black headline  py-0 mt-1 " > NUEVO PRODUCTO </v-card-text>
+        <v-card-text class="font-weight-black headline  py-0 mt-1 " > {{ modoVista === 1 ? 'NUEVO PRODUCTO': 'EDITAR PRODUCTOS'}} </v-card-text>
       </v-col>
        <v-col cols="3" sm="2" align="right">
         <v-btn color="error"  @click="$emit('modal',false)" outlined><v-icon>clear</v-icon></v-btn>
@@ -88,8 +90,16 @@
         class="pa-3 py-0"
 
       />
-      <v-col cols="12" v-if="GUARDAR_PRODUCTO">
-        <v-btn color="green" dark block @click="validarInfomracion()">CREAR PRODUCTO</v-btn>
+
+      <v-col cols="12" v-if="alertaFormulario">
+        <v-alert outlined type="error">
+          Que onda maaaann, lo sentimos este formulario no esta disponible :c 
+        </v-alert>
+      </v-col>
+      
+
+      <v-col cols="12" class="text-right" >
+        <v-btn color="green" dark  @click="validarInfomracion()">{{ modoVista === 1 ? 'CREAR PRODUCTO': 'ACTUAIZAR PRODUCTO' }}</v-btn>
       </v-col>
 
       <!-- MODULOS PARA FINALIZAR PROCESOS -->
@@ -104,14 +114,14 @@
 		<overlay v-if="overlay"/>
 
     </v-row>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
   // import  SelectMixin from '@/mixins/SelectMixin.js';
 	import  metodos from '@/mixins/metodos.js';
   import {mapGetters, mapActions} from 'vuex'
-  import overlay     from '@/components/overlay.vue'
+  import overlay        from '@/components/overlay.vue'
   import flexografia    from '@/views/Formularios/flexografia.vue'
   import digital        from '@/views/Formularios/digital.vue'
 
@@ -149,13 +159,12 @@
         activaFormulario: 0,
         // ALERTAS
         overlay: false,
-				snackbar    : false,
-				text		    : '',
-        color		    : 'error',
+				alerta: { activo: false, texto:'', color:'error' },
         
 				Correcto    : false,
         textCorrecto: '',
-        colorCorrecto:'green'
+        colorCorrecto:'green',
+        alertaFormulario: false
 			}
 		},
 		
@@ -179,7 +188,14 @@
       },
 
       depto(){
-        this.activaFormulario = this.depto.id;
+          this.activaFormulario = null;
+          this.alertaFormulario = false;
+
+        if(this.depto.id === 1){
+          this.activaFormulario = this.depto.id;
+        }else if(this.depto.id != null){
+          this.alertaFormulario = true;
+        }
       },
     },
 
@@ -199,11 +215,13 @@
             this.fecha       = this.data.fecha;
             this.url         = this.data.url;
             this.depto       = { id: this.data.dx }
-            let clienteACargar = res.filter( item => { if(this.data.id_cliente === item.id){ 
-                                                      const cliente = new Object();
-                                                      cliente.id = item.id; cliente.nombre = item.nombre
-                                                      return cliente; } 
-                                                  })  
+            let clienteACargar = res.filter( item => { 
+              if(this.data.id_cliente === item.id){ 
+                const cliente = new Object();
+                      cliente.id = item.id; cliente.nombre = item.nombre
+                      return cliente; 
+              } 
+            })  
               this.cliente = clienteACargar[0];
 
           }else{
@@ -213,27 +231,27 @@
 			},
 
 			validarInfomracion(){
-				if(!this.cliente.id){ this.snackbar = true; this.text="NO PUEDES OMITIR EL CLIENTE"   		                ; return }
-				if(!this.codigo)	  { this.snackbar = true; this.text="NO PUEDES OMITIR EL CÓDIGO"   	                    ; return }
-				if(this.revision < 0)  { this.snackbar = true; this.text="LA REVISIÓN NO PUEDE SER MENOR A CERO"          ; return }
-        if(!this.url)			  { this.snackbar = true; this.text="DEBES AGREGAR LA DIRECCIÓN DE LA FICHA TÉCNICA"    ; return }
-        if(!this.detalle)   { this.snackbar = true; this.text ="NO HAZ GUARDADO LAS CARACTERISTICAS DEL PRODUCTO" ; return }
+				if(!this.cliente.id){ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE'                   , color:'error' }; return }
+				if(!this.codigo)	  { this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CÓDIGO'                    , color:'error' }; return }
+				if(this.revision < 0) { this.alerta = { activo: true, texto:'LA REVISIÓN NO PUEDE SER MENOR A CERO'         , color:'error' }; return }
+        if(!this.url)			  { this.alerta   = { activo: true, texto:'DEBES AGREGAR LA DIRECCION DE LA FICHA TECNICA', color:'error' }; return }
+        if(!this.depto.id)	{ this.alerta   = { activo: true, texto:'DEBES SELECCIONAR UN DEPARTAMENTO'             , color:'error' }; return }
+        if(this.depto.id === 1 && !this.detalle )   {this.alerta   = { activo: true, texto:'NO HAZ GUARDADO LAS CARACTERISTICAS DEL PRODUCTO', color:'error' }; return }
 				this.PrepararPeticion()
 			},
 
 			PrepararPeticion(){
         // FORMAR ARRAY A MANDAR
         const producto = new Object();
-        producto.id_cliente  = this.cliente.id;
-        producto.nombre      = this.nombre;
-        producto.codigo      = this.codigo;
-        producto.descripcion = this.descripcion;
-        producto.revision    = this.revision;
-        producto.url         = this.url;
-        producto.dx          = this.depto.id;
-        producto.detalle     = this.detalle;
-        producto.fecha       = this.traerFechaActual();
-        
+              producto.id_cliente  = this.cliente.id;
+              producto.nombre      = this.nombre;
+              producto.codigo      = this.codigo;
+              producto.descripcion = this.descripcion;
+              producto.revision    = this.revision;
+              producto.url         = this.url;
+              producto.dx          = this.depto.id;
+              producto.detalle     = this.detalle ? this.detalle : [];
+              producto.fecha       = this.traerFechaActual();
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(producto): this.Actualizar(producto);
 			},
@@ -258,9 +276,9 @@
 			},
 	
 			TerminarProceso(mensaje){
-        var me = this ;	this.overlay = false; 
+        var that = this ;	this.overlay = false; 
         this.Correcto = true ; this.textCorrecto = mensaje;
-        setTimeout(() => { me.$emit('modal',false)}, 2000);
+        setTimeout(() => { that.$emit('modal',false)}, 2000);
 				this.limpiarCampos();  //LIMPIAR FORMULARIO
         this.consultaProductosxCliente(this.data.id_cliente) //ACTUALIZAR CONSULTA DE CLIENTES
         
@@ -285,7 +303,7 @@
 			},
 
 			mostrarError(mensaje){
-				this.snackbar=true; this.text=mensaje; this.color="error";
+        this.alerta   = { activo: true, texto: mensaje , color:'error' }
 			}
 		}
 	}

@@ -226,7 +226,7 @@
     computed:{ 
       ...mapGetters('Solicitudes',['consecutivo']),  
       ACTIVACAMPO(){ //! ESTA FUNCION SIRVE PARA VISUALIZAR EL FORMULARIO 
-        return this.tproducto.id === 1 ?  false: true ;
+        // return this.tproducto.id === 1 ?  false: true ;
       }
     },
     watch:{ 
@@ -255,10 +255,10 @@
       eliminaPanton(i){ this.pantones.splice(i,1); },
 
       validarModoVista(){
-        console.log('ENTRO', this.solicitud) 
+        // console.log('ENTRO', this.solicitud) 
         this.limpiarCampos();
-        this.consultaMateriales(this.depto_id);
-        this.consultaAcabados(this.depto_id);
+        // this.consultaMateriales(this.depto_id);
+        // this.consultaAcabados(this.depto_id);
 
         if(this.modoVista === 1 || this.modoVista === 3){this.limpiarCampos() };
 
@@ -269,91 +269,91 @@
           this.tproducto    = { id: this.parametros.tproductos };
           this.cantidad     = this.parametros.cantidad
           this.referencia   = this.parametros.referencia;
-          this.material     = { id: this.parametros.id_material};
-          this.tproducto    = { id: this.parametros.tproducto};
-          this.pantones     = this.parametros.pantones;
-          this.acabado      = this.parametros.acabados ;
-          this.checkActivo  = this.id_orientacion
-          this.evaluaCheck(this.parametros.id_orientacion)
-          this.etqxrollo     =  this.parametros.etqxrollo
-          this.med_nucleo    =  this.parametros.med_nucleo
-          this.etqxpaso      =  this.parametros.etqxpaso
-          this.med_desarrollo=  this.parametros.med_desarrollo
-          this.med_eje       =  this.parametros.med_eje
-          this.ancho         =  this.parametros.ancho
-          this.largo         =  this.parametros.largo
+          // this.material     = { id: this.parametros.id_material};
+          // this.tproducto    = { id: this.parametros.tproducto};
+          // this.pantones     = this.parametros.pantones;
+          // this.acabado      = this.parametros.acabados ;
+          // this.checkActivo  = this.id_orientacion
+          // this.evaluaCheck(this.parametros.id_orientacion)
+          // this.etqxrollo     =  this.parametros.etqxrollo
+          // this.med_nucleo    =  this.parametros.med_nucleo
+          // this.etqxpaso      =  this.parametros.etqxpaso
+          // this.med_desarrollo=  this.parametros.med_desarrollo
+          // this.med_eje       =  this.parametros.med_eje
+          // this.ancho         =  this.parametros.ancho
+          // this.largo         =  this.parametros.largo
         } 
         if(this.modoVista === 4){
           this.id_partida = this.parametros.id,
           this.tproducto  = { id: this.parametros.tipo_prod };
           this.cantidad   = this.parametros.cantidad;
           this.referencia = this.parametros.ft;
-          if(this.parametros.tipo_prod === 3){ this.consultaCaracteristicas(); };
-          if(this.parametros.tipo_prod === 2){ this.consultaModificaciones(); };
+          // if(this.parametros.tipo_prod === 3){ this.consultaCaracteristicas(); };
+          // if(this.parametros.tipo_prod === 2){ this.consultaModificaciones(); };
         }
       },
 
-      consultaCaracteristicas(){
-        this.$http.post('caracteristicas', this.parametros).then(response =>{
-          this.id_caracter        = response.body.id
-          this.material          = { id: response.body.id_material};
-          this.acabado           = response.body.acabados ;
-          this.checkActivo       = this.id_orientacion
-          this.evaluaCheck(response.body.id_orientacion)
-          this.etqxrollo         = response.body.etqxrollo
-          this.med_nucleo        = response.body.med_nucleo
-          this.etqxpaso          = response.body.etqxpaso
-          this.med_desarrollo    = response.body.med_desarrollo
-          this.med_eje           = response.body.med_eje
-          this.ancho             = response.body.ancho
-          this.largo             = response.body.largo
-          this.pantones          = response.body.pantones.map( item =>{ return item.pantone});
-          this.acabadosAEliminar = response.body.acabados;
-          this.pantonesAEliminar = response.body.pantones;
-        }).catch( error =>{
-          console.log('err', error)
-        } )
-      },
+      // consultaCaracteristicas(){
+      //   this.$http.post('caracteristicas', this.parametros).then(response =>{
+      //     this.id_caracter        = response.body.id
+      //     this.material          = { id: response.body.id_material};
+      //     this.acabado           = response.body.acabados ;
+      //     this.checkActivo       = this.id_orientacion
+      //     this.evaluaCheck(response.body.id_orientacion)
+      //     this.etqxrollo         = response.body.etqxrollo
+      //     this.med_nucleo        = response.body.med_nucleo
+      //     this.etqxpaso          = response.body.etqxpaso
+      //     this.med_desarrollo    = response.body.med_desarrollo
+      //     this.med_eje           = response.body.med_eje
+      //     this.ancho             = response.body.ancho
+      //     this.largo             = response.body.largo
+      //     this.pantones          = response.body.pantones.map( item =>{ return item.pantone});
+      //     this.acabadosAEliminar = response.body.acabados;
+      //     this.pantonesAEliminar = response.body.pantones;
+      //   }).catch( error =>{
+      //     console.log('err', error)
+      //   } )
+      // },
 
-      consultaModificaciones(){
-        this.$http.get('modificaciones/'+ this.parametros.id).then(res =>{
-          this.conceptosAEliminar  = []; let acabados = [], pantones =[]; 
-          for(let i=0; i< res.body.length; i++){
-            this.conceptosAEliminar.push(res.body[i].id);
-            res.body[i].concepto === 'Material'            ? this.material       = { id: parseInt(res.body[i].valor)}: '';
-            res.body[i].concepto === 'Etiqueta por Rollo'  ? this.etqxrollo      = res.body[i].valor: ''
-            res.body[i].concepto === 'Medida del nucleo'   ? this.med_nucleo     = res.body[i].valor: ''     
-            res.body[i].concepto === 'Etiqueta al paso'    ? this.etqxpaso       = res.body[i].valor: ''      
-            res.body[i].concepto === 'Medida de desarrollo'? this.med_desarrollo = res.body[i].valor: '' 
-            res.body[i].concepto === 'Medida del eje'      ? this.med_eje        = res.body[i].valor: '' 
-            res.body[i].concepto === 'Ancho'               ? this.ancho          = res.body[i].valor: ''
-            res.body[i].concepto === 'Largo'               ? this.largo          = res.body[i].valor: ''
-            res.body[i].concepto === 'Orientacion'         ? this.checkActivo    = parseInt(res.body[i].valor): '';
-            res.body[i].concepto === 'Orientacion'         ? this.evaluaCheck(res.body[i].valor)   : '';
-            if(res.body[i].concepto === 'Pantone' ){ pantones.push( res.body[i].valor) }
-            if(res.body[i].concepto === 'Acabado' ){ acabados.push({id: parseInt(res.body[i].valor)})}
-          }
-            this.pantones = pantones; this.acabado  = acabados;
-        }).catch(error =>{
-          console.log('error', error)
-        })
-      },
+      // consultaModificaciones(){
+      //   this.$http.get('modificaciones/'+ this.parametros.id).then(res =>{
+      //     this.conceptosAEliminar  = []; let acabados = [], pantones =[]; 
+      //     for(let i=0; i< res.body.length; i++){
+      //       this.conceptosAEliminar.push(res.body[i].id);
+      //       res.body[i].concepto === 'Material'            ? this.material       = { id: parseInt(res.body[i].valor)}: '';
+      //       res.body[i].concepto === 'Etiqueta por Rollo'  ? this.etqxrollo      = res.body[i].valor: ''
+      //       res.body[i].concepto === 'Medida del nucleo'   ? this.med_nucleo     = res.body[i].valor: ''     
+      //       res.body[i].concepto === 'Etiqueta al paso'    ? this.etqxpaso       = res.body[i].valor: ''      
+      //       res.body[i].concepto === 'Medida de desarrollo'? this.med_desarrollo = res.body[i].valor: '' 
+      //       res.body[i].concepto === 'Medida del eje'      ? this.med_eje        = res.body[i].valor: '' 
+      //       res.body[i].concepto === 'Ancho'               ? this.ancho          = res.body[i].valor: ''
+      //       res.body[i].concepto === 'Largo'               ? this.largo          = res.body[i].valor: ''
+      //       res.body[i].concepto === 'Orientacion'         ? this.checkActivo    = parseInt(res.body[i].valor): '';
+      //       res.body[i].concepto === 'Orientacion'         ? this.evaluaCheck(res.body[i].valor)   : '';
+      //       if(res.body[i].concepto === 'Pantone' ){ pantones.push( res.body[i].valor) }
+      //       if(res.body[i].concepto === 'Acabado' ){ acabados.push({id: parseInt(res.body[i].valor)})}
+      //     }
+      //       this.pantones = pantones; this.acabado  = acabados;
+      //   }).catch(error =>{
+      //     console.log('error', error)
+      //   })
+      // },
 
       validaInformacion(){
         if(this.tproducto.id === 3 ) {
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
           if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
-          if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
-          if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
-          if(!this.etqxrollo)      { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR ROLLO"    ; return };
-          if(!this.med_nucleo)     { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DE NUCLEO"      ; return };
-          if(!this.etqxpaso)       { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR PASO"     ; return };
-          if(!this.med_desarrollo) { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL DESARROLLO" ; return };
-          if(!this.med_eje)        { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL EJE"        ; return };
-          if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
-          if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
+          // if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
+          // if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
+          // if(!this.etqxrollo)      { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR ROLLO"    ; return };
+          // if(!this.med_nucleo)     { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DE NUCLEO"      ; return };
+          // if(!this.etqxpaso)       { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR PASO"     ; return };
+          // if(!this.med_desarrollo) { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL DESARROLLO" ; return };
+          // if(!this.med_eje)        { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL EJE"        ; return };
+          // if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
+          // if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
           // if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
-          if(!this.checkActivo)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"      ; return };
+          // if(!this.checkActivo)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"      ; return };
         }else if(this.tproducto.id === 1 || this.tproducto.id === 2 ){
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
           if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
@@ -384,27 +384,26 @@
                     id_solicitud   : this.solicitud.id,
                     dx             : 1,
                     referencia     : this.referencia,
-                    id_material    : this.material.id ? this.material.id : null,
-                    pantones       : this.pantones.length? this.pantones:[],
-                    acabados       : this.acabado.length? this.acabado : [],
-                    id_orientacion : this.checkActivo,
-                    etqxrollo      : this.etqxrollo? this.etqxrollo : '',
-                    med_nucleo     : this.med_nucleo? this.med_nucleo : '',
-                    etqxpaso       : this.etqxpaso? this.etqxpaso : '',
-                    med_desarrollo : this.med_desarrollo ? this.med_desarrollo : '',
-                    med_eje        : this.med_eje ? this.med_eje: '',
-                    ancho          : this.ancho ? this.ancho :'',
-                    largo          : this.largo ? this.largo :'',
                     tproducto      : this.tproducto.id,
                     cantidad       : this.cantidad,
-                    xmodificar     : this.tproducto.id === 2 ? this.objetoxModificar(): '',
+                    // id_material    : this.material.id ? this.material.id : null,
+                    // pantones       : this.pantones.length? this.pantones:[],
+                    // acabados       : this.acabado.length? this.acabado : [],
+                    // id_orientacion : this.checkActivo,
+                    // etqxrollo      : this.etqxrollo? this.etqxrollo : '',
+                    // med_nucleo     : this.med_nucleo? this.med_nucleo : '',
+                    // etqxpaso       : this.etqxpaso? this.etqxpaso : '',
+                    // med_desarrollo : this.med_desarrollo ? this.med_desarrollo : '',
+                    // med_eje        : this.med_eje ? this.med_eje: '',
+                    // ancho          : this.ancho ? this.ancho :'',
+                    // largo          : this.largo ? this.largo :'',
+                    // xmodificar     : this.tproducto.id === 2 ? this.objetoxModificar(): '',
                     // conceptosAEliminar: this.conceptosAEliminar,
                     // pantonesAEliminar : this.pantonesAEliminar,
                     // acabadosAEliminar : this.acabadosAEliminar
                   }
        }
 
-        // console.log('AGREGAR PRODUCTO', payload);
        // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
        if(this.modoVista === 1){ this.Crear(payload)      }; // CREAR PRODUCTO EN VUEX
        if(this.modoVista === 2){ this.Actualizar(payload) }; // ACTUALIZAR PRODUCTO EN VUEX

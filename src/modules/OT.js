@@ -7,6 +7,8 @@ export default{
 		ot: [],
     loading: true,
 		parametros:[],
+		filtros: { },
+
 	},
 
 	mutations:{
@@ -17,33 +19,35 @@ export default{
 			state.ot = data
     },
 		PARAMETROS(state, data){
-			state.parametros = data;
-		},
+			state.filtros = data
+		}
 		
 	},
 	actions:{ 
 		
-		consultaOT({commit}){
-			commit('LOADING',true); commit('ORDENES_TRABAJO', [])
-			Vue.http.post('ordenes.trabajo', store.state.OT.parametros).then(response=>{
+		consultaOT({commit}, payload){
+			commit('PARAMETROS', payload); commit('LOADING',true); commit('ORDENES_TRABAJO', []);
+			Vue.http.post('ordenes.trabajo', payload).then(response=>{
 				commit('ORDENES_TRABAJO', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false)) 
     },
 
-		guardaParametrosConsulta( { commit },payload){
-			commit('PARAMETROS', payload)
-		},
+		// guardaParametrosConsulta( { commit },payload){
+		// 	commit('PARAMETROS', payload)
+		// },
   },
 
 	getters:{
 		Loading(state){
 			return state.loading
 		},
-
 		getOT(state){
 		  return state.ot
-    }
+    },
+		Parametros(state){
+			return state.filtros
+		},
 	}
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-content class="pa-0 ma-3">
+  <v-main class="pa-0 ma-3">
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
 
@@ -15,6 +15,13 @@
 					<v-row class="pa-1 py-0">
 						<v-col cols="12"  md="6" >
 							<v-card-actions class="font-weight-black headline  py-0 mt-1 " > ORDENES DE TRABAJO </v-card-actions>
+						</v-col>
+
+						<v-col cols="12" sm="4" md="2">
+							<v-select
+                v-model="estatus" :items="Estatus" item-text="nombre" item-value="id"  dense
+                 hide-details  placeholder="Estatus " return-object outlined append-icon="mdi-circle-slice-5"
+              ></v-select> 
 						</v-col>
 
 						<v-col cols="12" sm="4" md="2">
@@ -117,7 +124,7 @@
 
   		</v-col>
   	</v-row>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
@@ -153,11 +160,16 @@
         ],
 
 				depto : { id:1, nombre:'FLEXOGRAFÍA'},
-				deptos: [],			
+				deptos: [{ id:1, nombre:'FLEXOGRAFÍA'}],	
+				estatus: {  id: 1, nombre:'Pendiente'},
+				Estatus:[ { id: 1, nombre:'Pendiente'},
+									{ id: 3, nombre:'Terminado'},
+									{ id: 2, nombre:'Cancelado'},	
+				],	
 				
-				fecha1: '',
+				fecha1:moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"), 
 				fechamodal1:false,
-				fecha2: '',
+				fecha2: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
 				fechamodal2:false,
 
 				alerta: { 
@@ -178,8 +190,16 @@
 		},
 
 		created(){
-			this.fecha1 = this.mesAnteriorPrimerDia;
-			this.fecha2 = this.mesActualUltimoDia;
+
+			if(this.Parametros.estatus != undefined){
+				this.estatus  = { id: this.Parametros.estatus };
+				this.depto    = { id: this.Parametros.id_depto };
+				this.fecha1   = this.Parametros.fecha1;
+				this.fecha2   = this.Parametros.fecha2;
+			}
+
+			// this.fecha1 = this.mesAnteriorPrimerDia;
+			// this.fecha2 = this.mesActualUltimoDia;
 			this.init();
 		},
 
@@ -194,11 +214,17 @@
 
 			depto(){
 				this.init()
-			}
+			},
+			estatus(){
+				this.init()
+			},
+
 		},
 
 		computed:{
-			...mapGetters('OT'  ,['getOT','Loading']), // IMPORTANDO USO DE VUEX - (GETTERS)
+			...mapGetters('OT'    ,['getOT','Loading','Parametros']), // IMPORTANDO USO DE VUEX - (GETTERS)
+      ...mapGetters('Login' ,['getdatosUsuario']), 
+
 			tamanioPantalla () {
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':
@@ -224,15 +250,15 @@
 			...mapActions('OT'  ,['consultaOT','guardaParametrosConsulta']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 
 			init(){
-        this.consultaDepartamentos();
-
+        // this.consultaDepartamentos();
 				const parametros = new Object();
-				parametros.id_depto = this.depto.id;
-        parametros.fecha1   = this.fecha1;
-        parametros.fecha2   = this.fecha2;
-
-        this.guardaParametrosConsulta(parametros);
-        this.consultaOT()
+							parametros.id_depto    = this.depto.id;
+							parametros.id_sucursal = this.getdatosUsuario.id_sucursal;
+							parametros.fecha1      = this.fecha1;
+							parametros.fecha2      = this.fecha2;
+							parametros.estatus     = this.estatus.id;
+        // this.guardaParametrosConsulta(parametros);
+        this.consultaOT(parametros);
 			},
 
 			abrirModal(modoVista, item){

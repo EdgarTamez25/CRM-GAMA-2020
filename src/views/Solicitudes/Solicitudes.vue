@@ -55,12 +55,6 @@
 					
 					</v-row>
 
-					<!-- <v-card-actions class="py-0 my-0">
-			      
-			      <v-spacer></v-spacer>
-						
-			    </v-card-actions> -->
-
 					<v-row class="pa-1">
 						<v-col cols="12" sm="6" class="py-0 my-0">
 							<v-text-field
@@ -107,7 +101,7 @@
 						</template>
 
 						<template v-slot:item.nota="{ item }" >
-							<v-btn color="blue"  dark small @click="abrirNota(item.nota)" v-if="item.nota"> ver nota </v-btn>
+							<v-btn color="blue"  dark small @click="abrirNota(item)" v-if="item.nota"> ver nota </v-btn>
 							<v-btn outlined small v-else> sin nota </v-btn>
 						</template>
 			    </v-data-table>
@@ -116,11 +110,20 @@
 		    <overlay v-if="overlay"/>
 
 				<v-dialog v-model="verNota"  hide-overlay width="500px">
-					<v-card	 class="pa-2" outlined>
-						<v-card-text class="font-weight-black  pa-2 subtitle-1" > {{ nota }} </v-card-text>
-						<v-card-text align="right" class="py-0">
-							<v-btn  outlined small color="red" @click="verNota = false"> Cerrar </v-btn>
+					<v-card	 class="pa-3" outlined>
+						<v-card-text class="pa-2 py-0 subtitle-1" > 
+							<span> SOLICITUD: {{ nota.id }}  </span>
 						</v-card-text>
+						<v-card-text class="pa-2 py-0 subtitle-1" > 
+							<span> CLIENTE  : {{ nota.nomcli }}  </span>
+						</v-card-text>
+						<v-divider class="my-3"></v-divider>
+						<v-card-subtitle class="font-weight-black  pa-2 py-0 subtitle-2">
+							{{ nota.nota }}
+						</v-card-subtitle>
+						<v-card-actions align="right" class="mt-6 py-0">
+							<v-btn block outlined small color="red" @click="verNota = false"> Cerrar </v-btn>
+						</v-card-actions>
 					</v-card>
 				</v-dialog>
 
@@ -209,9 +212,9 @@
 									{ id: 3, nombre:'Terminado'},
 									{ id: 4, nombre:'Cancelado'}
 								],
-				fecha1: '',
+				fecha1: moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
 				fechamodal1:false,
-				fecha2: '',
+				fecha2: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
 				fechamodal2:false,
 
 				nuevaSol: { modalSolicitud: false,
@@ -239,10 +242,24 @@
 		},
 
 		created(){
-			this.fecha1 = this.mesAnteriorPrimerDia;
-			this.fecha2 = this.mesActualUltimoDia;
+
+			this.$store.watch(
+        (state, getters) => state.Solicitudes.solicitudes, (newValue, oldValue) => {
+          clearInterval(actualizar);
+        },
+      );
+
+			if(this.Parametros.estatus != undefined){
+				this.estatus = { id: this.Parametros.estatus};
+				this.fecha1  = this.Parametros.fecha1
+				this.fecha2  = this.Parametros.fecha2
+			}
+
+
 			this.consultar_Clientes();
 			this.init();
+			let actualizar  = setInterval(() => { this.consultaAutomatica() }, 10000);
+
 		},
 
 		watch:{
@@ -260,7 +277,7 @@
 		},
 
 		computed:{
-			...mapGetters('Solicitudes'  ,['getSolicitudes','Loading']), // IMPORTANDO USO DE VUEX - (GETTERS)
+			...mapGetters('Solicitudes'  ,['getSolicitudes','Loading','Parametros']), // IMPORTANDO USO DE VUEX - (GETTERS)
       ...mapGetters('Login' ,['getdatosUsuario']), 
 
 			tamanioPantalla () {
@@ -285,15 +302,16 @@
 		},
 
 		methods:{
-			...mapActions('Solicitudes'  ,['consultaSolicitudes','guardaParametrosConsulta']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+			...mapActions('Solicitudes'  ,['consultaSolicitudes','guardaParametrosConsulta','consultaAutomatica']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 
 			init(){
-				const payload = { estatus: this.estatus.id,
-													fecha1 : this.fecha1,
-													fecha2 : this.fecha2,
-												}
-					this.guardaParametrosConsulta(payload);
-					this.consultaSolicitudes()
+				const payload = new Object();
+							payload.fecha1  = this.fecha1;
+							payload.fecha2  = this.fecha2;
+							payload.estatus = this.estatus.id;
+
+					// this.guardaParametrosConsulta(payload);
+					this.consultaSolicitudes(payload)
 			},
 
 			Preparar_Objeto(){
@@ -320,7 +338,7 @@
 			},
 
 			abrirNota(nota){
-				this.nota = nota;
+				this.nota = nota
 				this.verNota = true;
 			},	
 

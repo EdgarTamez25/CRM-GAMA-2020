@@ -1,11 +1,11 @@
 <template>
   <v-main class="pa-0 ma-3">
-    <v-snackbar v-model="alerta.snackbar" :vertical="alerta.vertical" top right :color="alerta.color" class="subtitle-1" > 
-      {{ alerta.text }} 
-        <v-btn dark text  @click="alerta.snackbar = false">
-          Cerrar
-        </v-btn>
-    </v-snackbar>
+     <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+        <strong> {{alerta.text}} </strong>
+        <template v-slot:action="{ attrs }">
+          <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+        </template>
+      </v-snackbar>
 
     <v-row justify="center">
       <v-col cols="12" lg="9" xl="8">
@@ -121,43 +121,73 @@
 
             <v-dialog v-model="crudSolicitud" persistent max-width="700">
               <v-card class="pa-4 ">
-                <v-card-text class="font-weight-black my-1 " align="center">SOLICITUD DE PEDIDO</v-card-text>
-                <!-- //! SELECCION DEL DEPARTAMENTO  -->
-                <v-select
-                    v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
-                    dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
-                    v-if="modoVista === 1 || modoVista === 3"
-                ></v-select> 
-                  <v-select
-                    v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" v-else 
-                    dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled 
-                ></v-select> 
+                <v-card-text class=" subtitle-1 font-weight-black pa-0 " align="center">AGREGAR PRODUCTO</v-card-text>
+
+                <v-row class="mt-4">
+                  <v-col cols="12" sm="6" v-if="modoVista === 1 || modoVista === 3">
+                    <v-select
+                        v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
+                        dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
+                    ></v-select>
+                  </v-col>
+
+                  <v-col cols="12" sm="6"  v-else>
+                    <v-select
+                      v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
+                      dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled 
+                    ></v-select>
+                  </v-col>
+
+                  <v-col cols="12" sm="6" class="" >
+                    <v-select
+                      v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+                      dense hide-details label="Tipo de producto" return-object :disabled="modoVista===2 || modoVista=== 4?true:false"
+                    ></v-select>
+                  </v-col>
+              
+                  <!-- //! REFERENCIA DEL PRODUCTO  -->
+                  <v-col cols="12" sm="6">
+                    <v-autocomplete
+                      :items="productosxcliente" v-model="producto" item-text="codigo" tem-value="id" label="Productos" 
+                      dense filled hide-details color="celeste" append-icon="person" return-object clearable
+                    ></v-autocomplete>
+                  </v-col>
+                  <!-- //! CANTIDAD  -->
+                  <v-col cols="12" sm="6" >
+                    <v-text-field 
+                      v-model="cantidad" hide-details dense label="Cantidad" 
+                      filled color="celeste" placeholder="Cantidad de material"
+                    />
+                  </v-col>
+
+                   <v-col cols="12" class="my-3"/>
+
+                  <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
+                  <v-footer  absolute>
+                    <v-btn color="error" outlined @click="crudSolicitud = false"  class="ma-1">Cancelar </v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn color="success"   @click="validaInformacion()">Guardar </v-btn>
+                  </v-footer>
+
+                </v-row>
+               
+                   
                 
-                <!-- //! FORMULARIOS  -->
-                <crudflexografia 
+                
+              
+                <!-- <crudflexografia 
                   :depto_id="depto.id" 
                   :modoVista="modoVista"
                   :parametros="parametros"
                   :solicitud="solicitud"
                   @modal="crudSolicitud = $event" 
-                />
-                  <!-- v-if="activaFormulario===1" -->
-
+                /> -->
               </v-card>
             </v-dialog>
     
-            <!-- // !ESTE ES EL BUENO ECHALE GANAS PARA ENTENDERLE TE QUIERO MUCHO -->
-            <v-dialog v-model="solicitarModal" persistent :width="anchoModal" height="200" >
+             <!--// !ESTE ES EL BUENO ECHALE GANAS PARA ENTENDERLE TE QUIERO MUCHO  -->
+            <!-- <v-dialog v-model="solicitarModal" persistent :width="anchoModal" height="200" >
               <v-card class="pa-4 ">
-                <!-- <v-select
-                  v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" v-if="modoVista === 1"
-                  dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
-                ></v-select> 
-                  <v-select
-                    v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" v-else 
-                    dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled 
-                ></v-select> -->
-
                 <modificaciones
                   :modalDDD="modalDDD"
                   :depto_id="depto.id" 
@@ -192,7 +222,7 @@
                   v-if="activaFormulario===3"
                 />
               </v-card>
-            </v-dialog>
+            </v-dialog> -->
 
 
             <v-dialog v-model="enviarDeptosModal" persistent :width="550">
@@ -239,9 +269,9 @@
   import loading         from '@/components/loading.vue'
   import overlay         from '@/components/overlay.vue'
   import modificaciones  from '@/views/Formularios/modificaciones.vue'
-  import flexografia     from '@/views/Formularios/flexografia.vue'
-  import crudflexografia from '@/views/Formularios/CRUD/crud_flexografia.vue'
-  import digital         from '@/views/Formularios/digital.vue'
+  // import flexografia     from '@/views/Formularios/flexografia.vue'
+  // import crudflexografia from '@/views/Formularios/CRUD/crud_flexografia.vue'
+  // import digital         from '@/views/Formularios/digital.vue'
   import enviarADeptos   from '@/components/enviarADeptos.vue'
 
   export default {
@@ -250,13 +280,13 @@
       loading,
       overlay,
       modificaciones,
-      flexografia,
-      crudflexografia,
-      digital,
+      // flexografia,
+      // crudflexografia,
+      // digital,
       enviarADeptos
     },
     data:()=>({
-      snack           : true,
+      
       solicitud       : [],
       Vista           :'',
       anchoModal      : 500,
@@ -270,7 +300,17 @@
       modoVista       : 1,
 			modalDDD        : false,
 
-      depto           : { id:1, nombre:'FLEXOGRAFÍA'},
+
+      tproducto    : { id:1, nombre: 'Producto Existente'},
+      tproductos   : [{ id:1, nombre:'Producto Existente'}, 
+                      { id:2, nombre:'Modificación de producto'},
+                      { id:3, nombre:'Nuevo Producto'}
+                     ],
+      productosxcliente: [],
+      producto: { id: null, nombre: ''},
+      cantidad     : '',
+
+      depto           : { id:null, nombre:''},
       deptos          : [],
 
       actualiza       : false,
@@ -283,10 +323,9 @@
       partidaAEditar:{},
       overlay: false,
       alerta: { 
-        snackbar: false,
+        activo: false,
         text: '',
         color: 'error',
-        vertical: true
       }
 
     }),
@@ -305,6 +344,19 @@
 			actualiza: function(){
         this.init();
       },
+
+      depto: function(){
+        const payload = new Object();
+              payload.id_depto = this.depto.id;
+              payload.id_cliente = this.solicitud.id_cliente;
+
+        this.productosxcliente = [];
+        this.consultaProdxClientexDepto( payload).then( response =>{ 
+          this. productosxcliente = response
+        }).catch( error =>{
+          this.alerta = { activo: true, text: error, color: 'error'} 
+        })
+      }
       
 		},
 
@@ -371,10 +423,13 @@
               payload.estatus      = 4 
         
         this.$http.post('valida.cancelacion', payload).then( response =>{
-          this.alerta.snackbar = true; this.alerta.text = response.bodyText; this.alerta.color="green";     
+          // this.alerta.activo = true; this.alerta.text = response.bodyText; this.alerta.color="green";    
+          this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
           this.init()     
         }).catch(error =>{
-          this.alerta.snackbar = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";          
+          // this.alerta.activo = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";       
+          this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
+
         }).finally(()=>{  
           this.overlay = false; 
         })
@@ -391,10 +446,13 @@
         console.log('partida', payload)
         
         this.$http.post('valida.cancelacion.partida', payload).then( response =>{
-          this.alerta.snackbar = true; this.alerta.text = response.bodyText; this.alerta.color="green";  
+          // this.alerta.activo = true; this.alerta.text = response.bodyText; this.alerta.color="green";  
+          this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
           this.init()     
         }).catch(error =>{
-          this.alerta.snackbar = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";          
+          // this.alerta.activo = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";   
+          this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
+
         }).finally(()=>{  
           this.overlay = false; 
         })
@@ -403,7 +461,7 @@
 
       MandarDeptoModal(item){
         // if(this.solicitud.estatus === 4){
-        //   this.alerta.color = "red darken-4"; this.alerta.snackbar = true; 
+        //   this.alerta.color = "red darken-4"; this.alerta.activo = true; 
         //   this.alerta.text = "Es imposible mover el producto ya que la solicitud está cancelada.";
         //   return;
         // }
@@ -416,7 +474,7 @@
         this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
         this.modoVista        = modoVista;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
         this.parametros       = items;    // ASIGNAR LOS PARAMETROS A MANDAR
-        this.depto            = { id: 1 }
+        // this.depto            = { id: 1 }
         this.crudSolicitud   = true;    // ABRIR MODAL
       }
       
