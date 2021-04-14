@@ -7,6 +7,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+<<<<<<< HEAD
 <<<<<<< ET
 <<<<<<< HEAD
 Route::get('/', function () { return view('welcome'); });
@@ -52,12 +53,16 @@ Route::get('/', function () {
 =======
 Route::get('/', function () { return view('welcome'); });
 >>>>>>> Actualizacion General
+=======
+Route::get('/', function () { return view('welcome'); });
+>>>>>>> master
 
 Route::post('iniciar.sesion.integral'      ,'userController@IniciarSesionIntegral') -> name('IniciarSesionIntegral');
 Route::post('valida.sesion.activa'         ,'userController@validaSesionActiva')    -> name('validaSesionActiva');
 Route::post('obtener.datos.usuario'        ,'userController@obtenerDatosUsuario')   -> name('obtenerDatosUsuario');
 Route::post('cerrar.sesion'                ,'userController@CerrarSesion')          -> name('CerrarSesion');
 
+<<<<<<< HEAD
 <<<<<<< ET
 //=================================== USUARIOS======================================================
 Route::get('catusuarios'  ,'userController@getcatalogo')-> name('catusuarios');   
@@ -229,6 +234,14 @@ Route::post('cliente','clientesController@add')         -> name('addCliente');  
 Route::put('cliente/{id}','clientesController@update')  -> name('updateCliente');          //PROBADA
 =======
 >>>>>>> Actualizacion General
+=======
+
+// NIVELES
+Route::get('niveles','nivelController@obtenerNiveles')   -> name('obtenerNiveles');
+Route::get('sistemas','sistemasController@obtenerSistemas')   -> name('obtenerSistemas');
+Route::get('consulta.accesos.usuario/{id}' ,'sistemasController@AccesosASistemas')          -> name('AccesosASistemas');
+
+>>>>>>> master
 
 
 
@@ -238,15 +251,19 @@ Route::post('login.permisos'           ,'userController@SesionPermisos')  	     
 Route::get('gama.etiquetas'            ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');
 Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo') -> name('SesionProgramacionFlexo');
 
+<<<<<<< HEAD
 <<<<<<< ET
 ////================================== SUB ZONAS ===================================================
 Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZona');      //PROBADA
 >>>>>>> parent of 63191fd... Actualizacion General
 =======
+=======
+>>>>>>> master
 //===================================  USUARIOS ====================================================
 	Route::post('usuarios'       ,'userController@agregarUsuario')      -> name('agregarUsuario');
 	Route::get('catusuarios'     ,'userController@catalogoUsuarios') 	-> name('catalogoUsuarios');
 	Route::put('usuarios/{id}'   ,'userController@actualizarUsuario')  	-> name('actualizarUsuario');
+<<<<<<< HEAD
 >>>>>>> Actualizacion General
 
 
@@ -258,10 +275,15 @@ Route::get('subzonas/{id}','subzonasController@SubzonaxZona')-> name('SubzonaxZo
 Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');               //PROBADA
 >>>>>>> parent of 63191fd... Actualizacion General
 =======
+=======
+
+
+>>>>>>> master
 	Route::get('usuarios'	       ,'userController@getAll')      -> name('getAllUsuarios');
 	Route::delete('usuarios/{id}','userController@delete')      -> name('deleteUsuarios');
 	Route::get('choferes'	       ,'userController@choferesAll') -> name('choferesAll');
 	Route::post('estatus.user'   ,'userController@estatusUser') -> name('estatusUser');
+<<<<<<< HEAD
 >>>>>>> Actualizacion General
 
 //===================================  VENDEDORES===================================================
@@ -312,6 +334,29 @@ Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');    
 	Route::put('proveedores/{id}' ,'proveedoresController@update')          -> name('updateProveedor');
 	Route::post('cambia.estatus.p','proveedoresController@cambiaEstatusP')  -> name('cambiaEstatusP');
 
+=======
+
+//===================================  VENDEDORES===================================================
+	Route::get('vendedores'		  ,'vendedoresController@vendedores') -> name('vendedores');
+	Route::get('vendxsuc/{suc}' ,'vendedoresController@vendxSuc')   -> name('vendxSuc');
+
+//==================================== CLIENTES ====================================================
+
+  Route::get('clientes.productos','clientesController@clientes')         -> name('Clientes');
+	Route::get('clientes'          ,'clientesController@catClientes')      -> name('catClientes');
+	Route::get('clientes.selector' ,'clientesController@clientesSelector') -> name('clientesSelector');
+	Route::post('cliente'          ,'clientesController@add')              -> name('addCliente');
+	Route::put('cliente/{id}'      ,'clientesController@update')           -> name('updateCliente');
+	Route::post('cambia.estatus'   ,'clientesController@cambiaEstatus')    -> name('cambiaEstatus');
+
+//==================================== PROVEDORES ==================================================
+	Route::get('catproveedores'   ,'proveedoresController@getcatalogo')     -> name('getcatprov');
+	Route::get('proveedores'      ,'proveedoresController@getAll')          -> name('getAllproveedores');
+	Route::post('proveedores'     ,'proveedoresController@add')             -> name('addProveedor');
+	Route::put('proveedores/{id}' ,'proveedoresController@update')          -> name('updateProveedor');
+	Route::post('cambia.estatus.p','proveedoresController@cambiaEstatusP')  -> name('cambiaEstatusP');
+
+>>>>>>> master
 //==================================== PRODUCTOS ===================================================
 	Route::get('catproductos'      ,'productosController@getcatalogo')    -> name('getcatproducto');
 	Route::get('productosxId/{id}' ,'productosController@getcatalogoxId') -> name('getcatalogoxId');
@@ -417,6 +462,7 @@ Route::get('ciudades','ciudadesController@getAll')-> name('getAllCiudades');    
 	Route::post('crear.nueva.solicitud'    ,'solicitudesController@CrearNuevaSolicitud') -> name('CrearNuevaSolicitud');
 
 
+<<<<<<< HEAD
 <<<<<<< ET
 <<<<<<< HEAD
 //==================================================================================================
@@ -432,6 +478,9 @@ Route::get('categorias'     ,'categoriasController@categorias') -> name('categor
 >>>>>>> parent of 63191fd... Actualizacion General
 =======
 
+=======
+
+>>>>>>> master
 	Route::post('movim.sol'   	 		    ,'solicitudesController@MovimSol')   			  -> name('MovimSol');
 	Route::post('enviar.movimiento'     ,'solicitudesController@EnviarSol')  			  -> name('EnviarSol');
 	Route::post('elimina.movimiento'    ,'solicitudesController@EliminarMovim') 		 -> name('EliminarMovim');
@@ -496,6 +545,7 @@ Route::get('categorias'     ,'categoriasController@categorias') -> name('categor
 
 //==================================================================================================
 //==================================== RUTAS PROGRAMACION FLEXO=====================================
+<<<<<<< HEAD
 >>>>>>> Actualizacion General
 
 //==================================== LLAMADAS-RH =================================================
@@ -535,13 +585,32 @@ Route::put('update.prospecto/{id}','prospectosController@UpdateProspecto') -> na
 Route::post('pasar.cliente','prospectosController@PasarACliente')           -> name('PasarACliente');
 Route::delete('delete.prospecto/{id}','clientesController@EliminarProspecto')  -> name('EliminarProspecto'); 
 =======
+=======
+
+//==================================== LLAMADAS-RH =================================================
+
+	Route::get('obtener.operadores'          ,'userController@obtenerOperadores')       -> name('obtenerOperadores');
+
+	Route::post('agregar.programacion'               ,'programacionFlexoController@programacionFlexo')        -> name('programacionFlexo');
+	Route::put('actualizar.programacion/{id}'        ,'programacionFlexoController@actualizaProgramacion')    -> name('actualizaProgramacion');
+	Route::post('obtener.programaciones'             ,'programacionFlexoController@obtenerProgramacion')      -> name('obtenerProgramacion');
+	Route::get('obtener.detalle.programacion/{id}'   ,'programacionFlexoController@DetalleProgramacion')      -> name('DetalleProgramacion');
+	Route::post('iniciaizar.ot.flexo'         			 ,'programacionFlexoController@InicializarProgramacion')  -> name('InicializarProgramacion');
+	Route::put('actualizar.detalle.orden.flexo/{id}' ,'programacionFlexoController@actualizarDetalle')   			-> name('actualizarDetalle');
+	Route::put('finalizar.orden.flexo/{id}'          ,'programacionFlexoController@FinalizarOTFlexo')   			-> name('FinalizarOTFlexo');
+	Route::put('cancelar.orden.trabajo/{id}'         ,'programacionFlexoController@cancelarOTFlexo')   			-> name('cancelarOTFlexo');
+
+>>>>>>> master
 	Route::post('agregar.maquina.operador'    ,'maquinasController@AgregarMaquinasxOP')     -> name('AgregarMaquinasxOP');
 	Route::post('editar.maquina.operador'     ,'maquinasController@EditarMaquinasxOP')      -> name('EditarMaquinasxOP');
 	Route::post('obtener.maquina.operador'    ,'maquinasController@ObtenerMaquinasxOp')     -> name('ObtenerMaquinasxOp');
 	Route::get('obtener.maquinas'   					,'maquinasController@Maquinas') 							-> name('Maquinas');
 	Route::delete('eliminar.asignacion.maquina/{id}','maquinasController@EliminarAsignacion')     -> name('EliminarAsignacion');
 	Route::post('valida.conservacion.asignación'   ,'maquinasController@ValidaConservacion')      -> name('ValidaConservacion');
+<<<<<<< HEAD
 >>>>>>> Actualizacion General
+=======
+>>>>>>> master
 
 	Route::post('obtener.maquina.asignada'                   ,'maquinasController@MaquinaAsignada')     -> name('MaquinaAsignada');
 	Route::get('obtener.programaciones.maquina/{id_maquina}' ,'maquinasController@ProgramacionMaquina')          -> name('ProgramacionMaquina');
@@ -553,12 +622,17 @@ Route::delete('delete.prospecto/{id}','clientesController@EliminarProspecto')  -
 
 
 
+<<<<<<< HEAD
 <<<<<<< ET
 >>>>>>> parent of 63191fd... Actualizacion General
 =======
 //==================================================================================================
 //============================== RUTAS REGISTRO TINTAS FLEXO =======================================
 >>>>>>> Actualizacion General
+=======
+//==================================================================================================
+//============================== RUTAS REGISTRO TINTAS FLEXO =======================================
+>>>>>>> master
 
 	Route::get('obtener.tintas'     ,'tintasController@obtenerTintas')     -> name('obtenerTintas');
 	Route::post('agregar.tintas'    ,'tintasController@agregarTintas')     -> name('agregarTintas');

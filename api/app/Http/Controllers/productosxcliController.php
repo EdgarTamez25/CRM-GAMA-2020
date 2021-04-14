@@ -34,6 +34,7 @@ class productosxcliController extends Controller
 				endif; 
 			endif;
 
+<<<<<<< HEAD
 <<<<<<< ET
 			if($req -> dx != 1):
 				$this -> creaProducto($req, $id_dx = 0 );
@@ -47,13 +48,18 @@ class productosxcliController extends Controller
 			// 	endif;
 			// endif;
 =======
+=======
+>>>>>>> master
 			if($req -> dx === 3 ):
 				if($id_dx = $this->Digital($req -> detalle )):      // !MANDO A INSERTAR A DIGITAL
 					$this -> creaProducto($req,$id_dx);
 					return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
 				endif;
 			endif;
+<<<<<<< HEAD
 >>>>>>> Actualizacion General
+=======
+>>>>>>> master
 		}
 
 		public function creaProducto($data , $id_dx){
@@ -134,6 +140,7 @@ class productosxcliController extends Controller
 				return response("El producto se creo correctamente" ,200);
 			endif;
 
+<<<<<<< HEAD
 <<<<<<< ET
 			return response("El producto se creo correctamente" ,200);
 
@@ -146,6 +153,8 @@ class productosxcliController extends Controller
 			// 	return response("El producto se creo correctamente" ,200);
 			// endif;
 =======
+=======
+>>>>>>> master
 			if($req -> dx === 3 ):
 				$this -> ActualizaDigital( $req -> detalle);
 				$this -> eliminaPantones($req -> detalle['pantonesAEliminar']);
@@ -154,7 +163,10 @@ class productosxcliController extends Controller
 				$this -> ciclaAcabados(  $req -> detalle['id'], $req -> detalle);
 				return response("El producto se creo correctamente" ,200);
 			endif;
+<<<<<<< HEAD
 >>>>>>> Actualizacion General
+=======
+>>>>>>> master
 		}
 		
 		public function actualizaFlexo($detalle){
