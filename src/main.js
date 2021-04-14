@@ -10,7 +10,8 @@ Vue.config.productionTip = false;
 Vue.use(VueResource)
 
 Vue.http.options.root = 'http://localhost:80/Proyectos/CRM-GAMA-2020/api/public/api/'
-// Vue.http.options.root = '/Proyectos/CRM-GAMA-2020/api/public/api/'
+// Vue.http.options.root = '/api/public/api/'
+
  
 Vue.http.interceptors.push((request, next) => {
   request.headers.set('Accept', 'application/json')
