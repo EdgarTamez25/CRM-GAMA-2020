@@ -83,7 +83,10 @@ class histrorialController extends Controller
 	}
 
 	public function Recotización(Request $req){
-		$recotizacion = DB::select('SELECT obscierre FROM historial WHERE id_compromiso=? AND fase_venta=?',
+		// $recotizacion = DB::select('SELECT obscierre FROM historial WHERE id_compromiso=? AND fase_venta=?',
+		// 															[$req -> id_compromiso, $req -> fase_venta]);
+		// return $recotizacion;	
+		$recotizacion = DB::select('SELECT max(obscierre) as obscierre FROM historial WHERE id_compromiso=? AND fase_venta=? GROUP BY id_compromiso;',
 																	[$req -> id_compromiso, $req -> fase_venta]);
 		return $recotizacion;	
 	}
