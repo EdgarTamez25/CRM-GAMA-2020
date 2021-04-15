@@ -438,11 +438,7 @@ private static $installed = array (
       'aliases' =>
       array (
       ),
-<<<<<<< HEAD
-      'reference' => '8b6ea51243f6287d370789b82d7e153bc566409a',
-=======
       'reference' => 'ab312735daac93a84c154f6db62c8155b32d2b20',
->>>>>>> 8b6ea51243f6287d370789b82d7e153bc566409a
     ),
     'laravel/tinker' =>
     array (
