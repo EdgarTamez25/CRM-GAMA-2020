@@ -43,6 +43,14 @@ export default {
 
 		},
 
+		consultaProdxCli(id_cliente){
+			this.$http.get('productos.cliente/'+ id_cliente).then( response =>{
+				this.productosxcliente = response.body
+			}).catch( error =>{
+				console.log('prodxcli', error)
+			})
+		},
+
 		consultaNiveles(){
 			this.$http.get('niveles').then(response =>{
 				this.niveles = response.body

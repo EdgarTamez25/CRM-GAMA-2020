@@ -103,41 +103,6 @@ export default{
 			commit('MODIFICACIONES', []);
 		},
 
-		actualizaProducto({commit}, payload){
-			if(payload.tproducto === 1){
-				return new Promise((resolve, reject)  => {
-					Vue.http.post('actualiza.prod.existente', payload).then( response =>{
-						resolve(true);
-					}).catch((error)=>{
-						console.log('error',error)
-						reject(error.bodyText)
-					})
-				})
-			}
-			
-			if(payload.tproducto === 2){
-				return new Promise((resolve, reject)  => {
-					Vue.http.post('actualiza.prod.modif', payload).then( response =>{
-						resolve(true);
-					}).catch((error)=>{
-						console.log('error',error)
-						reject(error.bodyText)
-					})
-				})
-			}
-			
-			if(payload.tproducto === 3){
-				return new Promise((resolve, reject) => {
-					Vue.http.post('actualiza.prod.nuevo', payload).then( response=>{
-						resolve(true);
-					}).catch((error)=>{
-						reject(error.bodyText)
-					})
-				})
-			}
-			
-		},
-
 		guardaParametrosConsulta( { commit },payload){
 			commit('PARAMETROS', payload)
 		},
@@ -147,11 +112,11 @@ export default{
 		},
 
 		agregaProducto({commit}, payload){
-			return new Promise(resolve => {
+			return new Promise((resolve, reject) => {
 				Vue.http.post('agregar.producto.solicitud', payload).then(response=>{
 					resolve(response.bodyText)
-					// commit('DETALLE', response.body)
 				}).catch((error)=>{
+					reject(errror.bodyText);
 					console.log('error',error)
 				}).finally(() => commit('LOADING', false)) 
 

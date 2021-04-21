@@ -155,27 +155,34 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::post('procesa.movimiento'	 ,'solicitudesController@ProcesaMovimiento')  -> name('ProcesaMovimiento'); 
 	
 	Route::post('solicitudes'					 ,'solicitudesController@Solicitudes')  	    -> name('Solicitudes'); 
-	Route::get('detalle.solicitud/{id}','solicitudesController@DetalleSolicitud')   -> name('DetalleSolicitud');
+	Route::get('detalle.solicitud/{id}','solicitudesController@DetalleSolicitud')   -> name('DetalleSolicitud');   
 	Route::get('modificaciones/{id}'   ,'solicitudesController@Modificaciones')     -> name('Modificaciones');
 	Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')    -> name('Caracteristicas');
-	Route::post('actualiza.modif'   	 ,'solicitudesController@ActualizaModif')     -> name('ActualizaModif');
-	Route::post('actualiza.prod.nuevo' ,'solicitudesController@ActualizaProdNuevo') -> name('ActualizaProdNuevo');
-	Route::post('actualiza.prod.existente' ,'solicitudesController@ActualizaProdExistente') -> name('ActualizaProdExistente');
-	Route::post('actualiza.prod.modif'     ,'solicitudesController@ActualizaProdModif') -> name('ActualizaProdModif');
+	// Route::post('actualiza.modif'   	 ,'solicitudesController@ActualizaModif')     -> name('ActualizaModif');
+	// Route::post('actualiza.prod.nuevo' ,'solicitudesController@ActualizaProdNuevo') -> name('ActualizaProdNuevo');
+	// Route::post('actualiza.prod.existente' ,'solicitudesController@ActualizaProdExistente') -> name('ActualizaProdExistente');
+	// Route::post('actualiza.prod.modif'     ,'solicitudesController@ActualizaProdModif') -> name('ActualizaProdModif');
 	Route::post('crear.nueva.solicitud'    ,'solicitudesController@CrearNuevaSolicitud') -> name('CrearNuevaSolicitud');
 
 	
 	
-	Route::post('movim.sol'   	 		    ,'solicitudesController@MovimSol')   			  -> name('MovimSol');
-	Route::post('enviar.movimiento'     ,'solicitudesController@EnviarSol')  			  -> name('EnviarSol');
 	Route::post('elimina.movimiento'    ,'solicitudesController@EliminarMovim') 		 -> name('EliminarMovim'); 
 	Route::post('finaliza.prodexit'     ,'solicitudesController@FinalizaProdExist')  -> name('FinalizaProdExist');
-
-	Route::post('valida.cancelacion'         ,'solicitudesController@ValidaCancelacion')  -> name('ValidaCancelacion');
-	Route::post('valida.cancelacion.partida' ,'solicitudesController@ValidaCancelacionPartida')  -> name('ValidaCancelacionPartida');
 	Route::post('cancelar.movimiento'        ,'solicitudesController@CancelarMovimiento')  -> name('CancelarMovimiento');
+	
 
-	Route::post('agregar.producto.solicitud' ,'solicitudesController@agregaProductoSol')  -> name('agregaProductoSol');
+	Route::get('movim.sol/{id_det_sol}'      ,'solicitudesController@MovimSol')   			  -> name('MovimSol');   // EN PROCESO
+	Route::post('enviar.movimiento'          ,'solicitudesController@EnviarSol')  			  -> name('EnviarSol');  // PROBADA ET
+	Route::post('actualiza.envio.movimiento' ,'solicitudesController@ActualizaEnvioSol')  -> name('ActualizaEnvioSol');  // 
+
+
+	
+
+	Route::post('valida.cancelacion.sol'           ,'solicitudesController@ValidaCancelacionSol')  		-> name('ValidaCancelacionSol');     // PROBADA ET
+	Route::post('valida.cancelacion.partida'       ,'solicitudesController@ValidaCancelacionPartida') -> name('ValidaCancelacionPartida'); // PROBADA ET
+	Route::post('agregar.producto.solicitud'       ,'solicitudesController@agregaProductoSol')        -> name('agregaProductoSol');        // PROBADA ET
+	Route::put('actualiza.producto.solicitud/{id}' ,'solicitudesController@actualizaProductoSol')     -> name('actualizaProductoSol');     // PROBADA ET
+
 	
 	
 

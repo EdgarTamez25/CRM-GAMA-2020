@@ -3,8 +3,11 @@
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
 
-				<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}}
-					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+				<v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+					<strong> {{alerta.texto}} </strong>
+					<template v-slot:action="{ attrs }">
+						<v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+					</template>
 				</v-snackbar>
 				<!-- CATALOGO DE COMPROMISOS -->
 				<v-card class="mt-3" outlined >
@@ -69,7 +72,7 @@
 						<v-col cols="12" sm="6" class="py-0 my-0  text-right">
 							<v-btn small class="ma-1" dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
 			      	<v-btn small class=" ma-1 celeste" dark      @click="nuevaSol.modalSolicitud = true">Agregar </v-btn>
-			      	<v-btn small class=" ma-1 gris" icon dark    @click="consultaSolicitudes()" ><v-icon>refresh</v-icon> </v-btn>
+			      	<v-btn small class=" ma-1 gris" icon dark    @click="init()" ><v-icon>refresh</v-icon> </v-btn>
 						</v-col>
 					</v-row>
 					
@@ -140,7 +143,7 @@
 
 						<v-col>
 							<v-textarea
-								v-model="comentario" label="Nota"	rows="3" placeholder="Escribe aquí tus comentarios..." >
+								v-model="comentario" label="Nota"	rows="4" outlined placeholder="Escribe aquí tus comentarios..." >
 							</v-textarea>
 						</v-col>
 
@@ -226,9 +229,7 @@
 				overlay   : false,
 
 
-				snackbar: false,
-				text		: '',
-				color		: 'error',
+				alerta: { activo: false, texto:'', color:'error' },
 
 				dialog: false,
 				textDialog : "Guardando Información",
@@ -242,7 +243,6 @@
 		},
 
 		created(){
-
 			this.$store.watch(
         (state, getters) => state.Solicitudes.solicitudes, (newValue, oldValue) => {
           clearInterval(actualizar);
@@ -254,12 +254,9 @@
 				this.fecha1  = this.Parametros.fecha1
 				this.fecha2  = this.Parametros.fecha2
 			}
-
-
 			this.consultar_Clientes();
 			this.init();
 			let actualizar  = setInterval(() => { this.consultaAutomatica() }, 10000);
-
 		},
 
 		watch:{
@@ -316,7 +313,9 @@
 
 			Preparar_Objeto(){
 
-				if(!this.cliente.id){ this.snackbar = true; this.text="NO PUEDES OMITIR EL CLIENTE"; this.color="green" ; return  };
+				if(!this.cliente.id){ 
+					this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE', color:'error' }; return;
+				}
 				this.overlay = true; this.nuevaSol.modalSolicitud = false;
 
 				const payload = new Object()
@@ -327,10 +326,10 @@
 							payload.nota       = this.comentario ? this.comentario : '';
 				
 				this.$http.post('crear.nueva.solicitud', payload).then( response =>{
-					this.snackbar = true; this.text= response.bodyText; this.color="green";
+					this.alerta = { activo: true, texto:response.bodyText, color:'error' };
 					this.init();
 				}).catch( error =>{
-					this.snackbar = true; this.text= error.bodyText; this.color="error";
+					this.alerta = { activo: true, texto:error.bodyText, color:'error' };
 				}).finally( ()=> { 
 					this.overlay = false;
 				})

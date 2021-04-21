@@ -1,5 +1,5 @@
 <template>
-  <v-content class="pa-0 ma-3">
+  <v-main class="pa-0 ma-3">
   	<v-row class="justify-center">
       <v-snackbar top v-model="snackbar" :timeout="2000"  :color="color"> {{text}}
         <v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
@@ -65,9 +65,6 @@
 			    		<v-btn class="celeste ma-1" icon dark @click="abrirModal(3, item)"><v-icon> mdi-pencil </v-icon></v-btn> 
 				    </template>
 
-						
-
-
 			    </v-data-table>
 			  </v-card>
 				<!-- PAGINACION -->
@@ -90,7 +87,7 @@
 			</v-dialog>
 
   	</v-row>
-  </v-content>
+  </v-main>
   <!-- </v-container> -->
 </template>
 

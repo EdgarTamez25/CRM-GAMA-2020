@@ -17,7 +17,7 @@ class solicitudesController extends Controller
 						'hora'		   =>  $req -> hora ,
 						'nota'       =>  $req -> nota
 				]
-		);
+			);
 			return $crearSolicitud ? response('Se creo correctamente', 200) : 
 															 response('Ocurrio un error',500);   //!RETORNO ID ENCONTRADO O FALSO SI HAY UN ERROR
 		}
@@ -25,139 +25,34 @@ class solicitudesController extends Controller
 	// !AGREGAR PRODUCTO ------------------------------------------>
 		public function agregaProductoSol(Request $req){
 
-			if($req -> tproducto === 1 ):
-				if($prod_exist = $this->productoExistente($req -> id_solicitud, $req)): 						    // !MANDO A INSERTAR EL PRODUCTO EXISTENTE
-					$this -> generaDetalleSoli($req -> id_solicitud,$req -> tproducto, $prod_exist);     // !MANDO A CREAR DETALLE DE LA SOLICITUD
-				endif; 
-			endif;
-			
-			if($req -> tproducto === 2 ): 
-				if($prod_modif = $this->productoAModificar($req -> id_solicitud,$req -> xmodificar)): 						    // !MANDO A INSERTAR EL PRODUCTO A MODIFICAR
-					$this -> generaDetalleSoli($req -> id_solicitud,$req -> tproducto, $prod_modif);     // !MANDO A CREAR DETALLE DE LA SOLICITUD
-				endif;
-			endif;
-
-			if($req -> tproducto === 3 ): 
-				if($prod_nuevo = $this->productoNuevo($req -> id_solicitud,$req)): 						    // !MANDO A INSERTAR EL PRODUCTO NUEVO
-					$this -> generaDetalleSoli($req -> id_solicitud,$req -> tproducto, $prod_nuevo);     // !MANDO A CREAR DETALLE DE LA SOLICITUD
-				endif;
-			endif;
-
-			return response("El producto se creo correctamente",200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
-
-
-		}
-
-		public function productoExistente($id_solicitud, $detalle){
-			$insertProducto = DB::table('prod_exist')->insertGetId(   //! INSERTO PRODUCTO EXISTENTE
-															[
-																	'id_solicitud' => $id_solicitud,
-																	'dx' 					 => $detalle["dx"],
-																	'ft'           => $detalle["referencia"],
-																	'cantidad'		 => $detalle["cantidad"],
-																	'tipo_prod'    => $detalle["tproducto"],
-															]
-													);
-			return $insertProducto ? $insertProducto : false;   //!RETORNO ID ENCONTRADO O FALSO SI HAY UN ERROR
-		}
-
-		public function productoAModificar($id_solicitud, $detalle){
-			$prodmodif = DB::table('prod_modif')->insertGetId(   //!INSERTO PRODUCTO POR MODIFICAR
-															[
-																	'id_solicitud' => $id_solicitud,
-																	'dx' 					 => $detalle["dx"],
-																	'ft'           => $detalle["referencia"],
-																	'cantidad'		 => $detalle["cantidad"],
-																	'tipo_prod'    => $detalle["tproducto"],
-															]
-													);
-
-			for($i=0;$i<count($detalle['xmodificar']); $i++):  //! GENERO UN CICLO EN EL ARRAY QUE RECIBO.
-				if($detalle['xmodificar'][$i]['tipo'] === 1):    //! EVALUO SI EL OBJECTO SOLO CONTIENE UN ELEMENTO, MANDO A INSERTARLO
-					$this -> insertarConcepto($prodmodif, $detalle['xmodificar'][$i]['concepto'], $detalle['xmodificar'][$i]['valor']);
-				else:  																					//! SI EL OBJETO CONTIENE UN ARRAY ENTONCES MANDO A CICLARLO PARA INSERTAR
-					$this -> ciclarConcepto($prodmodif, $detalle['xmodificar'][$i]['concepto'], $detalle['xmodificar'][$i]['valor']);
-				endif; 
-			endfor;
-
-			return $prodmodif ? $prodmodif : false; //! RETORNO ID DE LA TABLA DE MODIFICACIONES.
-		}
-
-		//!ESTA FUNCION SOLO INSERTA EN LA TABLA DE MODIFICACIONES 
-		//! Y SE MANDA A LLAMAR SOLO DE LA FUNCION productoAModificar
-		public function insertarConcepto($prod_modif, $concepto, $valor){ 
-			$dxmodif = DB::table('dx_modif')->insertGetId(
-					[
-							'id_prod_modif' => $prod_modif,
-							'concepto'		  => $concepto,
-							'valor'         => $valor,
-					]
-			);
-		}
-		//!ESTA FUNCION CICLA LOS ELEMENTOS DEL CONCEPTO A MODIFICAR
-		//!Y LOS INCERTA DE MANERA INDIVIDUAL EN LA TABLA DE MODIFICACIONES.
-		public function ciclarConcepto($prod_modif, $concepto, $valor){
-			for($i=0;$i<count($valor); $i++):
-				$this -> insertarConcepto($prod_modif, $concepto, $valor[$i]);
-			endfor;
-		}
-
-		public function productoNuevo($id_solicitud, $detalle){
-			$id_dx = null; //!DECLARAR VARIABLE PARA GUARDAR EL ID DE LA TABLA DONDE SE INSERTARA LA CARACTERISTICA
-			switch ($detalle["dx"]) {
-				case 1:
-					$id_dx = $this -> insertarEnFlexo($detalle);
-					break;
-			}
-
-			$insertProducto = DB::table('prod_nuevo')->insertGetId(   //! INSERTO PRODUCTO NUEVO
-															[
-																	'id_solicitud' => $id_solicitud,
-																	'dx' 					 => $detalle["dx"],
-																	'id_dx' 			 => $id_dx,
-																	'ft'           => $detalle["referencia"],
-																	'cantidad'		 => $detalle["cantidad"],
-																	'tipo_prod'    => $detalle["tproducto"],
-															]
-													);
-			return $insertProducto ? $insertProducto : false;   //!RETORNO ID ENCONTRADO O FALSO SI HAY UN ERROR
-		}
-
-		public function insertarEnFlexo($detalle){
-			$id_flexo = DB::table('det_flexo')->insertGetId(   //! INSERTO PRODUCTO NUEVO
-				[
-						'id_material' 		=> $detalle["id_material"],
-						'etqxrollo' 			=> $detalle["etqxrollo"],
-						'med_nucleo'  		=> $detalle["med_nucleo"],
-						'etqxpaso'		 		=> $detalle["etqxpaso"],
-						'med_desarrollo'  => $detalle["med_desarrollo"],
-						'med_eje'    			=> $detalle["med_eje"],
-						'id_orientacion'  => $detalle["id_orientacion"],
-						'ancho'    				=> $detalle["ancho"],
-						'largo'    				=> $detalle["largo"],
-				]
-			);
-			//! MANDO ACTUALIZAR DETALLES DE LA CARACTERISTICAS PARA CONSERVAR EL MISMO ID
-			$detalles = DB::update('UPDATE det_flexo SET det_acabados=:det_acabados,det_pantones=:det_pantones
-																WHERE id=:id', ['det_acabados' => $id_flexo,'det_pantones' => $id_flexo,'id' => $id_flexo	]);
-
-			$this -> ciclaAcabados($id_flexo, $detalle); //!GENERO CICLO PARA INSERTAR ACABADOS
-			$this -> ciclaPantones($id_flexo, $detalle); //!GENERO CICLO PARA INSERTAR PANTONES
-			return $id_flexo;
-		}
-
-		public function generaDetalleSoli($id_solicitud, $px, $id_px){
 			$insertProducto = DB::table('det_sol')->insertGetId(
 				[
-						'id_solicitud' => $id_solicitud,
-						'px' 					 => $px,
-						'id_px'        => $id_px,
+						'id_solicitud' => $req -> id_solicitud,
+						'id_depto' 		 => $req -> id_depto,
+						'id_producto'  => $req -> id_producto,
+						'tipo_prod'    => $req -> tproducto,
+						'cantidad'     => $req -> cantidad
 				]
 			);
+
+			return $insertProducto ? response('El producto se creo correctamente', 200):
+															 response('Ocurrio un error al crear el producto, intentelo de nuevo', 500);
 		}
-	// !FIN DE AGREGAR PRODUCTO ------------------------------------>
 
+		public function actualizaProductoSol($id, Request $req){
+			$actualizaProdSol = DB::update('UPDATE det_sol SET id_solicitud=:id_solicitud, id_depto=:id_depto, id_producto=:id_producto,
+																												 tipo_prod=:tipo_prod, cantidad=:cantidad
+																					WHERE id =:id',['id_solicitud' => $req  -> id_solicitud,
+																													'id_depto'     => $req  -> id_depto,
+																													'id_producto'  => $req  -> id_producto,
+																													'tipo_prod'    => $req  -> tipo_prod,
+																													'cantidad'     => $req  -> cantidad,
+																													'id' 		 			 => $id ]);
 
+			return $actualizaProdSol? response("la información se guardo correctamente",200): 
+																response("Ocurrio un error, intentelo de nuevo",500);
+		}
+		
 	// !CATALOGO DE SOLICITUDES
 		public function Solicitudes(Request $req){
 			$solicitud = DB::select('SELECT s.id, s.id_cliente, c.nombre as nomcli, s.id_usuario, u.nombre as nomusuario, 
@@ -169,28 +64,25 @@ class solicitudesController extends Controller
 			return $solicitud ? $solicitud: $solicitud = [];
 		}
 
+		public function ActualizaEnvioSol(Request $req){
+			$actualizaEnvioSol = DB::update('UPDATE movim_sol SET descripcion=:descripcion, id_depto=:id_depto
+																					WHERE id =:id',['descripcion' =>  $req -> descripcion,
+																													'id_depto'     => $req -> id_depto,
+																													'id' 		 			 => $req -> idAEditar 
+																												 ]);
+
+			return $actualizaEnvioSol? response("la información se guardo correctamente",200): 
+																response("Ocurrio un error, intentelo de nuevo",500);
+		}
+
 	//! CONSULTAR DETALLE DE LA SOLICITUD
 		public function DetalleSolicitud($id){
 			// ! IR A DET_SOL PARA OBTENER TODOS LOS PRODUCTOS DE LA SOLICITUD
-			$detalle = DB::select('SELECT * FROM	det_sol WHERE id_solicitud = ?', [$id]);
-			$detSol = [];
-
-			for($i=0;$i<count($detalle);$i++ ):
-				if($detalle[$i] -> px === 1):
-					$existente = $this -> consultaProdExistente($detalle[$i] -> id_px);
-					array_push($detSol,  $existente[0]);
-				endif;
-				if($detalle[$i] -> px === 2):
-					$Modificacion = $this -> consultaProdModif($detalle[$i] -> id_px);
-					array_push($detSol, $Modificacion[0]);
-				endif;
-				if($detalle[$i] -> px === 3):
-					$Nuevos = $this -> consultaProdNuevo($detalle[$i] -> id_px);
-					array_push($detSol, $Nuevos[0]);
-				endif; 
-			endfor;
-			
-			return $detSol ? $detSol: $detSol = [];
+			$detalle = DB::select('SELECT ds.id, ds.id_solicitud, ds.id_depto, ds.id_producto, pxc.nombre, 
+																		pxc.codigo, pxc.descripcion, ds.tipo_prod, ds.cantidad, ds.estatus
+															 FROM	det_sol ds LEFT JOIN prodxcli pxc ON ds.id_producto = pxc.id  
+														WHERE id_solicitud = ?', [$id]);
+			return $detalle ? $detalle: $detalle = [];
 		}
 	
 	// ! CONSULTAR SOLICITUDES DESARROLLO/DIGITAL/DISEÑO
@@ -394,125 +286,125 @@ class solicitudesController extends Controller
 			return response("la información se guardo correctamente",200);
 		}
 
-		public function actualizaEstatusModif($data){
-			// return $data;
-			DB::update('UPDATE prod_modif SET estatus=:estatus 
-										WHERE id=:id',['estatus' => $data['estatus'], 
-																	'id' 		 => $data['id'] ]);
-		}
+		// public function actualizaEstatusModif($data){
+		// 	// return $data;
+		// 	DB::update('UPDATE prod_modif SET estatus=:estatus 
+		// 								WHERE id=:id',['estatus' => $data['estatus'], 
+		// 															'id' 		 => $data['id'] ]);
+		// }
 
-		public function actualizaEstatusProdExist($data){
-			DB::update('UPDATE prod_exist SET estatus=:estatus 
-										WHERE id=:id',['estatus' => $data['estatus'], 
-																	'id' 		 => $data['id'] ]);
-		}
+		// public function actualizaEstatusProdExist($data){
+		// 	DB::update('UPDATE prod_exist SET estatus=:estatus 
+		// 								WHERE id=:id',['estatus' => $data['estatus'], 
+		// 															'id' 		 => $data['id'] ]);
+		// }
 
-		public function actualizaEstatusProdNuevo($data){
-			DB::update('UPDATE prod_nuevo SET estatus=:estatus 
-										WHERE id=:id',['estatus' => $data['estatus'], 
-																	'id' 		 => $data['id'] ]);
-		}
+		// public function actualizaEstatusProdNuevo($data){
+		// 	DB::update('UPDATE prod_nuevo SET estatus=:estatus 
+		// 								WHERE id=:id',['estatus' => $data['estatus'], 
+		// 															'id' 		 => $data['id'] ]);
+		// }
 
 	//! ACTUALIZAR CARACTERISTICAS ***************************************************************************
-		public function ActualizaProdNuevo(Request $req){
-			// return $req;
-			switch ($req["dx"]) {
-				case 1:
-					$this -> actualizaFlexo($req);
-					break;
-				case 3:
-					$this -> actualizaDigital($req);
-					break;
-			}
+		// public function ActualizaProdNuevo(Request $req){
+		// 	// return $req;
+		// 	switch ($req["dx"]) {
+		// 		case 1:
+		// 			$this -> actualizaFlexo($req);
+		// 			break;
+		// 		case 3:
+		// 			$this -> actualizaDigital($req);
+		// 			break;
+		// 	}
 
-			DB::update('UPDATE prod_nuevo SET ft=:ft, cantidad=:cantidad
-										WHERE id =:id',['ft' 			 => $req['referencia'] ,
-																		'cantidad' => $req['cantidad'] , 
-																		'id' 		   => $req['id']  ]);
-		}
+		// 	DB::update('UPDATE prod_nuevo SET ft=:ft, cantidad=:cantidad
+		// 								WHERE id =:id',['ft' 			 => $req['referencia'] ,
+		// 																'cantidad' => $req['cantidad'] , 
+		// 																'id' 		   => $req['id']  ]);
+		// }
 
-		public function actualizaFlexo($req){
-			DB::update('UPDATE det_flexo SET id_material=:id_material, etqxrollo=:etqxrollo, med_nucleo=:med_nucleo, etqxpaso=:etqxpaso, 
-																				med_desarrollo=:med_desarrollo, med_eje=:med_eje,id_orientacion=:id_orientacion, 
-																				ancho=:ancho, largo=:largo
-										WHERE id=:id',	['id_material'   => $req['id_material'] ,
-																		'etqxrollo'      => $req['etqxrollo'] , 
-																		'med_nucleo'     => $req['med_nucleo'],
-																		'etqxpaso'       => $req['etqxpaso'],
-																		'med_desarrollo' => $req['med_desarrollo'],
-																		'med_eje'        => $req['med_eje'],
-																		'id_orientacion' => $req['id_orientacion'],
-																		'ancho'          => $req['ancho'],
-																		'largo'          => $req['largo'],
-																		'id' 		         => $req['id_dx']  ]);
+		// public function actualizaFlexo($req){
+		// 	DB::update('UPDATE det_flexo SET id_material=:id_material, etqxrollo=:etqxrollo, med_nucleo=:med_nucleo, etqxpaso=:etqxpaso, 
+		// 																		med_desarrollo=:med_desarrollo, med_eje=:med_eje,id_orientacion=:id_orientacion, 
+		// 																		ancho=:ancho, largo=:largo
+		// 								WHERE id=:id',	['id_material'   => $req['id_material'] ,
+		// 																'etqxrollo'      => $req['etqxrollo'] , 
+		// 																'med_nucleo'     => $req['med_nucleo'],
+		// 																'etqxpaso'       => $req['etqxpaso'],
+		// 																'med_desarrollo' => $req['med_desarrollo'],
+		// 																'med_eje'        => $req['med_eje'],
+		// 																'id_orientacion' => $req['id_orientacion'],
+		// 																'ancho'          => $req['ancho'],
+		// 																'largo'          => $req['largo'],
+		// 																'id' 		         => $req['id_dx']  ]);
 
-			$this -> eliminaAcabado($req['id_dx']);      //!ELIMINO TODOS LOS ACABADOS QUE PERTENESCAN AL id_dx
-			$this -> eliminaPantone($req['id_dx']);			 //!ELIMINO TODOS LOS PANTONES QUE PERTENESCAN AL id_dx							
-			$this -> ciclaAcabados($req['id_dx'], $req); //!GENERO CICLO PARA ACABADOS
-			$this -> ciclaPantones($req['id_dx'], $req); //!GENERO CICLO PARA PANTONES
+		// 	$this -> eliminaAcabado($req['id_dx']);      //!ELIMINO TODOS LOS ACABADOS QUE PERTENESCAN AL id_dx
+		// 	$this -> eliminaPantone($req['id_dx']);			 //!ELIMINO TODOS LOS PANTONES QUE PERTENESCAN AL id_dx							
+		// 	$this -> ciclaAcabados($req['id_dx'], $req); //!GENERO CICLO PARA ACABADOS
+		// 	$this -> ciclaPantones($req['id_dx'], $req); //!GENERO CICLO PARA PANTONES
 
-			return response("la información se guardo correctamente",200);
-		}
+		// 	return response("la información se guardo correctamente",200);
+		// }
 
-		public function actualizaDigital($req){
-			DB::update('UPDATE det_digital SET id_material=:id_material, det_sobre=:det_sobre, estructura=:estructura, grosor=:grosor, 
-																				ancho=:ancho, largo=:largo
-										WHERE id=:id',	['id_material'   => $req['id_material'] ,
-																		'det_sobre'      => $req['id_material2'] , 
-																		'estructura'     => $req['estructura'],
-																		'grosor'         => $req['grosor'],
-																		'ancho'          => $req['ancho'],
-																		'largo'          => $req['largo'],
-																		'id' 		         => $req['id_dx']  ]);
+		// public function actualizaDigital($req){
+		// 	DB::update('UPDATE det_digital SET id_material=:id_material, det_sobre=:det_sobre, estructura=:estructura, grosor=:grosor, 
+		// 																		ancho=:ancho, largo=:largo
+		// 								WHERE id=:id',	['id_material'   => $req['id_material'] ,
+		// 																'det_sobre'      => $req['id_material2'] , 
+		// 																'estructura'     => $req['estructura'],
+		// 																'grosor'         => $req['grosor'],
+		// 																'ancho'          => $req['ancho'],
+		// 																'largo'          => $req['largo'],
+		// 																'id' 		         => $req['id_dx']  ]);
 
-			$this -> eliminaAcabado($req['id_dx']);      //!ELIMINO TODOS LOS ACABADOS QUE PERTENESCAN AL id_dx
-			$this -> eliminaPantone($req['id_dx']);			 //!ELIMINO TODOS LOS PANTONES QUE PERTENESCAN AL id_dx							
-			$this -> ciclaAcabados($req['id_dx'], $req); //!GENERO CICLO PARA ACABADOS
-			$this -> ciclaPantones($req['id_dx'], $req); //!GENERO CICLO PARA PANTONES
+		// 	$this -> eliminaAcabado($req['id_dx']);      //!ELIMINO TODOS LOS ACABADOS QUE PERTENESCAN AL id_dx
+		// 	$this -> eliminaPantone($req['id_dx']);			 //!ELIMINO TODOS LOS PANTONES QUE PERTENESCAN AL id_dx							
+		// 	$this -> ciclaAcabados($req['id_dx'], $req); //!GENERO CICLO PARA ACABADOS
+		// 	$this -> ciclaPantones($req['id_dx'], $req); //!GENERO CICLO PARA PANTONES
 
-			return response("la información se guardo correctamente",200);
-		}
+		// 	return response("la información se guardo correctamente",200);
+		// }
 
-		public function ActualizaProdExistente(Request $req){
-			$actualizaProdExist = DB::update('UPDATE prod_exist SET ft=:ft, cantidad=:cantidad WHERE id=:id', 
-																						[ 'ft' 			 => $req -> referencia, 
-																							'cantidad' => $req -> cantidad, 
-																							'id' 		   => $req -> id  
-																						]);
-			return $actualizaProdExist ? response('OK', 200): response('Ocurrio un error al actualizar el producto existente.',500);
-		}
+		// public function ActualizaProdExistente(Request $req){
+		// 	$actualizaProdExist = DB::update('UPDATE prod_exist SET ft=:ft, cantidad=:cantidad WHERE id=:id', 
+		// 																				[ 'ft' 			 => $req -> referencia, 
+		// 																					'cantidad' => $req -> cantidad, 
+		// 																					'id' 		   => $req -> id  
+		// 																				]);
+		// 	return $actualizaProdExist ? response('OK', 200): response('Ocurrio un error al actualizar el producto existente.',500);
+		// }
 
-		public function ActualizaProdModif(Request $req){
-			if($req -> tproducto === 2):
-				$this -> actualizaProductoModif($req);
-				$this -> eliminaDxModif($req -> conceptosAEliminar);
-				$this -> actualizaDxModif($req -> id_partida, $req -> xmodificar );
-			endif;
-		}
+		// public function ActualizaProdModif(Request $req){
+		// 	if($req -> tproducto === 2):
+		// 		$this -> actualizaProductoModif($req);
+		// 		$this -> eliminaDxModif($req -> conceptosAEliminar);
+		// 		$this -> actualizaDxModif($req -> id_partida, $req -> xmodificar );
+		// 	endif;
+		// }
 
-		public function actualizaProductoModif($data){
-			$actualizaProdNuevo = DB::update('UPDATE prod_modif SET ft=:ft, cantidad=:cantidad WHERE id=:id', 
-																							[ 'ft' 			 => $data['referencia'], 
-																								'cantidad' => $data['cantidad'], 
-																								'id' 		   => $data['id']  
-																							]);
-		}
+		// public function actualizaProductoModif($data){
+		// 	$actualizaProdNuevo = DB::update('UPDATE prod_modif SET ft=:ft, cantidad=:cantidad WHERE id=:id', 
+		// 																					[ 'ft' 			 => $data['referencia'], 
+		// 																						'cantidad' => $data['cantidad'], 
+		// 																						'id' 		   => $data['id']  
+		// 																					]);
+		// }
 
-		public function eliminaDxModif($conceptosAEliminar){
-			for($i=0;$i<count($conceptosAEliminar); $i++):  
-				DB::delete('DELETE FROM dx_modif WHERE id = ?', [ $conceptosAEliminar[$i] ]);
-			endfor;
-		}
+		// public function eliminaDxModif($conceptosAEliminar){
+		// 	for($i=0;$i<count($conceptosAEliminar); $i++):  
+		// 		DB::delete('DELETE FROM dx_modif WHERE id = ?', [ $conceptosAEliminar[$i] ]);
+		// 	endfor;
+		// }
 
-		public function actualizaDxModif($prodmodif, $detalle){
-			for($i=0;$i<count($detalle['xmodificar']); $i++):  //! GENERO UN CICLO EN EL ARRAY QUE RECIBO.
-				if($detalle['xmodificar'][$i]['tipo'] === 1):    //! EVALUO SI EL OBJECTO SOLO CONTIENE UN ELEMENTO, MANDO A INSERTARLO
-					$this -> insertarConcepto($prodmodif, $detalle['xmodificar'][$i]['concepto'], $detalle['xmodificar'][$i]['valor']);
-				else:  																					//! SI EL OBJETO CONTIENE UN ARRAY ENTONCES MANDO A CICLARLO PARA INSERTAR
-					$this -> ciclarConcepto($prodmodif, $detalle['xmodificar'][$i]['concepto'], $detalle['xmodificar'][$i]['valor']);
-				endif; 
-			endfor;
-		}
+		// public function actualizaDxModif($prodmodif, $detalle){
+		// 	for($i=0;$i<count($detalle['xmodificar']); $i++):  //! GENERO UN CICLO EN EL ARRAY QUE RECIBO.
+		// 		if($detalle['xmodificar'][$i]['tipo'] === 1):    //! EVALUO SI EL OBJECTO SOLO CONTIENE UN ELEMENTO, MANDO A INSERTARLO
+		// 			$this -> insertarConcepto($prodmodif, $detalle['xmodificar'][$i]['concepto'], $detalle['xmodificar'][$i]['valor']);
+		// 		else:  																					//! SI EL OBJETO CONTIENE UN ARRAY ENTONCES MANDO A CICLARLO PARA INSERTAR
+		// 			$this -> ciclarConcepto($prodmodif, $detalle['xmodificar'][$i]['concepto'], $detalle['xmodificar'][$i]['valor']);
+		// 		endif; 
+		// 	endfor;
+		// }
 
 
 	//! ******************************************************************************************************
@@ -556,33 +448,26 @@ class solicitudesController extends Controller
 			);
 		}
 
-		public function MovimSol(Request $req){
-			$movim = DB::select('SELECT * FROM movim_sol WHERE id_px =? AND px=? ORDER BY id DESC',[$req -> id_px, $req -> px]);
+		public function MovimSol($id_det_sol){
+			$movim = DB::select('SELECT * FROM movim_sol WHERE id_det_sol=? ORDER BY id DESC',[$id_det_sol]);
 			return $movim ? $movim: $movim = [];
 		}
 
 		public function EnviarSol(Request $req){
-			for($i=0;$i<count($req['deptos']); $i++):  
-				DB::table('movim_sol')->insertGetId(
-					[
-							'id_solicitud' 	=> $req['id_solicitud'],
-							'px'						=> $req['px'],
-							'id_px'    		  => $req['id_px'],
-							'id_depto'      => $req['deptos'][$i]['id'],
-							'fecha'					=> $req['fecha'],
-							'hora'					=> $req['hora'],
-							'responsable'   => $req['id_usuario']
-					]
-				);
-			endfor;
-			
-
-			if($req['px'] === 1): $this -> actualizaEstatusProdExist($req); endif;
-			if($req['px'] === 2): $this -> actualizaEstatusModif($req)    ; endif;
-			if($req['px'] === 3): $this -> actualizaEstatusProdNuevo($req); endif;
-			
+			$movimiento = DB::table('movim_sol')->insertGetId(
+										[
+												'id_det_sol' 	  => $req['id_det_sol'],
+												'id_depto'			=> $req['id_depto'],
+												'fecha'					=> $req['fecha'],
+												'hora'					=> $req['hora'],
+												'id_creador'    => $req['id_creador'],
+												'descripcion'   => $req['descripcion']
+										]
+									);
+				
 			$this -> validaEstatusSolicitud($req);
-			return response("la información se guardo correctamente",200);
+			return $movimiento ? response("La información se guardo correctamente",200):
+												   response("Ocurrio un error, intentelo mas tarde.",500);
 
 		}
 
@@ -692,26 +577,28 @@ class solicitudesController extends Controller
 		}
 
 	//! *************************** FUNCIONES PARA CANCELAR SOLICITUD **********************************
-		public function ValidaCancelacion(Request $req){
+		public function ValidaCancelacionSol(Request $req){
 			$detalle = $this -> DetalleSolicitud($req -> id_solicitud);
 			$Evaluacion = [];
 
 			for($i=0;$i<count($detalle); $i++):
-				$movimientos = $this -> consultaMovimientos($detalle[$i] -> tipo_prod, $detalle[$i] -> id );
+				$movimientos = $this -> consultaMovimientos( $detalle[$i] -> id);
 				$evaluacion  = $this -> evaluaCancelacion($movimientos);
 				array_push($Evaluacion,  $evaluacion);
 			endfor;
 			
 			if($this -> evaluarRespuestaCancelacion($Evaluacion) ):
-				$this -> cancelarSolicitud($req);
-				return response("La solicitud se ha cancelado correctamente",200);
+				$cancelarSol = $this -> cancelarSolicitud($req);
+				return $cancelarSol ? response("La solicitud se ha cancelado correctamente",200) :
+													response("Ocurrio un problema, intentelo nuevamente",500);
 			else:
 				return response("La solicitud no se puede cancelar ya que otro usuario lo está atendiendo",403);
 			endif;
 
 		}
-		public function consultaMovimientos($px, $id_px){
-			$movim = DB::select('SELECT * FROM movim_sol WHERE px=? AND id_px =? ',[$px, $id_px]);
+		public function consultaMovimientos($id_det_sol){
+			$movim = DB::select('SELECT * FROM movim_sol WHERE id_det_sol=? ',[$id_det_sol]);
+			// $movim = DB::select('SELECT * FROM movim_sol WHERE px=? AND id_px =? ',[$px, $id_px]);
 			return $movim ? $movim: $movim = [];
 		}
 		public function evaluaCancelacion($movimientos){
@@ -737,40 +624,38 @@ class solicitudesController extends Controller
 			endfor;
 			
 			return $errores === 0 ? true : false;
-
 		}
 		public function cancelarSolicitud(Request $req){
-			DB::update('UPDATE solicitudes SET estatus=:estatus WHERE id=:id',
+			$estatusSol = DB::update('UPDATE solicitudes SET estatus=:estatus WHERE id=:id',
 																			[ 'estatus' => $req -> estatus, 
 																				'id' 		  => $req -> id_solicitud  
 																			]);
+			return $estatusSol? true: false;
 		}	
 	//! *************************** FUNCIONES PARA CANCELAR PARTIDA **********************************
 
 		public function ValidaCancelacionPartida(Request $req){
 			$Evaluacion = [];
-			$movimientos = $this -> consultaMovimientos($req -> tipo_prod, $req -> id );
-
+			$movimientos = $this -> consultaMovimientos($req -> id);
 			$evaluacion  = $this -> evaluaCancelacion($movimientos);
 			array_push($Evaluacion,  $evaluacion);
 			
 			if($this -> evaluarRespuestaCancelacion($Evaluacion) ):
-				if($req -> tipo_prod === 1):
-					$this -> actualizaEstatusProdExist($req);
-				endif;
-				if($req -> tipo_prod === 2):
-					$this -> actualizaEstatusModif($req);
-				endif;
-				if($req -> tipo_prod === 3):
-					$this -> actualizaEstatusProdNuevo($req);
-				endif;
-
-				return response("La partida se ha cancelado correctamente",200);
+				$estatus = $this -> actualizaEstatusDetSol($req);
+				return $estatus ? response("La partida se ha cancelado correctamente",200) :
+													response("Ocurrio un problema, intentelo nuevamente",500);
 			else:
-				return response("La solicitud no se puede cancelar ya que otro usuario lo está atendiendo",403);
+				return response("La partida no se puede cancelar ya que otro usuario lo está atendiendo",403);
 			endif;
-
 		}
+
+		public function actualizaEstatusDetSol($data){
+			$estatusDelSol = DB::update('UPDATE det_sol SET estatus=:estatus 
+																			WHERE id=:id',['estatus' => $data['estatus'], 
+																										 'id' 		 => $data['id'] ]);
+			return $estatusDelSol ? true : false; 
+		}
+
 		public function CancelarMovimiento(Request $req){
 			$movimiento = DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id',
 																			[ 'estatus' => $req -> estatus, 
@@ -779,9 +664,6 @@ class solicitudesController extends Controller
 			return $movimiento ? response("La cancelación se proceso correctamente",200):
 									         response("Ocurrio un error, intentelo mas",403);
 		}
-
-	
-		
 
 }
 

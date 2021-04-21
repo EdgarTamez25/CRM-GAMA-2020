@@ -1,12 +1,13 @@
 <template>
   <v-main class="pa-0 ma-3">
-     <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
-        <strong> {{alerta.text}} </strong>
-        <template v-slot:action="{ attrs }">
-          <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
-        </template>
-      </v-snackbar>
 
+    <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+      <strong> {{alerta.text}} </strong>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+      </template>
+    </v-snackbar>
+	
     <v-row justify="center">
       <v-col cols="12" lg="9" xl="8">
         <v-card class="pa-2" flat>
@@ -48,10 +49,10 @@
             </v-col>
             <v-col cols="12" sm="4" md="5" xl="6" >
               <v-btn block color="gris" outlined @click="modalCancelar = true; accion=1" dark v-if="solicitud.estatus != 4">CANCELAR SOLICITUD </v-btn>
-              <v-btn block color="celeste" @click="agregarProducto(1,[])" class="mt-2" dark v-if="solicitud.estatus != 4">AGREGAR PRODUCTO </v-btn>
+              <v-btn block color="celeste" @click="validaTipoProducto(1)" class="mt-2" dark v-if="solicitud.estatus != 4">AGREGAR PRODUCTO </v-btn>
               <v-btn block color="red darken-4" dark v-else>SOLICITUD CANCELADA  </v-btn>
             </v-col>
-            <!-- {{ getDetalle }} -->
+            
             <v-col cols="12" class="py-0"/>
             <v-col cols="12">
               <v-card outlined>
@@ -59,58 +60,50 @@
                 <v-container style="height: 400px;" v-if="Loading">
                   <loading/>
                 </v-container>
+
                 <v-simple-table v-if="!Loading">
                   <template v-slot:default>
                     <thead>
                       <tr>
                         <th class="text-left green white--text"> TIPO </th>
-                        <th class="text-left green white--text"> REFERENCIA </th>
+                        <th class="text-left green white--text"> PRODUCTO </th>
                         <th class="text-left green white--text"> CANTIDAD </th>
+                        <th class="text-left green white--text"> DEPTO </th>
+
                         <th class="text-left green white--text"></th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-for="(item,i) in getDetalle" :key="i" >
-
                         <td class="font-weight-black rosa--text"    v-if="item.tipo_prod ===1"> Producto Existente</td>
                         <td class="font-weight-black orange--text"  v-if="item.tipo_prod ===2"> Modificación</td>
                         <td class="font-weight-black celeste--text" v-if="item.tipo_prod ===3"> Nuevo Producto</td>
-
-                        <td class="font-weight-black">{{ item.ft }}</td>
+                        <td class="font-weight-black">{{ item.codigo }}  </td>
                         <td class="font-weight-black">{{ item.cantidad }}</td>
+                        <td class="font-weight-black">{{ deptos[item.id_depto-1].nombre }}</td>
                         <td align="right">
                           <!-- MOSTRAR BOTON SI YA SE LEASIGNO UNA ACCION O SI ES UN PRODUCTO EXISTENTE -->
-                        <template v-if ="solicitud.estatus != 4 && item.estatus != 4">
-                          <v-btn outlined rounded small color="green" class="mx-1 mt-1 " 
-                                 v-if="item.estatus > 0 || item.tipo_prod != 2"
-                                 @click="MandarDeptoModal(item)"
-                          >   
-                            <v-icon>mdi-file-send</v-icon> 
-                          </v-btn>
+                          <template v-if ="solicitud.estatus != 4 && item.estatus != 4">
+                            <v-btn outlined rounded small color="green" class="mx-1 mt-1 " 
+                                  v-if="item.estatus > 0 || item.tipo_prod != 2"
+                                  @click="generarSolicitudADeptos(item)"
+                            >   
+                              <v-icon>mdi-file-send</v-icon> 
+                            </v-btn>
 
-                           <v-btn outlined rounded small color="celeste" class="mx-1 mt-1" dark 
-                                  v-if="item.estatus == 0 && item.tipo_prod === 2"  
-                                  @click="validaTipoProducto(item)">   
-                            <v-icon>mdi-eye</v-icon> 
-                          </v-btn>
-                          <v-btn text small color="celeste" class="mx-1 mt-1" dark v-else  @click="validaTipoProducto(item)">   
-                            <v-icon>mdi-eye</v-icon> 
-                          </v-btn>
+                            <v-btn text small color="celeste" class="mx-1 mt-1" dark  @click="validaTipoProducto(2,item)">   
+                              <v-icon>mdi-eye</v-icon> 
+                            </v-btn>
+                          
+                            <v-btn text small color="error" class="mx-1 mt-1" 
+                                  @click="modalCancelar = true; accion=2; partidaAEditar= item">
+                              <v-icon>mdi-close-thick</v-icon> 
+                            </v-btn>
+                          </template>
 
-                          <v-btn text small color="rosa" class="mx-1 mt-1" v-if="item.tipo_prod === 2" @click="modifProd(item)">   
-                            <v-icon>create</v-icon> 
-                          </v-btn>
-                          <!-- <v-btn text small c class="mx-1 mt-1"  disabled v-else > <v-icon>mdi-eye</v-icon></v-btn> -->
-
-                          <v-btn text small color="error" class="mx-1 mt-1" 
-                                 @click="modalCancelar = true; accion=2; partidaAEditar= item">
-                            <v-icon>mdi-close-thick</v-icon> 
-                          </v-btn>
-                        </template>
-
-                        <template v-if="solicitud.estatus === 4 || item.estatus === 4 ">
-                          <v-btn text small color="error" class="mx-1 mt-1" >SOLICITUD CANCELADA </v-btn>
-                        </template>
+                          <template v-if="solicitud.estatus === 4 || item.estatus === 4 ">
+                            <v-btn text small color="error" class="mx-1 mt-1" >SOLICITUD CANCELADA </v-btn>
+                          </template>
                         </td>
                       </tr>
                     </tbody>
@@ -121,35 +114,29 @@
 
             <v-dialog v-model="crudSolicitud" persistent max-width="700">
               <v-card class="pa-4 ">
-                <v-card-text class=" subtitle-1 font-weight-black pa-0 " align="center">AGREGAR PRODUCTO</v-card-text>
+                <v-card-text class=" subtitle-1 font-weight-black pa-0 " align="center">{{ modoVista === 1 ?'AGREGAR PRODUCTO':'EDITAR PRODUCTO'}}</v-card-text>
 
                 <v-row class="mt-4">
-                  <v-col cols="12" sm="6" v-if="modoVista === 1 || modoVista === 3">
-                    <v-select
-                        v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
-                        dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
-                    ></v-select>
-                  </v-col>
-
-                  <v-col cols="12" sm="6"  v-else>
+            
+                  <v-col cols="12" sm="6"  >
                     <v-select
                       v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
-                      dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled 
+                      dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"  
                     ></v-select>
                   </v-col>
 
                   <v-col cols="12" sm="6" class="" >
                     <v-select
                       v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
-                      dense hide-details label="Tipo de producto" return-object :disabled="modoVista===2 || modoVista=== 4?true:false"
+                      dense hide-details label="Tipo de producto" return-object 
                     ></v-select>
                   </v-col>
               
                   <!-- //! REFERENCIA DEL PRODUCTO  -->
                   <v-col cols="12" sm="6">
                     <v-autocomplete
-                      :items="productosxcliente" v-model="producto" item-text="codigo" tem-value="id" label="Productos" 
-                      dense filled hide-details color="celeste" append-icon="person" return-object clearable
+                      :items="productosxcliente" v-model="producto" item-text="codigo" item-value="id" label="Productos" 
+                      dense filled hide-details color="celeste" append-icon="person" return-object :disabled="depto.id != null ? false: true"
                     ></v-autocomplete>
                   </v-col>
                   <!-- //! CANTIDAD  -->
@@ -160,79 +147,28 @@
                     />
                   </v-col>
 
-                   <v-col cols="12" class="my-3"/>
+                  <v-col cols="12" class="my-3"/>
 
                   <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
                   <v-footer  absolute>
                     <v-btn color="error" outlined @click="crudSolicitud = false"  class="ma-1">Cancelar </v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn color="success"   @click="validaInformacion()">Guardar </v-btn>
+                    <v-btn color="success"   @click="validaInfoProducto()"> {{ modoVista ===1 ?'Guardar':'Actualizar' }}  </v-btn>
                   </v-footer>
-
                 </v-row>
-               
-                   
-                
-                
-              
-                <!-- <crudflexografia 
-                  :depto_id="depto.id" 
-                  :modoVista="modoVista"
-                  :parametros="parametros"
-                  :solicitud="solicitud"
-                  @modal="crudSolicitud = $event" 
-                /> -->
+
               </v-card>
             </v-dialog>
-    
-             <!--// !ESTE ES EL BUENO ECHALE GANAS PARA ENTENDERLE TE QUIERO MUCHO  -->
-            <!-- <v-dialog v-model="solicitarModal" persistent :width="anchoModal" height="200" >
-              <v-card class="pa-4 ">
-                <modificaciones
-                  :modalDDD="modalDDD"
-                  :depto_id="depto.id" 
-                  :modoVista="modoVista"
-                  :Vista="Vista"
-                  :parametros="parametros"
-                  :actualiza ="actualiza"
-                  @modal="solicitarModal = $event" 
-                  @put="actualiza = $event" 
-                  v-if="tablaModificar"
-                />
-                <flexografia 
-                  :modalDDD="modalDDD"
-                  :depto_id="depto.id" 
-                  :modoVista="modoVista"
-                  :Vista="Vista"
-                  :parametros="parametros"
-                  :actualiza ="actualiza"
-                  @modal="solicitarModal = $event" 
-                  @put="actualiza = $event" 
-                  v-if="activaFormulario===1"
-                />
-                <digital     
-                  :modalDDD="modalDDD"
-                  :depto_id="depto.id" 
-                  :modoVista="modoVista"
-                  :Vista="Vista"
-                  :parametros="parametros"
-                  :actualiza ="actualiza"
-                  @modal="solicitarModal = $event" 
-                  @put="actualiza = $event" 
-                  v-if="activaFormulario===3"
-                />
-              </v-card>
-            </v-dialog> -->
 
-
-            <v-dialog v-model="enviarDeptosModal" persistent :width="550">
+            <v-dialog v-model="enviarDeptosModal" persistent :width="600">
               <v-card class="pa-3">
                 <enviarADeptos 
                   :informacion="informacion" 
                   :actualiza ="actualiza"
+                  :solicitud="solicitud"
                   @modal="enviarDeptosModal = $event"
                   @put="actualiza = $event" 
-                   />
+                  />
               </v-card>
             </v-dialog>
 
@@ -253,13 +189,21 @@
               </v-card>
             </v-dialog>
 
-
-		        <overlay v-if="overlay"/>
-
           </v-row>
         </v-card>
+
+        <v-dialog v-model="Correcto" hide-overlay persistent width="350">
+          <v-card color="success"  dark class="pa-3">
+            <h3><strong>{{ textCorrecto }} </strong></h3>
+          </v-card>
+        </v-dialog>
+
+
       </v-col>
     </v-row>
+
+  	<overlay v-if="overlay"/>
+
   </v-main>
 </template>
 
@@ -268,10 +212,6 @@
 	import metodos         from '@/mixins/metodos.js';
   import loading         from '@/components/loading.vue'
   import overlay         from '@/components/overlay.vue'
-  import modificaciones  from '@/views/Formularios/modificaciones.vue'
-  // import flexografia     from '@/views/Formularios/flexografia.vue'
-  // import crudflexografia from '@/views/Formularios/CRUD/crud_flexografia.vue'
-  // import digital         from '@/views/Formularios/digital.vue'
   import enviarADeptos   from '@/components/enviarADeptos.vue'
 
   export default {
@@ -279,27 +219,23 @@
     components:{
       loading,
       overlay,
-      modificaciones,
-      // flexografia,
-      // crudflexografia,
-      // digital,
       enviarADeptos
     },
     data:()=>({
-      
       solicitud       : [],
       Vista           :'',
       anchoModal      : 500,
       solicitarModal  : false,
       crudSolicitud   : false,
       
-      
       activaFormulario: 0 ,
       tablaModificar  :  false,
       parametros      : '',
       modoVista       : 1,
-			modalDDD        : false,
+      idProdAEditar : null,
+      id_det_prod: null,
 
+			modalDDD        : false,
 
       tproducto    : { id:1, nombre: 'Producto Existente'},
       tproductos   : [{ id:1, nombre:'Producto Existente'}, 
@@ -315,12 +251,16 @@
 
       actualiza       : false,
 
-      informacion       :{},
-      enviarDeptosModal : false,
+      informacion       :{},   // objeto para el envio de sol a deptos
+      enviarDeptosModal : false, // modal para enviar a deptos
 
       modalCancelar:false,
       accion: 0,
       partidaAEditar:{},
+
+
+      Correcto      : false,
+      textCorrecto  : '',
       overlay: false,
       alerta: { 
         activo: false,
@@ -352,131 +292,155 @@
 
         this.productosxcliente = [];
         this.consultaProdxClientexDepto( payload).then( response =>{ 
-          this. productosxcliente = response
+          this.productosxcliente = response
+          // this.producto = { id: this.idProdAEditar };
+          this.alerta = { activo: true, 
+                          text:  response.length > 1? `Se encontraron ${response.length} productos`:
+                                                      `Se encontró ${response.length} producto` , 
+                          color: 'success'
+                        }
         }).catch( error =>{
           this.alerta = { activo: true, text: error, color: 'error'} 
         })
+
       }
       
 		},
 
     methods:{
-      ...mapActions('Solicitudes'  ,['consultaDetalle']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+      ...mapActions('Solicitudes'  ,['agregaProducto','actualizarProductoSol','consultaDetalle']), // IMPORTANDO USO DE VUEX (ACCIONES)
 
       init(){
         this.consultaDetalle(this.solicitud.id);
         this.consultaDepartamentos();
       },
+
+      validaInfoProducto(){
+        if(!this.depto.id)    { this.alerta = { activo: true, text: "OLVIDASTE SELECCIONAR EL DEPARTAMENTO"     , color: 'green'}; return };
+        if(!this.tproducto.id){ this.alerta = { activo: true, text: "OLVIDASTE SELECCIONAR EL TIPO DE PRODUCTO" , color: 'green'}; return };
+        if(!this.producto.id) { this.alerta = { activo: true, text: "OLVIDASTE LA FICHA TECNICA"                , color: 'green'}; return };
+        if(!this.cantidad)    { this.alerta = { activo: true, text: "OLVIDASTE LA CANTIDAD DE MATERIAL"         , color: 'green'}; return };
+        this.PrepararProducto();
+      },
+
+      PrepararProducto(){
+        this.overlay = true; this.crudSolicitud = false
+        const payload = new Object();
+              payload.id_solicitud = this.solicitud.id;
+              payload.id_depto     = this.depto.id;
+              payload.id_producto  = this.producto.id;
+              payload.tipo_prod    = this.tproducto.id;
+              payload.cantidad     = this.cantidad
+        this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
+      },
+    
+      Crear(payload){
+        this.$http.post('agregar.producto.solicitud', payload).then(response=>{
+          this.TerminarProceso(response.bodyText)
+				}).catch((error)=>{
+					this.alerta = { activo: true, text: error.bodyText, color:'error'}
+          console.log('error',error)
+				}).finally(()=>{ 
+          this.overlay = false; this.crudSolicitud = true
+        })
+
+      },
+
+      Actualizar(payload){
+        this.$http.put('actualiza.producto.solicitud/'+ this.id_det_prod, payload).then( response =>{
+          this.TerminarProceso(response.bodyText)
+        }).catch( error =>{
+          this.alerta = { activo: true, text: error.bodyText, color:'error'}
+          console.log('error',error)
+        }).finally(()=>{ 
+          this.overlay = false; this.crudSolicitud = true
+        })
+      },
+
+      TerminarProceso(mensaje){
+        var that = this ;
+        this.Correcto = true ; this.textCorrecto = mensaje;
+        setTimeout(()=>{ that.crudSolicitud = false; this.Correcto = false }, 1000);
+        this.consultaDetalle(this.solicitud.id)
+        this.limpiarCampos();  //LIMPIAR FORMULARIO
+      },
       
-      validaTipoProducto(item = []){
-        switch (item.tipo_prod) {
-          case 1:
-            this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
-            this.modoVista        = 2;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-            this.Vista            = 'SOLICITUDES'
-            this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
-            this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
-            this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
-            this.depto = { id: item.dx }
-            this.solicitarModal   = true;    // ABRIR MODAL
-            break;
-
-          case 2:
-            this.anchoModal       = 800;   // ASIGNAR EL ANCHO DE LA MODAL
-            this.modoVista        = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-            this.Vista            = 'SOLICITUDES'
-            this.parametros       = item;  // ASIGNAR LOS PARAMETROS A MANDAR
-            this.activaFormulario = 0 ;    // FORMULARIO QUE SE MOSTRARA
-            this.tablaModificar   = true;  // HABILITAR TABLA DE MODIFICACIONES
-            this.depto = { id: item.dx }
-            this.solicitarModal   = true;  // ABRIR MODAL 
-            break;
-
-          case 3:
-            this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
-            this.modoVista        = 2;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-            this.Vista            = 'SOLICITUDES'
-            this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
-            this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
-            this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
-            this.depto = { id: item.dx }
-            this.solicitarModal   = true;    // ABRIR MODAL
-            break;
-        }
+      validaTipoProducto(modo, item = {} ){
+          if(modo ===2){
+            this.id_det_prod   = item.id;
+            this.idProdAEditar = item.id_producto;
+            this.depto         = { id: item.id_depto};
+            this.tproducto     = { id: item.tipo_prod};
+            this.cantidad      =  item.cantidad;
+            this.producto      = { id: this.idProdAEditar };
+          }else{
+            this.limpiarCampos();
+          }
+          this.modoVista     = modo;
+          this.crudSolicitud = true
       },
 
-      modifProd(item){
-        // console.log('item', item)
-        this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
-        this.modoVista        = 4;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-        this.Vista            = 'SOLICITUDES'
-        this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
-        this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
-        this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
-        this.depto = { id: item.dx }
-        this.solicitarModal   = true;    // ABRIR MODAL
-      },
+      // modifProd(item){
+      //   // console.log('item', item)
+      //   this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
+      //   this.modoVista        = 4;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
+      //   this.Vista            = 'SOLICITUDES'
+      //   this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
+      //   this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
+      //   this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
+      //   this.depto = { id: item.dx }
+      //   this.solicitarModal   = true;    // ABRIR MODAL
+      // },
+
       cancelarSolicitud(){
         this.modalCancelar=false; this.overlay = true; 
         const payload = new Object();
               payload.id_solicitud = this.solicitud.id
               payload.estatus      = 4 
         
-        this.$http.post('valida.cancelacion', payload).then( response =>{
-          // this.alerta.activo = true; this.alerta.text = response.bodyText; this.alerta.color="green";    
+        this.$http.post('valida.cancelacion.sol', payload).then( response =>{
           this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
-          this.init()     
+          // this.init()     
+          let that = this;
+          setTimeout(()=>{ that.$router.push({ name:'solicitudes' })  }, 1000);
         }).catch(error =>{
-          // this.alerta.activo = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";       
           this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
-
         }).finally(()=>{  
           this.overlay = false; 
         })
       },
-
       cancelarPartida(){
         this.modalCancelar=false; this.overlay = true; 
         const payload = new Object();
-              payload.id_solicitud = this.solicitud.id
               payload.estatus      = 4
               payload.id           = this.partidaAEditar.id
-              payload.tipo_prod    = this.partidaAEditar.tipo_prod
-        
-        console.log('partida', payload)
-        
+
         this.$http.post('valida.cancelacion.partida', payload).then( response =>{
-          // this.alerta.activo = true; this.alerta.text = response.bodyText; this.alerta.color="green";  
           this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
           this.init()     
         }).catch(error =>{
-          // this.alerta.activo = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";   
           this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
-
         }).finally(()=>{  
           this.overlay = false; 
         })
       },
-
-
-      MandarDeptoModal(item){
+      generarSolicitudADeptos(item){
         // if(this.solicitud.estatus === 4){
         //   this.alerta.color = "red darken-4"; this.alerta.activo = true; 
         //   this.alerta.text = "Es imposible mover el producto ya que la solicitud está cancelada.";
         //   return;
         // }
+        console.log('item', item);
         this.informacion = item;
         this.enviarDeptosModal = true;
 
       },
-
-      agregarProducto(modoVista, items = []){
-        this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
-        this.modoVista        = modoVista;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-        this.parametros       = items;    // ASIGNAR LOS PARAMETROS A MANDAR
-        // this.depto            = { id: 1 }
-        this.crudSolicitud   = true;    // ABRIR MODAL
-      }
+      
+      limpiarCampos(){
+        this.cantidad  = '';
+        this.tproducto = { id:null, nombre:''};
+        this.producto  = { id:null, nombre:''};
+      },
       
     }
   }
