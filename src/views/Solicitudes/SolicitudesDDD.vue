@@ -3,13 +3,12 @@
   	<v-row class="justify-center" no-gutters>
   		<v-col cols="12" >
 
-				<v-snackbar v-model="alerta.snackbar" :vertical="alerta.vertical" top right :color="alerta.color" class="subtitle-1" > 
-					{{ alerta.text }} 
-						<v-btn dark text  @click="alerta.snackbar = false">
-							Cerrar
-						</v-btn>
-				</v-snackbar>
-
+				 <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+						<strong> {{alerta.text}} </strong>
+						<template v-slot:action="{ attrs }">
+							<v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+						</template>
+					</v-snackbar>
 				<!-- CATALOGO DE COMPROMISOS -->
 				<v-card class="mt-3" outlined >
 					 <v-row class="pa-1 py-0">
@@ -91,7 +90,6 @@
       			:items-per-page="itemsPerPage"
 						@page-count="pageCount = $event"
 						dense
-						class="letraData"
 			    >
 						<template v-slot:item.id_solicitud="{ item }"  >
 							<span style="font-size:12px"> {{  item.id_solicitud }} </span>
@@ -110,8 +108,8 @@
 							<span class="font-weight-black orange--text"  style="font-size:12px" v-if="item.tipo_prod === 2"> Modificación </span>
 							<span class="font-weight-black celeste--text" style="font-size:12px" v-if="item.tipo_prod === 3"> Nuevo Producto </span>
 						</template>	
-						<template v-slot:item.ft="{ item }">
-							<span style="font-size:12px" class="font-weight-black "> {{ item.ft }}</span>
+						<template v-slot:item.codigo="{ item }">
+							<span style="font-size:12px" class="font-weight-black "> {{ item.codigo }}</span>
 						</template>
 						<template v-slot:item.cantidad="{ item}">
 							<span style="font-size:12px" class="font-weight-black "> {{ item.cantidad }}</span>
@@ -130,7 +128,7 @@
 						</template>
 
 						<template v-slot:item.action="{ item }" v-if="estatus.id !=4">
-			    		<v-btn  color="green" class="ma-1"  small dark  @click="validaTipoProducto(item)" v-if=" item.id_encargado !=null">
+			    		<v-btn  color="green" class="ma-1"  small dark  @click="verTareaAsignada(item)" v-if=" item.id_encargado !=null">
 								<v-icon> mdi-eye </v-icon>
 							</v-btn> 
 							<v-btn text small color="error" class="mx-1 mt-1" 
@@ -148,11 +146,21 @@
   		</v-col>
   	</v-row>
 
+
+		<v-dialog v-model="resultados" width="500px" persistent>
+			<v-card class="pa-4">
+				<resultadosActividad
+				 :informacion='informacion' 
+				 @modal="resultados = $event"
+				/>
+			</v-card>
+		</v-dialog>
+
 		<v-dialog v-model="EncargadoModal" persistent width="500">
-			<v-card class="pa-1">
+			<v-card class="pa-4">
 				<v-card-text class="font-weight-black subtitle-1 pa-3 mt-1" align="center" v-if="!DatosEncargado.id_encargado" >QUIERO ATENDER ESTA SOLICITUD  </v-card-text>
 				<v-card-text v-else align="left" class="font-weight-black subtitle-1 pa-3 mt-1">
-						ACTUALMENTE EL USUARIO <span class="green--text">  {{ DatosEncargado.nomencargado }} </span>  ATIENDE ESTA SOLICITUD.
+						ACTUALMENTE EL USUARIO <span class="green--text">  {{ DatosEncargado.encargado }} </span>  ATIENDE ESTA SOLICITUD.
 				</v-card-text>
 				<v-card-subtitle class="font-weight-black subtitle-1" align="center" v-if="DatosEncargado.id_encargado && getdatosUsuario.id != DatosEncargado.id_encargado"  >
 					¿DESEA ASIGNARSE ESTA SOLICITUD?
@@ -166,52 +174,6 @@
 					</v-btn>
 				</v-card-actions>
 			</v-card>	
-		</v-dialog>
-		
-		<v-dialog v-model="solicitarModal" persistent :width="anchoModal" height="200" >
-			<v-card class="pa-4 ">
-				<prodExistente
-					:modalDDD="modalDDD"
-					:modoVista="modoVista"
-					:parametros="parametros"
-					:actualiza ="actualiza"
-					@modal="solicitarModal = $event" 
-					@put="actualiza = $event" 
-					v-if="productoExistente"
-				/>
-				<modificaciones
-          :modalDDD="modalDDD"
-					:depto_id="depto.id" 
-					:modoVista="modoVista"
-					:parametros="parametros"
-					:actualiza ="actualiza"
-					@modal="solicitarModal = $event" 
-					@put="actualiza = $event" 
-					v-if="tablaModificar"
-				/>
-				<flexografia
-          :modalDDD="modalDDD"
-					:depto_id="depto.id" 
-					:modoVista="modoVista"
-					:Vista="Vista"
-					:parametros="parametros"
-					:actualiza ="actualiza"
-					@modal="solicitarModal = $event" 
-					@put="actualiza = $event" 
-					v-if="activaFormulario===1"
-				/>
-				<digital    
-          :modalDDD="modalDDD"
-					:depto_id="depto.id" 
-					:modoVista="modoVista"
-					:Vista="Vista"
-					:parametros="parametros"
-					:actualiza ="actualiza"
-					@modal="solicitarModal = $event" 
-					@put="actualiza = $event" 
-					v-if="activaFormulario===3"
-				/>
-			</v-card>
 		</v-dialog>
 
 		<v-dialog v-model="Correcto" hide-overlay persistent width="350">
@@ -243,26 +205,17 @@
 
 <script>
 	var moment = require('moment'); moment.locale('es') /// inciar Moment 
-	import  SelectMixin from '@/mixins/SelectMixin.js';
-	import  ExcelExport from '@/mixins/ExcelExport.js';
 	import {mapGetters, mapActions} from 'vuex';
-  import modificaciones from '@/views/Formularios/modificaciones.vue'
-  import flexografia    from '@/views/Formularios/flexografia.vue'
-  import digital        from '@/views/Formularios/digital.vue'
-  import enviarADeptos  from '@/components/enviarADeptos.vue'
-	import prodExistente  from '@/views/Formularios/prodExistente.vue'
-  import overlay     from '@/components/overlay.vue'
-	
+	import  SelectMixin 					from '@/mixins/SelectMixin.js';
+	import  ExcelExport 					from '@/mixins/ExcelExport.js';
+  import overlay    					  from '@/components/overlay.vue'
+  import resultadosActividad   from  '@/views/Solicitudes/resultadosActividad.vue'
 
 	export default {
 		mixins:[SelectMixin,ExcelExport],
 		components: {
-      modificaciones,
-      flexografia,
-      digital,
-			enviarADeptos,
-			prodExistente,
-			overlay
+			overlay,
+			resultadosActividad
 		},
 		data () {
 			return {
@@ -274,21 +227,21 @@
 				Vista :'',
 				headers: [
             // { text: '#'   			, align: 'left'	 , value: 'id_key' },
-            { text: '#Sol' , align: 'left'	 , value: 'id_solicitud' },
+            { text: '#Sol'      , align: 'left'	 , value: 'id_solicitud' },
 						{ text: 'Cliente'	  , align: 'left'	 , value: 'nomcli' },
 						{ text: 'Vendedor'	, align: 'left'	 , value: 'nomvend' },
 						{ text: 'Fecha'		  , align: 'left'	 , value: 'fecha' },
 						{ text: 'Tipo'		  , align: 'left'	 , value: 'tipo_prod' },
-						{ text: 'Ref'				, align: 'left'	 , value: 'ft' },
-						{ text: 'Cantidad'  , align: 'left'	 , value: 'cantidad' },
+						{ text: 'Producto'				, align: 'left'	 , value: 'codigo' },
+						// { text: 'Cantidad'  , align: 'left'	 , value: 'cantidad' },
 						{ text: 'Encargado' , align: 'center'	 , value: 'encargado' },
 						{ text: '',  align: 'right', value: 'action' , sortable: false },
 				],
 
 				estatus: {  id: 1, nombre:'Pendiente'},
 				Estatus:[ { id: 1, nombre:'Pendiente'},
-									{ id: 2, nombre:'Realizado' },
-									{ id: 3, nombre:'Terminado'},
+									{ id: 2, nombre:'Finalizado' },
+									{ id: 3, nombre:'Autorizado'},
 									{ id: 4, nombre:'Cancelado'},
 
                 ],
@@ -300,16 +253,15 @@
 				
 				tipos:['Producto Existente','Modificación de Producto','Nuevo Producto'],
 
-				fecha1: '',
+				fecha1: moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
 				fechamodal1:false,
-				fecha2: '',
+				fecha2: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
 				fechamodal2:false,
 
 				alerta: { 
-					snackbar: false,
+					activo: false,
 					text: '',
 					color: 'error',
-					vertical: true
 				},
 
 
@@ -318,11 +270,7 @@
 				textDialog : "Guardando Información",
 				Correcto   : false,
 				textCorrecto: '',
-
-				mesAnteriorPrimerDia : moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
-				mesActualUltimoDia: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
 				// nextMonthLastDay: moment().add(1, 'months').endOf('month').format("YYYY-MM-DD"),
-
 				actualiza       : false,
 				anchoModal      : 500,
 				solicitarModal  : false, 
@@ -336,6 +284,9 @@
 				EncargadoModal  : false, 
 				DatosEncargado  : [],
 
+				resultados : false,
+				informacion: {},
+
 				overlay : false,
 				Correcto: false,
 				colorCorrecto : 'error',
@@ -347,8 +298,21 @@
 		},
 
 		created(){
-			this.fecha1 = this.mesAnteriorPrimerDia;
-			this.fecha2 = this.mesActualUltimoDia;
+			// this.$store.watch(
+      //   (state, getters) => state.Solicitudes.solicitudesddd, (newValue, oldValue) => {
+      //     clearInterval(actualizar);
+      //   },
+      // );
+
+			if(this.Parametros2.estatus != undefined){
+				this.estatus = { id: this.Parametros2.estatus};
+				this.fecha1  = this.Parametros2.fecha1
+				this.fecha2  = this.Parametros2.fecha2
+				this.depto   = { id: this.Parametros2.id_depto }
+			}
+
+			this.init();
+			// var actualizar  = setInterval(() => { this.consultaAutomaticaDDD() }, 5000);
 		},
 
 		watch:{
@@ -373,7 +337,7 @@
 		},
 
 		computed:{
-			...mapGetters('Solicitudes'  ,['getSolicitudesDDD','Loading']), // IMPORTANDO USO DE VUEX - (GETTERS)
+			...mapGetters('Solicitudes'  ,['getSolicitudesDDD','Loading','Parametros2']), // IMPORTANDO USO DE VUEX - (GETTERS)
 			...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
 
 			tamanioPantalla () {
@@ -398,66 +362,31 @@
 		},
 
 		methods:{
-			...mapActions('Solicitudes'  ,['consultaSolicitudesDDD','guardaParametrosConsulta']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+			...mapActions('Solicitudes'  ,['consultaSolicitudesDDD','guardaParametrosConsulta','consultaAutomaticaDDD']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 
 			init(){
-				const payload = { estatus: this.estatus.id,
-													fecha1 : this.fecha1,
-													fecha2 : this.fecha2,
-													id_depto: this.departamento.id
-												}
-				
+				const payload = new Object();
+							payload.estatus = this.estatus.id;
+							payload.fecha1  = this.fecha1;
+							payload.fecha2  = this.fecha2;
+							payload.id_depto = this.departamento.id
+
 				this.guardaParametrosConsulta(payload);
 				this.consultaSolicitudesDDD()
 			},
 
-			validaTipoProducto(item){
-        switch (item.tipo_prod) {
-					case 1:
-						this.anchoModal        = 500;   // ASIGNAR EL ANCHO DE LA MODAL
-						this.modoVista         = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-						this.Vista             ='SOLICITUDESDDD';
-            this.parametros        = item;  // ASIGNAR LOS PARAMETROS A MANDAR
-            this.activaFormulario  = 0 ;    // FORMULARIO QUE SE MOSTRARA
-						this.tablaModificar    = false;  // HABILITAR TABLA DE MODIFICACIONES
-            this.productoExistente = true;  // HABILITAR TABLA DE MODIFICACIONES
-            this.solicitarModal   = true;  // ABRIR MODAL 
-
-						break;
-          case 2:
-            this.anchoModal       = 800;   // ASIGNAR EL ANCHO DE LA MODAL
-						this.modoVista        = 2;     // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-						this.Vista             ='SOLICITUDESDDD';
-            this.parametros       = item;  // ASIGNAR LOS PARAMETROS A MANDAR
-            this.activaFormulario = 0 ;    // FORMULARIO QUE SE MOSTRARA
-            this.tablaModificar   = true;  // HABILITAR TABLA DE MODIFICACIONES
-            this.productoExistente = false;  // HABILITAR TABLA DE MODIFICACIONES
-            this.depto = { id: item.dx }
-            this.solicitarModal   = true;  // ABRIR MODAL 
-            break;
-
-          case 3:
-            this.anchoModal       = 700;     // ASIGNAR EL ANCHO DE LA MODAL
-						this.modoVista        = 2;       // ASIGNAR EL MODO DE LA MODAL ( EDITAR )
-						this.Vista             ='SOLICITUDESDDD';
-            this.parametros       = item;    // ASIGNAR LOS PARAMETROS A MANDAR
-            this.activaFormulario = item.dx; // FORMULARIO QUE SE MOSTRARA
-            this.tablaModificar   = false;   // HABILITAR TABLA DE MODIFICACIONES
-            this.productoExistente = false;  // HABILITAR TABLA DE MODIFICACIONES
-            this.depto = { id: item.dx }
-            this.solicitarModal   = true;    // ABRIR MODAL
-            break;
-        }
+			verTareaAsignada(item){
+				this.resultados =true;
+				this.informacion = item;
 			},
 		
 			verSolicitud(item){
 				this.$router.push({ name:'detsolicitud' , params:{ solicitud: item }}) 
 			},
 
-			actualizaEncargado(modo){
-				const payload = { id: this.DatosEncargado.id_key, id_encargado: this.getdatosUsuario.id }
+			actualizaEncargado(){
+				const payload = { id: this.DatosEncargado.id, id_encargado: this.getdatosUsuario.id }
 				this.EncargadoModal = false; this.overlay = true;
-
 				this.$http.post('actualiza.encargado', payload).then( response =>{
 					this.textCorrecto = response.bodyText; this.colorCorrecto = 'green';
 					this.Correcto = true; this.init()
@@ -473,18 +402,22 @@
 				this.modalCancelar=false; this.overlay = true; 
         const payload = new Object();
               payload.estatus      = 4
-              payload.id           = this.partidaAEditar.id_key
+              payload.id           = this.partidaAEditar.id
+							payload.id_det_sol   = this.partidaAEditar.id_det_sol
+              payload.id_solicitud = this.partidaAEditar.id_solicitud
         
-        console.log('partidaAEditar', this.partidaAEditar)
+        // console.log('partidaAEditar', this.partidaAEditar)
         
-        this.$http.post('cancelar.movimiento', payload).then( response =>{
-          this.alerta.snackbar = true; this.alerta.text = response.bodyText; this.alerta.color="green";  
-          this.init()     
-        }).catch(error =>{
-          this.alerta.snackbar = true; this.alerta.text = error.bodyText; this.alerta.color="red darken-4";          
-        }).finally(()=>{  
-          this.overlay = false; 
-        })
+				// ESTA FUNCION CAEE EN EL CONTROLADOR DE REGISTROS DE ACTIVIDAD
+				this.$http.post('actualiza.estatus.resultado', payload ).then( response =>{
+					this.alerta = { activo: true, text: response.bodyText , color:'green'}
+					this.init();
+				}).catch( error =>{
+					this.alerta = { activo: true, text: error.bodyText    , color:'error '}
+					// this.activarAlerta(error.bodyText, 500);
+				}).finally(()=>{
+					this.overlay = false;
+				})
 			},
 
 			ImprimirExcel(){
@@ -496,14 +429,13 @@
 				let tHeaders=[], tValores= [], tInformacion = [];
 				let theaders = [{ text: "Solicitud"			  , value:"id_solicitud" },
 												{ text: "Cliente"         , value:"nomcli"},
-												{ text: "Responsable"     , value:"nomvend"},
+												{ text: "Solicitante"     , value:"nomvend"},
 												{ text: "Fecha"           , value:"fecha"},
 												{ text: "Hora"            , value:"hora"},
 												{ text: "Tipo Producto"   , value:"tipo_prod"},
-												{ text: "Referencia"      , value:"ft"},
-												{ text: "Cantidad"        , value:"cantidad"},
-												{ text: "Encargado"       , value:"nomencargado"},
-												{ text: "Estatus"         , value:"estatus_key"},
+												{ text: "Producto"        , value:"codigo"},
+												{ text: "Encargado"       , value:"encargado"},
+												{ text: "Estatus"         , value:"estatus"},
 											 ]
 
 				for(let j =0;j< theaders.length; j++){
@@ -518,10 +450,10 @@
 															fecha 			: this.getSolicitudesDDD[x].fecha,
 															hora        : this.getSolicitudesDDD[x].hora,
 															tipo_prod   : this.tipos[this.getSolicitudesDDD[x].tipo_prod-1],
-															ft          :	this.getSolicitudesDDD[x].ft,
+															codigo      :	this.getSolicitudesDDD[x].codigo,
 															cantidad    : this.getSolicitudesDDD[x].cantidad,
 															nomencargado: this.getSolicitudesDDD[x].nomencargado,
-															estatus_key : this.Estatus[ this.getSolicitudesDDD[x].estatus_key-1].nombre })
+															estatus     : this.Estatus[ this.getSolicitudesDDD[x].estatus-1].nombre })
 				}
 
 				this.titulo = this.titulo +'_'+ this.departamento.nombre +'_'+this.estatus.nombre +"_"+ this.fecha1 +"-"+ this.fecha2;
@@ -534,7 +466,7 @@
 
 
 <style  scoped>
-	.letraData{
+	/* .letraData{
 		font-size: 10px; 
-	}
+	} */
 </style>

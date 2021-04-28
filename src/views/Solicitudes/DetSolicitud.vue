@@ -19,7 +19,7 @@
               </v-card-actions>
             </v-col>
 
-            <v-col cols="12" sm="8" md="7"  xl="6" >
+            <v-col cols="12"  md="7"  xl="6" >
               <v-card outlined>
                 <v-simple-table dense >
                   <template v-slot:default>
@@ -47,10 +47,19 @@
                 </v-simple-table>
               </v-card>
             </v-col>
-            <v-col cols="12" sm="4" md="5" xl="6" >
-              <v-btn block color="gris" outlined @click="modalCancelar = true; accion=1" dark v-if="solicitud.estatus != 4">CANCELAR SOLICITUD </v-btn>
-              <v-btn block color="celeste" @click="validaTipoProducto(1)" class="mt-2" dark v-if="solicitud.estatus != 4">AGREGAR PRODUCTO </v-btn>
-              <v-btn block color="red darken-4" dark v-else>SOLICITUD CANCELADA  </v-btn>
+            <v-col cols="12"  md="5" xl="6" >
+              <v-btn block color="gris" outlined @click="modalCancelar = true; accion=1"     dark 
+                     v-if="solicitud.estatus != 4 && solicitud.procesado != 1">CANCELAR SOLICITUD 
+              </v-btn>
+              <v-btn block color="celeste"       @click="validaTipoProducto(1)" class="mt-2" dark 
+                     v-if="solicitud.estatus != 4 && solicitud.procesado != 1">AGREGAR PRODUCTO 
+              </v-btn>
+              <v-btn block color="red darken-4"                                              dark 
+                     v-if="solicitud.estatus == 4 && solicitud.procesado != 1">SOLICITUD CANCELADA  
+              </v-btn>
+              <v-btn block color="rosa"          @click="validaGeneracionOT()"  class="mt-2" dark 
+                     v-if="solicitud.procesado != 1"> GENERAR ORDEN DE TRABAJO 
+              </v-btn>
             </v-col>
             
             <v-col cols="12" class="py-0"/>
@@ -83,7 +92,8 @@
                         <td class="font-weight-black">{{ deptos[item.id_depto-1].nombre }}</td>
                         <td align="right">
                           <!-- MOSTRAR BOTON SI YA SE LEASIGNO UNA ACCION O SI ES UN PRODUCTO EXISTENTE -->
-                          <template v-if ="solicitud.estatus != 4 && item.estatus != 4">
+                          <template v-if ="solicitud.estatus != 4 && item.estatus != 4 && solicitud.procesado != 1">
+                            {{ item.estatus }}
                             <v-btn outlined rounded small color="green" class="mx-1 mt-1 " 
                                   v-if="item.estatus > 0 || item.tipo_prod != 2"
                                   @click="generarSolicitudADeptos(item)"
@@ -192,12 +202,24 @@
           </v-row>
         </v-card>
 
+
+        <v-dialog v-model="generarOT" persistent width="800px">
+          <v-card class="pa-4 generadorOT" >
+            <generadorOT
+              :solicitud="solicitud"
+              :detallesol="getDetalle"
+              :generarOT="generarOT"
+              @modal="generarOT = $event"
+            />
+          </v-card>
+        </v-dialog>
+
         <v-dialog v-model="Correcto" hide-overlay persistent width="350">
           <v-card color="success"  dark class="pa-3">
             <h3><strong>{{ textCorrecto }} </strong></h3>
           </v-card>
         </v-dialog>
-
+<!-- {{ partidaAEditar }} -->
 
       </v-col>
     </v-row>
@@ -213,13 +235,15 @@
   import loading         from '@/components/loading.vue'
   import overlay         from '@/components/overlay.vue'
   import enviarADeptos   from '@/components/enviarADeptos.vue'
+  import generadorOT    from '@/views/OT/generador_OT.vue'
 
   export default {
     mixins:[metodos],
     components:{
       loading,
       overlay,
-      enviarADeptos
+      enviarADeptos,
+      generadorOT
     },
     data:()=>({
       solicitud       : [],
@@ -258,6 +282,7 @@
       accion: 0,
       partidaAEditar:{},
 
+      generarOT: false,
 
       Correcto      : false,
       textCorrecto  : '',
@@ -377,7 +402,7 @@
             this.limpiarCampos();
           }
           this.modoVista     = modo;
-          this.crudSolicitud = true
+          this.crudSolicitud = true 
       },
 
       // modifProd(item){
@@ -393,27 +418,32 @@
       // },
 
       cancelarSolicitud(){
+ 
         this.modalCancelar=false; this.overlay = true; 
         const payload = new Object();
               payload.id_solicitud = this.solicitud.id
               payload.estatus      = 4 
+              // payload.id_det_sol   =
+              // payload.id_solicitud = 
         
-        this.$http.post('valida.cancelacion.sol', payload).then( response =>{
-          this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
-          // this.init()     
-          let that = this;
-          setTimeout(()=>{ that.$router.push({ name:'solicitudes' })  }, 1000);
-        }).catch(error =>{
-          this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
-        }).finally(()=>{  
-          this.overlay = false; 
-        })
+        // this.$http.post('valida.cancelacion.sol', payload).then( response =>{
+        //   this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
+        //   // this.init()     
+        //   let that = this;
+        //   setTimeout(()=>{ that.$router.push({ name:'solicitudes' })  }, 1000);
+        // }).catch(error =>{
+        //   this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
+        // }).finally(()=>{  
+        //   this.overlay = false; 
+        // })
       },
       cancelarPartida(){
         this.modalCancelar=false; this.overlay = true; 
         const payload = new Object();
               payload.estatus      = 4
               payload.id           = this.partidaAEditar.id
+              payload.id_det_sol   = this.partidaAEditar.id
+              payload.id_solicitud = this.partidaAEditar.id_solicitud
 
         this.$http.post('valida.cancelacion.partida', payload).then( response =>{
           this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
@@ -425,14 +455,26 @@
         })
       },
       generarSolicitudADeptos(item){
-        // if(this.solicitud.estatus === 4){
-        //   this.alerta.color = "red darken-4"; this.alerta.activo = true; 
-        //   this.alerta.text = "Es imposible mover el producto ya que la solicitud está cancelada.";
-        //   return;
-        // }
-        console.log('item', item);
+        if(this.solicitud.estatus === 4){
+          this.alerta.color = "red darken-4"; this.alerta.activo = true; 
+          this.alerta.text = "Es imposible mover el producto ya que la solicitud está cancelada.";
+          return;
+        }
+        // console.log('item', item);
         this.informacion = item;
         this.enviarDeptosModal = true;
+
+      },
+
+      validaGeneracionOT(){
+        for(let i=0; i< this.getDetalle.length; i++){
+          if(this.getDetalle[i].estatus === 2 ){
+            this.alerta = { activo: true, text:`El producto ${this.getDetalle[i].codigo} está aun pendiente.`, color: 'error'};
+            return;
+          }
+        }
+
+        this.generarOT = true;
 
       },
       

@@ -12,7 +12,7 @@
     </v-container> -->
     <v-tabs color="rosa" centered icons-and-text v-model="tab">
       <v-tabs-slider></v-tabs-slider>
-      <v-tab href="#tab-1" > Solicitar </v-tab>
+      <v-tab href="#tab-1" > {{ Modo ===1?  'Solicitar':'Editar Solicitud'}} </v-tab>
       <v-tab href="#tab-2">  Seguimiento   </v-tab>
     </v-tabs>
 
@@ -48,14 +48,14 @@
         </v-row>
 
         <v-footer absolute>
-          <v-btn color="error" dark small outlined @click="$emit('modal',false)"  v-if="Modo === 1"> CANCELAR</v-btn>
-          <v-btn color="error" dark small outlined @click="regresaModo1()" v-else> Regresar</v-btn>
+          <v-btn color="error" dark outlined @click="$emit('modal',false)"  v-if="Modo === 1"> CANCELAR</v-btn>
+          <v-btn color="error" dark outlined @click="regresaModo1()" v-else> Regresar</v-btn>
 
           <v-spacer></v-spacer>
-          <v-btn dark color="celeste" small @click="validaInformacion()" v-if="Modo === 1">
+          <v-btn dark color="celeste" @click="validaInformacion()" v-if="Modo === 1">
             Envíar Solicitud
           </v-btn>
-          <v-btn dark color="celeste" small @click="validaInformacion()" v-if="Modo === 2">
+          <v-btn dark color="celeste" @click="validaInformacion()" v-if="Modo === 2">
             Actualizar Solicitud 
           </v-btn>
         </v-footer>
@@ -67,51 +67,68 @@
         <v-row >
           <v-col cols="12" v-if="!getMovimientos.length" class="pa-4">
             <v-alert outlined type="warning" transition="scale-transition">
-              Actualmente no se encuentran movimientos realizados de esté producto.
+              <v-row align="center">
+                <v-col class="grow">
+                   Actualmente no se encuentran movimientos realizados de esté producto.
+                </v-col>
+                <v-col class="shrink">
+                  <v-btn class="" fab small dark color="celeste"  @click="init()"> <v-icon>refresh</v-icon></v-btn >
+                </v-col>
+              </v-row>
             </v-alert>
           </v-col>
-          <v-card  width="550px">
+          <v-card  width="550px" v-else>
             <v-list two-line subheader >
               <v-list-item v-for="(item , i) in getMovimientos" :key="i" link  @dblclick="verDetalle(item)">
                 <v-list-item-content >
                   <v-list-item-title    class="font-weight-black caption">DEPARTAMENTO  </v-list-item-title>
-                  <v-list-item-subtitle class="font-weight-black caption">{{ deptos[item.id_depto-1 ].nombre }}  </v-list-item-subtitle>
+                  <v-list-item-subtitle class="font-weight-black caption">{{ deptos[item.id_depto-1].nombre }}  </v-list-item-subtitle>
                 </v-list-item-content>
 
                 <v-list-item-content >
                   <v-list-item-title    class="font-weight-black caption">ESTATUS  </v-list-item-title>
                   <v-list-item-subtitle class="font-weight-black caption" v-if="item.estatus === 1"> ASIGNADO </v-list-item-subtitle>
-                  <v-list-item-subtitle class="font-weight-black caption" v-if="item.estatus === 2"> REALIZADO </v-list-item-subtitle>
-                  <v-list-item-subtitle class="font-weight-black caption" v-if="item.estatus === 3"> TERMINADO </v-list-item-subtitle>
+                  <v-list-item-subtitle class="font-weight-black caption" v-if="item.estatus === 2"> FINALIZADO </v-list-item-subtitle>
+                  <v-list-item-subtitle class="font-weight-black caption" v-if="item.estatus === 3"> AUTORIZADO </v-list-item-subtitle>
                   <v-list-item-subtitle class="font-weight-black caption" v-if="item.estatus === 4"> CANCELADO </v-list-item-subtitle>
                 </v-list-item-content>
               
                 <v-list-item-action>
                   <v-btn color="error" dark fab x-small v-if="item.estatus === 1 && item.id_encargado === null"   
                         @click="validaDelete(item)"> 
-                    <v-icon>mdi-close</v-icon> 
+                    <v-icon>mdi-delete</v-icon> 
                   </v-btn>
-                  <v-btn color="gris" dark fab mall v-if="item.estatus === 1 && item.id_encargado != null"> 
+                  <v-btn color="gris" dark fab x-small v-if="item.estatus === 1 && item.id_encargado != null"> 
                     <v-icon>mdi-account-alert</v-icon> 
                   </v-btn>
-                  <v-btn color="orange" dark fab small v-if="item.estatus === 2"  > 
+                  <v-btn color="orange" dark fab x-small v-if="item.estatus === 2"  > 
                     <v-icon>mdi-account-arrow-right</v-icon> 
                   </v-btn>
-                  <v-btn color="green" dark fab small v-if="item.estatus === 3"  > 
+                  <v-btn color="green" dark fab x-small v-if="item.estatus === 3"  > 
                     <v-icon>mdi-account-check</v-icon> 
                   </v-btn>
-                  <v-btn color="error" dark fab small v-if="item.estatus === 4"  > 
+                  <v-btn color="error" dark fab x-small v-if="item.estatus === 4"  > 
                     <v-icon>mdi-account-cancel</v-icon> 
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>
             </v-list>
+
+
           </v-card>
+          <!-- <v-col class=""> -->
+          <!-- </v-col> -->
         </v-row>
+        <v-row  v-if="getMovimientos.length">
+          <v-card class="mt-2" width="550px" flat>
+            <v-btn class="" outlined color="celeste" dark block small @click="init()"> Actualizar Estatus</v-btn >
+          </v-card> 
+        </v-row>
+        
       </v-tab-item>
     </v-tabs-items>
 
-
+      
     <v-dialog v-model="Correcto" hide-overlay persistent width="350">
       <v-card :color="colorCorrecto" dark class="pa-3">
         <v-card-text class="font-weight-black headline pa-3 white--text" align="center">
@@ -237,7 +254,6 @@
         this.tproducto = { id: this.informacion.tipo_prod}
       },
 
-
       validaInformacion(){
         if(!this.depto.id ){
           this.alerta = { activo: true, text: 'Debe seleccionar un departamento.', color: 'error'} ; return;
@@ -254,24 +270,28 @@
       },
 
       validaMovimRepetidos(){
-        if(!this.getMovimientos){ return true };
+        if(!this.getMovimientos.length){  console.log('retornare true'); return true };
 
         for(let i=0; i<this.getMovimientos.length;i++){
+          console.log('ENTRE AL PRIMER CICLO', i)
           if(this.Modo === 1){
-            if( this.depto.id === this.getMovimientos.id_depto ){
-              return true;
+            console.log(`comparo ${ this.depto.id} con ${ this.getMovimientos[i].id_depto}`);
+            if( this.depto.id === this.getMovimientos[i].id_depto ){
+              console.log('SON IGUALES EN  MODO 1');
+              return false;
             }
           }
 
           if(this.Modo === 2){
-            if( this.getMovimientos[i].id === this.idAEditar && this.depto.id === this.getMovimientos[i].id_depto ){
-              return true;
+            console.log(`comparo2 -  ${ this.getMovimientos[i].id } con2 -  ${ this.idAEditar}`);
+            console.log(`comparo3 -  ${ this.depto.id } con3 -  ${ this.getMovimientos[i].id_depto}`);
+            if( this.getMovimientos[i].id != this.idAEditar && this.depto.id === this.getMovimientos[i].id_depto ){
+              return false;
             }
           }
           
         }
-
-        return false;
+        return true;
       },
 
       PrepararDatos(){
@@ -290,14 +310,14 @@
         this.Modo === 1 ? this.enviarSolicitud(payload): this.actualizaEnvioSol(payload);
 
       },
-      
 
-      enviarSolicitud(){
+      enviarSolicitud(payload){
         this.insertaMovimientos(payload).then(response =>{
           this.Terminar(response)
           this.init();
           this.consultaDetalle(this.informacion.id_solicitud);
           this.tab = 'tab-2'
+          this.limpiarCampos();
         }).catch(error =>{
           this.Terminar(error)
         }).finally(()=>{
@@ -309,8 +329,9 @@
         this.ActualizaMovimientos(payload).then(response =>{
           this.Terminar(response)
           this.init();
-          // this.consultaDetalle(this.informacion.id_solicitud);
+          this.consultaDetalle(this.informacion.id_solicitud);
           this.tab = 'tab-2'
+          this.limpiarCampos();
         }).catch(error =>{
           this.Terminar(error)
         }).finally(()=>{
@@ -319,11 +340,13 @@
       },
 
       verDetalle(item){
-        this.depto = { id: item.id_depto };
-        this.descripcion = item.descripcion;
-        this.Modo = 2
-        this.tab = 'tab-1'
-        this.idAEditar = item.id
+        if(item.estatus === 1){
+          this.depto = { id: item.id_depto };
+          this.descripcion = item.descripcion;
+          this.Modo = 2
+          this.tab = 'tab-1'
+          this.idAEditar = item.id
+        }
       },
 
       regresaModo1(){
@@ -339,20 +362,6 @@
         this.agregaOtro = true;
       },
 
-      // finalizaProdExist(){
-      //   this.validarFinalizacion = false; this.overlay = true;
-      //   const payload = new Object();
-      //         payload.id           = this.informacion.id;
-      //         payload.id_solicitud = this.informacion.id_solicitud
-      //         payload.estatus     = 3;
-        
-      //   this.$http.post('finaliza.prodexit', payload).then(response =>{
-      //     this.Terminar(response)
-      //     this.init(); var me = this;
-      //     setTimeout(()=>{ me.$emit('modal',false); me.$emit('put', this.actualiza = !this.actualiza)}, 1500)
-      //   }).catch(error => { console.log('error', error )})
-      // },
-
       validaDelete(item){
         let estatus = 0, cero =0, uno=0, dos=0, tres=0;
         for(let i =0; i<this.getMovimientos.length; i++){
@@ -367,14 +376,11 @@
         else if(uno > 0) { estatus = 1; }
         else if(dos > 0) { estatus = 2; }
         else if(tres > 0){ estatus = 3; };
-        
+
         this.elementoAEliminar = {  id_delete: item.id, // id para eliminar
-                                    id_solicitud: item.id_solicitud, // id de solicitud 
-                                    px: item.px, // identidificador de tabla
-                                    id: this.informacion.id,
-                                    estatus: estatus // estatus para actualizar
+                                    id_solicitud: this.informacion.id_solicitud, // id de solicitud 
+                                    id_det_sol: item.id_det_sol,
                                    }
-        // console.log('elementoAEliminar', this.elementoAEliminar);
         this.EliminaRegistro = true
       },
 
@@ -387,7 +393,9 @@
 				}).catch((error)=>{
 					this.Terminar(error)
            console.log('err delete', err) 
-				})
+				}).finally(()=>{
+          this.overlay = false;
+        })
       
       },
 
@@ -395,6 +403,11 @@
         res.status === 200 ? this.colorCorrecto = 'green' : this.colorCorrecto = 'error';
         res.status === 200 ? this.textCorrecto = res.bodyText : this.textCorrecto = 'Ocurrio un error, intentelo de nuevo';
         this.Correcto = true; setTimeout(()=>{ this.Correcto = false}, 2000)
+      },
+
+      limpiarCampos(){
+        this.depto = { id: null, nombre:''};
+        this.descripcion = ''
       }
     }
 

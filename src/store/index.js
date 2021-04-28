@@ -20,6 +20,8 @@ import Solicitudes from '@/modules/Solicitudes';
 import Movimientos from '@/modules/Movimientos';
 
 import OT from '@/modules/OT';
+import Monitor     from '@/modules/Monitor';
+
 
 
 Vue.use(Vuex)
@@ -96,6 +98,7 @@ export default new Vuex.Store({
     Prospectos,
     Movimientos,
     ProductosxCliente,
-    OT
+    OT,
+    Monitor
   }
 })

@@ -73,7 +73,7 @@
 				</div>
   		</v-col>
 
-			{{ getProductosxCli}}
+			<!-- {{ getProductosxCli}} -->
 
 
 			<v-dialog v-model="controlProductoModal" persistent width="700px">

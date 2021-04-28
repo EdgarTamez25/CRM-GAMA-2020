@@ -7,8 +7,6 @@ export default{
 		ot: [],
     loading: true,
 		parametros:[],
-		filtros: { },
-
 	},
 
 	mutations:{
@@ -20,7 +18,7 @@ export default{
     },
 		PARAMETROS(state, data){
 			state.filtros = data
-		}
+		},
 		
 	},
 	actions:{ 
@@ -33,10 +31,6 @@ export default{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false)) 
     },
-
-		// guardaParametrosConsulta( { commit },payload){
-		// 	commit('PARAMETROS', payload)
-		// },
   },
 
 	getters:{

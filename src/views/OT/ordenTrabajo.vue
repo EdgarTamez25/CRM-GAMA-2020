@@ -24,12 +24,12 @@
               ></v-select> 
 						</v-col>
 
-						<v-col cols="12" sm="4" md="2">
+						<!-- <v-col cols="12" sm="4" md="2">
 							<v-select
 									v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste"  
 									dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"  
 							></v-select>
-						</v-col>
+						</v-col> -->
 
 						<v-col cols="6" sm="4" md="2" > <!-- FECHA DE COMPROMISO -->
 							<v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
@@ -74,7 +74,7 @@
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 						<v-btn small  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
-			      <v-btn small class="celeste" dark @click="abrirModal(1)">Agregar </v-btn>
+			      <!-- <v-btn small class="celeste" dark @click="abrirModal(1)">Agregar </v-btn> -->
 			      <v-btn  class="gris" icon dark @click="init()" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 					
@@ -95,10 +95,11 @@
 							<v-btn  color="rosa " class="ma-1"  small dark  @click="abrirModal(2,item)">
 								<v-icon> mdi-pencil </v-icon>
 							</v-btn> 
-			    		<!-- <v-btn  color="green" class="ma-1"  small dark  @click="irDetalleOt(2,item)">
-								<v-icon> mdi-eye </v-icon>
-							</v-btn>  -->
 			    	</template>
+
+						<template v-slot:item.oc="{ item }">
+							{{ item.oc ? item.oc : 'SIN O.C.'}}
+						</template>
 
 						<template v-slot:item.hora="{ item }">
 							{{ item.hora >='12:00'? item.hora +' '+'pm': item.hora+ ' '+'am' }}
@@ -152,11 +153,12 @@
 				modoVista : 0, 
 				
 				headers: [
-						{ text: 'N° de Orden' , align: 'left'	 , value: 'id' },
+						{ text: 'N° de Orden' , align: 'start' , value: 'id' },
 						{ text: 'Cliente'			, align: 'left'	 , value: 'nomcli' },
+						{ text: 'O.C.'			  , align: 'left'	 , value: 'oc' },
 						{ text: 'Fecha'			  , align: 'left'	 , value: 'fecha' },
 						{ text: 'Hora'		   	, align: 'left'	 , value: 'hora' },
-						{ text: '' 						, align: 'right'  , value: 'action' , sortable: false },
+						{ text: '' 						, align: 'right' , value: 'action' , sortable: false },
         ],
 
 				depto : { id:1, nombre:'FLEXOGRAFÍA'},
@@ -252,8 +254,8 @@
 			init(){
         // this.consultaDepartamentos();
 				const parametros = new Object();
-							parametros.id_depto    = this.depto.id;
-							parametros.id_sucursal = this.getdatosUsuario.id_sucursal;
+							// parametros.id_depto    = this.depto.id;
+							// parametros.id_sucursal = this.getdatosUsuario.id_sucursal;
 							parametros.fecha1      = this.fecha1;
 							parametros.fecha2      = this.fecha2;
 							parametros.estatus     = this.estatus.id;
@@ -282,10 +284,10 @@
 				}
 				let tHeaders=[], tValores= [];
 				let theaders = [{ text: "Id"					    , value:"id" },
-												{ text: "Responsable"     , value:"nomvend"},
+												{ text: "Solicitante"     , value:"solicitante"},
 												{ text: "Cliente"         , value:"nomcli"},
 												{ text: "Orden de Compra" , value:"oc"},
-												{ text: "Referencia"      , value:"referencia"},
+												{ text: "Solicitud"       , value:"id_solicitud"},
 												{ text: "Fecha"           , value:"fecha"},
 												{ text: "Hora"            , value:"hora"},
 											 ]

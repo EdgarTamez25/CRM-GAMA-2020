@@ -8,10 +8,11 @@ export default{
     loading: true,
 		detalle: [],
 		modificaciones: [],
-		parametros:[],
 		solicitudesddd:[],
 		datosFlexo: null,
 		datosDigital: null,
+		
+		parametros:{},
 		filtros:{}
 	},
 
@@ -47,6 +48,14 @@ export default{
 				console.log('NO HAY CAMBIOS')
 			}
 		},
+		// SOLICITUDES_AUTOMATICAS_DDD(state, data){
+		// 	if(state.solicitudesddd.length != data.length){
+		// 		state.solicitudesddd = data
+		// 		console.log('SI HAY CAMBIOS')
+		// 	}else{
+		// 		console.log('NO HAY CAMBIOS')
+		// 	}
+		// },
 		PARAMETROS2(state, data){
 			state.filtros = data
 		}
@@ -64,7 +73,7 @@ export default{
 			}).finally(() => commit('LOADING', false)) 
     },
 		
-		consultaSolicitudesDDD({commit}){
+		consultaSolicitudesDDD({commit}, payload){
 			// Limpio Arreglo y Genero Consulta
 			commit('LOADING',true); commit('SOLICITUDESDDD', [])
 			Vue.http.post('solicitudes.ddd', store.state.Solicitudes.parametros).then(response=>{
@@ -123,13 +132,22 @@ export default{
 			})
 		},
 
-		consultaAutomatica({commit}){
-			Vue.http.post('solicitudes', store.state.Solicitudes.parametros).then(response=>{
-				commit('SOLICITUDES_AUTOMATICAS', response.body)
-			}).catch((error)=>{
-				console.log('error',error)
-			}).finally(() => commit('LOADING', false)) 
-		}
+		// consultaAutomatica({commit}){
+		// 	Vue.http.post('solicitudes', store.state.Solicitudes.parametros).then(response=>{
+		// 		console.log('RESPONSE', response)
+		// 		commit('SOLICITUDES_AUTOMATICAS', response.body)
+		// 	}).catch((error)=>{
+		// 		console.log('error',error)
+		// 	}).finally(() => commit('LOADING', false)) 
+		// },
+
+		// consultaAutomaticaDDD({commit}){
+		// 	Vue.http.post('solicitudes',  store.state.Solicitudes.parametros).then(response=>{
+		// 		commit('SOLICITUDES_AUTOMATICAS_DDD', response.body)
+		// 	}).catch((error)=>{
+		// 		console.log('error',error)
+		// 	}).finally(() => commit('LOADING', false)) 
+		// }
 
 
   },
@@ -165,6 +183,9 @@ export default{
 		Parametros(state){
 			return state.filtros
 		},
+		Parametros2(state){
+			return state.parametros
+		}
 		
 	}
 }

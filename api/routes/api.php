@@ -14,20 +14,15 @@ Route::post('valida.sesion.activa'         ,'userController@validaSesionActiva')
 Route::post('obtener.datos.usuario'        ,'userController@obtenerDatosUsuario')   -> name('obtenerDatosUsuario');
 Route::post('cerrar.sesion'                ,'userController@CerrarSesion')          -> name('CerrarSesion');
 
+//===================================  NIVELES ====================================================
+	Route::get('niveles','nivelController@obtenerNiveles')   -> name('obtenerNiveles');
+	Route::get('sistemas','sistemasController@obtenerSistemas')   -> name('obtenerSistemas');
+	Route::get('consulta.accesos.usuario/{id}' ,'sistemasController@AccesosASistemas')          -> name('AccesosASistemas');
 
-// NIVELES
-Route::get('niveles','nivelController@obtenerNiveles')   -> name('obtenerNiveles');
-Route::get('sistemas','sistemasController@obtenerSistemas')   -> name('obtenerSistemas');
-Route::get('consulta.accesos.usuario/{id}' ,'sistemasController@AccesosASistemas')          -> name('AccesosASistemas');
-
-
-
-
-
-Route::post('login'                    ,'userController@IniciarSesion')           -> name('IniciarSesion');
-Route::post('login.permisos'           ,'userController@SesionPermisos')  	      -> name('SesionPermisos');
-Route::get('gama.etiquetas'            ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');   
-Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo') -> name('SesionProgramacionFlexo');
+	Route::post('login'                    ,'userController@IniciarSesion')           -> name('IniciarSesion');
+	Route::post('login.permisos'           ,'userController@SesionPermisos')  	      -> name('SesionPermisos');
+	Route::get('gama.etiquetas'            ,'gamaEtiquetasController@modulosActivos') -> name('modulosActivos');   
+	Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo') -> name('SesionProgramacionFlexo');
 
 //===================================  USUARIOS ====================================================
 	Route::post('usuarios'       ,'userController@agregarUsuario')      -> name('agregarUsuario');    	
@@ -128,7 +123,6 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 ////================================== ENTREGAS ====================================================
 	Route::post('entrega.producto' ,'entregasController@EntregarProducto') -> name('EntregarProducto');
 	Route::post('entrega.id'			 ,'entregasController@entregabyid')		   -> name('Entregabyid');
-
 //==================================== PROSPECTOS ==================================================
 	Route::get('prospectos'              ,'prospectosController@Prospectos')      -> name('Prospectos');
 	Route::get('prospectos.id/{id}'      ,'prospectosController@ProspectosxId')   -> name('ProspectosxId');
@@ -136,24 +130,19 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::put('update.prospecto/{id}'	 ,'prospectosController@UpdateProspecto') -> name('UpdateProspecto');
 	Route::post('pasar.cliente'					 ,'prospectosController@PasarACliente')   -> name('PasarACliente');
 	Route::delete('delete.prospecto/{id}','clientesController@EliminarProspecto') -> name('EliminarProspecto'); 
-
 //==================================== DEPARTAMENTOS ===============================================
 	Route::get('departamentos','departamentosController@Departamentos')  -> name('Departamentos'); 
 //==================================== PUESTOS =====================================================
 	Route::get('puestos','puestosController@Puestos')  -> name('Puestos'); 
-
 //==================================== PRODUCTOS X CLIENTE==========================================
 	Route::get('productos.cliente/{id_cliente}' ,'productosxcliController@productosxCli')     -> name('productosxCli');
 	Route::post('crear.producto.cliente'        ,'productosxcliController@crearDetalle')      -> name('crearDetalle');
 	Route::put('actualiza.producto.cliente/{id}','productosxcliController@actualizaProducto') -> name('actualizaProducto');
 	Route::post('productos.cliente.deptos'      ,'productosxcliController@PxCxD')     				-> name('PxCxD');
-	
-
 //==================================== SOLICITUDES =================================================
-	Route::post('solicitudes.ddd'			 ,'solicitudesController@SolicitudesDDD')  	  -> name('SolicitudesDDD'); 
-	Route::post('actualiza.encargado'	 ,'solicitudesController@ActualizaEncargado') -> name('ActualizaEncargado'); 
+	Route::post('solicitudes.ddd'			 ,'solicitudesController@SolicitudesDDD')  	  -> name('SolicitudesDDD');      // EN PROCESO
+	Route::post('actualiza.encargado'	 ,'solicitudesController@ActualizaEncargado') -> name('ActualizaEncargado');  // EN PROCESO 
 	Route::post('procesa.movimiento'	 ,'solicitudesController@ProcesaMovimiento')  -> name('ProcesaMovimiento'); 
-	
 	Route::post('solicitudes'					 ,'solicitudesController@Solicitudes')  	    -> name('Solicitudes'); 
 	Route::get('detalle.solicitud/{id}','solicitudesController@DetalleSolicitud')   -> name('DetalleSolicitud');   
 	Route::get('modificaciones/{id}'   ,'solicitudesController@Modificaciones')     -> name('Modificaciones');
@@ -164,14 +153,12 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	// Route::post('actualiza.prod.modif'     ,'solicitudesController@ActualizaProdModif') -> name('ActualizaProdModif');
 	Route::post('crear.nueva.solicitud'    ,'solicitudesController@CrearNuevaSolicitud') -> name('CrearNuevaSolicitud');
 
-	
-	
 	Route::post('elimina.movimiento'    ,'solicitudesController@EliminarMovim') 		 -> name('EliminarMovim'); 
 	Route::post('finaliza.prodexit'     ,'solicitudesController@FinalizaProdExist')  -> name('FinalizaProdExist');
 	Route::post('cancelar.movimiento'        ,'solicitudesController@CancelarMovimiento')  -> name('CancelarMovimiento');
 	
 
-	Route::get('movim.sol/{id_det_sol}'      ,'solicitudesController@MovimSol')   			  -> name('MovimSol');   // EN PROCESO
+	Route::get('movim.sol/{id_det_sol}'      ,'solicitudesController@MovimSol')   			  -> name('MovimSol');   // PROBADA ET
 	Route::post('enviar.movimiento'          ,'solicitudesController@EnviarSol')  			  -> name('EnviarSol');  // PROBADA ET
 	Route::post('actualiza.envio.movimiento' ,'solicitudesController@ActualizaEnvioSol')  -> name('ActualizaEnvioSol');  // 
 
@@ -182,26 +169,58 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::post('valida.cancelacion.partida'       ,'solicitudesController@ValidaCancelacionPartida') -> name('ValidaCancelacionPartida'); // PROBADA ET
 	Route::post('agregar.producto.solicitud'       ,'solicitudesController@agregaProductoSol')        -> name('agregaProductoSol');        // PROBADA ET
 	Route::put('actualiza.producto.solicitud/{id}' ,'solicitudesController@actualizaProductoSol')     -> name('actualizaProductoSol');     // PROBADA ET
-
-	
-	
-
+// =================================== REGISTRO-ACTIVIDAD ==========================================
+	Route::post('agrega.resultados.actividad'	     ,'registroActividadController@AgregaResultadosActividad') -> name('AgregaResultadosActividad'); // PROBADA ET
+	Route::get('obtener.res.act.id/{id}'	         ,'registroActividadController@ObtenerResultadosxId')      -> name('ObtenerResultadosxId');      // PROBADA ET
+	Route::delete('elimina.registro.actividad/{id}','registroActividadController@EliminaRegAct')     				 -> name('EliminaRegAct');             // PROBADA ET
+	Route::post('actualiza.estatus.resultado'	     ,'solicitudesController@ActualizaEstatusResult')    -> name('ActualizaEstatusResult');   			 // PROBADA ET
 //==================================== MATERIALES ==================================================
 	Route::get('materiales/{dx}' ,'materialesController@Materiales')  -> name('Materiales');
 //==================================== ACABADOS   ==================================================
 	Route::get('acabados/{dx}'   ,'acabadosController@Acabados')      -> name('Acabados');
 
-	Route::post('ordenes.trabajo'    ,'ordenesTrabajoController@OrdenesTrabajo')  	-> name('OrdenesTrabajo'); 
-	Route::post('crear.orden.trabajo','ordenesTrabajoController@CrearOT')  					-> name('CrearOT'); 
-	Route::get('detalle.ot/{id}'     ,'ordenesTrabajoController@DetalleOT')         -> name('DetalleOT');
-	Route::put('actualiza.ot/{id}'   ,'ordenesTrabajoController@ActualizaOT')       -> name('ActualizaOT');
+	Route::post('ordenes.trabajo'    ,'OTContrller@OrdenesTrabajo')  	-> name('OrdenesTrabajo');  // PROBADA ET 
+	Route::get('detalle.ot/{id}'     ,'OTContrller@DetalleOT')         -> name('DetalleOT');      // PROBADA ET
+	Route::put('actualiza.ot/{id}'   ,'OTContrller@ActualizaOT')       -> name('ActualizaOT'); 
 	
-	Route::delete('elimina.partida.detot/{id}','ordenesTrabajoController@EliminarPartidaDetOT')     -> name('EliminarPartidaDetOT');  
-	Route::post('actualiza.partida.detot'     ,'ordenesTrabajoController@ActualizaPartidaDetOT')  	-> name('ActualizaPartidaDetOT'); 
-	Route::post('agregar.partida.detot'       ,'ordenesTrabajoController@AgregarPartidaOT')  				-> name('AgregarPartidaOT'); 
+	Route::delete('elimina.partida.detot/{id}','OTContrller@EliminarPartidaDetOT')     -> name('EliminarPartidaDetOT');  
+	Route::post('actualiza.partida.detot'     ,'OTContrller@ActualizaPartidaDetOT')  	-> name('ActualizaPartidaDetOT'); 
+	Route::post('agregar.partida.detot'       ,'OTContrller@AgregarPartidaOT')  				-> name('AgregarPartidaOT'); 
+	Route::post('crear.orden.trabajo','OTContrller@CrearOT')  					-> name('CrearOT');     // EN PROCESO
+	Route::put('actualiza.urgencia.det.ot/{id}'   ,'OTContrller@ActualizaUrgenciaDetOT')       -> name('ActualizaUrgenciaDetOT'); 
+//==================================== MONITOR   ==================================================
 
+	Route::post('obtener.datos.monitor','monitorController@ObtenerDatosMonitor') -> name('ObtenerDatosMonitor');   
+	Route::post('programar.producto'   ,'monitorController@ProgramarProductos')  -> name('ProgramarProductos');   
 
-	
+	Route::post('obtener.programaciones.bordados'   ,'monitorController@ObtenerPrograBordados')     -> name('ObtenerPrograBordados');     
+	Route::post('obtener.programaciones.digital'    ,'monitorController@ObtenerPrograDigital')      -> name('ObtenerPrograDigital');     
+	Route::post('obtener.programaciones.offset'     ,'monitorController@ObtenerPrograOffset')       -> name('ObtenerPrograOffset');     
+	Route::post('obtener.programaciones.serigrafia' ,'monitorController@ObtenerPrograSerigrafia')   -> name('ObtenerPrograSerigrafia');     
+	Route::post('obtener.programaciones.empaque'    ,'monitorController@ObtenerPrograEmpaque')      -> name('ObtenerPrograEmpaque');     
+	Route::post('obtener.programaciones.sublimacion','monitorController@ObtenerPrograSublimacion')  -> name('ObtenerPrograSublimacion');     
+	Route::post('obtener.programaciones.tampografia','monitorController@ObtenerPrograTampografia')  -> name('ObtenerPrograTampografia');     
+	Route::post('obtener.programaciones.uv'					,'monitorController@ObtenerPrograUV')  					-> name('ObtenerPrograUV');           
+
+	Route::put('actualiza.maquina.bordados/{id}'     ,'monitorController@ActualizaMaquinaBordados')      -> name('ActualizaMaquinaBordados'); 
+	Route::put('actualiza.maquina.digital/{id}'      ,'monitorController@ActualizaMaquinaDigital')       -> name('ActualizaMaquinaDigital'); 
+	Route::put('actualiza.maquina.offset/{id}'       ,'monitorController@ActualizaMaquinaOffset')        -> name('ActualizaMaquinaOffset'); 
+	Route::put('actualiza.maquina.serigrafia/{id}'   ,'monitorController@ActualizaMaquinaSerigrafia')    -> name('ActualizaMaquinaSerigrafia'); 
+	Route::put('actualiza.maquina.empaque/{id}'      ,'monitorController@ActualizaMaquinaEmpaque')       -> name('ActualizaMaquinaEmpaque'); 
+	Route::put('actualiza.maquina.sublimacion/{id}'  ,'monitorController@ActualizaMaquinaSublimacion')   -> name('ActualizaMaquinaSublimacion'); 
+	Route::put('actualiza.maquina.tampografia/{id}'  ,'monitorController@ActualizaMaquinaTampografia')   -> name('ActualizaMaquinaTampografia'); 
+	Route::put('actualiza.maquina.uv/{id}'           ,'monitorController@ActualizaMaquinaUV')   				 -> name('ActualizaMaquinaUV'); 
+
+	Route::post('finalizar.producto.flexo'        ,'monitorController@FinalizaProdFlexo')         -> name('FinalizaProdFlexo'); 
+	Route::post('finalizar.producto.bordados'     ,'monitorController@FinalizaProdBordados')      -> name('FinalizaProdBordados'); 
+	Route::post('finalizar.producto.digital'      ,'monitorController@FinalizaProdDigital')       -> name('FinalizaProdDigital'); 
+	Route::post('finalizar.producto.offset'       ,'monitorController@FinalizaProdOffset')        -> name('FinalizaProdOffset'); 
+	Route::post('finalizar.producto.serigrafia'   ,'monitorController@FinalizaProdSerigrafia')    -> name('FinalizaProdSerigrafia'); 
+	Route::post('finalizar.producto.empaque'      ,'monitorController@FinalizaProdEmpaque')       -> name('FinalizaProdEmpaque'); 
+	Route::post('finalizar.producto.sublimacion'  ,'monitorController@FinalizaProdSublimacion')   -> name('FinalizaProdSublimacion'); 
+	Route::post('finalizar.producto.tampografia'  ,'monitorController@FinalizaProdTampografia')   -> name('FinalizaProdTampografia'); 
+	Route::post('finalizar.producto.uv'           ,'monitorController@FinalizaProdUV')   				  -> name('FinalizaProdUV'); 
+
 
 
 //==================================================================================================
@@ -230,17 +249,12 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::post('add.junta'          ,'juntasController@addJuntas')       -> name('addJuntas');
 	Route::put('put.junta/{id}'      ,'juntasController@putJuntas')       -> name('putJuntas');
 	Route::post('sala.juntas'        ,'juntasController@salaJuntas')      -> name('salaJuntas');
-
-
-
-
 //==================================================================================================
 //==================================== RUTAS PROGRAMACION FLEXO=====================================
 
 //==================================== LLAMADAS-RH =================================================
-
-	Route::get('obtener.operadores'          ,'userController@obtenerOperadores')       -> name('obtenerOperadores');
-
+	
+  Route::get('obtener.operadores'                  ,'userController@obtenerOperadores')       							-> name('obtenerOperadores');
 	Route::post('agregar.programacion'               ,'programacionFlexoController@programacionFlexo')        -> name('programacionFlexo');
 	Route::put('actualizar.programacion/{id}'        ,'programacionFlexoController@actualizaProgramacion')    -> name('actualizaProgramacion');
 	Route::post('obtener.programaciones'             ,'programacionFlexoController@obtenerProgramacion')      -> name('obtenerProgramacion');
@@ -248,14 +262,14 @@ Route::post('login.programacion.flexo' ,'userController@SesionProgramacionFlexo'
 	Route::post('iniciaizar.ot.flexo'         			 ,'programacionFlexoController@InicializarProgramacion')  -> name('InicializarProgramacion');
 	Route::put('actualizar.detalle.orden.flexo/{id}' ,'programacionFlexoController@actualizarDetalle')   			-> name('actualizarDetalle');
 	Route::put('finalizar.orden.flexo/{id}'          ,'programacionFlexoController@FinalizarOTFlexo')   			-> name('FinalizarOTFlexo');
-	Route::put('cancelar.orden.trabajo/{id}'         ,'programacionFlexoController@cancelarOTFlexo')   			-> name('cancelarOTFlexo');
+	Route::put('cancelar.orden.trabajo/{id}'         ,'programacionFlexoController@cancelarOTFlexo')   			  -> name('cancelarOTFlexo');
 
-	Route::post('agregar.maquina.operador'    ,'maquinasController@AgregarMaquinasxOP')     -> name('AgregarMaquinasxOP');
-	Route::post('editar.maquina.operador'     ,'maquinasController@EditarMaquinasxOP')      -> name('EditarMaquinasxOP');
-	Route::post('obtener.maquina.operador'    ,'maquinasController@ObtenerMaquinasxOp')     -> name('ObtenerMaquinasxOp');
-	Route::get('obtener.maquinas'   					,'maquinasController@Maquinas') 							-> name('Maquinas');  
-	Route::delete('eliminar.asignacion.maquina/{id}','maquinasController@EliminarAsignacion')     -> name('EliminarAsignacion');  
-	Route::post('valida.conservacion.asignación'   ,'maquinasController@ValidaConservacion')      -> name('ValidaConservacion');
+	Route::post('agregar.maquina.operador'           ,'maquinasController@AgregarMaquinasxOP')  -> name('AgregarMaquinasxOP');
+	Route::post('editar.maquina.operador'            ,'maquinasController@EditarMaquinasxOP')   -> name('EditarMaquinasxOP');
+	Route::post('obtener.maquina.operador'           ,'maquinasController@ObtenerMaquinasxOp')  -> name('ObtenerMaquinasxOp');
+	Route::get('obtener.maquinas.depto/{id_depto}'   ,'maquinasController@MaquinasxDepto') 	    -> name('MaquinasxDepto');  
+	Route::delete('eliminar.asignacion.maquina/{id}' ,'maquinasController@EliminarAsignacion')  -> name('EliminarAsignacion');  
+	Route::post('valida.conservacion.asignación'     ,'maquinasController@ValidaConservacion')  -> name('ValidaConservacion');
 	
 	Route::post('obtener.maquina.asignada'                   ,'maquinasController@MaquinaAsignada')     -> name('MaquinaAsignada');
 	Route::get('obtener.programaciones.maquina/{id_maquina}' ,'maquinasController@ProgramacionMaquina')          -> name('ProgramacionMaquina');

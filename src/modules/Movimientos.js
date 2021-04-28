@@ -6,6 +6,7 @@ export default{
 	state:{
 		movimientos: [],
     loading: true,
+		resultados:[]
 	},
 
 	mutations:{
@@ -15,6 +16,10 @@ export default{
 		MOVIMIENTOS(state, data){
 			state.movimientos = data
     },
+
+		RESULTADOS(state, data){
+			state.resultados = data;
+		}
     
 		
 	},
@@ -56,7 +61,42 @@ export default{
 					commit('LOADING', false)
 				})
 			})
+		},
+
+		agregarResultado({commit}, payload){
+			return new Promise((resolve,reject) =>{
+				Vue.http.post('agrega.resultados.actividad', payload).then(response=>{
+					resolve(response.bodyText)
+				}).catch((error)=>{
+					reject(error.bodyText)
+					console.log('error',error)
+				}).finally(()=>{ 
+					commit('LOADING', false)
+				})
+			})
+		},
+
+		consultaResultados({commit}, id){
+			Vue.http.get('obtener.res.act.id/'+ id).then(response=>{
+				commit('RESULTADOS', response.body)
+			}).catch((error)=>{
+				console.log('error',error)
+			})
+		},
+
+		eliminarResultado({commit},id){
+			return new Promise((resolve,reject) =>{
+				Vue.http.delete('elimina.registro.actividad/'+ id).then(response=>{
+					resolve(response.bodyText)
+				}).catch((error)=>{
+					reject(error.bodyText)
+					console.log('error',error)
+				}).finally(()=>{ 
+					commit('LOADING', false)
+				})
+			})
 		}
+
   },
 
 	getters:{
@@ -67,5 +107,10 @@ export default{
 		getMovimientos(state){
 		  return state.movimientos
     },
+
+		getResultados(state){
+		  return state.resultados
+
+		}
 	}
 }

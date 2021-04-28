@@ -30,7 +30,7 @@ class solicitudesController extends Controller
 						'id_solicitud' => $req -> id_solicitud,
 						'id_depto' 		 => $req -> id_depto,
 						'id_producto'  => $req -> id_producto,
-						'tipo_prod'    => $req -> tproducto,
+						'tipo_prod'    => $req -> tipo_prod,
 						'cantidad'     => $req -> cantidad
 				]
 			);
@@ -56,7 +56,7 @@ class solicitudesController extends Controller
 	// !CATALOGO DE SOLICITUDES
 		public function Solicitudes(Request $req){
 			$solicitud = DB::select('SELECT s.id, s.id_cliente, c.nombre as nomcli, s.id_usuario, u.nombre as nomusuario, 
-																			s.fecha, s.hora, s.nota, s.estatus
+																			s.fecha, s.hora, s.nota, s.estatus, s.procesado
 																FROM	solicitudes s LEFT JOIN clientes c ON s.id_cliente = c.id
 																										LEFT JOIN users u    ON s.id_usuario = u.id
 																WHERE s.estatus = ? AND s.fecha BETWEEN ? AND ?
@@ -86,38 +86,44 @@ class solicitudesController extends Controller
 		}
 	
 	// ! CONSULTAR SOLICITUDES DESARROLLO/DIGITAL/DISEÑO
+
 		public function SolicitudesDDD(Request $req){
-			$movimientos = DB::select('SELECT m.id, m.id_solicitud, m.px, m.id_px, m.id_depto, m.fecha, m.hora, m.estatus,u.nombre as nomvend, 
-																				c.nombre as nomcli, us.id as id_encargado, us.usuario as encargado, us.nombre as nomencargado
-																	FROM movim_sol m LEFT JOIN solicitudes s ON m.id_solicitud = s.id
-																									LEFT JOIN users u       ON s.id_usuario   = u.id 
-																									LEFT JOIN clientes c    ON s.id_cliente   = c.id
-																									LEFT JOIN users us      ON m.id_encargado = us.id
+			$movimientos = DB::select('SELECT m.id, m.id_det_sol, ds.id_solicitud, ds.id_producto, ds.tipo_prod, p.codigo, v.nombre as nomvend,
+																				s.id_cliente, c.nombre as nomcli,m.id_depto, m.fecha, m.hora, m.id_creador, u.nombre as creador, 
+																				m.id_encargado, us.usuario as encargado, m.descripcion, m.estatus
+																		FROM movim_sol m LEFT JOIN det_sol ds    ON m.id_det_sol    = ds.id
+																						 LEFT JOIN prodxcli p    ON ds.id_producto  = p.id
+																						 LEFT JOIN solicitudes s ON ds.id_solicitud = s.id
+																						 LEFT JOIN clientes    c ON s.id_cliente    = c.id
+																						 LEFT JOIN users u       ON m.id_creador    = u.id 
+																						 LEFT JOIN users us      ON m.id_encargado  = us.id
+																		         LEFT JOIN users v       ON s.id_usuario    = v.id
 																WHERE m.estatus = ? AND m.id_depto = ? AND m.fecha BETWEEN ? AND ?', 
 																[ $req -> estatus, $req -> id_depto , $req -> fecha1 , $req -> fecha2]);
-			// return $movimientos;
 
-			$movimSol = [];
+			return $movimientos ? $movimientos: $movimientos = [];
 
-			for($i=0;$i<count($movimientos);$i++ ):
-				if($movimientos[$i] -> px === 1):
-					$existente = $this -> consultaProdExistente($movimientos[$i] -> id_px);
-					$arrayTemp = $this -> formarObjecto($existente, $movimientos[$i]);
-					array_push($movimSol,  $arrayTemp);
-				endif;
-				if($movimientos[$i] -> px === 2):
-					$Modificacion = $this -> consultaProdModif($movimientos[$i] -> id_px);
-					$arrayTemp = $this -> formarObjecto($Modificacion, $movimientos[$i]);
-					array_push($movimSol, $arrayTemp);
-				endif;
-				if($movimientos[$i] -> px === 3):
-					$Nuevos = $this -> consultaProdNuevo($movimientos[$i] -> id_px);
-					$arrayTemp = $this -> formarObjecto($Nuevos, $movimientos[$i]);
-					array_push($movimSol, $arrayTemp);
-				endif; 
-			endfor;
+			// $movimSol = [];
 
-			return $movimSol ? $movimSol: $movimSol = [];
+			// for($i=0;$i<count($movimientos);$i++ ):
+			// 	if($movimientos[$i] -> px === 1):
+			// 		$existente = $this -> consultaProdExistente($movimientos[$i] -> id_px);
+			// 		$arrayTemp = $this -> formarObjecto($existente, $movimientos[$i]);
+			// 		array_push($movimSol,  $arrayTemp);
+			// 	endif;
+			// 	if($movimientos[$i] -> px === 2):
+			// 		$Modificacion = $this -> consultaProdModif($movimientos[$i] -> id_px);
+			// 		$arrayTemp = $this -> formarObjecto($Modificacion, $movimientos[$i]);
+			// 		array_push($movimSol, $arrayTemp);
+			// 	endif;
+			// 	if($movimientos[$i] -> px === 3):
+			// 		$Nuevos = $this -> consultaProdNuevo($movimientos[$i] -> id_px);
+			// 		$arrayTemp = $this -> formarObjecto($Nuevos, $movimientos[$i]);
+			// 		array_push($movimSol, $arrayTemp);
+			// 	endif; 
+			// endfor;
+
+			// return $movimSol ? $movimSol: $movimSol = [];
 
 		}
 
@@ -464,34 +470,36 @@ class solicitudesController extends Controller
 												'descripcion'   => $req['descripcion']
 										]
 									);
-				
-			$this -> validaEstatusSolicitud($req);
+			
+			$this -> validaEstatusMovim($req);
+		  $this -> validaEstatusSolicitud($req);
 			return $movimiento ? response("La información se guardo correctamente",200):
 												   response("Ocurrio un error, intentelo mas tarde.",500);
 
 		}
 
-		public function FinalizaProdExist(Request $req){
-			$this -> actualizaEstatusProdExist($req);
-			$this -> validaEstatusSolicitud($req);
-			return response("la información se guardo correctamente",200);
-		}
+		// public function FinalizaProdExist(Request $req){
+		// 	$this -> actualizaEstatusProdExist($req);
+		// 	$this -> validaEstatusSolicitud($req);
+		// 	return response("la información se guardo correctamente",200);
+		// }
 	
 		public function EliminarMovim(Request $req){
 			$deleteMovim = DB::delete('DELETE FROM movim_sol WHERE id= ?',[$req -> id_delete]);
-
-			if($req -> px === 1): $this -> actualizaEstatusProdExist($req); endif;
-			if($req -> px === 2): $this -> actualizaEstatusModif($req)    ; endif;
-			if($req -> px === 3): $this -> actualizaEstatusProdNuevo($req); endif;
-			
+			$this -> validaEstatusMovim($req);
 			$this -> validaEstatusSolicitud($req);
 			return response("la información se guardo correctamente",200);
 		}
 
 		public function validaEstatusMovim($data){
-			$uno=0; $dos=0; $tres=0;
-			$movim = DB::select('SELECT * FROM movim_sol WHERE id_solicitud =? AND id_px=? AND px=?', 
-														[$data -> id_solicitud, $data -> id, $data -> px]);
+			$cero=0;$uno=0; $dos=0; $tres=0; $cuatro=0; $movim=[];
+
+			$movim = DB::select('SELECT * FROM movim_sol WHERE id_det_sol =? ', [$data -> id_det_sol]);
+
+			if(count($movim) === 0){
+			 $objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 1 ];
+			 $this -> actualizaEstatusDetSol($objetTemp);
+		  }
 
 			for($i=0;$i<count($movim); $i++): 
 				if($movim[$i] -> estatus === 1 ):
@@ -500,27 +508,23 @@ class solicitudesController extends Controller
 					$dos++;
 				elseif($movim[$i] -> estatus === 3):
 					$tres++;
+				elseif($movim[$i] -> estatus === 4):
+					$cuatro++;
 				endif;
 			endfor;
 			
 			if($uno > 0):
-				$objetTemp  = ["id" => $data -> id, "estatus" => 2];$objetTemp2 = [ "data" => $objetTemp];
-				if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
-				if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
-				if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
-
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 2 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
 			elseif($dos > 0):
-				$objetTemp = ["id" => $data -> id, "estatus" => 2];	$objetTemp2 = [ "data" => $objetTemp];
-				if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
-				if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
-				if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
-
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 2 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
 			elseif($tres > 0):
-				// return $data;
-				$objetTemp = ["id" => $data -> id, "estatus" => 3];$objetTemp2 = [ "data" => $objetTemp];
-				if($data -> px === 1): $this -> actualizaEstatusProdExist($objetTemp2['data']); endif;
-				if($data -> px === 2): $this -> actualizaEstatusModif($objetTemp2['data'])    ; endif;
-				if($data -> px === 3): $this -> actualizaEstatusProdNuevo($objetTemp2['data']); endif;
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 3 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
+			elseif($cuatro > 0):
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 1 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
 			endif;
 		}
 
@@ -530,9 +534,7 @@ class solicitudesController extends Controller
 			$cero=0;$uno=0;$dos=0; $tres=0; $cuatro=0;
 			$detalle = $this -> DetalleSolicitud($data['id_solicitud']);
 			
-			// return $detalle;
-
-			if(!$detalle): 
+			if(count($detalle) === 0): 
 				$this -> actualizaEstatusSolicitud($data['id_solicitud'],1);
 				return ;
 			endif;
@@ -567,13 +569,11 @@ class solicitudesController extends Controller
 				// return "ACTUALIZA A CUATRO";
 				$this -> actualizaEstatusSolicitud($data['id_solicitud'],4);
 			endif;
-
 		}
 
 		public function actualizaEstatusSolicitud($id_solicitud, $estatus){
 			DB::update('UPDATE solicitudes SET estatus=:estatus 
 										WHERE id=:id',['estatus' => $estatus, 'id' => $id_solicitud]);
-			
 		}
 
 	//! *************************** FUNCIONES PARA CANCELAR SOLICITUD **********************************
@@ -641,29 +641,48 @@ class solicitudesController extends Controller
 			array_push($Evaluacion,  $evaluacion);
 			
 			if($this -> evaluarRespuestaCancelacion($Evaluacion) ):
-				$estatus = $this -> actualizaEstatusDetSol($req);
-				return $estatus ? response("La partida se ha cancelado correctamente",200) :
-													response("Ocurrio un problema, intentelo nuevamente",500);
+				$detalle  = ["id" => $req -> id, "estatus" => $req -> estatus ];   //  SE FORMA OBJETO PARA PODER ACTUALIZAR EL DETALLE
+				if($estatus = $this -> actualizaEstatusDetSol($detalle)):
+					$solicitud  = ["id_solicitud" => $req -> id_solicitud ]; //  SE FORMA OBJETO PARA PODER ACTUALIZAR EL ESTATUS
+				  $this -> validaEstatusSolicitud($solicitud);
+					return response("La partida se ha cancelado correctamente",200);
+				else:
+					return response("Ocurrio un problema, intentelo nuevamente",500);
+				endif;
+				
 			else:
 				return response("La partida no se puede cancelar ya que otro usuario lo está atendiendo",403);
 			endif;
 		}
 
 		public function actualizaEstatusDetSol($data){
-			$estatusDelSol = DB::update('UPDATE det_sol SET estatus=:estatus 
+			 $estatusDelSol = DB::update('UPDATE det_sol SET estatus=:estatus 
 																			WHERE id=:id',['estatus' => $data['estatus'], 
 																										 'id' 		 => $data['id'] ]);
 			return $estatusDelSol ? true : false; 
 		}
 
-		public function CancelarMovimiento(Request $req){
-			$movimiento = DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id',
-																			[ 'estatus' => $req -> estatus, 
-																				'id' 		  => $req -> id  
+		public function ActualizaEstatusResult(Request $req ){
+			$actualiza = DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id', 
+																			[ 'estatus'  => $req -> estatus, 
+																				'id' 		   => $req -> id  
 																			]);
-			return $movimiento ? response("La cancelación se proceso correctamente",200):
-									         response("Ocurrio un error, intentelo mas",403);
+			
+			$this -> validaEstatusMovim($req);
+			$this -> validaEstatusSolicitud($req);
+			return $actualiza? response('Se finalizo correctamente.',200):
+			 									 response('Ocurrio un error intentalo mas tarde.',500);
 		}
+
+
+			// public function CancelarMovimiento(Request $req){
+			// 	$movimiento = DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id',
+			// 																	[ 'estatus' => $req -> estatus, 
+			// 																		'id' 		  => $req -> id  
+			// 																	]);
+			// 	return $movimiento ? response("La cancelación se proceso correctamente",200):
+			// 							         response("Ocurrio un error, intentelo mas",403);
+			// }
 
 }
 

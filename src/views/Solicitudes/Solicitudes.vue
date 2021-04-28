@@ -212,7 +212,7 @@
 				estatus: {  id: 1, nombre:'Pendiente'},
 				Estatus:[ { id: 1, nombre:'Pendiente'},
 									{ id: 2, nombre:'Asignado' },
-									{ id: 3, nombre:'Terminado'},
+									{ id: 3, nombre:'Finalizado'},
 									{ id: 4, nombre:'Cancelado'}
 								],
 				fecha1: moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
@@ -236,18 +236,13 @@
 				Correcto   : false,
 				textCorrecto: '',
 
-				mesAnteriorPrimerDia : moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
-				mesActualUltimoDia: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
+				// mesAnteriorPrimerDia : moment().subtract(1, 'months').startOf('month').format("YYYY-MM-DD"),
+				// mesActualUltimoDia: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
 				// nextMonthLastDay: moment().add(1, 'months').endOf('month').format("YYYY-MM-DD"),
 			}
 		},
 
 		created(){
-			this.$store.watch(
-        (state, getters) => state.Solicitudes.solicitudes, (newValue, oldValue) => {
-          clearInterval(actualizar);
-        },
-      );
 
 			if(this.Parametros.estatus != undefined){
 				this.estatus = { id: this.Parametros.estatus};
@@ -256,7 +251,7 @@
 			}
 			this.consultar_Clientes();
 			this.init();
-			let actualizar  = setInterval(() => { this.consultaAutomatica() }, 10000);
+			// var actualizar  = setInterval(() => { this.consultaAutomatica() }, 10000);
 		},
 
 		watch:{
@@ -306,7 +301,6 @@
 							payload.fecha1  = this.fecha1;
 							payload.fecha2  = this.fecha2;
 							payload.estatus = this.estatus.id;
-
 					// this.guardaParametrosConsulta(payload);
 					this.consultaSolicitudes(payload)
 			},
@@ -326,7 +320,7 @@
 							payload.nota       = this.comentario ? this.comentario : '';
 				
 				this.$http.post('crear.nueva.solicitud', payload).then( response =>{
-					this.alerta = { activo: true, texto:response.bodyText, color:'error' };
+					this.alerta = { activo: true, texto:response.bodyText, color:'green' };
 					this.init();
 				}).catch( error =>{
 					this.alerta = { activo: true, texto:error.bodyText, color:'error' };

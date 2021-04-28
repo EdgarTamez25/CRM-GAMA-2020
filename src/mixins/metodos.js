@@ -114,6 +114,17 @@ export default {
 				})
 			})
 		},
+
+		consultaProdxCliente( id_cliente){
+			return new Promise( (resolve, reject) => {
+				this.$http.get('productos.cliente/'+ id_cliente).then((response)=>{
+					resolve(response.body)
+				}).catch(error =>{
+					reject('No se encontraron productos de este cliente.')
+					console.log('error clixdpto', error)
+				})
+			})
+		},
 		
 		evualuaRetorno(){
 			if(this.getSolicitudes.length){
@@ -125,6 +136,14 @@ export default {
 
 		evaluarContenidoDetalles(data){
 			data.length > 2 ? true: false;
+		},
+
+		consultarSucursales(){ //SUCURSALES
+			this.$http.get('sucursales').then((response)=>{
+				this.sucursales = response.body
+			}).catch(error =>{
+				console.log('error', error)
+			})
 		},
   }
 }

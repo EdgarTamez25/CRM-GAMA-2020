@@ -254,8 +254,9 @@ export default {
           model: true,
           administracion: [ 
             // { text: 'Productos'            ,icon: 'print',path: '/productos'},
-            { text: 'Productos por cliente',icon: 'mdi-printer-3d',path: '/productos-por-cliente'},
+            { text: 'Productos por cliente',icon: 'mdi-printer-3d'    ,path: '/productos-por-cliente'},
             { text: 'Ordenes de Trabajo'   ,icon: 'mdi-text-box-check',path: '/ordenes-de-trabajo'},
+            // { text: 'Monitor '             ,icon: 'mdi-monitor-eye'   ,path: '/monitor-master'},
           ],
         },
 
@@ -305,22 +306,22 @@ export default {
               this.blocked = false;  // DESACTIVO BLOCKEO
             }).catch( error=>{      // OBTENGO LA INFORMACION DEL USUARIO
               this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
-              // window.location.href = this.urlSistemaPrincipal;
+              window.location.href = this.urlSistemaPrincipal;
             });  
           }).catch( error =>{
-            console.log('Error validacion', error.bodyText)
-            // window.location.href = this.urlSistemaPrincipal;
+            // console.log('Error validacion', error.bodyText)
+            window.location.href = this.urlSistemaPrincipal;
           })
           if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
             this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
           }
         }else{ 
-         console.log('NO HAY KEYLOG')
-        //  window.location.href = this.urlSistemaPrincipal;
+        //  console.log('NO HAY KEYLOG')
+         window.location.href = this.urlSistemaPrincipal;
         }
     } else {
-      console.log('NO ES COMPATIBLE LOCAL')
-      // window.location.href = this.urlSistemaPrincipal;
+      // console.log('NO ES COMPATIBLE LOCAL')
+      window.location.href = this.urlSistemaPrincipal;
     }
     
     // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
