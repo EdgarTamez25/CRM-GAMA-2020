@@ -63,7 +63,7 @@
 							</v-dialog>
 						</v-col>
 					</v-row> 
-
+					
 					<v-card-actions class="py-0 my-0">
 			      <v-text-field
 			        v-model="search"
@@ -71,6 +71,7 @@
 			        label="Buscar solicitud"
 			        single-line
 			        hide-details
+							filled dense
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 			      <!-- <v-btn small class="celeste" dark @click="NuevoCompromiso(1)">Agregar </v-btn> -->
@@ -91,28 +92,29 @@
 						@page-count="pageCount = $event"
 						dense
 			    >
-						<template v-slot:item.id_solicitud="{ item }"  >
-							<span style="font-size:12px"> {{  item.id_solicitud }} </span>
+						<template v-slot:item.tipo="{ item }"  >
+							<span class="celeste--text caption"  v-if="item.tipo === 1"> Solicitud de Pedido </span>
+							<span class="celeste--text caption"  v-if="item.tipo === 2"> Solicitud de Cotización </span>
 						</template>
+
 						<template v-slot:item.nomcli = "{ item }"  >
-							<span style="font-size:12px"> {{  item.nomcli }} </span>
+							<span class="caption" > {{  item.nomcli }} </span>
 						</template>
 						<template v-slot:item.nomvend = "{ item }"  >
-							<span style="font-size:12px"> {{  item.nomvend }} </span>
+							<span class="caption"> {{  item.nomvend }} </span>
 						</template>
 						<template v-slot:item.fecha="{ item }">
-							<span  style="font-size:12px"> {{  moment(item.fecha).format('LL') }} </span>
+							<span class="caption"> {{  moment(item.fecha).format('LL') }} </span>
 						</template>
 						<template v-slot:item.tipo_prod="{ item }">
-							<span class="font-weight-black rosa--text"    style="font-size:12px" v-if="item.tipo_prod === 1"> Producto Existente </span>
-							<span class="font-weight-black orange--text"  style="font-size:12px" v-if="item.tipo_prod === 2"> Modificación </span>
-							<span class="font-weight-black celeste--text" style="font-size:12px" v-if="item.tipo_prod === 3"> Nuevo Producto </span>
+							<span class="font-weight-black rosa--text caption"     v-if="item.tipo_prod === 1"> Producto Existente </span>
+							<span class="font-weight-black celeste--text caption"  v-if="item.tipo_prod === 2"> Nuevo Producto </span>
 						</template>	
 						<template v-slot:item.codigo="{ item }">
-							<span style="font-size:12px" class="font-weight-black "> {{ item.codigo }}</span>
+							<span class="font-weight-black caption "> {{ item.codigo }}</span>
 						</template>
 						<template v-slot:item.cantidad="{ item}">
-							<span style="font-size:12px" class="font-weight-black "> {{ item.cantidad }}</span>
+							<span class="font-weight-black caption "> {{ item.cantidad }}</span>
 						</template>
 
 						<template v-slot:item.encargado ="{ item }">
@@ -157,18 +159,18 @@
 		</v-dialog>
 
 		<v-dialog v-model="EncargadoModal" persistent width="500">
-			<v-card class="pa-4">
-				<v-card-text class="font-weight-black subtitle-1 pa-3 mt-1" align="center" v-if="!DatosEncargado.id_encargado" >QUIERO ATENDER ESTA SOLICITUD  </v-card-text>
-				<v-card-text v-else align="left" class="font-weight-black subtitle-1 pa-3 mt-1">
+			<v-card class="pa-1">
+				<v-card-text class="font-weight-black headline pa-3 mt-1" align="center" v-if="!DatosEncargado.id_encargado" >QUIERO ATENDER ESTA SOLICITUD  </v-card-text>
+				<v-card-text v-else align="left" class="font-weight-black headline pa-3 mt-1">
 						ACTUALMENTE EL USUARIO <span class="green--text">  {{ DatosEncargado.encargado }} </span>  ATIENDE ESTA SOLICITUD.
 				</v-card-text>
 				<v-card-subtitle class="font-weight-black subtitle-1" align="center" v-if="DatosEncargado.id_encargado && getdatosUsuario.id != DatosEncargado.id_encargado"  >
 					¿DESEA ASIGNARSE ESTA SOLICITUD?
 				</v-card-subtitle>
 				<v-card-actions>
-					<v-btn outlined color="error" class="ma-1"  small dark  @click="EncargadoModal = false" > {{ !DatosEncargado.id_encargado ? 'NO QUIERO':'CANCELAR'}} </v-btn>
+					<v-btn outlined color="error" class="ma-1"  dark  @click="EncargadoModal = false" > {{ !DatosEncargado.id_encargado ? 'NO,QUIERO':'CANCELAR'}} </v-btn>
 					<v-spacer></v-spacer>
-					<v-btn color="celeste" class="ma-1" small dark v-if="!DatosEncargado.id_encargado" @click="actualizaEncargado(1)"> SI QUIERO </v-btn>
+					<v-btn color="celeste" class="ma-1"  dark v-if="!DatosEncargado.id_encargado" @click="actualizaEncargado(1)"> SI,QUIERO </v-btn>
 					<v-btn color="celeste" class="ma-1" small dark v-if="DatosEncargado.id_encargado && getdatosUsuario.id != DatosEncargado.id_encargado" @click="actualizaEncargado(2)"> 
 						 SI, ASIGNAR 
 					</v-btn>
@@ -208,8 +210,8 @@
 	import {mapGetters, mapActions} from 'vuex';
 	import  SelectMixin 					from '@/mixins/SelectMixin.js';
 	import  ExcelExport 					from '@/mixins/ExcelExport.js';
-  import overlay    					  from '@/components/overlay.vue'
-  import resultadosActividad   from  '@/views/Solicitudes/resultadosActividad.vue'
+  import  overlay    					  from '@/components/overlay.vue'
+  import  resultadosActividad   from '@/views/Solicitudes/resultadosActividad.vue'
 
 	export default {
 		mixins:[SelectMixin,ExcelExport],
@@ -226,14 +228,12 @@
 				search: '',
 				Vista :'',
 				headers: [
-            // { text: '#'   			, align: 'left'	 , value: 'id_key' },
-            { text: '#Sol'      , align: 'left'	 , value: 'id_solicitud' },
+            // { text: ''          , align: 'left'	 , value: 'tipo' },
 						{ text: 'Cliente'	  , align: 'left'	 , value: 'nomcli' },
 						{ text: 'Vendedor'	, align: 'left'	 , value: 'nomvend' },
 						{ text: 'Fecha'		  , align: 'left'	 , value: 'fecha' },
 						{ text: 'Tipo'		  , align: 'left'	 , value: 'tipo_prod' },
-						{ text: 'Producto'				, align: 'left'	 , value: 'codigo' },
-						// { text: 'Cantidad'  , align: 'left'	 , value: 'cantidad' },
+						{ text: 'Producto'  , align: 'left'	 , value: 'codigo' },
 						{ text: 'Encargado' , align: 'center'	 , value: 'encargado' },
 						{ text: '',  align: 'right', value: 'action' , sortable: false },
 				],
@@ -365,11 +365,12 @@
 			...mapActions('Solicitudes'  ,['consultaSolicitudesDDD','guardaParametrosConsulta','consultaAutomaticaDDD']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
 
 			init(){
-				const payload = new Object();
-							payload.estatus = this.estatus.id;
-							payload.fecha1  = this.fecha1;
-							payload.fecha2  = this.fecha2;
-							payload.id_depto = this.departamento.id
+				const payload = new Object({
+					estatus : this.estatus.id,
+					fecha1  : this.fecha1,
+					fecha2  : this.fecha2,
+					id_depto: this.departamento.id
+				});
 
 				this.guardaParametrosConsulta(payload);
 				this.consultaSolicitudesDDD()
@@ -388,10 +389,13 @@
 				const payload = { id: this.DatosEncargado.id, id_encargado: this.getdatosUsuario.id }
 				this.EncargadoModal = false; this.overlay = true;
 				this.$http.post('actualiza.encargado', payload).then( response =>{
-					this.textCorrecto = response.bodyText; this.colorCorrecto = 'green';
-					this.Correcto = true; this.init()
+					this.textCorrecto = response.bodyText; 
+					this.colorCorrecto = 'green';
+					this.Correcto = true; 
+					this.init()
 				}).catch( error =>{
-					this.textCorrecto = error.bodyText; this.colorCorrecto = 'red';
+					this.textCorrecto = error.bodyText; 
+					this.colorCorrecto = 'red';
 				}).finally( ()=>{ 
 					var me = this; this.overlay = false;
 					setTimeout(()=>{ me.Correcto = false }, 1500)
@@ -400,21 +404,20 @@
 
 			cancelarMovimiento(){
 				this.modalCancelar=false; this.overlay = true; 
-        const payload = new Object();
-              payload.estatus      = 4
-              payload.id           = this.partidaAEditar.id
-							payload.id_det_sol   = this.partidaAEditar.id_det_sol
-              payload.id_solicitud = this.partidaAEditar.id_solicitud
-        
-        // console.log('partidaAEditar', this.partidaAEditar)
+
+        const payload = new Object({
+					id          : this.partidaAEditar.id,
+					id_det_sol  : this.partidaAEditar.id_det_sol,
+					id_solicitud: this.partidaAEditar.id_solicitud,
+					estatus     : 4
+				});
         
 				// ESTA FUNCION CAEE EN EL CONTROLADOR DE REGISTROS DE ACTIVIDAD
 				this.$http.post('actualiza.estatus.resultado', payload ).then( response =>{
 					this.alerta = { activo: true, text: response.bodyText , color:'green'}
 					this.init();
 				}).catch( error =>{
-					this.alerta = { activo: true, text: error.bodyText    , color:'error '}
-					// this.activarAlerta(error.bodyText, 500);
+					this.alerta = { activo: true, text: error.bodyText, color:'error '}
 				}).finally(()=>{
 					this.overlay = false;
 				})
@@ -463,10 +466,3 @@
 		}
 	}
 </script>
-
-
-<style  scoped>
-	/* .letraData{
-		font-size: 10px; 
-	} */
-</style>

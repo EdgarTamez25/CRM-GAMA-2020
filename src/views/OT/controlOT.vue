@@ -153,7 +153,11 @@
                       <th class="text-left"> Concepto  </th>
                       <!-- <th class="text-left"> Entrega </th> -->
                       <th class="text-left"> Urgencia  </th>
+                      <th class="text-left"> Estatus</th>
+
                       <th class="text-left"></th>
+
+
                     </tr>
                   </thead>
                   <tbody>
@@ -172,9 +176,15 @@
                         <span v-if="item.urgencia === 3"> PRIORIDAD</span>
                       </td>
                       <td>
-                        <v-btn color="success" class="ma-1" icon v-if="parametros.estatus != 3" @click="rellenaCampos(item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
-                        <v-btn color="error"   class="ma-1" icon v-if="parametros.estatus != 3" @click="eliminaPartida(item.id)"> <v-icon>mdi-delete</v-icon> </v-btn>
+                        <span class="error--text font-weight-black" v-if="item.estatus === 1"> PENDIENTE</span>
+                        <span class="orange--text font-weight-black" v-if="item.estatus === 2"> PROGRAMADA</span>
+                        <span class="success--text font-weight-black" v-if="item.estatus === 3"> FINALIZADA</span>
                       </td>
+                      <td v-if="item.estatus === 1" >
+                        <v-btn color="success" class="ma-1" icon v-if="parametros.estatus === 1" @click="rellenaCampos(item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
+                        <v-btn color="error"   class="ma-1" icon v-if="parametros.estatus === 1" @click="eliminaPartida(item.id)"> <v-icon>mdi-delete</v-icon> </v-btn>
+                      </td>
+                      
                     </tr>
                   </tbody>
                 </template>

@@ -8,17 +8,19 @@ use Illuminate\Support\Facades\DB;
 class programacionFlexoController extends Controller
 {
 		public function obtenerProgramacion(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
 			$programaciones = DB::select('SELECT f.id, f.id_det_ot, do.id_ot, ot.id_cliente, c.nombre as nomcli, 
-																				   do.id_producto, p.codigo, do.cantidad, f.fecha_prog, f.id_maquina,
-																			     m.nombre as maquina, f.id_pleca, f.id_suaje, f.hora_inicio, f.hora_fin, 
-																			     f.urgencia,f.creacion, f.id_creador, f.id_sucursal, f.estatus, f.finalizacion
+																					do.id_producto, p.codigo, do.cantidad, do.concepto, f.fecha_prog, f.id_maquina,
+																					m.nombre as maquina, f.id_pleca, f.id_suaje, f.hora_inicio, f.hora_fin, 
+																					f.urgencia,f.creacion, f.id_creador, f.id_sucursal, f.estatus, f.finalizacion
 																			FROM flexo_ot f LEFT JOIN det_ot do  ON f.id_det_ot = do.id
-																						   			  LEFT JOIN ot         ON do.id_ot    = ot.id
-																			                LEFT JOIN clientes c ON ot.id_cliente = c.id
-																			                LEFT JOIN prodxcli p ON do.id_producto = p.id
-																			                LEFT JOIN maquinas m ON f.id_maquina   = m.id
-																		WHERE f.estatus = ? AND f.id_sucursal AND f.creacion BETWEEN ? AND ? ORDER BY f.urgencia DESC, f.id DESC ',
-																		[$req -> estatus , $req -> fecha1 , $req -> fecha2 ]);
+																											LEFT JOIN ot         ON do.id_ot    = ot.id
+																											LEFT JOIN clientes c ON ot.id_cliente = c.id
+																											LEFT JOIN prodxcli p ON do.id_producto = p.id
+																											LEFT JOIN maquinas m ON f.id_maquina   = m.id
+																		WHERE f.estatus = ? AND f.id_sucursal = ? AND f.creacion BETWEEN  ? AND ? 
+																		ORDER BY f.urgencia DESC, f.id DESC',
+																		[$req -> estatus , $req -> id_sucursal, $req -> fecha1 , $fecha2 ]);
 
 			return $programaciones ? $programaciones : [];
 		}

@@ -58,7 +58,7 @@
                      v-if="solicitud.estatus == 4 && solicitud.procesado != 1">SOLICITUD CANCELADA  
               </v-btn>
               <v-btn block color="rosa"          @click="validaGeneracionOT()"  class="mt-2" dark 
-                     v-if="solicitud.procesado != 1"> GENERAR ORDEN DE TRABAJO 
+                     v-if="solicitud.procesado != 1 && getDetalle.length "> GENERAR ORDEN DE TRABAJO 
               </v-btn>
             </v-col>
             
@@ -93,13 +93,13 @@
                         <td align="right">
                           <!-- MOSTRAR BOTON SI YA SE LEASIGNO UNA ACCION O SI ES UN PRODUCTO EXISTENTE -->
                           <template v-if ="solicitud.estatus != 4 && item.estatus != 4 && solicitud.procesado != 1">
-                            {{ item.estatus }}
-                            <v-btn outlined rounded small color="green" class="mx-1 mt-1 " 
+                            <!-- {{ item.estatus }} -->
+                            <!-- <v-btn outlined rounded small color="green" class="mx-1 mt-1 " 
                                   v-if="item.estatus > 0 || item.tipo_prod != 2"
                                   @click="generarSolicitudADeptos(item)"
                             >   
                               <v-icon>mdi-file-send</v-icon> 
-                            </v-btn>
+                            </v-btn> -->
 
                             <v-btn text small color="celeste" class="mx-1 mt-1" dark  @click="validaTipoProducto(2,item)">   
                               <v-icon>mdi-eye</v-icon> 
@@ -203,8 +203,8 @@
         </v-card>
 
 
-        <v-dialog v-model="generarOT" persistent width="800px">
-          <v-card class="pa-4 generadorOT" >
+        <v-dialog v-model="generarOT" fullscreen hide-overlay transition="dialog-bottom-transition">
+          <v-card class="pa-4" >
             <generadorOT
               :solicitud="solicitud"
               :detallesol="getDetalle"
@@ -426,16 +426,16 @@
               // payload.id_det_sol   =
               // payload.id_solicitud = 
         
-        // this.$http.post('valida.cancelacion.sol', payload).then( response =>{
-        //   this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
-        //   // this.init()     
-        //   let that = this;
-        //   setTimeout(()=>{ that.$router.push({ name:'solicitudes' })  }, 1000);
-        // }).catch(error =>{
-        //   this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
-        // }).finally(()=>{  
-        //   this.overlay = false; 
-        // })
+        this.$http.post('valida.cancelacion.sol', payload).then( response =>{
+          this.alerta = { activo: true, text: response.bodyText, color: 'green'} 
+          this.init()     
+          let that = this;
+          setTimeout(()=>{ that.$router.push({ name:'solicitudes' })  }, 1000);
+        }).catch(error =>{
+          this.alerta = { activo: true, text: error.bodyText, color: 'error'} 
+        }).finally(()=>{  
+          this.overlay = false; 
+        })
       },
       cancelarPartida(){
         this.modalCancelar=false; this.overlay = true; 

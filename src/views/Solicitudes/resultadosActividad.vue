@@ -18,10 +18,10 @@
             <v-simple-table dense >
               <template v-slot:default>
                 <tbody >
-                  <tr >
+                  <!-- <tr >
                     <td class="font-weight-black">SOLICITUD</td>
                     <td  align="left"> {{ informacion.id_solicitud  }}</td>
-                  </tr>
+                  </tr> -->
                   <tr>
                     <td class="font-weight-black">CLIENTE</td>
                     <td>{{ informacion.nomcli }}</td>
@@ -29,8 +29,7 @@
                   <tr>
                     <td class="font-weight-black">TIPO</td>
                     <td v-if="informacion.tipo_prod === 1 "> Producto Existente </td>
-                    <td v-if="informacion.tipo_prod === 2 "> Modificación  </td>
-                    <td v-if="informacion.tipo_prod === 3 "> Nuevo Producto  </td>
+                    <td v-if="informacion.tipo_prod === 2 "> Nuevo Producto  </td>
                   </tr>
                   <tr>
                     <td class="font-weight-black">PRODUCTO</td>
@@ -155,6 +154,13 @@
       // this.consultaProdxCli(this.solicitud.id_cliente);
       // this.llenaCamposDefault();
         this.init();
+      },
+
+
+      watch:{
+        informacion(){
+          this.init();
+        },
       },
 
       computed:{

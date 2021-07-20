@@ -333,7 +333,8 @@
 													contacto2		: this.contacto2,
 													diasfact		: this.diasFact,
 													estatus     : 1,
-													prospecto   : 0
+													prospecto   : 0,
+													creacion    : this.traerFechaActual()
 												}
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearCliente(payload): this.ActualizarCliente(payload);

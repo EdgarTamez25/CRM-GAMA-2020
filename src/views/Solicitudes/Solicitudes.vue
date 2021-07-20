@@ -18,11 +18,11 @@
 						</v-col>
 
 							<v-col cols="12" sm="4" md="2">
-							<v-select
-                  v-model="estatus" :items="Estatus" item-text="nombre" item-value="id"  dense
-                   hide-details  placeholder="Estatus " return-object outlined append-icon="mdi-circle-slice-5"
-                ></v-select> 
-						</v-col>
+								<v-select
+	                  v-model="estatus" :items="Estatus" item-text="nombre" item-value="id"  dense
+	                   hide-details  placeholder="Estatus " return-object outlined append-icon="mdi-circle-slice-5"
+	                ></v-select> 
+							</v-col>
 
 						<v-col cols="6" md="2" > <!-- FECHA DE COMPROMISO -->
 							<v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
@@ -66,6 +66,7 @@
 								label="Buscar solicitud"
 								single-line
 								hide-details
+								filled dense
 							></v-text-field>
 						</v-col>
 
@@ -100,12 +101,16 @@
 						</template>
 
 						<template v-slot:item.fecha="{ item }">
-							<span> {{  moment(item.fecha).format('LL') }} </span>
+							<span v-if="item.fecha < fecha_actual"   class="red--text">    {{  moment(item.fecha).format('LL') }} </span>
+							<span v-if="item.fecha === fecha_actual" class="orange--text"> {{  moment(item.fecha).format('LL') }} </span>
+							<span v-if="item.fecha > fecha_actual"   class="green--text">  {{  moment(item.fecha).format('LL') }} </span>
 						</template>
 
 						<template v-slot:item.nota="{ item }" >
-							<v-btn color="blue"  dark small @click="abrirNota(item)" v-if="item.nota"> ver nota </v-btn>
-							<v-btn outlined small v-else> sin nota </v-btn>
+							<!-- <v-btn color="blue"  dark small @click="abrirNota(item)" v-if="item.nota"> ver nota </v-btn>
+							<v-btn outlined small v-else> sin nota </v-btn> -->
+							<span class="font-weight-bold caption blue--text text-justify" v-if="item.nota"> {{ item.nota }} </span> 
+							<span class="font-weight-bold caption blue--text text-justify" v-else> {{ item.nota }} </span> 
 						</template>
 			    </v-data-table>
 			  </v-card>
@@ -140,8 +145,14 @@
 								dense outlined hide-details color="celeste" append-icon="people" return-object
 							></v-autocomplete>
 						</v-col>
+						<v-col cols="12" >  <!-- VENDEDORES -->
+							<v-autocomplete
+								:items="vendedores" v-model="vendedor" item-text="nombre" tem-value="id" label="Responsable" 
+								dense outlined hide-details color="celeste" append-icon="persons" return-object
+							></v-autocomplete>
+						</v-col>
 
-						<v-col>
+						<v-col cols="12">
 							<v-textarea
 								v-model="comentario" label="Nota"	rows="4" outlined placeholder="Escribe aquí tus comentarios..." >
 							</v-textarea>
@@ -219,12 +230,15 @@
 				fechamodal1:false,
 				fecha2: moment().subtract('months').endOf('months').format("YYYY-MM-DD"),
 				fechamodal2:false,
-
-				nuevaSol: { modalSolicitud: false,
+				fecha_actual: '',
+				nuevaSol: { modalSolicitud: false, 
 										modo: 1,
 									},
 				clientes	: [],
 				cliente		: {id:null, nombre:''},
+				vendedores : [],
+				vendedor	 : {id:null, nombre:''},
+
 				comentario: '',
 				overlay   : false,
 
@@ -243,13 +257,16 @@
 		},
 
 		created(){
-
+			this.fecha_actual = this.traerFechaActual();
+			
 			if(this.Parametros.estatus != undefined){
 				this.estatus = { id: this.Parametros.estatus};
 				this.fecha1  = this.Parametros.fecha1
 				this.fecha2  = this.Parametros.fecha2
 			}
 			this.consultar_Clientes();
+			this.consultar_Vendedores()
+
 			this.init();
 			// var actualizar  = setInterval(() => { this.consultaAutomatica() }, 10000);
 		},
@@ -310,11 +327,14 @@
 				if(!this.cliente.id){ 
 					this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE', color:'error' }; return;
 				}
+				if(!this.vendedor.id){ 
+					this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL RESPONSABLE', color:'error' }; return;
+				}
 				this.overlay = true; this.nuevaSol.modalSolicitud = false;
 
 				const payload = new Object()
 							payload.id_cliente = this.cliente.id
-							payload.id_usuario = this.getdatosUsuario.id
+							payload.id_usuario = this.vendedor.id
 							payload.fecha      = this.traerFechaActual();
 							payload.hora       = this.traerHoraActual();
 							payload.nota       = this.comentario ? this.comentario : '';

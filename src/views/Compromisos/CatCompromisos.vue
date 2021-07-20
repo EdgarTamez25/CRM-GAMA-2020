@@ -51,13 +51,14 @@
 						</v-col>
 					</v-row> 
 
-					<v-card-actions clas="py-0 my-0">
+					<v-card-actions class="">
 			      <v-text-field
 			        v-model="search"
 			        append-icon="search"
 			        label="Buscar compromiso"
 			        single-line
 			        hide-details
+							filled dense
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 						<v-btn small dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>

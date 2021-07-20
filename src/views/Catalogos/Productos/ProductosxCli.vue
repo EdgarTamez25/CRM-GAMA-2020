@@ -27,6 +27,7 @@
 			        label="Buscar producto"
 			        single-line
 			        hide-details
+							filled dense
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 			      <v-btn small class="celeste" @click="abrirModal(1)" dark>Agregar  </v-btn>

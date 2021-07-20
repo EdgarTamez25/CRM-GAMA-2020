@@ -20,7 +20,7 @@ class monitorController extends Controller
 																					   LEFT JOIN prodxcli p   ON do.id_producto = p.id
 																					   LEFT JOIN sucursales s ON do.id_sucursal = s.id
 															               LEFT JOIN users u      ON ot.id_solicitante = u.id
-															WHERE do.estatus = ? AND do.id_depto = ? AND do.fecha_progra BETWEEN ? AND ? ORDER BY do.id DESC',
+															WHERE do.estatus = ? AND do.id_depto = ? AND do.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
 			[$req -> estatus, $req -> id_depto, $req -> fecha1, $req -> fecha2 ]);
 
 			return $Monitor ? $Monitor : [];
@@ -30,39 +30,48 @@ class monitorController extends Controller
 
 				if($req -> detalle[$i]['id_depto'] === 1): // FLEXOGRAFIA
 					$this -> insertarFlexoOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2 , $req -> creacion );
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 2): // BORDADOS
 					$this -> insertarBordadosOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 3): // DIGITAL
 					$this -> insertarDigitalOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 4): // OFFSET
 					$this -> insertarOffsetOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 5): // SERIGRAFIA
 					$this -> insertarSerigrafiaOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 6): // EMPAQUE
 					$this -> insertarEmpaqueOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 7): // SUBLIMACIÓN
 					$this -> insertarSublimacionOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 8): // TAMPOGRAFÍA
 					$this -> insertarTampografiaOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 				if($req -> detalle[$i]['id_depto'] === 9): // UV
 					$this -> insertarUvOT($req , $req -> detalle[$i]);
-					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2);
+					$this -> actualizaDetOT($req -> detalle[$i]['id'], 2, $req -> creacion);
+					$this -> actualizaSucursal($req -> detalle[$i]['id'], $req -> id_sucursal);
 				endif;
 			endfor;
 			return response("Los productos se programaron correctamente",200);
@@ -170,6 +179,7 @@ class monitorController extends Controller
     }
   // ====================== CONSULTA DE DATOS               =================================================================
     public function ObtenerPrograBordados(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$bordados = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina, m.nombre as maquina,b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM bordados_ot b LEFT JOIN det_ot do  ON b.id_det_ot = do.id
@@ -178,11 +188,12 @@ class monitorController extends Controller
 															                       LEFT JOIN clientes c ON ot.id_cliente = c.id
 															                       LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			
 			return $bordados ? $bordados:[]; 
     }
     public function ObtenerPrograDigital(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$digital = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina, m.nombre as maquina, b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM digital_ot b  LEFT JOIN det_ot do  ON b.id_det_ot   = do.id
@@ -191,11 +202,12 @@ class monitorController extends Controller
 															                       LEFT JOIN clientes c ON ot.id_cliente = c.id
 															                       LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			
 			return $digital ? $digital:[]; 
     }
     public function ObtenerPrograOffset(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$offset = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina,m.nombre as maquina, b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM offset_ot b   LEFT JOIN det_ot do  ON b.id_det_ot   = do.id
@@ -204,11 +216,12 @@ class monitorController extends Controller
 															                       LEFT JOIN clientes c ON ot.id_cliente = c.id
 															                       LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			
 			return $offset ? $offset:[]; 
     }
     public function ObtenerPrograSerigrafia(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$serigrafia = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina,m.nombre as maquina, b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM serigrafia_ot b LEFT JOIN det_ot do  ON b.id_det_ot   = do.id
@@ -217,11 +230,12 @@ class monitorController extends Controller
 																                       LEFT JOIN clientes c ON ot.id_cliente = c.id
 																                       LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			
 			return $serigrafia ? $serigrafia:[]; 
     }
     public function ObtenerPrograEmpaque(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$empaque = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina,m.nombre as maquina,b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM empaque_ot b LEFT JOIN det_ot do  ON b.id_det_ot   = do.id
@@ -230,11 +244,12 @@ class monitorController extends Controller
 														                        LEFT JOIN clientes c ON ot.id_cliente = c.id
 															                      LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			
 			return $empaque ? $empaque:[]; 
     }
     public function ObtenerPrograSublimacion(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$sublimacion = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina,m.nombre as maquina,b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM sublimacion_ot b LEFT JOIN det_ot do  ON b.id_det_ot   = do.id
@@ -243,11 +258,12 @@ class monitorController extends Controller
 																                        LEFT JOIN clientes c ON ot.id_cliente = c.id
 																                        LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			
 			return $sublimacion ? $sublimacion:[]; 
     }
     public function ObtenerPrograTampografia(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$tampografia = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina,m.nombre as maquina,b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM tampografia_ot b LEFT JOIN det_ot do  ON b.id_det_ot   = do.id
@@ -256,11 +272,12 @@ class monitorController extends Controller
 															                          LEFT JOIN clientes c ON ot.id_cliente = c.id
 																                        LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			
 			return $tampografia ? $tampografia:[]; 
     }
     public function ObtenerPrograUV(Request $req){
+			$fecha2 = $req -> fecha2 .' '. $req -> horaActual;
     	$uv = DB::select('SELECT b.id, b.id_det_ot, do.id_producto, p.codigo, do.cantidad, ot.id as id_ot, ot.id_cliente, c.nombre as nomcli,
 																	  b.id_maquina,m.nombre as maquina,b.id_sucursal, b.urgencia, b.creacion, b.id_creador, b.finalizacion, b.estatus
 																	FROM uv_ot b LEFT JOIN det_ot do  ON b.id_det_ot   = do.id
@@ -269,12 +286,16 @@ class monitorController extends Controller
 												                       LEFT JOIN clientes c ON ot.id_cliente = c.id
 													                     LEFT JOIN maquinas m ON b.id_maquina  = m.id
 														  WHERE b.estatus = ? AND b.id_sucursal = ? AND b.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $req -> fecha2 ]);
+			[$req -> estatus, $req -> id_sucursal, $req -> fecha1, $fecha2 ]);
 			return $uv ? $uv:[]; 
     }
   // ====================== ACTUALIZAR ESTATUS DETALLE O.T. =================================================================
-    public function actualizaDetOT($id, $estatus){
-    	DB::update('UPDATE det_ot SET  estatus=:estatus WHERE id=:id',['estatus' => $estatus, 'id' => $id]);
+    public function actualizaDetOT($id, $estatus, $fecha){
+    	DB::update('UPDATE det_ot SET  estatus=:estatus, fecha_progra=:fecha_progra 
+										WHERE id=:id',['estatus' => $estatus, 'fecha_progra' => $fecha, 'id' => $id]);
+    }
+		public function actualizaSucursal($id, $id_sucursal){
+    	DB::update('UPDATE det_ot SET  id_sucursal=:id_sucursal WHERE id=:id',['id_sucursal' => $id_sucursal, 'id' => $id]);
     }
   // ====================== ACTUAIZACION DE MAQUINAS        =================================================================
 

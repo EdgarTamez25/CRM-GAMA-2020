@@ -43,14 +43,14 @@ class OTContrller extends Controller
 			]);
 
 		for($i=0;$i<count($req -> detalle); $i++):  
-			 $this -> insertaDetalleOT($id_ot, $i+1, $req -> fecha, $req -> detalle[$i]);
+			 $this -> insertaDetalleOT($id_ot, $i+1, $req -> fecha, $req -> hora, $req -> detalle[$i]);
 		endfor;
 
-		$this -> actualizaEstatusSolicitud($req -> id_solicitud);
+		$this -> actualizaEstatusSolicitud($req -> id_solicitud, $req -> fecha_procesado);
 	 	return response("La orden de trabajo se creo correctamente" ,200);
 	}
 
-	public function insertaDetalleOT($id_ot,$partida,$fecha, $detalle){
+	public function insertaDetalleOT($id_ot,$partida,$fecha, $hora, $detalle){
 		DB::table('det_ot')->insertGetId(
 			[
 					'id_ot'	  			=> $id_ot,
@@ -58,7 +58,8 @@ class OTContrller extends Controller
 					'id_depto'      => $detalle['id_depto'],
 					'id_producto' 	=> $detalle['id_producto'],
 					'cantidad' 			=> $detalle['cantidad'],
-					'fecha_progra' 	=> $fecha,
+					'fecha_entrega' => $detalle['fecha'],        // FECHA ENTREGA
+					'creacion'      => $fecha.' '.$hora,
 					'concepto' 		  => $detalle['concepto']['id'],
 					'urgencia'  		=> $detalle['urgencia']['id'],
 					'razon'  				=> $detalle['razon'],
@@ -111,10 +112,11 @@ class OTContrller extends Controller
 	}
 
 
-	public function actualizaEstatusSolicitud($id_solicitud){
-		DB::update('UPDATE solicitudes SET procesado=:procesado, estatus=:estatus
+	public function actualizaEstatusSolicitud($id_solicitud, $fecha_procesado){
+		DB::update('UPDATE solicitudes SET procesado=:procesado, estatus=:estatus, fecha_procesado=:fecha_procesado
 									WHERE id=:id', ['procesado' => 1 ,
 																	'estatus'   => 3 ,
+																	'fecha_procesado' => $fecha_procesado,
 																	'id' 				=> $id_solicitud]);
 	}
 

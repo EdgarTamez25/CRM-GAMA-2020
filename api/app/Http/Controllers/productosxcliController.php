@@ -24,18 +24,21 @@ class productosxcliController extends Controller
 
 		//  TODO EL PROCESO PARA CREAR PRODUCTO  *************** INICIO
 		public function crearDetalle(Request $req){
-			if($req -> dx === 1 ):
-				if($id_dx = $this->Flexografia($req -> detalle )):	// !MANDO A INSERTAR A FLEXOGRAFIA
-						// return $id_dx;
-					$this -> creaProducto($req, $id_dx);
-					return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
-				endif; 
-			endif;
+			$this -> creaProducto($req, $id_dx = 0);
+			return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
 
-			if($req -> dx != 1):
-				$this -> creaProducto($req, $id_dx = 0 );
-				return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
-			endif;
+			// if($req -> dx === 1 ):
+			// 	if($id_dx = $this->Flexografia($req -> detalle )):	// !MANDO A INSERTAR A FLEXOGRAFIA
+			// 			// return $id_dx;
+			// 		$this -> creaProducto($req, $id_dx);
+			// 		return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
+			// 	endif; 
+			// endif;
+
+			// if($req -> dx != 1):
+			// 	$this -> creaProducto($req, $id_dx = 0 );
+			// 	return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
+			// endif;
 
 			// if($req -> dx === 3 ):
 			// 	if($id_dx = $this->Digital($req -> detalle )):      // !MANDO A INSERTAR A DIGITAL
@@ -114,14 +117,14 @@ class productosxcliController extends Controller
 																								'url' 		    => $req -> url,
 																								'id' 				  => $id	]);
 			
-			if($req -> dx === 1 ):
-				$this -> actualizaFlexo( $req -> detalle);
-				$this -> eliminaPantones($req -> detalle['pantonesAEliminar']);
-				$this -> eliminaAcabados($req -> detalle['acabadosAEliminar']);
-				$this -> ciclaPantones(  $req -> detalle['id'], $req -> detalle);
-				$this -> ciclaAcabados(  $req -> detalle['id'], $req -> detalle);
-				return response("El producto se creo correctamente" ,200);
-			endif;
+			// if($req -> dx === 1 ):
+			// 	$this -> actualizaFlexo( $req -> detalle);
+			// 	$this -> eliminaPantones($req -> detalle['pantonesAEliminar']);
+			// 	$this -> eliminaAcabados($req -> detalle['acabadosAEliminar']);
+			// 	$this -> ciclaPantones(  $req -> detalle['id'], $req -> detalle);
+			// 	$this -> ciclaAcabados(  $req -> detalle['id'], $req -> detalle);
+			// 	return response("El producto se creo correctamente" ,200);
+			// endif;
 
 			return response("El producto se creo correctamente" ,200);
 

@@ -63,7 +63,6 @@ class solicitudesController extends Controller
 															ORDER BY s.id DESC',[ $req -> estatus, $req -> fecha1, $req -> fecha2 ]);
 			return $solicitud ? $solicitud: $solicitud = [];
 		}
-
 		public function ActualizaEnvioSol(Request $req){
 			$actualizaEnvioSol = DB::update('UPDATE movim_sol SET descripcion=:descripcion, id_depto=:id_depto
 																					WHERE id =:id',['descripcion' =>  $req -> descripcion,
@@ -74,7 +73,6 @@ class solicitudesController extends Controller
 			return $actualizaEnvioSol? response("la información se guardo correctamente",200): 
 																response("Ocurrio un error, intentelo de nuevo",500);
 		}
-
 	//! CONSULTAR DETALLE DE LA SOLICITUD
 		public function DetalleSolicitud($id){
 			// ! IR A DET_SOL PARA OBTENER TODOS LOS PRODUCTOS DE LA SOLICITUD
@@ -86,19 +84,17 @@ class solicitudesController extends Controller
 		}
 	
 	// ! CONSULTAR SOLICITUDES DESARROLLO/DIGITAL/DISEÑO
-
 		public function SolicitudesDDD(Request $req){
-			$movimientos = DB::select('SELECT m.id, m.id_det_sol, ds.id_solicitud, ds.id_producto, ds.tipo_prod, p.codigo, v.nombre as nomvend,
-																				s.id_cliente, c.nombre as nomcli,m.id_depto, m.fecha, m.hora, m.id_creador, u.nombre as creador, 
-																				m.id_encargado, us.usuario as encargado, m.descripcion, m.estatus
-																		FROM movim_sol m LEFT JOIN det_sol ds    ON m.id_det_sol    = ds.id
-																						 LEFT JOIN prodxcli p    ON ds.id_producto  = p.id
-																						 LEFT JOIN solicitudes s ON ds.id_solicitud = s.id
-																						 LEFT JOIN clientes    c ON s.id_cliente    = c.id
-																						 LEFT JOIN users u       ON m.id_creador    = u.id 
-																						 LEFT JOIN users us      ON m.id_encargado  = us.id
-																		         LEFT JOIN users v       ON s.id_usuario    = v.id
-																WHERE m.estatus = ? AND m.id_depto = ? AND m.fecha BETWEEN ? AND ?', 
+			$movimientos = DB::select('SELECT m.id, m.id_det_sol, ds.id_solicitud, m.id_depto, m.fecha, m.hora, m.id_compromiso,
+																				m.id_cliente, c.nombre as nomcli, m.id_producto, p.codigo , m.descripcion, 
+																				m.tipo, m.tipo_prod, m.id_encargado, u.usuario as encargado, m.id_creador, 
+																				v.nombre as nomvend, m.estatus
+																	FROM movim_sol m LEFT JOIN det_sol ds ON m.id_det_sol   = ds.id
+																									 LEFT JOIN clientes c ON m.id_cliente   = c.id
+																									 LEFT JOIN prodxcli p ON m.id_producto  = p.id
+																						       LEFT JOIN users    u ON m.id_encargado = u.id
+																									 LEFT JOIN users    v ON m.id_creador   = v.id
+																WHERE m.estatus = ? AND m.id_depto = ? AND m.fecha BETWEEN ? AND ? order by m.fecha DESC ', 
 																[ $req -> estatus, $req -> id_depto , $req -> fecha1 , $req -> fecha2]);
 
 			return $movimientos ? $movimientos: $movimientos = [];
@@ -673,8 +669,6 @@ class solicitudesController extends Controller
 			return $actualiza? response('Se finalizo correctamente.',200):
 			 									 response('Ocurrio un error intentalo mas tarde.',500);
 		}
-
-
 			// public function CancelarMovimiento(Request $req){
 			// 	$movimiento = DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id',
 			// 																	[ 'estatus' => $req -> estatus, 

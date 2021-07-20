@@ -66,7 +66,7 @@
 						dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" :disabled="modoVista === 3? true:false"
 				></v-select>
       </v-col> 
-
+      <!--
       <flexografia
         :modalDDD="modalDDD"
         :depto_id="depto.id" 
@@ -90,13 +90,13 @@
         class="pa-3 py-0"
 
       />
-
+  
       <v-col cols="12" v-if="alertaFormulario">
         <v-alert outlined type="error">
           Que onda maaaann, lo sentimos este formulario no esta disponible :c 
         </v-alert>
       </v-col>
-      
+      -->
 
       <v-col cols="12" class="text-right" >
         <v-btn color="green" dark  @click="validarInfomracion()">{{ modoVista === 1 ? 'CREAR PRODUCTO': 'ACTUAIZAR PRODUCTO' }}</v-btn>
@@ -188,14 +188,14 @@
       },
 
       depto(){
-          this.activaFormulario = null;
-          this.alertaFormulario = false;
+          // this.activaFormulario = null;
+          // this.alertaFormulario = false;
 
-        if(this.depto.id === 1){
-          this.activaFormulario = this.depto.id;
-        }else if(this.depto.id != null){
-          this.alertaFormulario = true;
-        }
+        // if(this.depto.id === 1){
+        //   this.activaFormulario = this.depto.id;
+        // }else if(this.depto.id != null){
+        //   this.alertaFormulario = true;
+        // }
       },
     },
 
@@ -233,8 +233,8 @@
 			validarInfomracion(){
 				if(!this.cliente.id){ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE'                   , color:'error' }; return }
 				if(!this.codigo)	  { this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CÓDIGO'                    , color:'error' }; return }
-				if(this.revision < 0) { this.alerta = { activo: true, texto:'LA REVISIÓN NO PUEDE SER MENOR A CERO'         , color:'error' }; return }
-        if(!this.url)			  { this.alerta   = { activo: true, texto:'DEBES AGREGAR LA DIRECCION DE LA FICHA TECNICA', color:'error' }; return }
+				// if(this.revision < 0) { this.alerta = { activo: true, texto:'LA REVISIÓN NO PUEDE SER MENOR A CERO'         , color:'error' }; return }
+        // if(!this.url)			  { this.alerta   = { activo: true, texto:'DEBES AGREGAR LA DIRECCION DE LA FICHA TECNICA', color:'error' }; return }
         if(!this.depto.id)	{ this.alerta   = { activo: true, texto:'DEBES SELECCIONAR UN DEPARTAMENTO'             , color:'error' }; return }
         if(this.depto.id === 1 && !this.detalle )   {this.alerta   = { activo: true, texto:'NO HAZ GUARDADO LAS CARACTERISTICAS DEL PRODUCTO', color:'error' }; return }
 				this.PrepararPeticion()
@@ -244,14 +244,15 @@
         // FORMAR ARRAY A MANDAR
         const producto = new Object();
               producto.id_cliente  = this.cliente.id;
-              producto.nombre      = this.nombre;
-              producto.codigo      = this.codigo;
-              producto.descripcion = this.descripcion;
-              producto.revision    = this.revision;
-              producto.url         = this.url;
+              producto.nombre      = this.nombre ? this.nombre: '';
+              producto.codigo      = this.codigo ? this.codigo: '';
+              producto.descripcion = this.descripcion ? this.descripcion : '';
+              producto.revision    = this.revision ? this.revision : 0;
+              producto.url         = this.url ? this.url : '';
               producto.dx          = this.depto.id;
               producto.detalle     = this.detalle ? this.detalle : [];
               producto.fecha       = this.traerFechaActual();
+              producto.id_usuario  = this.getdatosUsuario.id; 
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(producto): this.Actualizar(producto);
 			},

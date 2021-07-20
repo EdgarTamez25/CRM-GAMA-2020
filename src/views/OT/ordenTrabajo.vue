@@ -64,20 +64,20 @@
 						</v-col>
 					</v-row>
 
-					<v-card-actions class="py-0 my-0">
+					<v-card-actions >
 			      <v-text-field
 			        v-model="search"
 			        append-icon="search"
 			        label="Buscar orden de trabajo"
 			        single-line
 			        hide-details
+							filled dense
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
 						<v-btn small  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
 			      <!-- <v-btn small class="celeste" dark @click="abrirModal(1)">Agregar </v-btn> -->
 			      <v-btn  class="gris" icon dark @click="init()" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
-					
 			    <v-data-table
 			      :headers="headers"
 			      :items="getOT"
@@ -153,11 +153,13 @@
 				modoVista : 0, 
 				
 				headers: [
-						{ text: 'N° de Orden' , align: 'start' , value: 'id' },
+					{ text: 'N° de Orden' , align: 'start' , value: 'id' },
 						{ text: 'Cliente'			, align: 'left'	 , value: 'nomcli' },
 						{ text: 'O.C.'			  , align: 'left'	 , value: 'oc' },
 						{ text: 'Fecha'			  , align: 'left'	 , value: 'fecha' },
-						{ text: 'Hora'		   	, align: 'left'	 , value: 'hora' },
+					{ text: '# Solicitud'	, align: 'left'	 , value: 'id_solicitud' },
+						{ text: 'Solicitante'	, align: 'left'	 , value: 'solicitante' },
+
 						{ text: '' 						, align: 'right' , value: 'action' , sortable: false },
         ],
 
@@ -192,8 +194,8 @@
 		},
 
 		created(){
-
-			if(this.Parametros.estatus != undefined){
+			// console.log('Parametros',this.Parametros)
+			if(this.Parametros != undefined){
 				this.estatus  = { id: this.Parametros.estatus };
 				this.depto    = { id: this.Parametros.id_depto };
 				this.fecha1   = this.Parametros.fecha1;

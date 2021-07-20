@@ -68,7 +68,7 @@ export default new Vuex.Store({
       // commit("setToken", '')
       // localStorage.removeItem("tlaKey")
       // router.push({name: 'Login'})
-      setTimeout(()=>{ window.location.href = "http://producciongama.com:8080/"; }, 2000)
+      setTimeout(()=>{ window.location.href = "http://producciongama.com/"; }, 2000)
 
     }
   },

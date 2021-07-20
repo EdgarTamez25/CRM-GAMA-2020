@@ -7,7 +7,7 @@
         <v-list dense nav class="py-0">
           <v-list-item two-line>
             <v-list-item-avatar>
-              <img src="http://producciongama.com:8080/CRM-GAMA-2020/imagenes/person.png">
+              <img src="http://producciongama.com/CRM-GAMA-2020/imagenes/person.png">
             </v-list-item-avatar>
 
             <v-list-item-content>
@@ -177,7 +177,7 @@
 
        <!-- v-if="getLogeado" -->
     <v-app-bar app color="rosa" dark class="elevation-0" v-ripple dense >
-       <img src="http://producciongama.com:8080/CRM-GAMA-2020/imagenes/logo.png" height="40" @click.stop="drawer = !drawer">
+       <img src="http://producciongama.com/CRM-GAMA-2020/imagenes/logo.png" height="40" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
 
       <v-toolbar-items text-right> 
@@ -221,18 +221,9 @@ export default {
   },
   data: () => ({
     syster_number: 1,
-    urlSistemaPrincipal: 'http://producciongama.com:8080/',
+    urlSistemaPrincipal: 'http://producciongama.com/',
 
     cerrar_sesion:false,
-    // niveles:['Administrador',
-    //          'Supervisor',
-    //          'Vendedor',
-    //          'Chofer',
-    //          'Almacenista',
-    //          'Ventas',
-    //          'Servicio al Cliente',
-    //          'Invitado',
-    //          ],
 
     drawer: null,
     contador: 0 ,
@@ -304,26 +295,22 @@ export default {
             this.ObtenerDatosUsuario(payload).then(response =>{
               this.alerta = { activo: true, texto: `HOLA DE NUEVO ${ response.nombre }`, color :'success', vertical:true  };
               this.blocked = false;  // DESACTIVO BLOCKEO
-            }).catch( error=>{      // OBTENGO LA INFORMACION DEL USUARIO
+            }).catch( error=>{       // OBTENGO LA INFORMACION DEL USUARIO
               this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
               window.location.href = this.urlSistemaPrincipal;
             });  
           }).catch( error =>{
-            // console.log('Error validacion', error.bodyText)
             window.location.href = this.urlSistemaPrincipal;
           })
           if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
             this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
           }
         }else{ 
-        //  console.log('NO HAY KEYLOG')
          window.location.href = this.urlSistemaPrincipal;
         }
     } else {
-      // console.log('NO ES COMPATIBLE LOCAL')
       window.location.href = this.urlSistemaPrincipal;
     }
-    
     // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
     // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
     // this.consultaMonedas()  // CONSULTAR MONEDAS VUEX
@@ -371,16 +358,16 @@ export default {
       })
     },
 
-    colorBar(){
-      this.color = this.colores[this.contador]  
-      this.contador++
-      if(this.contador <= 5){
-        setTimeout(this.colorBar,10000);
-      }
-      if(this.contador == 5){
-        this.contador = 0
-      }
-    },
+    // colorBar(){
+    //   this.color = this.colores[this.contador]  
+    //   this.contador++
+    //   if(this.contador <= 5){
+    //     setTimeout(this.colorBar,10000);
+    //   }
+    //   if(this.contador == 5){
+    //     this.contador = 0
+    //   }
+    // },
 
     
 
@@ -394,7 +381,7 @@ export default {
   /* .fondo{
     background: #ee9ca7;  
     background: -webkit-linear-gradient(to right, #f3b8bf, #ee9ca7);  
-    background: linear-gradient(to right, hsla(353, 22%, 63%, 0.449), #ee9ca7),url('http://producciongama.com:8080/CRM-GAMA-2020/imagenes/fondo2.jpg'); 
+    background: linear-gradient(to right, hsla(353, 22%, 63%, 0.449), #ee9ca7),url('http://producciongama.com/CRM-GAMA-2020/imagenes/fondo2.jpg'); 
     background-attachment: fixed;
     background-size: cover;
     padding: 0px;

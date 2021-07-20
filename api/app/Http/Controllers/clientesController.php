@@ -34,7 +34,32 @@ class clientesController extends Controller
 		}
 
     public function add(Request $request){
-			$addcliente = clientes::create($request->all());
+			// $addcliente = clientes::create($request->all());
+
+			$addcliente = DB::table('clientes')->insertGetId(
+			[
+					'nombre' 	      => $request -> nombre,
+					'direccion'     => $request -> direccion,
+					'id_ciudad'     => $request -> id_ciudad,
+					'cp'    				=> $request -> cp,
+					'id_zona'			  => $request -> id_zona,
+					'tipo_cliente' 	=> $request -> tipo_cliente,
+					'rfc'			      => $request -> rfc,
+					'id_cartera'		=> $request -> id_cartera,
+					'fuente' 				=> $request -> fuente,
+					'nivel' 	      => $request -> nivel,
+					'razon_social'  => $request -> razon_social,
+					'tel1' 			    => $request -> tel1,
+					'ext1' 			    => $request -> ext1,
+					'tel2' 			    => $request -> tel2,
+					'ext2' 			    => $request -> ext2,
+					'contacto' 		  => $request -> contacto,
+					'contacto2' 	  => $request -> contacto2,
+					'diasfact' 	    => $request -> diasfact,
+					'estatus'       => $request -> estatus,
+					'prospecto'     => $request -> prospecto
+			]);
+
 			
 			if($addcliente):
 				return "El Cliente se ah insertado correctamente";

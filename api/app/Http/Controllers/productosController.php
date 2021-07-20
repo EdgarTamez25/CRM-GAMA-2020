@@ -13,6 +13,12 @@ class productosController extends Controller
         $Productos = productos::all();
         return $Productos;
 		}
+
+		public function ProdxClixDeptos(Request $req)
+		{
+			$productos = DB::select('SELECT nombre, codigo FROM prodxcli WHERE id_cliente = ? AND dx',[$req -> id_cliente, $req -> dx]);
+			return $productos;
+		}
 		
 		// public function getcatalogo(){
 		// 	$CatProductos = DB::select('SELECT p.id,p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,
