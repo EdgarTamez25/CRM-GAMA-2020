@@ -18,10 +18,18 @@ class clientesController extends Controller
     public function catClientes(){
         $data = DB::select('SELECT c.id , c.nombre, c.direccion, c.id_ciudad, cty.nombre as ciudad,
 																	 e.nombre as estado, c.cp, p.nombre as pais, c.id_zona, z.nombre as nomzona, 
+<<<<<<< HEAD
 																	 c.razon_social, c.fuente, c.tipo_cliente, c.rfc,
 																	 c.nivel, c.tel1, c.ext1, c.tel2, c.ext2, c.contacto, 
 																	 c.contacto2,c.estatus,c.diasfact
 														FROM clientes c LEFT JOIN zonas 		z  ON c.id_zona = z.id
+=======
+																	 c.razon_social, c.fuente, c.tipo_cliente, c.rfc,c.id_cartera, 
+																	 c.nivel, ca.nombre as nomcartera, c.tel1, c.ext1, c.tel2, c.ext2, c.contacto, 
+																	 c.contacto2,c.estatus,c.diasfact
+														FROM clientes c LEFT JOIN zonas 		z  ON c.id_zona = z.id
+																						LEFT JOIN carteras ca  ON c.id_cartera = ca.id 
+>>>>>>> AE
 																						LEFT JOIN ciudades cty ON c.id_ciudad = cty.id 
 																						LEFT JOIN estados e    ON cty.id_estado = e.id
 																						LEFT JOIN paises p     ON e.id_pais = p.id
@@ -71,7 +79,11 @@ class clientesController extends Controller
 
     public function update($id, Request $req){
 				$data = DB::update('UPDATE clientes SET nombre=:nombre, direccion=:direccion, id_zona=:id_zona,tipo_cliente=:tipo_cliente,
+<<<<<<< HEAD
 																								rfc=:rfc,razon_social=:razon_social, nivel=:nivel,
+=======
+																								rfc=:rfc, id_cartera=:id_cartera, razon_social=:razon_social, nivel=:nivel,
+>>>>>>> AE
 																								fuente=:fuente, tel1=:tel1, ext1=:ext1, tel2=:tel2, ext2=:ext2, contacto=:contacto,	
 																								contacto2=:contacto2,	diasfact=:diasfact, prospecto=:prospecto, id_ciudad=:id_ciudad,
 																								cp=:cp

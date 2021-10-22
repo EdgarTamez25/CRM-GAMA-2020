@@ -47,7 +47,11 @@ class juntasController extends Controller
 													WHERE sj.id_sucursal = ? AND fecha between ? AND ?  
 												 ORDER BY sj.id DESC',[$req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
 
+<<<<<<< HEAD
     return $Junta ? $Junta: $Junta =[];
+=======
+    return $Junta ? $Junta:[];
+>>>>>>> AE
 	}
 
 

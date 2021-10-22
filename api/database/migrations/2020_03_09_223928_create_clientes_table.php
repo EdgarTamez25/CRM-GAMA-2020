@@ -19,14 +19,18 @@ class CreateClientesTable extends Migration
             $table->string('nombre');
             $table->integer('id_zona')->nullable();
             $table->string('direccion')->nullable();
+            $table->integer('id_ciudad')->nullable();
             $table->string('razon_social')->nullable();
             $table->integer('id_giro')->nullable();
             $table->integer('fuente');//id del vendedor : quien registró al cliente
             $table->integer('tipo_cliente');
             $table->string('rfc')->nullable();
             $table->string('tel1')->nullable();
+            $table->string('ext1',10)->nullable();
             $table->string('tel2')->nullable();
+            $table->string('ext2',10)->nullable();
             $table->string('contacto')->nullable();
+            $table->string('contacto2')->nullable();
             $table->string('diasfact')->nullable();
             $table->integer('nivel')->nullable();
             $table->integer('id_cartera')->nullable();
