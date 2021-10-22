@@ -12,7 +12,7 @@
     "jquery": "^3.5.1",
     "jspdf": "^2.2.0",
     "jspdf-autotable": "^3.5.13",
-    "material-design-icons-iconfont": "^5.0.1",
+    "material-design-icons-iconfont": "^6.1.0",
     "md5": "^2.2.1",
     "moment": "^2.25.3",
     "register-service-worker": "^1.6.2",
@@ -21,7 +21,7 @@
     "vue-router": "^3.1.5",
     "vuetify": "^2.3.23",
     "vuex": "^3.1.2",
-    "xlsx": "^0.16.9"
+    "xlsx": "^0.17.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-pwa": "^4.2.0",
@@ -29,7 +29,7 @@
     "@vue/cli-plugin-vuex": "^4.2.0",
     "@vue/cli-service": "^4.2.0",
     "sass": "^1.19.0",
-    "sass-loader": "^8.0.0",
+    "sass-loader": "^12.2.0",
     "script-loader": "^0.7.2",
     "vue-cli-plugin-vuetify": "^2.0.5",
     "vue-template-compiler": "^2.6.11",
