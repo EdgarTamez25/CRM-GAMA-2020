@@ -23,4 +23,5 @@
 .DS_Store
 node_modules
 /dist
-e
+/vendor
+/api/vendor
