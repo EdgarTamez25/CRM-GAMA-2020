@@ -5,11 +5,8 @@ namespace Illuminate\Filesystem;
 use ErrorException;
 use FilesystemIterator;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Traits\Macroable;
 use RuntimeException;
-use SplFileObject;
-use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Mime\MimeTypes;
 
@@ -90,22 +87,14 @@ class Filesystem
      * Get the returned value of a file.
      *
      * @param  string  $path
-     * @param  array  $data
      * @return mixed
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function getRequire($path, array $data = [])
+    public function getRequire($path)
     {
         if ($this->isFile($path)) {
-            $__path = $path;
-            $__data = $data;
-
-            return (static function () use ($__path, $__data) {
-                extract($__data, EXTR_SKIP);
-
-                return require $__path;
-            })();
+            return require $path;
         }
 
         throw new FileNotFoundException("File does not exist at path {$path}.");
@@ -114,53 +103,12 @@ class Filesystem
     /**
      * Require the given file once.
      *
-     * @param  string  $path
-     * @param  array  $data
+     * @param  string  $file
      * @return mixed
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function requireOnce($path, array $data = [])
+    public function requireOnce($file)
     {
-        if ($this->isFile($path)) {
-            $__path = $path;
-            $__data = $data;
-
-            return (static function () use ($__path, $__data) {
-                extract($__data, EXTR_SKIP);
-
-                return require_once $__path;
-            })();
-        }
-
-        throw new FileNotFoundException("File does not exist at path {$path}.");
-    }
-
-    /**
-     * Get the contents of a file one line at a time.
-     *
-     * @param  string  $path
-     * @return \Illuminate\Support\LazyCollection
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function lines($path)
-    {
-        if (! $this->isFile($path)) {
-            throw new FileNotFoundException(
-                "File does not exist at path {$path}."
-            );
-        }
-
-        return LazyCollection::make(function () use ($path) {
-            $file = new SplFileObject($path);
-
-            $file->setFlags(SplFileObject::DROP_NEW_LINE);
-
-            while (! $file->eof()) {
-                yield $file->fgets();
-            }
-        });
+        require_once $file;
     }
 
     /**
@@ -209,19 +157,6 @@ class Filesystem
         file_put_contents($tempPath, $content);
 
         rename($tempPath, $path);
-    }
-
-    /**
-     * Replace a given string within a given file.
-     *
-     * @param  array|string  $search
-     * @param  array|string  $replace
-     * @param  string  $path
-     * @return void
-     */
-    public function replaceInFile($search, $replace, $path)
-    {
-        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
     }
 
     /**
@@ -336,28 +271,6 @@ class Filesystem
     }
 
     /**
-     * Create a relative symlink to the target file or directory.
-     *
-     * @param  string  $target
-     * @param  string  $link
-     * @return void
-     *
-     * @throws \RuntimeException
-     */
-    public function relativeLink($target, $link)
-    {
-        if (! class_exists(SymfonyFilesystem::class)) {
-            throw new RuntimeException(
-                'To enable support for relative links, please install the symfony/filesystem package.'
-            );
-        }
-
-        $relativeTarget = (new SymfonyFilesystem)->makePathRelative($target, dirname($link));
-
-        $this->link($relativeTarget, $link);
-    }
-
-    /**
      * Extract the file name from a file path.
      *
      * @param  string  $path
@@ -406,8 +319,6 @@ class Filesystem
      *
      * @param  string  $path
      * @return string|null
-     *
-     * @throws \RuntimeException
      */
     public function guessExtension($path)
     {

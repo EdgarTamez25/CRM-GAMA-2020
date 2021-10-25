@@ -133,9 +133,9 @@ class ArrayInput extends Input
             if ('--' === $key) {
                 return;
             }
-            if (str_starts_with($key, '--')) {
+            if (0 === strpos($key, '--')) {
                 $this->addLongOption(substr($key, 2), $value);
-            } elseif (str_starts_with($key, '-')) {
+            } elseif (0 === strpos($key, '-')) {
                 $this->addShortOption(substr($key, 1), $value);
             } else {
                 $this->addArgument($key, $value);
@@ -166,14 +166,7 @@ class ArrayInput extends Input
     private function addLongOption(string $name, $value)
     {
         if (!$this->definition->hasOption($name)) {
-            if (!$this->definition->hasNegation($name)) {
-                throw new InvalidOptionException(sprintf('The "--%s" option does not exist.', $name));
-            }
-
-            $optionName = $this->definition->negationToName($name);
-            $this->options[$optionName] = false;
-
-            return;
+            throw new InvalidOptionException(sprintf('The "--%s" option does not exist.', $name));
         }
 
         $option = $this->definition->getOption($name);

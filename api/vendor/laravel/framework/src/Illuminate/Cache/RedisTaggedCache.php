@@ -10,7 +10,6 @@ class RedisTaggedCache extends TaggedCache
      * @var string
      */
     const REFERENCE_KEY_FOREVER = 'forever_ref';
-
     /**
      * Standard reference key.
      *
@@ -42,13 +41,13 @@ class RedisTaggedCache extends TaggedCache
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return int|bool
+     * @return void
      */
     public function increment($key, $value = 1)
     {
         $this->pushStandardKeys($this->tags->getNamespace(), $key);
 
-        return parent::increment($key, $value);
+        parent::increment($key, $value);
     }
 
     /**
@@ -56,13 +55,13 @@ class RedisTaggedCache extends TaggedCache
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return int|bool
+     * @return void
      */
     public function decrement($key, $value = 1)
     {
         $this->pushStandardKeys($this->tags->getNamespace(), $key);
 
-        return parent::decrement($key, $value);
+        parent::decrement($key, $value);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Illuminate\View\Compilers\Concerns;
 
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 
 trait CompilesComponents
 {
@@ -95,7 +94,7 @@ trait CompilesComponents
      */
     public function compileEndComponentClass()
     {
-        return $this->compileEndComponent()."\n".implode("\n", [
+        return static::compileEndComponent()."\n".implode("\n", [
             '<?php endif; ?>',
         ]);
     }
@@ -162,20 +161,6 @@ trait CompilesComponents
     }
 
     /**
-     * Compile the aware statement into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileAware($expression)
-    {
-        return "<?php foreach ({$expression} as \$__key => \$__value) {
-    \$__consumeVariable = is_string(\$__key) ? \$__key : \$__value;
-    \$\$__consumeVariable = is_string(\$__key) ? \$__env->getConsumableComponentData(\$__key, \$__value) : \$__env->getConsumableComponentData(\$__value);
-} ?>";
-    }
-
-    /**
      * Sanitize the given component attribute value.
      *
      * @param  mixed  $value
@@ -184,7 +169,7 @@ trait CompilesComponents
     public static function sanitizeComponentAttribute($value)
     {
         return is_string($value) ||
-               (is_object($value) && ! $value instanceof ComponentAttributeBag && method_exists($value, '__toString'))
+               (is_object($value) && method_exists($value, '__toString'))
                         ? e($value)
                         : $value;
     }

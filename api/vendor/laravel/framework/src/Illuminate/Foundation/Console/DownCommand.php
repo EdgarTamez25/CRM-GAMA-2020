@@ -2,33 +2,29 @@
 
 namespace Illuminate\Foundation\Console;
 
-use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Events\MaintenanceModeEnabled;
-use Illuminate\Foundation\Exceptions\RegisterErrorViewPaths;
-use Throwable;
+use Illuminate\Support\InteractsWithTime;
 
 class DownCommand extends Command
 {
+    use InteractsWithTime;
+
     /**
      * The console command signature.
      *
      * @var string
      */
-    protected $signature = 'down {--redirect= : The path that users should be redirected to}
-                                 {--render= : The view that should be prerendered for display during maintenance mode}
+    protected $signature = 'down {--message= : The message for the maintenance mode}
                                  {--retry= : The number of seconds after which the request may be retried}
-                                 {--refresh= : The number of seconds after which the browser may refresh}
-                                 {--secret= : The secret phrase that may be used to bypass maintenance mode}
-                                 {--status=503 : The status code that should be used when returning the maintenance mode response}';
+                                 {--allow=* : IP or networks allowed to access the application while in maintenance mode}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Put the application into maintenance / demo mode';
+    protected $description = 'Put the application into maintenance mode';
 
     /**
      * Execute the console command.
@@ -38,23 +34,15 @@ class DownCommand extends Command
     public function handle()
     {
         try {
-            if (is_file(storage_path('framework/down'))) {
+            if (file_exists(storage_path('framework/down'))) {
                 $this->comment('Application is already down.');
 
-                return 0;
+                return true;
             }
 
-            file_put_contents(
-                storage_path('framework/down'),
-                json_encode($this->getDownFilePayload(), JSON_PRETTY_PRINT)
-            );
-
-            file_put_contents(
-                storage_path('framework/maintenance.php'),
-                file_get_contents(__DIR__.'/stubs/maintenance-mode.stub')
-            );
-
-            $this->laravel->get('events')->dispatch(MaintenanceModeEnabled::class);
+            file_put_contents(storage_path('framework/down'),
+                              json_encode($this->getDownFilePayload(),
+                              JSON_PRETTY_PRINT));
 
             $this->comment('Application is now in maintenance mode.');
         } catch (Exception $e) {
@@ -74,56 +62,11 @@ class DownCommand extends Command
     protected function getDownFilePayload()
     {
         return [
-            'except' => $this->excludedPaths(),
-            'redirect' => $this->redirectPath(),
+            'time' => $this->currentTime(),
+            'message' => $this->option('message'),
             'retry' => $this->getRetryTime(),
-            'refresh' => $this->option('refresh'),
-            'secret' => $this->option('secret'),
-            'status' => (int) $this->option('status', 503),
-            'template' => $this->option('render') ? $this->prerenderView() : null,
+            'allowed' => $this->option('allow'),
         ];
-    }
-
-    /**
-     * Get the paths that should be excluded from maintenance mode.
-     *
-     * @return array
-     */
-    protected function excludedPaths()
-    {
-        try {
-            return $this->laravel->make(PreventRequestsDuringMaintenance::class)->getExcludedPaths();
-        } catch (Throwable $e) {
-            return [];
-        }
-    }
-
-    /**
-     * Get the path that users should be redirected to.
-     *
-     * @return string
-     */
-    protected function redirectPath()
-    {
-        if ($this->option('redirect') && $this->option('redirect') !== '/') {
-            return '/'.trim($this->option('redirect'), '/');
-        }
-
-        return $this->option('redirect');
-    }
-
-    /**
-     * Prerender the specified view so that it can be rendered even before loading Composer.
-     *
-     * @return string
-     */
-    protected function prerenderView()
-    {
-        (new RegisterErrorViewPaths)();
-
-        return view($this->option('render'), [
-            'retryAfter' => $this->option('retry'),
-        ])->render();
     }
 
     /**
