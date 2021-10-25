@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Prueba extends Model
+class prueba extends Model
 {
     protected $table = "users";
     protected $fillable = array(

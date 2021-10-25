@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOtTable extends Migration
+class create_ot_table extends Migration
 {
     /**
      * Run the migrations.
@@ -19,7 +19,7 @@ class CreateOtTable extends Migration
             $table->integer('id_cliente');
             $table->string('oc',50);
             $table->string('referencia',50);
-            $table->date('fecha'); 
+            $table->date('fecha');
             $table->string('hora',10);
             $table->integer('estatus')->default(1);
         });

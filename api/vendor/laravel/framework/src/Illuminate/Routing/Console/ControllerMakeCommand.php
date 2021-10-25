@@ -2,13 +2,15 @@
 
 namespace Illuminate\Routing\Console;
 
+use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 
 class ControllerMakeCommand extends GeneratorCommand
 {
+    use CreatesMatchingTest;
+
     /**
      * The console command name.
      *
@@ -39,7 +41,9 @@ class ControllerMakeCommand extends GeneratorCommand
     {
         $stub = null;
 
-        if ($this->option('parent')) {
+        if ($type = $this->option('type')) {
+            $stub = "/stubs/controller.{$type}.stub";
+        } elseif ($this->option('parent')) {
             $stub = '/stubs/controller.nested.stub';
         } elseif ($this->option('model')) {
             $stub = '/stubs/controller.model.stub';
@@ -87,7 +91,7 @@ class ControllerMakeCommand extends GeneratorCommand
     /**
      * Build the class with the given name.
      *
-     * Remove the base controller import if we are already in base namespace.
+     * Remove the base controller import if we are already in the base namespace.
      *
      * @param  string  $name
      * @return string
@@ -184,13 +188,7 @@ class ControllerMakeCommand extends GeneratorCommand
             throw new InvalidArgumentException('Model name contains invalid characters.');
         }
 
-        $model = trim(str_replace('/', '\\', $model), '\\');
-
-        if (! Str::startsWith($model, $rootNamespace = $this->laravel->getNamespace())) {
-            $model = $rootNamespace.$model;
-        }
-
-        return $model;
+        return $this->qualifyModel($model);
     }
 
     /**
@@ -202,6 +200,7 @@ class ControllerMakeCommand extends GeneratorCommand
     {
         return [
             ['api', null, InputOption::VALUE_NONE, 'Exclude the create and edit methods from the controller.'],
+            ['type', null, InputOption::VALUE_REQUIRED, 'Manually specify the controller stub file to use.'],
             ['force', null, InputOption::VALUE_NONE, 'Create the class even if the controller already exists'],
             ['invokable', 'i', InputOption::VALUE_NONE, 'Generate a single method, invokable controller class.'],
             ['model', 'm', InputOption::VALUE_OPTIONAL, 'Generate a resource controller for the given model.'],

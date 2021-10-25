@@ -29,7 +29,7 @@ class coloresController extends Controller
                                             'estatus'   => $req  -> estatus,
                                             'id'        => $id
                                             ]);
-	return $actualizaOT ? response("El color se actualizo correctamente",200):
+	return $data ? response("El color se actualizo correctamente",200):
 						  response("Ocurrio un error, vuelve a intentarlo mas tarde", 500);
 	}
 }
