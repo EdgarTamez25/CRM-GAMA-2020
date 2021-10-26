@@ -10,8 +10,7 @@ class unidadesController extends Controller
 {
     public function obtenerUnidades()
     {
-        $Unidad = unidades::all();
-        return $Unidad;
+				return DB::select('SELECT * FROM unidades WHERE estatus = 1');
     }
 
 		public function agregarUnidades(Request $request){

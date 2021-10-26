@@ -11,43 +11,80 @@
         </v-snackbar>
         
 				<v-card-actions class="pa-0" >
-
 					<!-- <h3> <strong> {{ modoVista === 1? 'NUEVA ORDEN DE TRABJO':'EDITAR ORDEN DE TRABAJO' }} </strong></h3>  -->
 					<h3> <strong> {{ modoVista === 1? 'NUEVA ORDEN DE TRABJO':'EDITAR ORDEN DE TRABAJO' }} </strong></h3> 
-
 					<v-spacer></v-spacer>
 					<v-btn color="error" filled @click="$emit('modal',false)" ><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
-
 				<!-- <v-divider class="mt-2"></v-divider> -->
-
 				<v-row>
-					<v-col cols="12" sm="6" >  <!-- VENDEDORES -->
+
+          <v-col cols="12" sm="8"  >
+            <v-card outlined>
+              <v-simple-table dense >
+                <template v-slot:default>
+                  <tbody >
+                    <tr >
+                      <td class="font-weight-black">CLIENTE</td>
+                      <td class="subtitle-1"  align="left"> {{ parametros.nomcli }}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-black">RESPONSABLE</td>
+                      <td class="subtitle-1">{{ parametros.solicitante }}</td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-black">SOLICITUD</td>
+                      <td class="subtitle-1"> {{ parametros.id_solicitud }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-black">CREACIÓN</td>
+                      <td class="subtitle-1">  {{  moment(parametros.fecha + ' '  + parametros.hora).format('llll') }} </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card>
+          </v-col>
+
+            <v-col cols="12" sm="4">
+              <v-text-field
+                v-model="orden_compra" label="Orden de compra" hide-details dense filled clearable 
+              ></v-text-field>
+              <v-btn 
+                  v-if="modoVista===2 && parametros.estatus != 3 " 
+                  :disabled="orden_compra? false:true" 
+                  @click="PrepararPeticion()"
+                  color="rosa" 
+                  dark 
+                  block
+                  class="mt-2"
+              >  Actualizar OC 
+              </v-btn>
+            </v-col>
+
+				<!--	<v-col cols="12" sm="6" >   VENDEDORES 
 						<v-autocomplete
 							:items="usuarios" v-model="usuario" item-text="nombre" tem-value="id" label="Responsable" 
 							dense filled hide-details color="celeste" append-icon="persons" return-object disabled
 						></v-autocomplete>
-					</v-col>
+					</v-col> -->
 
-					<v-col cols="12" sm="6" > <!-- CLIENTE -->
+				<!--	<v-col cols="12" sm="6" >  CLIENTE 
 						<v-autocomplete
 							:items="clientes" v-model="cliente" item-text="nombre" item-value="id" label="Clientes" 
 							dense filled hide-details color="celeste" append-icon="people" return-object
               :disabled="detalle.length? true: false"
 						></v-autocomplete>
-					</v-col>
+					</v-col> -->
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="orden_compra" label="Orden de compra" hide-details dense filled clearable 
-            ></v-text-field>
-          </v-col>
+         
 
-          <v-col cols="12" sm="6">
+           <!-- <v-col cols="12" sm="6">
             <v-text-field
               v-model="id_solicitud" label="Solicitud" hide-details dense filled clearable disabled
             ></v-text-field>
-          </v-col>
+          </v-col> -->
 
           <!-- <v-col cols="12" sm="6"  >
             <v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
@@ -65,79 +102,40 @@
             </v-dialog>
           </v-col> -->
 
-          <v-col cols="12" class="text-right" >
+         <!-- <v-col cols="12" class="text-right" >
             <v-btn v-if="modoVista===2 && parametros.estatus != 3 " :disabled="orden_compra? false:true" 
                    color="rosa" dark @click="PrepararPeticion()">  Actualizar Orden de trabajo 
             </v-btn>
-          </v-col>
+          </v-col> -->
 
-          <v-col cols="12" sm="8" class="py-0">
-            <v-card-text class="font-weight-black subtitle-1 py-0" > 
-              PRODUCTOS A SOLICITAR 
-            </v-card-text>
-          </v-col>
+          
           <!-- <v-col cols="12" sm="4" class="py-0 text-right">
             <v-btn v-if="modoVista===2" color="gris" dark block small @click="FormularioProductos = !FormularioProductos"> 
               {{ FormularioProductos ? 'Esconder Formulario': 'Habilitar Formulario' }}  
             </v-btn>
           </v-col> -->
 
-          <template v-if="FormularioProductos">
-            <v-col cols="12" sm="6">
-              <v-select
-                v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
-                dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled
-                
-              ></v-select> 
-            </v-col>
-            <v-col cols="12" sm="6">  <!-- PRODUCTOS -->
-              <v-autocomplete
-                :items="productos" v-model="producto" item-text="codigo" item-value="id" label="Productos" 
-                dense outlined hide-details color="celeste" append-icon="print" return-object
-                :disabled="cliente.id && modo ==1 ? false: true"
-              >
-              </v-autocomplete>
-            </v-col>
-
-            <v-col cols="12" sm="6">
-              <v-text-field
-                v-model="cantidad" label="Cantidad" hide-details dense outlined clearable
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="12" sm="6">
-              <v-select
-                v-model="concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
-                dense hide-details  label="Conceptos" return-object outlined
-              ></v-select> 
-            </v-col>
-
-            <v-col cols="12" sm="6">
-              <v-select
-                v-model="urgencia" :items="urgencias" item-text="nombre" item-value="id" outlined color="celeste" 
-                dense hide-details  label="Urgencia" return-object 
-              ></v-select> 
-            </v-col>
-
-            <v-col cols="12" sm="6" > 
-              <v-textarea
-                v-model ="razon" outlined label="Razon de la urgencia" rows="2" 
-                hide-details dense :disabled="urgencia.id != 1 && urgencia.id ? false:true"
-              ></v-textarea>
-            </v-col>
-
-            <v-col cols="12" sm="6" class="py-0 text-right" v-if="modo === 1"> 
-              <v-btn color="celeste" dark  @click="validarPartida(1) "> Agregar partida</v-btn> 
-            </v-col>
-          </template>
-
-          
-          <v-col cols="6" class="py-0" v-if="modo === 2"> 
-            <v-btn color="gris" dark block @click="limpiarCamposPartida()"> CANCELAR</v-btn>
-           </v-col>
-          <v-col cols="6" class="py-0" v-if="modo === 2"> 
-            <v-btn color="celeste" dark block @click="validarPartida(2)"> Actualizar partida</v-btn>
+          <v-col cols="12" class="py-0 pa-0">
+            <v-card-text class="font-weight-black text-h6 py-0 text-center" > 
+              PRODUCTOS A SOLICITAR  
+            </v-card-text>
           </v-col>
+
+          <!--<v-col cols="12" sm="6">
+            <v-select
+              v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
+              dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled
+              
+            ></v-select> 
+          </v-col> -->
+          <!--<v-col cols="12" sm="6">   PRODUCTOS 
+            <v-autocomplete
+              :items="productos" v-model="producto" item-text="codigo" item-value="id" label="Productos" 
+              dense outlined hide-details color="celeste" append-icon="print" return-object
+              :disabled="cliente.id && modo ==1 ? false: true"
+            >
+            </v-autocomplete>
+          </v-col>-->
 
           <!-- TABLA DE PRODUCTOS POR SOLICITAR -->
           <v-col cols="12">
@@ -147,29 +145,25 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
-                      <th class="text-left"> #  </th>
                       <th class="text-left"> Producto  </th>
                       <th class="text-left"> Cantidad  </th>
+                      <th class="text-left"> Unidad  </th>
                       <th class="text-left"> Concepto  </th>
                       <!-- <th class="text-left"> Entrega </th> -->
                       <th class="text-left"> Urgencia  </th>
                       <th class="text-left"> Estatus</th>
-
                       <th class="text-left"></th>
-
-
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(item, i) in detalle" :key="i">
-                      <td>{{ item.partida }}</td>
                       <td>{{ item.producto }}</td>
                       <td>{{ item.cantidad }}</td>
+                      <td>{{ item.unidad }}</td>
                       <td>
                         <span v-if="item.concepto === 1"> PRODUCCION </span>
                         <span v-if="item.concepto === 2"> STOCK </span>
                       </td>
-                      <!-- <td>{{ item.fecha_entrega }}</td> -->
                       <td>
                         <span v-if="item.urgencia === 1"> NORMAL</span>
                         <span v-if="item.urgencia === 2"> URGENTE</span>
@@ -184,7 +178,6 @@
                         <v-btn color="success" class="ma-1" icon v-if="parametros.estatus === 1" @click="rellenaCampos(item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
                         <v-btn color="error"   class="ma-1" icon v-if="parametros.estatus === 1" @click="eliminaPartida(item.id)"> <v-icon>mdi-delete</v-icon> </v-btn>
                       </td>
-                      
                     </tr>
                   </tbody>
                 </template>
@@ -205,6 +198,62 @@
           <v-btn color="success" small v-if="modoVista===1" @click="validaInformacion()" >  Guardar información </v-btn>
           <v-btn color="success" small v-if="modoVista===2" @click="validaInformacion()" >  Actualizar información </v-btn>
         </v-footer>
+        <!-- FORMULARIO EDICION-->
+        <v-dialog v-model="FormularioProductos" width="600px">
+          <v-card class="pa-4">
+            <v-row>
+              <v-col cols="12" class="py-0 pa-0">
+                <v-card-actions>
+                  <v-card-text class="font-weight-black text-h6 text-left"> PRODUCTO: 
+                    <span class="rosa--text">  {{ producto.nombre }} </span>
+                  </v-card-text>
+                  <v-spacer></v-spacer>
+                  <v-btn color="error" small  @click="limpiarCamposPartida()" ><v-icon>clear</v-icon></v-btn>
+                </v-card-actions>
+              </v-col>
+
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="cantidad" label="Cantidad" hide-details dense outlined clearable type="number"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" sm="6">
+                <v-select
+                  v-model="concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
+                  dense hide-details  label="Conceptos" return-object outlined
+                ></v-select> 
+              </v-col>
+
+              <v-col cols="12" sm="6">
+                <v-select
+                  v-model="urgencia" :items="urgencias" item-text="nombre" item-value="id" outlined color="celeste" 
+                  dense hide-details  label="Urgencia" return-object 
+                ></v-select> 
+              </v-col>
+
+              <v-col cols="12" sm="6" > 
+                <v-textarea
+                  v-model ="razon" outlined label="Razon de la urgencia" rows="1" 
+                  hide-details dense :disabled="urgencia.id != 1 && urgencia.id ? false:true"
+                ></v-textarea>
+              </v-col>
+
+              <v-col cols="12" sm="6" class="py-0 text-right" v-if="modo === 1"> 
+                <v-btn color="celeste" dark  @click="validarPartida(1) "> Agregar partida</v-btn> 
+              </v-col>
+
+              <v-col class="mt-5"/>
+
+              <v-footer absolute fixed>
+                <v-spacer></v-spacer>
+                <v-btn dark color="success"  @click="validarPartida(2)" >
+                  Actualizar
+                </v-btn> 
+              </v-footer>
+            </v-row>
+          </v-card>
+        </v-dialog>
 
         <v-dialog v-model="Correcto" hide-overlay persistent width="350">
           <v-card :color="colorCorrecto" dark class="pa-3">
@@ -214,18 +263,16 @@
           </v-card>
         </v-dialog>
 
-        <v-dialog v-model="alertaEliminar"  persistent width="350">
-          <v-card class="pa-3" color="red darken-4">
-            <v-card-text class="font-weight-black subtitle-1 pa-3 white--text" align="left">
-              ¿ ESTAS SEGURO DE QUERER ELIMINAR LA PARTIDA ?
-            </v-card-text>
-            <v-card-subtitle class=" white--text" align="left">
-              La información se perdera completamente.
-            </v-card-subtitle>
+        <v-dialog v-model="alertaEliminar"  persistent width="400">
+          <v-card>
+            <v-card-title class="subtitle-1 font-weight-black " style="word-break:normal;">¿ESTÁS SEGURO DE QUERER ELIMINAR LA PARTIDA ? </v-card-title>
+            <v-divider class="my-0 py-3" ></v-divider>
+            <v-card-subtitle align="center" class="red--text font-weight-bold "> LA INFORMACIÓN SE PERDERÁ COMPLETAMENTE </v-card-subtitle>
+            <v-divider class="my-0 py-2 " ></v-divider>
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="gris"    dark small  @click="alertaEliminar=false" >  Cancelar </v-btn>
-              <v-btn color="celeste" dark small  @click="editarEliminarPartida()" >  Eliminar </v-btn>
+              <v-btn color="gris"    dark   @click="alertaEliminar=false" >  NO, Cancelar </v-btn>
+              <v-spacer/>
+              <v-btn color="celeste" text   @click="editarEliminarPartida()" >  SÍ, Eliminar </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -296,12 +343,12 @@
 				Correcto    : false,
         textCorrecto: '',
         colorCorrecto: 'success',
+
 			}
 		},
 		
 		created(){
       this.consultar_Usuarios();
-			// this.consultar_Vendedores();
       this.consultar_Clientes();
       this.consultaDepartamentos();
 			this.validarModoVista(); 	  // VALIDO EL MODO DE LA VISTA
@@ -311,7 +358,7 @@
 			// IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
       ...mapGetters('Login'    ,['getdatosUsuario']), 
       ...mapGetters('ProductosxCliente' ,['Loading','getPxCxD']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
-			...mapGetters('OT'    ,['Parametros']), // IMPORTANDO USO DE VUEX - (GETTERS)
+			...mapGetters('OT',['Parametros']), // IMPORTANDO USO DE VUEX - (GETTERS)
 
 		},
 
@@ -322,26 +369,6 @@
       parametros(){ 
         this.validarModoVista(); 	
       } ,
-      // depto(){
-      //   // if(this.cliente.id){
-      //   //   const payload = new Object();
-      //   //   payload.id_depto   = this.depto.id 
-      //   //   payload.id_cliente = this.cliente.id
-      //   //   this.consultaPxCxD(payload)
-          
-      //   // }
-      // },
-      // cliente(){
-      //   // if(!this.depto.id){ this.depto = { id:1, nombre:'FLEXOGRAFÍA'} }
-      //   // if(this.cliente.id){ 
-      //     // const payload = new Object();
-      //     //   payload.id_cliente = this.cliente.id
-      //     // this.consultaProdxCliente( this.cliente.id).then(response =>{
-      //     //   this.producto = { id: this.detalle.id_producto }
-      //     // })
-      //   // }
-      // }
-      
     },
 
 		methods:{
@@ -426,15 +453,17 @@
           })
         }
 
+        // ! POR EL MOMENTO SOLO ESTE SE USA 
         if(this.modoVista === 2){
-          const payload = new Object();
-                payload.id            = this.idEditar;
-                payload.id_producto   = this.producto.id;
-                payload.cantidad      = this.cantidad;
-                payload.concepto      = this.concepto.id;
-                payload.urgencia      = this.urgencia.id;
-                payload.razon         = this.razon? this.razon:'';
-
+          const payload = { 
+            id          : this.idEditar,
+            id_producto : this.producto.id,
+            cantidad    : this.cantidad,
+            concepto    : this.concepto.id,
+            urgencia    : this.urgencia.id,
+            razon       : this.razon? this.razon:''
+          }
+          
           this.$http.post('actualiza.partida.detot',payload).then(response =>{
             this.consultaDetalle(this.parametros.id)
             this.alerta = { activo: true, texto:response.bodyText , color:'success'}; 
@@ -495,10 +524,11 @@
           this.orden_compra = this.parametros.oc;
           this.id_solicitud   = this.parametros.id_solicitud;
           this.consultaDetalle(this.parametros.id);
-          this.consultaProdxCliente( this.cliente.id).then(response =>{
-            // console.log('response', response)
-            this.productos = response
-          })
+
+          // this.consultaProdxCliente( this.cliente.id).then(response =>{
+          //   // console.log('response', response)
+          //   this.productos = response
+          // })
 
 				}else{
 				  this.limpiarCampos()
@@ -552,8 +582,7 @@
 			Actualizar(payload){
 				this.$http.put('actualiza.ot/'+ this.parametros.id, payload).then((response)=>{
           this.alerta = { activo: true, texto: response.bodyText, color:'green' }
-				  this.consultaOT(this.Parametros) //ACTUALIZAR CONSULTA DE CLIENTES
-
+				  // this.consultaOT(this.Parametros) //ACTUALIZAR CONSULTA DE CLIENTES
 				}).catch(error =>{
           this.alerta = { activo: true, texto: error.bodyText, color:'error' }
 				}).finally(() => this.overlay = false)

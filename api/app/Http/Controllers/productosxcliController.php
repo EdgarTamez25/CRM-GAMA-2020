@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\DB;
 class productosxcliController extends Controller
 {
     public function productosxCli($id_cliente){
-        $productosxCli = DB::select('SELECT p.id, p.id_cliente, c.nombre as nomcli, p.nombre, p.codigo, p.descripcion,
-																						p.revision, p.fecha, p.url, p.dx, p.id_dx, p.estatus 
-																		 	FROM prodxcli p LEFT JOIN clientes c ON p.id_cliente = c.id 
-																		 WHERE id_cliente = ?', [$id_cliente]);
+        $productosxCli = DB::select('SELECT p.id, p.id_cliente, c.nombre as nomcli, p.nombre, p.codigo, 
+																					p.descripcion, p.id_unidad, u.nombre as unidad, p.revision, 
+																						p.fecha, p.url, p.dx, p.id_dx, p.estatus 
+																			FROM prodxcli p 
+																			LEFT JOIN clientes c ON p.id_cliente = c.id 
+																				LEFT JOIN unidades u ON p.id_unidad  = u.id
+																			WHERE id_cliente = ?', [$id_cliente]);
         return $productosxCli ? response($productosxCli,200) : response([], 500); 
 		}
 		
@@ -24,46 +27,43 @@ class productosxcliController extends Controller
 
 		//  TODO EL PROCESO PARA CREAR PRODUCTO  *************** INICIO
 		public function crearDetalle(Request $req){
-			$this -> creaProducto($req, $id_dx = 0);
-			return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
-
-			// if($req -> dx === 1 ):
-			// 	if($id_dx = $this->Flexografia($req -> detalle )):	// !MANDO A INSERTAR A FLEXOGRAFIA
-			// 			// return $id_dx;
-			// 		$this -> creaProducto($req, $id_dx);
-			// 		return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
-			// 	endif; 
-			// endif;
-
-			// if($req -> dx != 1):
-			// 	$this -> creaProducto($req, $id_dx = 0 );
-			// 	return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
-			// endif;
-
-			// if($req -> dx === 3 ):
-			// 	if($id_dx = $this->Digital($req -> detalle )):      // !MANDO A INSERTAR A DIGITAL
-			// 		$this -> creaProducto($req,$id_dx);
-			// 		return response("El producto se creo correctamente" ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
-			// 	endif;
-			// endif;
-		}
-
-		public function creaProducto($data , $id_dx){
+			// $this -> creaProducto($req, $id_dx = 0);
 			$creaProducto = DB::table('prodxcli')->insertGetId(
-													[
-														'id_cliente' 	=> $data -> id_cliente ,
-														'nombre'			=> $data -> nombre ,
-														'codigo'			=> $data -> codigo ,
-														'descripcion' => $data -> descripcion ,
-														'revision'	  => $data -> revision ,
-														'fecha'	  		=> $data -> fecha ,
-														'url'				  => $data -> url ,
-														'dx'				  => $data -> dx ,
-														'id_dx'    		=> $id_dx,
-														// 'estatus'     => $data -> estatus
-													]
-											);
+					[
+						'id_cliente' 	=> $req -> id_cliente ,
+						'nombre'			=> $req -> nombre ,
+						'codigo'			=> $req -> codigo ,
+						'descripcion' => $req -> descripcion ,
+						'revision'	  => $req -> revision ,
+						'fecha'	  		=> $req -> fecha ,
+						'url'				  => $req -> url ,
+						'dx'				  => $req -> dx ,
+						'id_dx'    		=> 0,
+						'id_unidad'   => $req -> id_unidad
+						// 'estatus'     => $data -> estatus
+					]
+			);
+			return $creaProducto ? response("El producto se creo correctamente" ,200): 
+														 response("Error al crear producto, intentelo mas tarde" ,500); // !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA	
 		}
+
+		// public function creaProducto($data , $id_dx){
+		// 	$creaProducto = DB::table('prodxcli')->insertGetId(
+		// 											[
+		// 												'id_cliente' 	=> $data -> id_cliente ,
+		// 												'nombre'			=> $data -> nombre ,
+		// 												'codigo'			=> $data -> codigo ,
+		// 												'descripcion' => $data -> descripcion ,
+		// 												'revision'	  => $data -> revision ,
+		// 												'fecha'	  		=> $data -> fecha ,
+		// 												'url'				  => $data -> url ,
+		// 												'dx'				  => $data -> dx ,
+		// 												'id_dx'    		=> $id_dx,
+		// 												'id_unidad'   => $data -> id_unidad
+		// 												// 'estatus'     => $data -> estatus
+		// 											]
+		// 									);
+		// }
 
 		public function Flexografia($detalle){
 			$id_flexo = DB::table('det_flexo')->insertGetId(   //! INSERTO PRODUCTO NUEVO
@@ -107,7 +107,7 @@ class productosxcliController extends Controller
 		// TODO EL PROCESO PARA ACUTALIZAR PRODUCTO ************ INICIO
 		public function actualizaProducto($id, Request $req){
 			$producto = DB::update('UPDATE prodxcli SET id_cliente=:id_cliente,nombre=:nombre, codigo=:codigo, descripcion=:descripcion,
-																									revision=:revision,fecha=:fecha,url=:url
+																									revision=:revision,fecha=:fecha,url=:url, id_unidad=:id_unidad
 																WHERE id=:id', ['id_cliente'  => $req -> id_cliente,
 																								'nombre' 		  => $req -> nombre,
 																								'codigo' 		  => $req -> codigo,
@@ -115,21 +115,14 @@ class productosxcliController extends Controller
 																								'revision' 		=> $req -> revision,
 																								'fecha' 		  => $req -> fecha,
 																								'url' 		    => $req -> url,
+																								'id_unidad'   => $req -> id_unidad,
 																								'id' 				  => $id	]);
+			
+			return $producto ? response("El producto se actualizo correctamente" ,200): 
+												 response("Ocurrio un error, intentelo mas tarde" ,500);
 			
 			// if($req -> dx === 1 ):
 			// 	$this -> actualizaFlexo( $req -> detalle);
-			// 	$this -> eliminaPantones($req -> detalle['pantonesAEliminar']);
-			// 	$this -> eliminaAcabados($req -> detalle['acabadosAEliminar']);
-			// 	$this -> ciclaPantones(  $req -> detalle['id'], $req -> detalle);
-			// 	$this -> ciclaAcabados(  $req -> detalle['id'], $req -> detalle);
-			// 	return response("El producto se creo correctamente" ,200);
-			// endif;
-
-			return response("El producto se creo correctamente" ,200);
-
-			// if($req -> dx === 3 ):
-			// 	$this -> ActualizaDigital( $req -> detalle);
 			// 	$this -> eliminaPantones($req -> detalle['pantonesAEliminar']);
 			// 	$this -> eliminaAcabados($req -> detalle['acabadosAEliminar']);
 			// 	$this -> ciclaPantones(  $req -> detalle['id'], $req -> detalle);
@@ -173,6 +166,14 @@ class productosxcliController extends Controller
 		}
 		// TODO EL PROCESO PARA ACTUALIZAR PRODUCTO *********** FIN
 
+
+
+
+
+
+
+
+		
 		// !FUNCIONES PARA INSERTAR VALORES MULTIPLES ****** INICIO
 		public function actualizaValoresMultiplesFlexo($id_flexo){
 			DB::update('UPDATE det_flexo SET det_acabados=:det_acabados,det_pantones=:det_pantones
@@ -182,7 +183,7 @@ class productosxcliController extends Controller
 			DB::update('UPDATE det_digital SET det_acabados=:det_acabados,det_pantones=:det_pantones
 			WHERE id=:id', ['det_acabados' => $id_digital,'det_pantones' => $id_digital,'id' => $id_digital	]);
 		}
-		public function ciclaAcabados($id_dx, $detalle){
+		public function ciclaAcabados($id_dx, $detalle){ 
 			// return $detalle;
 			for($i=0;$i<count($detalle['acabados']); $i++):  
 				$this -> insertarAcabado($id_dx, $detalle['acabados'][$i]['id'], $detalle['dx'] );
