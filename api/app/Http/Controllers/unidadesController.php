@@ -8,15 +8,15 @@ use App\unidades;
 
 class unidadesController extends Controller
 {
-    public function getAll()
+    public function obtenerUnidades()
     {
         $Unidad = unidades::all();
         return $Unidad;
     }
 
-		public function add(Request $request){
+		public function agregarUnidades(Request $request){
 			$addunidad = unidades::create($request->all());
-			
+
 			if($addunidad):
 				return "La Unidad se ah insertado correctamente";
 			else:
@@ -24,12 +24,12 @@ class unidadesController extends Controller
 			endif;
 
 		}
-		
-		public function update($id, Request $req){
+
+		public function actualizarUnidades($id, Request $req){
 			$data = DB::update('UPDATE unidades SET nombre=:nombre, estatus=:estatus WHERE id =:id',
 													['nombre'=> $req -> nombre,'estatus'=> $req -> estatus, 'id'=> $id	]
 												);
-			
+
 			return 'La Unidad se actualizo correctamente';
 	}
 }
