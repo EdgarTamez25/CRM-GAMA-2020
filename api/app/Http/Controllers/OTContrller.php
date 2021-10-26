@@ -21,10 +21,12 @@ class OTContrller extends Controller
 	}
 
 	public function DetalleOT($id){
-		$detalleOT = DB::select('SELECT d.id, d.partida, d.id_ot, d.id_depto, d.id_producto, p.codigo as producto, d.cantidad, 
-																	  d.fecha_progra, d.fecha_entrega, d.concepto, d.urgencia, d.razon, d.estatus 
-																FROM det_ot d LEFT JOIN prodxcli p ON d.id_producto = p.id
-														 WHERE d.id_ot = ?', [ $id]);
+		$detalleOT = DB::select('SELECT d.id, d.partida, d.id_ot, d.id_producto, p.codigo as producto, d.cantidad, p.id_unidad,u.nombre as unidad,
+																		d.fecha_progra, d.fecha_entrega, d.concepto, d.urgencia, d.razon, d.estatus 
+																FROM det_ot d 
+																	LEFT JOIN prodxcli p ON d.id_producto = p.id
+																	LEFT JOIN unidades u ON p.id_unidad   = u.id
+																WHERE d.id_ot = ?', [ $id]);
 		return $detalleOT ? $detalleOT : [];
 	}
 
@@ -32,14 +34,13 @@ class OTContrller extends Controller
 		
 		$id_ot = DB::table('ot')->insertGetId(
 			[
+				  'id_cliente' 	   => $req -> id_cliente,
 					'id_solicitante' => $req -> id_solicitante,
-					'id_cliente' 	   => $req -> id_cliente,
-					'oc' 					   => $req -> oc,
 					'id_solicitud' 	 => $req -> id_solicitud,
+					'oc' 					   => $req -> oc,
 					'fecha' 			   => $req -> fecha,
 					'hora' 		  	   => $req -> hora,
 					'id_creador'     => $req -> id_creador,
-
 			]);
 
 		for($i=0;$i<count($req -> detalle); $i++):  
@@ -47,22 +48,22 @@ class OTContrller extends Controller
 		endfor;
 
 		$this -> actualizaEstatusSolicitud($req -> id_solicitud, $req -> fecha_procesado);
-	 	return response("La orden de trabajo se creo correctamente" ,200);
+		return $id_ot? response("La orden de trabajo se creo correctamente" ,200):
+									 response("Ocurrio un error, intentelo mas tarde." ,500);
 	}
 
 	public function insertaDetalleOT($id_ot,$partida,$fecha, $hora, $detalle){
 		DB::table('det_ot')->insertGetId(
 			[
 					'id_ot'	  			=> $id_ot,
-					'partida'	  		=> $partida,
-					'id_depto'      => $detalle['id_depto'],
 					'id_producto' 	=> $detalle['id_producto'],
+					'partida'	  		=> $partida,
 					'cantidad' 			=> $detalle['cantidad'],
-					'fecha_entrega' => $detalle['fecha'],        // FECHA ENTREGA
-					'creacion'      => $fecha.' '.$hora,
 					'concepto' 		  => $detalle['concepto']['id'],
 					'urgencia'  		=> $detalle['urgencia']['id'],
 					'razon'  				=> $detalle['razon'],
+					'fecha_entrega' => $detalle['fecha'],     
+					'creacion'      => $fecha.' '.$hora,
 			]);
 	}
 

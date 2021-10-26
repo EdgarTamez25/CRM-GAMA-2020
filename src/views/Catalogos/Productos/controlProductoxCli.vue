@@ -41,7 +41,7 @@
 
        <v-col cols="12" sm="6">
          <v-autocomplete
-          :items="unidades" v-model="unidad" item-text="nombre" tem-value="id" label="Unidad" 
+          :items="unidades" v-model="unidad" item-text="nombre" item-value="id" label="Unidad" 
           dense filled hide-details color="celeste" return-object clearable 
         ></v-autocomplete>
       </v-col>
@@ -173,7 +173,8 @@
 			async validarModoVista(){
         this.clientes = await this.consultar_Clientes();
         this.deptos   = await this.consultaDepartamentos();
-        // this.unidades = await this.consulta_unidades();
+        this.unidades = await this.consulta_unidades();
+        // console.log('data', this.data)
         if(this.modoVista === 3){
             // ASIGNAR VALORES AL FORMULARIO
             this.nombre      = this.data.nombre;
@@ -182,9 +183,9 @@
             this.revision    = this.data.revision;
             this.fecha       = this.data.fecha;
             this.url         = this.data.url;
-            // this.unidad      = this.data.unidad.id;
             this.depto       = { id: this.data.dx };
             this.cliente     = { id: this.data.id_cliente};
+            this.unidad      = { id: this.data.id_unidad };
         }else{
           this.limpiarCampos()
         }
@@ -194,7 +195,7 @@
 			validarInfomracion(){
 				if(!this.cliente.id){ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE' , color:'error' }; return }
 				if(!this.codigo)	  { this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CÓDIGO'  , color:'error' }; return }
-				// if(!this.unidad.id)	{ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR LA UNIDAD'  , color:'error' }; return }
+				if(!this.unidad.id)	{ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR LA UNIDAD'  , color:'error' }; return }
 				// if(this.revision < 0) { this.alerta = { activo: true, texto:'LA REVISIÓN NO PUEDE SER MENOR A CERO'         , color:'error' }; return }
         // if(!this.url)			  { this.alerta   = { activo: true, texto:'DEBES AGREGAR LA DIRECCION DE LA FICHA TECNICA', color:'error' }; return }
         if(!this.depto.id)	{ this.alerta   = { activo: true, texto:'DEBES SELECCIONAR UN DEPARTAMENTO'             , color:'error' }; return }
@@ -208,7 +209,7 @@
               producto.id_cliente  = this.cliente.id;
               producto.nombre      = this.nombre ? this.nombre: '';
               producto.codigo      = this.codigo ? this.codigo: '';
-              producto.unidad      = 1;//this.unidad.id;
+              producto.id_unidad      = this.unidad.id;
               producto.descripcion = this.descripcion ? this.descripcion : '';
               producto.revision    = this.revision ? this.revision : 0;
               producto.url         = this.url ? this.url : '';
@@ -222,7 +223,6 @@
 
 			Crear(producto){
         this.overlay = true ; 
-        
 				this.$http.post('crear.producto.cliente', producto).then((response)=>{
 					this.TerminarProceso(response.bodyText);					
 				}).catch(error =>{

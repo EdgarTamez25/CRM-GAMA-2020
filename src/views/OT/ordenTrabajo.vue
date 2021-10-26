@@ -117,9 +117,13 @@
 					<v-pagination v-model="page" :length="pageCount"></v-pagination>
 				</div>
 		
-				<v-dialog persistent v-model="otModal" width="700px" >	
+				<v-dialog persistent v-model="otModal" width="800px" >	
 		    	<v-card class="pa-3">
-		    		<controlOT :modoVista="modoVista" :parametros="parametros" @modal="otModal = $event" />
+		    		<controlOT 
+							:modoVista="modoVista" 
+							:parametros="parametros" 
+							@modal="otModal = $event" 
+						/>
 		    	</v-card>
 		    </v-dialog>
 
