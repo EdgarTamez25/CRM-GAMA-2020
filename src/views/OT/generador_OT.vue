@@ -1,22 +1,19 @@
 <template>
   <v-row class="pa-4" >
-    <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
-      <strong> {{alerta.text}} </strong>
-      <template v-slot:action="{ attrs }">
-        <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
-      </template>
-    </v-snackbar>
     
     <!-- //! TITULO DE LA PAGINA -->
-    <v-col cols="12" class="text-center py-0">
-      <v-card-text class="font-weight-black text-h6">
-        GENERADOR DE ORDENES DE TRABAJO
-      </v-card-text>
-      <!-- <v-divider class=""></v-divider> -->
+    <v-col cols="12" class="py-0">
+      <v-card-actions class="pa-0" >
+        <v-card-text class="font-weight-black text-h6">
+          GENERADOR DE ORDENES DE TRABAJO
+        </v-card-text>
+        <v-spacer></v-spacer>
+        <v-btn color="error"  @click="$emit('modal',false)" ><v-icon>clear</v-icon></v-btn>
+      </v-card-actions>
     </v-col>
 
     <!-- //! TABLA DE INFORMACION DE LA SOLICITUD -->
-    <v-col cols="12"  md="5" xl="4" class="text-left">
+    <v-col cols="12"  sm="7"  class="text-left">
       <v-card outlined>
         <v-simple-table dense >
           <template v-slot:default>
@@ -40,8 +37,8 @@
     
     </v-col>
 
-    <v-col cols="12" sm="6" md="3" class="">
-      <v-text-field v-model="oc" hide-details dense filled placeholder="Orden de trabajo" label="Orden de compra"></v-text-field>
+    <v-col cols="12" sm="5"  class="">
+      <v-text-field v-model="oc" hide-details dense filled placeholder="Orden de compra" label="Orden de compra"></v-text-field>
     </v-col>
 
     <v-col cols="12">
@@ -49,57 +46,36 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left green white--text"> PRODUCTO </th>
-              <th class="text-left green white--text"> CANTIDAD </th>
-              <th class="text-left green white--text"> CONCEPTO </th>
-              <th class="text-left green white--text"> F.ENTREGA </th>
-              <th class="text-left green white--text"> URGENCIA </th>
+              <th class="text-left rosa white--text"> PRODUCTO </th>
+              <th class="text-left rosa white--text"> CANTIDAD </th>
+              <th class="text-left rosa white--text"> UNIDAD </th>
+              <th class="text-left rosa white--text"> CONCEPTO </th>
+              <th class="text-left rosa white--text"> F.ENTREGA </th>
+              <th class="text-left rosa white--text"> URGENCIA </th>
+              <th class="text-left rosa white--text">  </th>
+
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item,i) in Detalle" :key="i" >
-              <td class="font-weight-black" width="150px" >  {{ item.codigo }}  </td>
-              <td width="150px">{{ item.cantidad }}</td>
+              <td class="font-weight-black" width="130px" >  {{ item.codigo }}  </td>
+              <td width="100px">{{ item.cantidad }}</td>
+              <td width="100px">PIEZA</td>
+
               <td > 
-                <v-select
-                  v-model="item.concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
-                  outlined dense hide-details  placeholder="Concepto" return-object 
-                ></v-select> 
+                <span v-if="item.concepto" > {{ item.concepto.nombre }} </span>
+                <span v-else> SIN CONCEPTO </span>
               </td>
               <td>
-                <v-text-field 
-                  v-model="item.fecha" label="Fecha" 
-                  outlined dense hide-details color="rosa" type="date"
-                ></v-text-field>
-              <!-- <v-menu
-                ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="item.fecha" 
-                transition="scale-transition" offset-y min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field 
-                    v-model="item.fecha" label="Fecha" append-icon="mdi-calendar" 
-                    v-bind="attrs" v-on="on" outlined dense hide-details color="rosa"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="fecha" no-title scrollable color="rosa">
-                  <v-spacer></v-spacer>
-                  <v-btn text color="error" @click="menu = false" > Cancelar </v-btn>
-                  <v-btn  color="rosa"  dark @click="$refs.menu.save(item.fecha)"> OK </v-btn>
-                </v-date-picker>
-              </v-menu> -->
+                <span v-if="item.fecha"> {{ item.fecha }} </span>
+                <span v-else> SIN FECHA </span>
               </td>
               <td > 
-                <span class="mt-1 pa-1">
-                  <v-select
-                    v-model="item.urgencia" :items="urgencias" item-text="nombre" item-value="id" color="celeste" 
-                    dense hide-details  placeholder="Urgencia" return-object solo
-                  ></v-select> 
-                </span>
-                <span class="mt-1 pa-1" >
-                  <v-textarea
-                    v-model ="item.razon"  label="Razon de la urgencia" rows="1" hide-details dense  
-                  ></v-textarea>
-                </span>
+                <span v-if="item.urgencia"> {{ item.urgencia.nombre }}  </span>
+                <span v-else> SIN URGENCIA </span>
+              </td>
+              <td class="pa-2"> 
+                <v-btn fab small color="celeste" dark @click="abrir_detalle_partida(item)"> <v-icon> mdi-pencil </v-icon>  </v-btn> 
               </td>
             </tr>
           </tbody>
@@ -107,11 +83,11 @@
       </v-simple-table>
     </v-col>
 
+    <v-col class="mt-5"/>
     <v-footer absolute fixed>
-      <v-btn color="error" dark  @click="$emit('modal',false)"  > CANCELAR</v-btn>
       <v-spacer></v-spacer>
-      <v-btn dark color="celeste" @click="validaInformacion()" :disabled="overlay ? true : false" >
-        Generar O.T 
+      <v-btn dark color="success" @click="alertaGenerarOT = true" :disabled="GENERAR_OT" >
+        Generar Orden de trabajo 
       </v-btn> 
     </v-footer>
 
@@ -129,6 +105,56 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="detalleModal" width="400px" persistent>
+      <v-card class="pa-4">
+        <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+          <strong> {{alerta.text}} </strong>
+          <template v-slot:action="{ attrs }">
+            <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+          </template>
+        </v-snackbar>
+
+        <v-card-text class="font-weight-black text-h6 text-center py-0"> DETALLE DE LA PARTIDA </v-card-text>
+
+          <v-row>
+            <v-col cols="12">
+               <v-select
+                v-model="editDetalle.concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
+                outlined dense hide-details  placeholder="Concepto" return-object 
+              ></v-select>
+            </v-col>
+            <v-col cols="12"> 
+              <v-text-field 
+                v-model="editDetalle.fecha" label="Fecha" 
+                outlined dense hide-details color="rosa" type="date"
+              ></v-text-field> 
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                v-model="editDetalle.urgencia" :items="urgencias" item-text="nombre" item-value="id" color="celeste" 
+                dense hide-details placeholder="Urgencia" return-object outlined
+              ></v-select>
+            </v-col>
+            <v-col cols="12" >
+              <v-textarea
+                v-model ="editDetalle.razon" label="Razon de la urgencia" rows="2" hide-details dense filled
+              ></v-textarea>
+            </v-col>
+          </v-row>
+
+        <div class="mt-10"> </div>
+        <v-footer absolute fixed>
+        <v-btn  text color="error" @click="detalleModal = false">Cancelar</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn  dark color="celeste" @click="validar_detalle_partida()" :disabled="overlay ? true : false" >
+            Guardar
+          </v-btn> 
+        </v-footer>
+      </v-card>
+    </v-dialog>
+
+    
 
 
     <overlay v-if="overlay"/>
@@ -157,6 +183,11 @@
         conceptos: [{id:1, nombre:'PRODUCCION'}, {id:2, nombre:'STOCK'}],
         oc:'',
 
+        concepto:'',
+        urgencia: '',
+        razon:'',
+
+
         alertaGenerarOT: false,
         overlay: false,
         alerta: { 
@@ -167,6 +198,16 @@
 
         fecha: '',
         menu: false,
+
+        detalleModal: false,
+        editedIndex: -1,
+        editDetalle : {
+          id: null,
+          concepto: { id: null, nombre: '' },
+          fecha: '',
+          urgencia: { id:null, nombre: '' },
+          razon: '',
+        }
       }
     },
 
@@ -183,11 +224,19 @@
 
     computed:{
       ...mapGetters('Login' ,['getdatosUsuario']), 
+
+      GENERAR_OT(){
+        for(let i = 0 ; i < this.Detalle.length; i++){
+          if(!this.Detalle[i].listo){  return true; }
+        }
+        return false;
+      }
     },
 
 
     methods: {  
       init(){
+        console.log('detallesol', this.detallesol)
         this.Detalle = []; this.fecha = this.traerFechaActual();
         for(let i=0; i<this.detallesol.length; i++){
           this.Detalle.push( {
@@ -204,39 +253,10 @@
               concepto     : null,
               urgencia     : null,
               razon        : '',
-              fecha        : this.traerFechaActual()
+              fecha        : this.traerFechaActual(),
+              listo        : false
           })
         }
-      },
-
-      validaInformacion(){
-        for(let item of this.Detalle){
-          if(!item.concepto){
-            this.alerta = { activo: true, text:`Aun no seleccionas el concepto para el producto ${ item.codigo }. `, color:'error'};
-            return
-          }
-          if(!item.urgencia){
-            this.alerta = { activo: true, text:`Aun no seleccionas la urgencia del producto ${ item.codigo }.`, color:'error'};
-            return;
-          }
-          if(item.urgencia.id != 1){
-            if(!item.razon){
-              this.alerta = { activo: true, text:`Debes añadir la razon de la urgencia para el producto ${ item.codigo }.`, color:'error'};
-              return;
-            }
-          }
-          // if(item.fecha === this.traerFechaActual()){
-          //   this.alerta = { activo: true, text:`La fecha del producto ${ item.codigo } no puede ser la misma que el día actual.`, color:'error'};
-          //   return;
-          // }
-          if( item.fecha < this.traerFechaActual()){
-            this.alerta = { activo: true, text:`La fecha del producto ${item.codigo} no puede ser anterior a la actual.`, color:'error'};
-            return;
-          }
-
-        }
-        this.alertaGenerarOT = true;
-        // this.PrepararObjecto()
       },
 
       PrepararObjecto(){
@@ -263,6 +283,45 @@
         }).finally(()=>{
           this.overlay = false
         })
+      },
+
+      editItem (item) {
+        
+      },
+
+      abrir_detalle_partida(item){
+        this.editedIndex = this.Detalle.indexOf(item)
+        this.editDetalle = Object.assign({}, item)
+        this.detalleModal = true
+      },
+
+      validar_detalle_partida(){
+        if(!this.editDetalle.concepto){
+            this.alerta = { activo: true, text:`Aun no seleccionas el concepto para el producto ${ this.editDetalle.codigo }. `, color:'error'};
+            return
+        }
+        if(!this.editDetalle.urgencia){
+          this.alerta = { activo: true, text:`Aun no seleccionas la urgencia del producto ${ this.editDetalle.codigo }.`, color:'error'};
+          return;
+        }
+        if(this.editDetalle.urgencia.id != 1){
+          if(!this.editDetalle.razon){
+            this.alerta = { activo: true, text:`Debes añadir la razon de la urgencia para el producto ${ this.editDetalle.codigo }.`, color:'error'};
+            return;
+          }
+        }
+        if( this.editDetalle.fecha < this.traerFechaActual()){
+          this.alerta = { activo: true, text:`La fecha del producto ${this.editDetalle.codigo} no puede ser anterior a la actual.`, color:'error'};
+          return;
+        }
+
+        this.editDetalle.listo = true;
+        this.guardar_detalle_partida();
+      },
+
+      guardar_detalle_partida(){
+        Object.assign(this.Detalle[this.editedIndex], this.editDetalle)
+        this.detalleModal = false;
       }
 
     },

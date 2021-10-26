@@ -30,8 +30,8 @@
 							filled dense
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
-			      <v-btn small class="celeste" @click="abrirModal(1)" dark>Agregar  </v-btn>
-			      <v-btn small class="gris" icon dark @click="productosxCliente()" v-if="cliente.id"><v-icon>refresh</v-icon> </v-btn>
+			      <v-btn  class="celeste" @click="abrirModal(1)" dark>Agregar  </v-btn>
+			      <v-btn  class="gris" icon dark @click="productosxCliente()" v-if="cliente.id"><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 
 			    <v-data-table
@@ -57,7 +57,7 @@
 							</v-btn>
 				    </template> -->
 						<template v-slot:item.dx="{ item }"  > 
-			    		<span class="font-weight-black ">{{ deptos[item.dx-1].nombre  }}</span>
+			    		<span class="font-weight-black ">{{ nombres_deptos[item.dx-1]  }}</span>
 				    </template>
 						<template v-slot:item.codigo="{ item }"  > 
 			    		<span class="font-weight-black rosa--text">{{ item.codigo  }}</span>
@@ -127,13 +127,14 @@
 					],
 					cliente: { id:null, nombre:'' },
 					deptos:[],
+					nombres_deptos:[]
 				}
 			},
 
-			created(){
+			async created(){
         // this.consultaProductos()// CONSULTAR PRODUCTOS A VUEX
-        this.consultaClienteProductos();
-				this.consultaDepartamentos();
+        await this.consultaClienteProductos();
+				this.nombres_deptos = await this.consulta_deptos_productos();
 			},
 
 			computed:{
