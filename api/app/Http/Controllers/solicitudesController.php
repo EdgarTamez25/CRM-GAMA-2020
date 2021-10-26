@@ -76,10 +76,13 @@ class solicitudesController extends Controller
 	//! CONSULTAR DETALLE DE LA SOLICITUD
 		public function DetalleSolicitud($id){
 			// ! IR A DET_SOL PARA OBTENER TODOS LOS PRODUCTOS DE LA SOLICITUD
-			$detalle = DB::select('SELECT ds.id, ds.id_solicitud, ds.id_depto, ds.id_producto, pxc.nombre, 
-																		pxc.codigo, pxc.descripcion, ds.tipo_prod, ds.cantidad, ds.estatus
-															 FROM	det_sol ds LEFT JOIN prodxcli pxc ON ds.id_producto = pxc.id  
-														WHERE id_solicitud = ?', [$id]);
+			$detalle = DB::select('SELECT ds.id, ds.id_solicitud, ds.id_depto, ds.id_producto, pxc.id_unidad, 
+																		u.nombre as unidad, pxc.codigo, pxc.descripcion, ds.tipo_prod, 
+																			ds.cantidad, ds.estatus
+															FROM det_sol ds 
+																  LEFT JOIN prodxcli pxc ON ds.id_producto = pxc.id 
+																	LEFT JOIN unidades u   ON pxc.id_unidad = u.id
+															WHERE id_solicitud = ?', [$id]);
 			return $detalle ? $detalle: $detalle = [];
 		}
 	

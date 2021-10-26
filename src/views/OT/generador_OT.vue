@@ -60,8 +60,7 @@
             <tr v-for="(item,i) in Detalle" :key="i" >
               <td class="font-weight-black" width="130px" >  {{ item.codigo }}  </td>
               <td width="100px">{{ item.cantidad }}</td>
-              <td width="100px">PIEZA</td>
-
+              <td width="100px"> {{ item.unidad }} </td>
               <td > 
                 <span v-if="item.concepto" > {{ item.concepto.nombre }} </span>
                 <span v-else> SIN CONCEPTO </span>
@@ -211,7 +210,6 @@
       }
     },
 
-
     created(){
       this.init()
     },
@@ -233,37 +231,45 @@
       }
     },
 
-
     methods: {  
       init(){
         console.log('detallesol', this.detallesol)
         this.Detalle = []; this.fecha = this.traerFechaActual();
         for(let i=0; i<this.detallesol.length; i++){
-          this.Detalle.push( {
-              id           : this.detallesol[i].id,
-              id_solicitud : this.detallesol[i].id_solicitud,
-              id_depto     : this.detallesol[i].id_depto,
-              id_producto  : this.detallesol[i].id_producto,
-              nombre       : this.detallesol[i].nombre, 
-              codigo       : this.detallesol[i].codigo,
-              descripcion  : this.detallesol[i].descripcion,
-              tipo_prod    : this.detallesol[i].tipo_prod,
-              cantidad     : this.detallesol[i].cantidad,
-              estatus      : this.detallesol[i].estatus,
-              concepto     : null,
+          this.Detalle.push({ 
+              ...this.detallesol[i], 
+              concepto: null,
               urgencia     : null,
               razon        : '',
               fecha        : this.traerFechaActual(),
-              listo        : false
+              listo        : false 
           })
+
+          // this.Detalle.push( {
+          //     id           : this.detallesol[i].id,
+          //     id_solicitud : this.detallesol[i].id_solicitud,
+          //     id_depto     : this.detallesol[i].id_depto,
+          //     id_producto  : this.detallesol[i].id_producto,
+          //     nombre       : this.detallesol[i].nombre, 
+          //     codigo       : this.detallesol[i].codigo,
+          //     descripcion  : this.detallesol[i].descripcion,
+          //     tipo_prod    : this.detallesol[i].tipo_prod,
+          //     cantidad     : this.detallesol[i].cantidad,
+          //     estatus      : this.detallesol[i].estatus,
+          //     concepto     : null,
+          //     urgencia     : null,
+          //     razon        : '',
+          //     fecha        : this.traerFechaActual(),
+          //     listo        : false
+          // })
         }
       },
 
       PrepararObjecto(){
         this.alertaGenerarOT = false;  this.overlay = true
-        const ot = new Object({
-          id_solicitante : this.solicitud.id_usuario,
+        const ot = {
           id_cliente     : this.solicitud.id_cliente,
+          id_solicitante : this.solicitud.id_usuario,
           id_solicitud   : this.solicitud.id,
           oc             : this.oc ? this.oc : '',
           fecha          : this.traerFechaActual(),
@@ -271,7 +277,7 @@
           id_creador     : this.getdatosUsuario.id,
           detalle        : this.Detalle,
           fecha_procesado: this.traerFechaActual() + ' ' + this.traerHoraActual()
-        });
+        };
 
         console.log('OT', ot)
         this.$http.post('crear.orden.trabajo', ot).then( response =>{

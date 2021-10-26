@@ -156,10 +156,12 @@ export default {
 		},
 
 		consulta_unidades(){ // UNIDADES PARA PRODUCTOS POR CLIENTE
-			this.$http.get('unidades').then((response)=>{
-				this.unidades = response.body 
-			}).catch(error =>{
-				console.log('error', error)
+			return new Promise( (resolve) => {
+				this.$http.get('obtener.unidades').then((response)=>{
+					resolve(response.body)
+				}).catch(error =>{
+					console.log('error clixdpto', error)
+				})
 			})
 		},
   }
