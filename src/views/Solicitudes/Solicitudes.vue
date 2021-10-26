@@ -10,7 +10,7 @@
 					</template>
 				</v-snackbar>
 				<!-- CATALOGO DE COMPROMISOS -->
-				<v-card class="mt-3" outlined >
+				<v-card class="mt-3 pa-3" outlined  >
 					<v-row class="pa-1 py-0">
 
 						<v-col cols="12" sm="8" md="6">
@@ -90,11 +90,11 @@
 						@page-count="pageCount = $event"
 						dense
 			    >
-			    	<template v-slot:item.action="{ item }" > 
-			    		<v-btn  color="green" class="ma-1"  small dark  @click="verSolicitud(item)">
-								<v-icon> mdi-eye </v-icon>
-							</v-btn> 
-			    	</template>
+				    	<template v-slot:item.action="{ item }" > 
+				    		<v-btn  color="green" class="ma-1"  small dark  @click="verSolicitud(item)">
+									<v-icon> mdi-eye </v-icon>
+								</v-btn> 
+				    	</template>
 
 						<template v-slot:item.hora="{ item }">
 							{{ item.hora >='12:00'? item.hora +' '+'pm': item.hora+ ' '+'am' }}

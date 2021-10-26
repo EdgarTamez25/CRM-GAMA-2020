@@ -17,10 +17,10 @@
         <v-btn color="error"  @click="$emit('modal',false)" outlined><v-icon>clear</v-icon></v-btn>
       </v-col>
 
-      <v-col cols="12" >
+      <v-col cols="12" sm="6">
         <v-autocomplete
-          :items="clientes" v-model="cliente" item-text="nombre" tem-value="id" label="Clientes" 
-          dense filled hide-details color="celeste" append-icon="person" return-object clearable
+          :items="clientes" v-model="cliente" item-text="nombre" item-value="id" label="Clientes" 
+          dense filled hide-details color="celeste" return-object clearable
           :disabled="modoVista === 3? true:false"
         ></v-autocomplete>
       </v-col>
@@ -37,6 +37,13 @@
           v-model="codigo" label="Codigo" placeholder="Codigo de producto"
           hide-details dense filled clearable
         ></v-text-field>
+      </v-col>
+
+       <v-col cols="12" sm="6">
+         <v-autocomplete
+          :items="unidades" v-model="unidad" item-text="nombre" tem-value="id" label="Unidad" 
+          dense filled hide-details color="celeste" return-object clearable 
+        ></v-autocomplete>
       </v-col>
 
       <v-col cols="12" >
@@ -65,38 +72,8 @@
 						v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
 						dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" :disabled="modoVista === 3? true:false"
 				></v-select>
+      
       </v-col> 
-      <!--
-      <flexografia
-        :modalDDD="modalDDD"
-        :depto_id="depto.id" 
-        :modoVista="modoVista"
-        :Vista="Vista"
-        :parametros="data"
-        @modal="caracteristicasModal = $event" 
-        @detalle="detalle = $event"
-        v-if="activaFormulario===1"
-        class="pa-3 py-0"
-      />
-      <digital    
-        :modalDDD="modalDDD"
-        :depto_id="depto.id" 
-        :modoVista="modoVista"
-        :Vista="Vista"
-        :parametros="data"
-        @modal="caracteristicasModal = $event" 
-        @detalle="detalle = $event"
-        v-if="activaFormulario===3"
-        class="pa-3 py-0"
-
-      />
-  
-      <v-col cols="12" v-if="alertaFormulario">
-        <v-alert outlined type="error">
-          Que onda maaaann, lo sentimos este formulario no esta disponible :c 
-        </v-alert>
-      </v-col>
-      -->
 
       <v-col cols="12" class="text-right" >
         <v-btn color="green" dark  @click="validarInfomracion()">{{ modoVista === 1 ? 'CREAR PRODUCTO': 'ACTUAIZAR PRODUCTO' }}</v-btn>
@@ -118,7 +95,6 @@
 </template>
 
 <script>
-  // import  SelectMixin from '@/mixins/SelectMixin.js';
 	import  metodos from '@/mixins/metodos.js';
   import {mapGetters, mapActions} from 'vuex'
   import overlay        from '@/components/overlay.vue'
@@ -154,6 +130,9 @@
         deptos    : [],
         depto     : { id:null, nombre:''}, 
 
+        unidades  :[],
+        unidad    : { id:null, nombre:''},
+
         detalle: [],
         caracteristicasModal: false,
         activaFormulario: 0,
@@ -177,36 +156,25 @@
       ...mapGetters('ProductosxCliente' ,['Loading','getProductosxCli']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
       ...mapGetters('Login'    ,['getdatosUsuario']), 
 
-      GUARDAR_PRODUCTO(){
-        return Object.keys(this.detalle).length > 0 ? true: false;
-      }
+      // GUARDAR_PRODUCTO(){
+      //   return Object.keys(this.detalle).length > 0 ? true: false;
+      // }
 		},
 
 		watch:{ 
       data(){ 
         this.validarModoVista(); 	
       },
-
-      depto(){
-          // this.activaFormulario = null;
-          // this.alertaFormulario = false;
-
-        // if(this.depto.id === 1){
-        //   this.activaFormulario = this.depto.id;
-        // }else if(this.depto.id != null){
-        //   this.alertaFormulario = true;
-        // }
-      },
     },
 
 		methods:{
       ...mapActions('ProductosxCliente',['consultaProductosxCliente']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
       
-
-			validarModoVista(){
-        this.consultaDepartamentos();
-        this.consultar_Clientes().then(res =>{
-          if(this.modoVista === 3){
+			async validarModoVista(){
+        this.clientes = await this.consultar_Clientes();
+        this.deptos   = await this.consultaDepartamentos();
+        // this.unidades = await this.consulta_unidades();
+        if(this.modoVista === 3){
             // ASIGNAR VALORES AL FORMULARIO
             this.nombre      = this.data.nombre;
             this.codigo      = this.data.codigo;
@@ -214,29 +182,23 @@
             this.revision    = this.data.revision;
             this.fecha       = this.data.fecha;
             this.url         = this.data.url;
-            this.depto       = { id: this.data.dx }
-            let clienteACargar = res.filter( item => { 
-              if(this.data.id_cliente === item.id){ 
-                const cliente = new Object();
-                      cliente.id = item.id; cliente.nombre = item.nombre
-                      return cliente; 
-              } 
-            })  
-              this.cliente = clienteACargar[0];
+            // this.unidad      = this.data.unidad.id;
+            this.depto       = { id: this.data.dx };
+            this.cliente     = { id: this.data.id_cliente};
+        }else{
+          this.limpiarCampos()
+        }
 
-          }else{
-            this.limpiarCampos()
-          }
-        });
 			},
 
 			validarInfomracion(){
-				if(!this.cliente.id){ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE'                   , color:'error' }; return }
-				if(!this.codigo)	  { this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CÓDIGO'                    , color:'error' }; return }
+				if(!this.cliente.id){ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE' , color:'error' }; return }
+				if(!this.codigo)	  { this.alerta   = { activo: true, texto:'NO PUEDES OMITIR EL CÓDIGO'  , color:'error' }; return }
+				// if(!this.unidad.id)	{ this.alerta   = { activo: true, texto:'NO PUEDES OMITIR LA UNIDAD'  , color:'error' }; return }
 				// if(this.revision < 0) { this.alerta = { activo: true, texto:'LA REVISIÓN NO PUEDE SER MENOR A CERO'         , color:'error' }; return }
         // if(!this.url)			  { this.alerta   = { activo: true, texto:'DEBES AGREGAR LA DIRECCION DE LA FICHA TECNICA', color:'error' }; return }
         if(!this.depto.id)	{ this.alerta   = { activo: true, texto:'DEBES SELECCIONAR UN DEPARTAMENTO'             , color:'error' }; return }
-        if(this.depto.id === 1 && !this.detalle )   {this.alerta   = { activo: true, texto:'NO HAZ GUARDADO LAS CARACTERISTICAS DEL PRODUCTO', color:'error' }; return }
+        // if(this.depto.id === 1 && !this.detalle )   {this.alerta   = { activo: true, texto:'NO HAZ GUARDADO LAS CARACTERISTICAS DEL PRODUCTO', color:'error' }; return }
 				this.PrepararPeticion()
 			},
 
@@ -246,6 +208,7 @@
               producto.id_cliente  = this.cliente.id;
               producto.nombre      = this.nombre ? this.nombre: '';
               producto.codigo      = this.codigo ? this.codigo: '';
+              producto.unidad      = 1;//this.unidad.id;
               producto.descripcion = this.descripcion ? this.descripcion : '';
               producto.revision    = this.revision ? this.revision : 0;
               producto.url         = this.url ? this.url : '';
@@ -301,6 +264,7 @@
         this.depto       = { id: null, nombre:''};
         this.detalle     = [];
         this.cliente     = {id:null , nombre:''}
+        this.unidad      = {id:null , nombre:''}
 			},
 
 			mostrarError(mensaje){

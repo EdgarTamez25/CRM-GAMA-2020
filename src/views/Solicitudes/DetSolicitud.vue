@@ -9,9 +9,10 @@
     </v-snackbar>
 	
     <v-row justify="center">
-      <v-col cols="12" lg="9" xl="8">
-        <v-card class="pa-2" flat>
+      <v-col cols="12" lg="9" xl="8" >
+        <v-card class="pa-4" outlined>
           <v-row >
+
             <v-col cols="12" class="text-right">
               <v-card-actions class="py-0">
                 <v-btn text onClick="history.go(-1); return false;"> <v-icon large>mdi-arrow-left-thick</v-icon> </v-btn>  <v-spacer></v-spacer>
@@ -35,7 +36,8 @@
                       <tr>
                         <td class="font-weight-black">FECHA Y HORA</td>
                         <td class="subtitle-1">
-                          {{ solicitud.fecha}} ** {{ solicitud.hora >='12:00'? solicitud.hora +' '+'pm': solicitud.hora+ ' '+'am' }}
+                        {{  moment(solicitud.fecha + ' '  + solicitud.hora).format('llll') }}
+                         
                         </td>
                       </tr>
                       <tr>
@@ -77,19 +79,20 @@
                         <th class="text-left green white--text"> TIPO </th>
                         <th class="text-left green white--text"> PRODUCTO </th>
                         <th class="text-left green white--text"> CANTIDAD </th>
+                        <th class="text-left green white--text"> UNIDAD </th>
                         <th class="text-left green white--text"> DEPTO </th>
-
                         <th class="text-left green white--text"></th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item,i) in getDetalle" :key="i" >
-                        <td class="font-weight-black rosa--text"    v-if="item.tipo_prod ===1"> Producto Existente</td>
-                        <td class="font-weight-black orange--text"  v-if="item.tipo_prod ===2"> Modificación</td>
-                        <td class="font-weight-black celeste--text" v-if="item.tipo_prod ===3"> Nuevo Producto</td>
-                        <td class="font-weight-black">{{ item.codigo }}  </td>
-                        <td class="font-weight-black">{{ item.cantidad }}</td>
-                        <td class="font-weight-black">{{ deptos[item.id_depto-1].nombre }}</td>
+                      <tr v-for="(item,i) in getDetalle" :key="i" class="font-weight-black">
+                        <td class=" rosa--text"    v-if="item.tipo_prod ===1"> Producto Existente</td>
+                        <td class=" orange--text"  v-if="item.tipo_prod ===2"> Modificación</td>
+                        <td class=" celeste--text" v-if="item.tipo_prod ===3"> Nuevo Producto</td>
+                        <td >{{ item.codigo }}  </td>
+                        <td >{{ item.cantidad }}</td>
+                        <td >{{ item.unidad }}</td>
+                        <td >{{ nombres_deptos[item.id_depto-1] }}</td>
                         <td align="right">
                           <!-- MOSTRAR BOTON SI YA SE LEASIGNO UNA ACCION O SI ES UN PRODUCTO EXISTENTE -->
                           <template v-if ="solicitud.estatus != 4 && item.estatus != 4 && solicitud.procesado != 1">
@@ -152,7 +155,7 @@
                   <!-- //! CANTIDAD  -->
                   <v-col cols="12" sm="6" >
                     <v-text-field 
-                      v-model="cantidad" hide-details dense label="Cantidad" 
+                      v-model="cantidad" hide-details dense label="Cantidad" type="number"
                       filled color="celeste" placeholder="Cantidad de material"
                     />
                   </v-col>
@@ -203,8 +206,8 @@
         </v-card>
 
 
-        <v-dialog v-model="generarOT" fullscreen hide-overlay transition="dialog-bottom-transition">
-          <v-card class="pa-4" >
+        <v-dialog v-model="generarOT" width="900px" persistent transition="dialog-bottom-transition">
+          <v-card class="pa-3" >
             <generadorOT
               :solicitud="solicitud"
               :detallesol="getDetalle"
@@ -219,7 +222,6 @@
             <h3><strong>{{ textCorrecto }} </strong></h3>
           </v-card>
         </v-dialog>
-<!-- {{ partidaAEditar }} -->
 
       </v-col>
     </v-row>
@@ -272,6 +274,8 @@
 
       depto           : { id:null, nombre:''},
       deptos          : [],
+			nombres_deptos  : [],
+
 
       actualiza       : false,
 
@@ -335,9 +339,11 @@
     methods:{
       ...mapActions('Solicitudes'  ,['agregaProducto','actualizarProductoSol','consultaDetalle']), // IMPORTANDO USO DE VUEX (ACCIONES)
 
-      init(){
+      async init(){
         this.consultaDetalle(this.solicitud.id);
-        this.consultaDepartamentos();
+        this.nombres_deptos = await this.consulta_deptos_productos();
+        this.deptos         = await this.consultaDepartamentos();
+
       },
 
       validaInfoProducto(){
@@ -355,7 +361,8 @@
               payload.id_depto     = this.depto.id;
               payload.id_producto  = this.producto.id;
               payload.tipo_prod    = this.tproducto.id;
-              payload.cantidad     = this.cantidad
+              payload.cantidad     = this.cantidad;
+              payload.id_unidad    = 1 //this.unidad.id
         this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
       },
     

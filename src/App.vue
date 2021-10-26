@@ -1,32 +1,35 @@
 <template>
   <v-app id="inspire">
     <!-- <div :class="loading">Loading&#8230;</div> -->
-
-    <v-navigation-drawer app v-model="drawer" temporary width="300px" >
-
-        <v-list dense nav class="py-0">
-          <v-list-item two-line>
-            <v-list-item-avatar>
-              <img src="http://producciongama.com/CRM-GAMA-2020/imagenes/person.png">
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title> {{ getdatosUsuario.nombre }} </v-list-item-title>
-              <!-- <v-list-item-subtitle> {{ niveles[getdatosUsuario.nivel-1] }}</v-list-item-subtitle> -->
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-divider></v-divider>
-
-        </v-list>
-      
-     <v-list dense shaped>
+    <v-navigation-drawer 
+      v-model="drawer" 
+      app
+      :mini-variant.sync="mini"
+      class="elevation-3 mt-2"
+      style="border-radius:12px"
+      dark
+    >
+      <v-list dense nav class="py-0">
+        <v-list-item two-line  @click="mini= !mini">
+          <v-list-item-avatar size="30px">
+            <img src="http://producciongama.com/CRM-GAMA-2020/imagenes/person.png">
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title> {{ getdatosUsuario.nombre }} </v-list-item-title>
+            <!-- <v-list-item-subtitle> {{ niveles[getdatosUsuario.nivel-1] }}</v-list-item-subtitle> -->
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider></v-divider>
+      </v-list>
+    
+     <v-list dense>
         <template v-for="control in AppControl">
           <v-list-item
             v-for="(child, i) in control.admin"
             :key="i"
             :to="child.path"
             color= "rosa"
+            @click="mini= !mini"
           >
             <v-list-item-icon>
               <v-icon>{{ child.icon }}</v-icon>
@@ -42,10 +45,13 @@
         </template>
       </v-list>
       <!-- ADMINISTRACION -->
-      <v-list dense shaped>
+      <v-list dense >
         <template v-for="admin in AppControl">
 
-          <v-list-group  v-if="admin.administracion" :key="admin.title" v-model="admin.model" :prepend-icon="admin.model ? admin.icon : admin['icon-alt']"
+          <v-list-group 
+            v-model="admin.model" 
+            v-if="admin.administracion" :key="admin.title"  
+            :prepend-icon="admin.icon"
             color="rosa"
           >
             <template v-slot:activator>
@@ -63,27 +69,34 @@
               :key="i"
               :to="child.path"
               dense
-              
+              @click="mini= !mini"
             >
+               <v-list-item-action v-if="child.icon">
+                  <v-icon>{{ child.icon }}</v-icon>
+                </v-list-item-action>
+                
               <v-list-item-content >
                 <v-list-item-title >
                   {{ child.text }}
                 </v-list-item-title>
               </v-list-item-content>
-               <v-list-item-action v-if="child.icon">
-                <v-icon>{{ child.icon }}</v-icon>
-              </v-list-item-action>
+
+              
             </v-list-item>
           </v-list-group>
         </template>
       </v-list>
 
       <!-- CATALOGOS -->
-      <v-list dense shaped>
+      <v-list dense >
         <template v-for="cat in AppControl">
 
-          <v-list-group  v-if="cat.catalogos" :key="cat.title" v-model="cat.model" :prepend-icon="cat.model ? cat.icon : cat['icon-alt']"
-            color="rosa"
+          <v-list-group 
+             v-model="cat.model"
+             v-if="cat.catalogos" 
+             :key="cat.title"  
+             :prepend-icon="cat.icon"
+             color="rosa"
           >
             <template v-slot:activator>
               <v-list-item>
@@ -100,7 +113,11 @@
               :key="i"
               :to="child.path"
               dense
+              @click="mini= !mini"
             >
+            <v-list-item-action v-if="child.icon">
+                <v-icon>{{ child.icon }}</v-icon>
+              </v-list-item-action>
               
               <v-list-item-content >
                 <v-list-item-title >
@@ -108,30 +125,34 @@
                 </v-list-item-title>
               </v-list-item-content>
               
-              <v-list-item-action v-if="child.icon">
-                <v-icon>{{ child.icon }}</v-icon>
-              </v-list-item-action>
+              
             </v-list-item>
           </v-list-group>
         </template>
       </v-list>
 
-      <v-divider></v-divider>
-
+      <!--<v-divider></v-divider>
       <v-card-actions>
         <v-btn color="red" outlined block small @click="cerrar_sesion=true">Cerrar Sesión
           <v-icon right>mdi-exit-to-app</v-icon>
         </v-btn>
-      </v-card-actions>
+      </v-card-actions> -->
 
     </v-navigation-drawer>
 
     <!-- <v-content class="ma-3"> -->
-    <v-main >
-      <v-slide-y-transition mode="out-in">
-       <router-view/>
-      </v-slide-y-transition>
+    
+
+    <v-main>
+      <v-card  height="100%" style="border-radius: 0px;">
+        <v-main class="elevation-0 transparent pa-0" >
+          <v-slide-y-transition mode="out-in" >
+            <router-view  />
+          </v-slide-y-transition>
+        </v-main> 
+      </v-card>
     </v-main>
+
 
     <v-snackbar v-model="alerta.activo" multi-line :vertical="alerta.vertical" top right :color="alerta.color" > 
       <strong> {{alerta.texto}} </strong>
@@ -142,7 +163,7 @@
 
 
     <!-- MODAL PARA LA MONEDA PREDETERMINADA -->
-    <div class="text-center">
+    <!-- <div class="text-center">
       <v-dialog v-model="dialogMoneda" width="400"  >
         <v-card class="">
           <v-card-title class="headline white--text rosa"  >
@@ -173,29 +194,33 @@
 
         </v-card>
       </v-dialog>
-    </div>
+    </div> -->
 
-       <!-- v-if="getLogeado" -->
-    <v-app-bar app color="rosa" dark class="elevation-0" v-ripple dense >
-       <img src="http://producciongama.com/CRM-GAMA-2020/imagenes/logo.png" height="40" @click.stop="drawer = !drawer">
+       <!-- v-if="getLogeado" @click.stop="drawer = !drawer"-->
+    <v-app-bar app color="rosa" dark class="elevation-4 ma-2" v-ripple  style="border-radius:10px">
+       <img src="http://producciongama.com/CRM-GAMA-2020/imagenes/logo.png" height="45" @click.stop="drawer = !drawer; mini = false" >
       <v-spacer></v-spacer>
-
-      <v-toolbar-items text-right> 
+      
+      <v-toolbar-items @click="cerrar_sesion=true">
+        <v-icon right>mdi-exit-to-app</v-icon>
+      </v-toolbar-items>
+     <!-- <v-toolbar-items text-right> 
         <v-btn text color="white" dark @click="BuscarPredeterminado"> 
           <v-icon large>attach_money</v-icon>
         </v-btn>
-      </v-toolbar-items>
+      </v-toolbar-items> -->
     </v-app-bar>
 
     <v-dialog v-model="cerrar_sesion" width="400px">
-      <v-card color="grey darken-4" >
-        <v-card-title class=" white--text font-weight-medium my-5">
-         ¿Quiere cerrar la sesión?
+      <v-card >
+        <v-card-title class="font-weight-black text-center text-h5" style="word-break:normal;">
+         ¿Estás seguro de que quiere cerrar la sesión?
         </v-card-title>
+        <v-divider class="mt-3"></v-divider>
         <v-card-actions>
+          <v-btn color="morado"  dark @click="cerrar_sesion=false">no, Cancelar</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="celeste" outlined small @click="cerrar_sesion=false">Cancelar</v-btn>
-          <v-btn color="rosa" dark small @click="salir">Cerrar Sesión</v-btn>
+          <v-btn color="celeste" dark text  @click="salir">SÍ, Cerrar Sesión</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -242,7 +267,7 @@ export default {
         {
           icon: 'menu_book',
           title :' Administración',
-          model: true,
+          model: false,
           administracion: [ 
             // { text: 'Productos'            ,icon: 'print',path: '/productos'},
             { text: 'Productos por cliente',icon: 'mdi-printer-3d'    ,path: '/productos-por-cliente'},
@@ -256,7 +281,7 @@ export default {
         {
           icon: 'account_box',
           title :' Catálogos',
-          model: true,
+          model: false,
           catalogos: [ 
             { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
             { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
@@ -280,6 +305,8 @@ export default {
         alerta: { activo: false, texto:'', color:'error', vertical:true },
         loading: true,
         blocked: true,
+
+        mini: true,
   }),
 
   created(){
@@ -297,19 +324,19 @@ export default {
               this.blocked = false;  // DESACTIVO BLOCKEO
             }).catch( error=>{       // OBTENGO LA INFORMACION DEL USUARIO
               this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
-              window.location.href = this.urlSistemaPrincipal;
+              // window.location.href = this.urlSistemaPrincipal;
             });  
           }).catch( error =>{
-            window.location.href = this.urlSistemaPrincipal;
+            // window.location.href = this.urlSistemaPrincipal;
           })
           if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
             this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
           }
         }else{ 
-         window.location.href = this.urlSistemaPrincipal;
+        //  window.location.href = this.urlSistemaPrincipal;
         }
     } else {
-      window.location.href = this.urlSistemaPrincipal;
+      // window.location.href = this.urlSistemaPrincipal;
     }
     // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
     // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
@@ -319,7 +346,7 @@ export default {
 
   computed:{
     // IMPORTANDO USO DE VUEX - ZONAS (GETTERS)
-    ...mapGetters('Monedas' ,['getMonedas']), 
+    // ...mapGetters('Monedas' ,['getMonedas']), 
     ...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
 
   },
@@ -329,7 +356,7 @@ export default {
   },
 
   methods:{
-    ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
+    // ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
     ...mapActions('Login' ,['salirLogin','ObtenerDatosUsuario','validaSession']), 
 
     salir(){
@@ -339,24 +366,24 @@ export default {
       this.$store.dispatch("salir")
     },
 
-    BuscarPredeterminado(){
-      for(var i=0; i<this.getMonedas.length; i++){
-        if(this.getMonedas[i].predeterminado === 1){
-          this.id_moneda = this.getMonedas[i].id
-          this.Moneda    = this.getMonedas[i].codigo
-        }
-      } 
-      this.dialogMoneda = true; 
-    },
+    // BuscarPredeterminado(){
+    //   for(var i=0; i<this.getMonedas.length; i++){
+    //     if(this.getMonedas[i].predeterminado === 1){
+    //       this.id_moneda = this.getMonedas[i].id
+    //       this.Moneda    = this.getMonedas[i].codigo
+    //     }
+    //   } 
+    //   this.dialogMoneda = true; 
+    // },
 
-    MonedaPredeterminada(){
-      this.guardarMonedaPredeterminada(this.id_moneda).then(response =>{
-        if(response){
-          this.dialogMoneda = false; 
-          this.alerta = { activo: true, texto: "MONEDA ACTUALIZADA CORRECTAMENTE", color:'error', vertical:true }
-        }
-      })
-    },
+    // MonedaPredeterminada(){
+    //   this.guardarMonedaPredeterminada(this.id_moneda).then(response =>{
+    //     if(response){
+    //       this.dialogMoneda = false; 
+    //       this.alerta = { activo: true, texto: "MONEDA ACTUALIZADA CORRECTAMENTE", color:'error', vertical:true }
+    //     }
+    //   })
+    // },
 
     // colorBar(){
     //   this.color = this.colores[this.contador]  
@@ -376,7 +403,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
   
   /* .fondo{
     background: #ee9ca7;  
@@ -390,5 +417,20 @@ export default {
     height: 100%;
   } */
 
+   /* width */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: rgb(255, 255, 255);
+    /* background: transparent; */
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #bf1c7f;
+  }
  
 </style>

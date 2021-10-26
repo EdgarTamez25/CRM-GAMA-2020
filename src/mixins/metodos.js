@@ -21,8 +21,8 @@ export default {
 		consultar_Clientes(){  // AUTOCOMPLETE -> CLIENTES
 			return new Promise( resolve => {
 				this.$http.get('clientes').then((response)=>{
-					this.clientes = response.body //LLENNO ARRAY
-					resolve(this.clientes);
+					// this.clientes = response.body //LLENNO ARRAY
+					resolve(response.body);
 				}).catch(error =>{
 					console.log('error', error)
 				})
@@ -37,17 +37,26 @@ export default {
 			})
 		},
 
+		consulta_deptos_productos(){
+			let nombres_depos = [ 'FLEXOGRAFÍA', '', 'DIGITAL', 'ACABADOS', 'SERIGRAFÍA','EMPAQUE','SUBLIMACIÓN','TAMPOGRAFÍA','UV'];
+			return nombres_depos;
+		},
+
 		consultaDepartamentos(){
-			this.deptos = [	{ id:1, nombre:'FLEXOGRAFÍA'},
-											// { id:2, nombre:'BORDADOS'},
-											{ id:3, nombre:'DIGITAL'},
-											{ id:4, nombre:'ACABADOS'},
-											{ id:5, nombre:'SERIGRAFÍA'},
-											// { id:6, nombre:'EMPAQUE'},
-											// { id:7, nombre:'SUBLIMACIÓN'},
-											// { id:8, nombre:'TAMPOGRAFÍA'},
-											// { id:9, nombre:'UV'}
-										]
+			return new Promise( resolve => {
+				let departamentos = [	{ id:1, nombre:'FLEXOGRAFÍA'},
+															// { id:2, nombre:'BORDADOS'},
+															{ id:3, nombre:'DIGITAL'},
+															{ id:4, nombre:'ACABADOS'},
+															{ id:5, nombre:'SERIGRAFÍA'},
+															// { id:6, nombre:'EMPAQUE'},
+															// { id:7, nombre:'SUBLIMACIÓN'},
+															// { id:8, nombre:'TAMPOGRAFÍA'},
+															// { id:9, nombre:'UV'}
+														];
+				resolve(departamentos);
+
+			})
 		},
 
 		consultar_Vendedores(){  // AUTOCOMPLETE -> VENDEDORES
@@ -141,6 +150,14 @@ export default {
 		consultarSucursales(){ //SUCURSALES
 			this.$http.get('sucursales').then((response)=>{
 				this.sucursales = response.body
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
+
+		consulta_unidades(){ // UNIDADES PARA PRODUCTOS POR CLIENTE
+			this.$http.get('unidades').then((response)=>{
+				this.unidades = response.body 
 			}).catch(error =>{
 				console.log('error', error)
 			})
