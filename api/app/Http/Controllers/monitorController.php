@@ -11,17 +11,18 @@ class monitorController extends Controller
     
     public function ObtenerDatosMonitor(Request $req){
 
-    	$Monitor = DB::select('SELECT do.id, do.partida, do.id_ot, ot.id_cliente, c.nombre as nomcli, do.id_depto,
-																    do.id_producto, p.codigo, do.id_sucursal, s.nombre as nomsuc, do.cantidad, 
-															      do.fecha_progra, do.fecha_entrega,do.concepto, do.urgencia, do.razon, 
-															      do.estatus, u.nombre as solicitante
-															FROM det_ot do LEFT JOIN ot 		ON do.id_ot = ot.id
-																					   LEFT JOIN clientes c   ON ot.id_cliente = c.id
-																					   LEFT JOIN prodxcli p   ON do.id_producto = p.id
-																					   LEFT JOIN sucursales s ON do.id_sucursal = s.id
-															               LEFT JOIN users u      ON ot.id_solicitante = u.id
-															WHERE do.estatus = ? AND do.id_depto = ? AND do.creacion BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> id_depto, $req -> fecha1, $req -> fecha2 ]);
+    	$Monitor = DB::select('SELECT do.id, do.id_ot, do.id_producto, p.codigo,p.id_unidad, u.nombre as unidad,
+																		do.partida, do.cantidad,do.concepto, do.urgencia, do.razon, do.fecha_entrega,
+																		do.creacion, do.fecha_progra, do.finalizacion, do.estatus,
+																		ot.id_cliente, c.nombre as nomcli, ot.id_solicitante, us.nombre as solicitante,
+																		ot.id_solicitud, ot.oc
+															FROM det_ot do LEFT JOIN ot 			  ON do.id_ot          = ot.id
+																					   LEFT JOIN prodxcli p ON do.id_producto    = p.id
+																						 LEFT JOIN unidades u ON p.id_unidad       = u.id
+																						 LEFT JOIN clientes c ON ot.id_cliente     = c.id
+																						 LEFT JOIN users   us ON ot.id_solicitante = us.id
+															WHERE do.estatus = ? AND ot.fecha BETWEEN ? AND ? ORDER BY do.id DESC',
+			[$req -> estatus, $req -> fecha1, $req -> fecha2 ]);
 
 			return $Monitor ? $Monitor : [];
     }
