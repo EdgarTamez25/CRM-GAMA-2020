@@ -75,11 +75,11 @@ return [
         'sameElse' => 'L',
     ],
     'meridiem' => function ($hour) {
-        if ($hour < 12) {
+        if ($hour < 11) {
             return 'pagi';
         }
         if ($hour < 15) {
-            return 'tengah hari';
+            return 'tengahari';
         }
         if ($hour < 19) {
             return 'petang';

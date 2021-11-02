@@ -63,16 +63,12 @@ trait Test
      *
      * @param Closure|static|string|false|null $testNow real or mock Carbon instance
      * @param Closure|null $callback
-     *
-     * @return mixed
      */
     public static function withTestNow($testNow = null, $callback = null)
     {
         static::setTestNow($testNow);
-        $result = $callback();
+        $callback();
         static::setTestNow();
-
-        return $result;
     }
 
     /**

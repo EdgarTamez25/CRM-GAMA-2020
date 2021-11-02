@@ -12,7 +12,6 @@
 namespace Symfony\Component\Console\Command;
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
@@ -33,17 +32,11 @@ class Command
     // see https://tldp.org/LDP/abs/html/exitcodes.html
     public const SUCCESS = 0;
     public const FAILURE = 1;
-    public const INVALID = 2;
 
     /**
      * @var string|null The default command name
      */
     protected static $defaultName;
-
-    /**
-     * @var string|null The default command description
-     */
-    protected static $defaultDescription;
 
     private $application;
     private $name;
@@ -66,30 +59,9 @@ class Command
     public static function getDefaultName()
     {
         $class = static::class;
-
-        if (\PHP_VERSION_ID >= 80000 && $attribute = (new \ReflectionClass($class))->getAttributes(AsCommand::class)) {
-            return $attribute[0]->newInstance()->name;
-        }
-
         $r = new \ReflectionProperty($class, 'defaultName');
 
         return $class === $r->class ? static::$defaultName : null;
-    }
-
-    /**
-     * @return string|null The default command description or null when no default description is set
-     */
-    public static function getDefaultDescription(): ?string
-    {
-        $class = static::class;
-
-        if (\PHP_VERSION_ID >= 80000 && $attribute = (new \ReflectionClass($class))->getAttributes(AsCommand::class)) {
-            return $attribute[0]->newInstance()->description;
-        }
-
-        $r = new \ReflectionProperty($class, 'defaultDescription');
-
-        return $class === $r->class ? static::$defaultDescription : null;
     }
 
     /**
@@ -101,23 +73,8 @@ class Command
     {
         $this->definition = new InputDefinition();
 
-        if (null === $name && null !== $name = static::getDefaultName()) {
-            $aliases = explode('|', $name);
-
-            if ('' === $name = array_shift($aliases)) {
-                $this->setHidden(true);
-                $name = array_shift($aliases);
-            }
-
-            $this->setAliases($aliases);
-        }
-
-        if (null !== $name) {
+        if (null !== $name || null !== $name = static::getDefaultName()) {
             $this->setName($name);
-        }
-
-        if ('' === $this->description) {
-            $this->setDescription(static::getDefaultDescription() ?? '');
         }
 
         $this->configure();
@@ -347,8 +304,6 @@ class Command
      * This method is not part of public API and should not be used directly.
      *
      * @param bool $mergeArgs Whether to merge or not the Application definition arguments to Command definition arguments
-     *
-     * @internal
      */
     public function mergeApplicationDefinition(bool $mergeArgs = true)
     {
@@ -420,8 +375,8 @@ class Command
     /**
      * Adds an argument.
      *
-     * @param int|null $mode    The argument mode: InputArgument::REQUIRED or InputArgument::OPTIONAL
-     * @param mixed    $default The default value (for InputArgument::OPTIONAL mode only)
+     * @param int|null             $mode    The argument mode: InputArgument::REQUIRED or InputArgument::OPTIONAL
+     * @param string|string[]|null $default The default value (for InputArgument::OPTIONAL mode only)
      *
      * @throws InvalidArgumentException When argument mode is not valid
      *
@@ -440,9 +395,9 @@ class Command
     /**
      * Adds an option.
      *
-     * @param string|array|null $shortcut The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
-     * @param int|null          $mode     The option mode: One of the InputOption::VALUE_* constants
-     * @param mixed             $default  The default value (must be null for InputOption::VALUE_NONE)
+     * @param string|array|null         $shortcut The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
+     * @param int|null                  $mode     The option mode: One of the InputOption::VALUE_* constants
+     * @param string|string[]|bool|null $default  The default value (must be null for InputOption::VALUE_NONE)
      *
      * @throws InvalidArgumentException If option mode is invalid or incompatible
      *
@@ -508,7 +463,7 @@ class Command
      * @param bool $hidden Whether or not the command should be hidden from the list of commands
      *                     The default value will be true in Symfony 6.0
      *
-     * @return $this
+     * @return Command The current instance
      *
      * @final since Symfony 5.1
      */
@@ -605,14 +560,11 @@ class Command
      */
     public function setAliases(iterable $aliases)
     {
-        $list = [];
-
         foreach ($aliases as $alias) {
             $this->validateName($alias);
-            $list[] = $alias;
         }
 
-        $this->aliases = \is_array($aliases) ? $aliases : $list;
+        $this->aliases = $aliases;
 
         return $this;
     }
@@ -652,7 +604,7 @@ class Command
      */
     public function addUsage(string $usage)
     {
-        if (!str_starts_with($usage, $this->name)) {
+        if (0 !== strpos($usage, $this->name)) {
             $usage = sprintf('%s %s', $this->name, $usage);
         }
 

@@ -261,3 +261,6 @@ Route::get('obtener.MovimProd', 'movimProdController@obtenerMovimProd')->name('o
 Route::post('agregar.MovimProd', 'movimProdController@agregarMovimProd')->name('agregarMovimProd');
 Route::put('actualizar.MovimProd/{id}', 'movimProdController@actualizarMovimProd')->name('actualizarMovimProd');
 //==================================================================================================
+//=================================== DEPARTAMENTOS POR SUCURSAL ====================================
+    Route::get('obtener.deptos.por.suc/{id}', 'departamentosController@obtener_deptos_por_suc')->name('obtener_deptos_por_suc');
+

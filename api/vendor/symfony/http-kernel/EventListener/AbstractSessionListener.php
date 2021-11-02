@@ -52,23 +52,24 @@ abstract class AbstractSessionListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
-        if (!$event->isMainRequest()) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
+        $session = null;
         $request = $event->getRequest();
         if (!$request->hasSession()) {
             $sess = null;
             $request->setSessionFactory(function () use (&$sess) { return $sess ?? $sess = $this->getSession(); });
         }
 
-        $session = $this->container && $this->container->has('initialized_session') ? $this->container->get('initialized_session') : null;
+        $session = $session ?? ($this->container && $this->container->has('initialized_session') ? $this->container->get('initialized_session') : null);
         $this->sessionUsageStack[] = $session instanceof Session ? $session->getUsageIndex() : 0;
     }
 
     public function onKernelResponse(ResponseEvent $event)
     {
-        if (!$event->isMainRequest()) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
@@ -137,7 +138,7 @@ abstract class AbstractSessionListener implements EventSubscriberInterface
 
     public function onFinishRequest(FinishRequestEvent $event)
     {
-        if ($event->isMainRequest()) {
+        if ($event->isMasterRequest()) {
             array_pop($this->sessionUsageStack);
         }
     }
