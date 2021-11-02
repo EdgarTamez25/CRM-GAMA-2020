@@ -13,14 +13,8 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Exception;
 
-/**
- * @template T of CarbonInterface
- */
 trait CarbonTypeConverter
 {
-    /**
-     * @return class-string<T>
-     */
     protected function getCarbonClassName(): string
     {
         return Carbon::class;
@@ -37,7 +31,7 @@ trait CarbonTypeConverter
             return $type;
         }
 
-        if (str_contains($type, '(')) {
+        if (strpos($type, '(') !== false) {
             return preg_replace('/\(\d+\)/', "($precision)", $type);
         }
 
@@ -48,8 +42,6 @@ trait CarbonTypeConverter
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @return T|null
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
@@ -86,8 +78,6 @@ trait CarbonTypeConverter
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @return string|null
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
@@ -95,7 +85,7 @@ trait CarbonTypeConverter
             return $value;
         }
 
-        if ($value instanceof DateTimeInterface) {
+        if ($value instanceof DateTimeInterface || $value instanceof CarbonInterface) {
             return $value->format('Y-m-d H:i:s.u');
         }
 

@@ -38,14 +38,14 @@ class Command extends SymfonyCommand
     /**
      * The console command description.
      *
-     * @var string
+     * @var string|null
      */
     protected $description;
 
     /**
      * The console command help text.
      *
-     * @var string
+     * @var string|null
      */
     protected $help;
 
@@ -131,9 +131,7 @@ class Command extends SymfonyCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
-
-        return (int) $this->laravel->call([$this, $method]);
+        return (int) $this->laravel->call([$this, 'handle']);
     }
 
     /**
@@ -163,8 +161,6 @@ class Command extends SymfonyCommand
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function isHidden()
     {
@@ -173,8 +169,6 @@ class Command extends SymfonyCommand
 
     /**
      * {@inheritdoc}
-     *
-     * @return static
      */
     public function setHidden(bool $hidden)
     {

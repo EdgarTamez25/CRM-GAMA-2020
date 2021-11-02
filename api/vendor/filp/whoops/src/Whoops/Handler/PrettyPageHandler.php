@@ -27,7 +27,6 @@ class PrettyPageHandler extends Handler
     const EDITOR_ATOM = "atom";
     const EDITOR_ESPRESSO = "espresso";
     const EDITOR_XDEBUG = "xdebug";
-    const EDITOR_NETBEANS = "netbeans";
 
     /**
      * Search paths to be scanned for resources.
@@ -121,7 +120,6 @@ class PrettyPageHandler extends Handler
         "vscode"   => "vscode://file/%file:%line",
         "atom"     => "atom://core/open/file?filename=%file&line=%line",
         "espresso" => "x-espresso://open?filepath=%file&lines=%line",
-        "netbeans" => "netbeans://open/?f=%file:%line",
     ];
 
     /**
@@ -136,10 +134,10 @@ class PrettyPageHandler extends Handler
      */
     public function __construct()
     {
-        if (ini_get('xdebug.file_link_format') || get_cfg_var('xdebug.file_link_format')) {
+        if (ini_get('xdebug.file_link_format') || extension_loaded('xdebug')) {
             // Register editor using xdebug's file_link_format option.
             $this->editors['xdebug'] = function ($file, $line) {
-                return str_replace(['%f', '%l'], [$file, $line], ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format'));
+                return str_replace(['%f', '%l'], [$file, $line], ini_get('xdebug.file_link_format'));
             };
 
             // If xdebug is available, use it as default editor.
@@ -202,8 +200,7 @@ class PrettyPageHandler extends Handler
         $templateFile = $this->getResource("views/layout.html.php");
         $cssFile      = $this->getResource("css/whoops.base.css");
         $zeptoFile    = $this->getResource("js/zepto.min.js");
-        $prismJs = $this->getResource("js/prism.js");
-        $prismCss = $this->getResource("css/prism.css");
+        $prettifyFile = $this->getResource("js/prettify.min.js");
         $clipboard    = $this->getResource("js/clipboard.min.js");
         $jsFile       = $this->getResource("js/whoops.base.js");
 
@@ -226,8 +223,7 @@ class PrettyPageHandler extends Handler
             // @todo: Asset compiler
             "stylesheet" => file_get_contents($cssFile),
             "zepto"      => file_get_contents($zeptoFile),
-            "prismJs"   => file_get_contents($prismJs),
-            "prismCss"   => file_get_contents($prismCss),
+            "prettify"   => file_get_contents($prettifyFile),
             "clipboard"  => file_get_contents($clipboard),
             "javascript" => file_get_contents($jsFile),
 

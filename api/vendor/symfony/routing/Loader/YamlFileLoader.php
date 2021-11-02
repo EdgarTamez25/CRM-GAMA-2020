@@ -84,24 +84,6 @@ class YamlFileLoader extends FileLoader
         }
 
         foreach ($parsedConfig as $name => $config) {
-            if (0 === strpos($name, 'when@')) {
-                if (!$this->env || 'when@'.$this->env !== $name) {
-                    continue;
-                }
-
-                foreach ($config as $name => $config) {
-                    $this->validate($config, $name.'" when "@'.$this->env, $path);
-
-                    if (isset($config['resource'])) {
-                        $this->parseImport($collection, $config, $path, $file);
-                    } else {
-                        $this->parseRoute($collection, $name, $config, $path);
-                    }
-                }
-
-                continue;
-            }
-
             $this->validate($config, $name, $path);
 
             if (isset($config['resource'])) {
@@ -124,6 +106,10 @@ class YamlFileLoader extends FileLoader
 
     /**
      * Parses a route and adds it to the RouteCollection.
+     *
+     * @param string $name   Route name
+     * @param array  $config Route definition
+     * @param string $path   Full path of the YAML file being processed
      */
     protected function parseRoute(RouteCollection $collection, string $name, array $config, string $path)
     {
@@ -168,6 +154,10 @@ class YamlFileLoader extends FileLoader
 
     /**
      * Parses an import and adds the routes in the resource to the RouteCollection.
+     *
+     * @param array  $config Route definition
+     * @param string $path   Full path of the YAML file being processed
+     * @param string $file   Loaded file name
      */
     protected function parseImport(RouteCollection $collection, array $config, string $path, string $file)
     {

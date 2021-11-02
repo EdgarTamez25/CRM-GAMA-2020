@@ -1,20 +1,25 @@
 <?php
 
-declare(strict_types=1);
+/**
+ * This file is part of Collision.
+ *
+ * (c) Nuno Maduro <enunomaduro@gmail.com>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace NunoMaduro\Collision;
 
 use NunoMaduro\Collision\Contracts\ArgumentFormatter as ArgumentFormatterContract;
 
 /**
- * @internal
+ * This is an Collision Argument Formatter implementation.
  *
- * @see \Tests\Unit\ArgumentFormatterTest
+ * @author Nuno Maduro <enunomaduro@gmail.com>
  */
-final class ArgumentFormatter implements ArgumentFormatterContract
+class ArgumentFormatter implements ArgumentFormatterContract
 {
-    private const MAX_STRING_LENGTH = 1000;
-
     /**
      * {@inheritdoc}
      */
@@ -25,7 +30,7 @@ final class ArgumentFormatter implements ArgumentFormatterContract
         foreach ($arguments as $argument) {
             switch (true) {
                 case is_string($argument):
-                    $result[] = '"' . (mb_strlen($argument) > self::MAX_STRING_LENGTH ? mb_substr($argument, 0, self::MAX_STRING_LENGTH) . '...' : $argument) . '"';
+                    $result[] = '"' . $argument . '"';
                     break;
                 case is_array($argument):
                     $associative = array_keys($argument) !== range(0, count($argument) - 1);

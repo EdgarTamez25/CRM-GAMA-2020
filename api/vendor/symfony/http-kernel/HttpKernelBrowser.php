@@ -54,15 +54,13 @@ class HttpKernelBrowser extends AbstractBrowser
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param Request $request
+     * Makes a request.
      *
      * @return Response A Response instance
      */
     protected function doRequest($request)
     {
-        $response = $this->kernel->handle($request, HttpKernelInterface::MAIN_REQUEST, $this->catchExceptions);
+        $response = $this->kernel->handle($request, HttpKernelInterface::MASTER_REQUEST, $this->catchExceptions);
 
         if ($this->kernel instanceof TerminableInterface) {
             $this->kernel->terminate($request, $response);
@@ -72,9 +70,7 @@ class HttpKernelBrowser extends AbstractBrowser
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param Request $request
+     * Returns the script to execute when the request must be insulated.
      *
      * @return string
      */
@@ -128,7 +124,7 @@ EOF;
     }
 
     /**
-     * {@inheritdoc}
+     * Converts the BrowserKit request to a HttpKernel request.
      *
      * @return Request A Request instance
      */
@@ -190,9 +186,7 @@ EOF;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param Request $request
+     * Converts the HttpKernel response to a BrowserKit response.
      *
      * @return DomResponse A DomResponse instance
      */
