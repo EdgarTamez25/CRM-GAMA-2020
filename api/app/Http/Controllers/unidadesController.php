@@ -10,26 +10,32 @@ class unidadesController extends Controller
 {
     public function obtenerUnidades()
     {
-        $Unidad = unidades::all();
+        $Unidad = DB::select('SELECT * FROM unidades WHERE estatus = 1');
         return $Unidad;
     }
 
-		public function agregarUnidades(Request $request){
-			$addunidad = unidades::create($request->all());
+    public function agregarUnidades(Request $req)
+    {
+        $agregar = DB::table('unidades')->insertGetId(
+            [
+                'nombre' => $req->nombre,
+                'estatus' => $req->estatus
+            ]
+        );
+        return $agregar ? response("La Unidad se ah insertado correctamente", 200) :
+            response("Ocurrio un problema al crear la unidad, por favor intentelo mas tarde.", 500);
+    }
 
-			if($addunidad):
-				return "La Unidad se ah insertado correctamente";
-			else:
-				return "Ocurrio un problema al crear la unidad, por favor intentelo mas tarde.";
-			endif;
-
-		}
-
-		public function actualizarUnidades($id, Request $req){
-			$data = DB::update('UPDATE unidades SET nombre=:nombre, estatus=:estatus WHERE id =:id',
-													['nombre'=> $req -> nombre,'estatus'=> $req -> estatus, 'id'=> $id	]
-												);
-
-			return 'La Unidad se actualizo correctamente';
-	}
+    public function actualizarUnidades($id, Request $req)
+    {
+        $actualizar = DB::update('UPDATE unidades SET nombre=:nombre, estatus=:estatus
+                                            WHERE id =:id',
+            [
+                'nombre' => $req->nombre,
+                'estatus' => $req->estatus,
+                'id' => $id
+            ]);
+        return $actualizar ? response("La Unidad se ah actualizado correctamente", 200) :
+            response("Ocurrio un problema al actualizar la unidad, por favor intentelo mas tarde.", 500);
+    }
 }

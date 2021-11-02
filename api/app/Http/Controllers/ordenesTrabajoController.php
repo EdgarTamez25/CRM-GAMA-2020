@@ -9,7 +9,7 @@ class ordenesTrabajoController extends Controller
 {
     // !CATALOGO DE ORDENES TRABAJO
 	public function OrdenesTrabajo(Request $req){
-		$OT = DB::select('SELECT ot.id, ot.id_depto, ot.id_cliente, c.nombre as nomcli, ot.oc, ot.referencia, 
+		$OT = DB::select('SELECT ot.id, ot.id_depto, ot.id_cliente, c.nombre as nomcli, ot.oc, ot.referencia,
 		 											   ot.fecha, ot.hora, ot.estatus, ot.id_usuario , u.nombre as nomusuario
 												FROM ot LEFT JOIN clientes c ON ot.id_cliente  = c.id
 																LEFT JOIN users    u ON ot.id_usuario = u.id
@@ -20,7 +20,7 @@ class ordenesTrabajoController extends Controller
 
 	public function DetalleOT($id){
 		$detalleOT = DB::select('SELECT d.id, d.id_ot, d.id_producto, p.codigo as producto, d.cantidad, d.fecha_progra, d.fecha_entrega,
-																		d.concepto, d.urgencia, d.razon, d.estatus 
+																		d.concepto, d.urgencia, d.razon, d.estatus
 																FROM det_ot d LEFT JOIN prodxcli p ON d.id_producto = p.id
 														 WHERE d.id_ot = ?', [ $id]);
 		return $detalleOT ? $detalleOT : [];
@@ -39,13 +39,13 @@ class ordenesTrabajoController extends Controller
 					'hora' 		  	=> $req -> hora,
 					'id_creador'  => $req -> id_creador,
 			]);
-		
-			for($i=0;$i<count($req -> detalle); $i++):  
+
+			for($i=0;$i<count($req -> detalle); $i++):
 				// $this -> insertaDetalleOT($id_ot, $req -> fecha, $req -> detalle[$i]);
 				$id_det_ot   = $this -> insertaDetalleOT($id_ot, $req -> fecha, $req -> detalle[$i]);
 				$id_flexo_ot = $this -> insertaFlexoOT($id_det_ot, $req -> creacion, $req -> id_creador);
 			endfor;
-			
+
 			return response("La orden de trabajo se creo correctamente" ,200);
 	}
 
@@ -75,9 +75,9 @@ class ordenesTrabajoController extends Controller
 
 	public function ActualizaOT($id, Request $req){
 		$actualizaOT = DB::update('UPDATE ot SET id_vendedor=:id_vendedor, oc=:oc, referencia=:referencia
-																		WHERE id=:id',['id_vendedor'  => $req -> id_vendedor, 
-																									 'oc'      			=> $req -> oc, 
-																									 'referencia'   => $req -> referencia, 
+																		WHERE id=:id',['id_vendedor'  => $req -> id_vendedor,
+																									 'oc'      			=> $req -> oc,
+																									 'referencia'   => $req -> referencia,
 																									 'id' 					=> $id]);
 
 
@@ -117,12 +117,12 @@ class ordenesTrabajoController extends Controller
 
 		$actualizaPartida = DB::update('UPDATE det_ot SET id_producto=:id_producto, cantidad=:cantidad, fecha_entrega=:fecha_entrega,
 																											concepto=:concepto, urgencia=:urgencia, razon=:razon
-																		WHERE id=:id',['id_producto'   => $req -> id_producto, 
-																									 'cantidad'      => $req -> cantidad, 
-																									 'fecha_entrega' => $req -> fecha_entrega, 
-																									 'concepto'      => $req -> concepto, 
-																									 'urgencia'      => $req -> urgencia, 
-																									 'razon'         => $req -> razon, 
+																		WHERE id=:id',['id_producto'   => $req -> id_producto,
+																									 'cantidad'      => $req -> cantidad,
+																									 'fecha_entrega' => $req -> fecha_entrega,
+																									 'concepto'      => $req -> concepto,
+																									 'urgencia'      => $req -> urgencia,
+																									 'razon'         => $req -> razon,
 																									 'id' 					 => $req -> id]);
 
 
@@ -134,7 +134,7 @@ class ordenesTrabajoController extends Controller
 		$flexoOT = DB::select('SELECT id, estatus FROM flexo_ot WHERE id_det_ot = ?', [ $id]);
 		return $flexoOT ? $flexoOT : [];
 	}
-	
-	
+
+
 
 }
