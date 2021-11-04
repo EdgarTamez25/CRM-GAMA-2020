@@ -31,7 +31,6 @@ class OTContrller extends Controller
 	}
 
 	public function CrearOT(Request $req){
-		
 		$id_ot = DB::table('ot')->insertGetId(
 			[
 				  'id_cliente' 	   => $req -> id_cliente,
@@ -43,11 +42,21 @@ class OTContrller extends Controller
 					'id_creador'     => $req -> id_creador,
 			]);
 
-		for($i=0;$i<count($req -> detalle); $i++):  
-			 $this -> insertaDetalleOT($id_ot, $i+1, $req -> fecha, $req -> hora, $req -> detalle[$i]);
-		endfor;
+		if($req -> sistema === 'CRM-GAMA'):
+			for($i=0;$i<count($req -> detalle); $i++):  
+				$this -> insertaDetalleOT($id_ot, $i+1, $req -> fecha, $req -> hora, $req -> detalle[$i]);
+			endfor;
+			$this -> actualizaEstatusSolicitud($req -> id_solicitud, $req -> fecha_procesado);
+		endif; 
 
-		$this -> actualizaEstatusSolicitud($req -> id_solicitud, $req -> fecha_procesado);
+		if($req -> sistema === 'MRP'):
+			for($i=0;$i<count($req -> detalle); $i++):  
+				$this -> insertaDetalleOT2($id_ot, $i+1, $req -> fecha, $req -> hora, $req -> detalle[$i]);
+			endfor;
+		endif;
+
+
+
 		return $id_ot? response("La orden de trabajo se creo correctamente" ,200):
 									 response("Ocurrio un error, intentelo mas tarde." ,500);
 	}
@@ -62,6 +71,20 @@ class OTContrller extends Controller
 					'concepto' 		  => $detalle['concepto']['id'],
 					'urgencia'  		=> $detalle['urgencia']['id'],
 					'razon'  				=> $detalle['razon'],
+					'fecha_entrega' => $detalle['fecha'],     
+					'creacion'      => $fecha.' '.$hora,
+			]);
+	}
+
+	public function insertaDetalleOT2($id_ot,$partida,$fecha, $hora, $detalle){
+		DB::table('det_ot')->insertGetId(
+			[
+					'id_ot'	  			=> $id_ot,
+					'id_producto' 	=> $detalle['producto']['id'],
+					'partida'	  		=> $partida,
+					'cantidad' 			=> $detalle['cantidad'],
+					'concepto' 		  => $detalle['concepto']['id'],
+					'urgencia'  		=> $detalle['urgencia']['id'],
 					'fecha_entrega' => $detalle['fecha'],     
 					'creacion'      => $fecha.' '.$hora,
 			]);
@@ -99,13 +122,17 @@ class OTContrller extends Controller
 	}
 
 	public function ActualizaPartidaDetOT(Request $req){
-		$actualizaPartida = DB::update('UPDATE det_ot SET cantidad=:cantidad, concepto=:concepto, urgencia=:urgencia, razon=:razon
+		$actualizaPartida = DB::update('UPDATE det_ot SET cantidad=:cantidad, concepto=:concepto, 
+																											urgencia=:urgencia, razon=:razon,
+																											fecha_entrega=:fecha_entrega
 																		WHERE id=:id',[
 																									 'cantidad'      => $req -> cantidad, 
 																									 'concepto'      => $req -> concepto, 
 																									 'urgencia'      => $req -> urgencia, 
 																									 'razon'         => $req -> razon, 
-																									 'id' 					 => $req -> id]);
+																									 'fecha_entrega' => $req -> fecha_entrega, 
+																									 'id' 					 => $req -> id
+																								  ]);
 
 
 		return $actualizaPartida ? response("La partida se actualizo correctamente",200):

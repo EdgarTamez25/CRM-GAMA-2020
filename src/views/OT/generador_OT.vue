@@ -276,10 +276,10 @@
           hora           : this.traerHoraActual(),
           id_creador     : this.getdatosUsuario.id,
           detalle        : this.Detalle,
-          fecha_procesado: this.traerFechaActual() + ' ' + this.traerHoraActual()
+          fecha_procesado: this.traerFechaActual() + ' ' + this.traerHoraActual(),
+          sistema        : 'CRM-GAMA'
         };
 
-        console.log('OT', ot)
         this.$http.post('crear.orden.trabajo', ot).then( response =>{
             this.alerta = { activo: true, text: response.bodyText, color:'green'};
             let that = this; setTimeout(() => { that.$router.push({ name:'solicitudes' })}, 1500);
