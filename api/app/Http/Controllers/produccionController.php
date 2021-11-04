@@ -8,147 +8,65 @@ use Illuminate\Support\Facades\DB;
 class produccionController extends Controller
 {
     //
-    public function obtenerProduccion()
+    public function obtenerProgramacion()
     {
-        $produccion = DB::select('SELECT * FROM produccion WHERE estatus = 1');
-        return $produccion;
+        $programacion = DB::select('SELECT * FROM produccion WHERE estatus = 1');
+        return $programacion;
     }
 
     public function ciclaProgramacion(Request $req)
     {
-        if ($agregarProd->tipo_prog === 1):
-            // !    EL REQUEST CONTIENE EL EL TIPO_PROG PARA EVALUAR SI ES NECESARIO CICLAR EL OBJETO "req -> programacion"
-            for ($i = 0; $i < count($req->$programacion); $i++):
-                $this->agregarProgramacion($programacion, $id);
-                return ($id_produccion);
-            endfor;
-
-            $this->agregar_primer_registro();
-            return $actualizar ? response("La Unidad se ah actualizado correctamente", 200) :
-                response("Ocurrio un problema al actualizar la unidad, por favor intentelo mas tarde.", 500);
-        else:
-            $this->agregarProgramacion();
-        endif;
+        // return ($req->programacion[0]['depto']['id']);
+        for ($i = 0; $i < count($req->programacion); $i++):
+            $id_produccion = $this->agregarProgramacion($req, $req->programacion[$i]['depto']['id'], $req->programacion[$i]['sucursal']['id']);
+            $this->agregarPrimerMov($req->programacion[$i], $id_produccion, $req->id_producto, $req->creacion);
+        endfor;
+        return response("Se programó correctamente", 200);
     }
 
-    public function agregarProduccion(Request $req)
+    public function agregarProgramacion($data, $id_depto, $id_sucursal)
     {
         // !    EL REQUEST CONTIENE UN ARRAY DE OBJETOS LLAMADO PROGRAMACION "$req -> programacion"
         // ! 1. CREO EL REGISTRO PARA LA PRODUCCION
-        $agregarProd = DB::table('produccion')->insertGetId(
+        // return $item['sucursal'];
+        // return $item['sucursal'] -> id;
+        // return 'Sucursal: ' + $item['sucursal']['id'];
+        $agregarProg = DB::table('produccion')->insertGetId(
             [
-                'id_det_ot' => $req->id_det_ot,             //! 2 RECUPERO id_det_ot del request
-                'id_producto' => $req->id_producto,         //! 2 RECUPERO id_producto del request
-                'cant_sol' => $req->cant_sol,               //! 2 RECUPERO cant_sol del request
-                'urgencia' => $req->urgencia,               //! 2 RECUPERO urgencia del request
-                'total' => total,
-                'fecha_entrega' => $req->fecha_entrega,     //! 2 RECUPERO fecha_entrega del request
-                'id_creador' => $req->id_creador,           //! 2 RECUPERO id_creador del request
-                'creacion' => $req->creacion,               //! 2 RECUPERO creacion del request
-                'finalizacion' => finalizacion,
-                'tipo_prog' => $req->tipo_prog,             //! 2 RECUPERO tipo
-                'estatus' => $req->estatus
+                'id_det_ot' => $data['id_det_ot'],             //! 2 RECUPERO id_det_ot del data
+                'id_producto' => $data['id_producto'],         //! 2 RECUPERO id_producto del data
+                'cant_sol' => $data['cant_sol'],               //! 2 RECUPERO cant_sol del data
+                'urgencia' => $data['urgencia'],               //! 2 RECUPERO urgencia del data
+                'fecha_entrega' => $data['fecha_entrega'],     //! 2 RECUPERO fecha_entrega del data
+                'id_creador' => $data['id_creador'],           //! 2 RECUPERO id_creador del data
+                'creacion' => $data['creacion'],               //! 2 RECUPERO creacion del data
+                'tipo_prog' => $data['tipo_prog'],             //! 2 RECUPERO tipo
+                'cant_prog' => $data['cant_prog'],
+                'id_depto' => $id_depto,
+                'id_sucursal' => $id_sucursal
             ]
         );
-        $programacion = $req->programacion;                 //! 2 RECUPERO objeto programacion
-
-        return $agregarProd ? response("Se creó el registro de producción correctamente", 200) :  //! RETORNO id_produccion
-            response("Ocurrió un problema al crear el registro de producción, por favor intentelo más tarde.", 500);
+        return $agregarProg;
     }
 
-    // public function actualizarProduccion($id, Request $req)
-    // {
-    //     $actualizar = DB::update('UPDATE produccion
-    //                                 SET
-    //                                         id_det_ot=:id_det_ot,       id_producto=:id_producto,
-    //                                         cant_sol=:cant_sol,         urgencia=:urgencia,
-    //                                         total=:total,               fentrega=:fentrega,
-    //                                         id_creador=:id_creador,     creacion=:creacion,
-    //                                         finalizacion=:finalizacion, tipo_prog=:tipo_prog,
-    //                                         estatus=:estatus
-    //                                 WHERE id=:id',
-    //         [
-    //             'id_det_ot' => $req->id_det_ot,
-    //             'id_producto' => $req->id_producto,
-    //             'cant_sol' => $req->cant_sol,
-    //             'urgencia' => $req->urgencia,
-    //             'total' => $req->total,
-    //             'fentrega' => $req->fentrega,
-    //             'id_creador' => $req->id_creador,
-    //             'creacion' => $req->creacion,
-    //             'finalizacion' => $req->finalizacion,
-    //             'tipo_prog' => $req->tipo_prog,
-    //             'estatus' => $req->estatus,
-    //             'id' => $req->id
-    //         ]);
-    //     if ($actualizar):
-    //         return response("Se actualizó el registro de producción correctamente", 200);
-    //     else:
-    //         return response("Ocurrió un problema al actualizar el registro de producción, por favor intentelo más tarde.", 500);
-    //     endif;
-    // }
-
-
-    //      $id_det_ot = $req->id_det_ot;              // !2. RECUPERAR ID_DET_OT
-    //      $id_producto = $req->id_producto;          // !2. RECUPERAR ID_PRODUCTO
-    //      $cant_sol = $req->cant_sol;                // !2. RECUPERAR CANT_SOL
-    //      $urgencia = $req->urgencia;                // !2. RECUPERAR URGENCIA
-    //      $fentrega = $req->fentrega;                // !2. RECUPERAR FENTREGA
-    //      $id_creador = $req->id_creador;            // !2. RECUPERAR ID_CREADOR
-    //      $creacion = $req->creacion;                // !2. RECUPERAR CREACION
-    //      $tipo_prog = $req->tipo_prog;              // !2. RECUPERAR TIPO_PROG
-    //      $programacion = $req->programacion;        // !2. RECUPERAR PARCIALIDAD
-
-    public function agregarPrimerMov(Request $req)
+    public function agregarPrimerMov($item, $id_produccion, $id_producto, $creacion)
     {
         $agregar = DB::table('movim_prod')->insertGetId(
             [
-                'id_produccion' => $req->id_produccion,
-                'id_depto' => $req->id_depto,
-                'id_sucursal' => $req->id_sucursal,
-                'id_producto' => $req->id_producto,
-                'cant_sol' => $req->cant_sol,
-                'recibidas' => $req->recibidas,
-                'terminadas' => $req->terminadas,
-                'creacion' => $req->creacion,
-                'estatus_prod' => $req->estatus_prod,
-                'estatus' => $req->estatus
+                'id_produccion' => $id_produccion,
+                'id_depto' => $item['depto']['id'],
+                'id_sucursal' => $item['sucursal']['id'],
+                'id_producto' => $id_producto,
+                'cant_sol' => $item['cantidad'],
+                'creacion' => $creacion
             ]
         );
-        if ($agregar):
-            return response("Se creo el registro de produccion correctamente", 200);
-        else:
-            return response("Ocurrio un problema al crear el registro de produccion, por favor intentelo mas tarde.", 500);
-        endif;
     }
 
     public function obtenerMovimProd()
     {
         $produccion = DB::select('SELECT * FROM movim_prod WHERE estatus = 1');
         return $produccion;
-    }
-
-    public function agregarMovimProd(Request $req)
-    {
-        $agregar = DB::table('movim_prod')->insertGetId(
-            [
-                'id_produccion' => $req->id_produccion,
-                'id_depto' => $req->id_depto,
-                'id_sucursal' => $req->id_sucursal,
-                'id_producto' => $req->id_producto,
-                'cant_sol' => $req->cant_sol,
-                'recibidas' => $req->recibidas,
-                'terminadas' => $req->terminadas,
-                'creacion' => $req->creacion,
-                'estatus_prod' => $req->estatus_prod,
-                'estatus' => $req->estatus
-            ]
-        );
-        if ($agregar):
-            return response("Se creo el registro de produccion correctamente", 200);
-        else:
-            return response("Ocurrio un problema al crear el registro de produccion, por favor intentelo mas tarde.", 500);
-        endif;
     }
 
     public function actualizarMovimProd($id, Request $req)

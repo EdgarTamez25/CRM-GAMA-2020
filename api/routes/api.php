@@ -252,9 +252,9 @@ Route::post('agregar.unidades', 'unidadesController@agregarUnidades')->name('agr
 Route::put('actualizar.unidades/{id}', 'unidadesController@actualizarUnidades')->name('actualizarUnidades');
 //==================================================================================================
 //==================================== PRODUCCION =================================================
-Route::get('obtener.produccion', 'produccionController@obtenerProduccion')->name('obtenerProduccion');
-Route::post('agregar.produccion', 'produccionController@agregarProduccion')->name('agregarProduccion');
-Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
+Route::get('obtener.programacion', 'produccionController@obtenerProgramacion')->name('obtenerProgramacion');
+Route::post('agregar.programacion', 'produccionController@ciclaProgramacion')->name('ciclaProgramacion');
+// Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
 //==================================================================================================
 //=================================== MOVIM PROD ===================================================
 Route::get('obtener.MovimProd', 'movimProdController@obtenerMovimProd')->name('obtenerMovimProd');
