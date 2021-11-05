@@ -17,7 +17,7 @@ export default{
 			state.ot = data
     },
 		PARAMETROS(state, data){
-			state.filtros = data
+			state.parametros = data
 		},
 		
 	},
@@ -41,7 +41,7 @@ export default{
 		  return state.ot
     },
 		Parametros(state){
-			return state.filtros
+			return state.parametros
 		},
 	}
 }
