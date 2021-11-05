@@ -141,18 +141,6 @@
     </v-navigation-drawer>
 
     <!-- <v-content class="ma-3"> -->
-    
-
-    <v-main>
-      <v-card  height="100%" style="border-radius: 0px;">
-        <v-main class="elevation-0 transparent pa-0" >
-          <v-slide-y-transition mode="out-in" >
-            <router-view  />
-          </v-slide-y-transition>
-        </v-main> 
-      </v-card>
-    </v-main>
-
 
     <v-snackbar v-model="alerta.activo" multi-line :vertical="alerta.vertical" top right :color="alerta.color" > 
       <strong> {{alerta.texto}} </strong>
@@ -198,7 +186,14 @@
 
        <!-- v-if="getLogeado" @click.stop="drawer = !drawer"-->
     <v-app-bar app color="rosa" dark class="elevation-4 ma-2" v-ripple  style="border-radius:10px">
-       <img src="http://producciongama.com/CRM-GAMA-2020/imagenes/logo.png" height="45" @click.stop="drawer = !drawer; mini = false" >
+       <v-img 
+        src="http://producciongama.com/CRM-GAMA-2020/imagenes/logo.png" 
+        width="65" 
+        class="shrink mr-2 "
+        @click.stop="drawer = !drawer; mini = false" 
+        transition="fab-transition"
+        contain
+        />
       <v-spacer></v-spacer>
       
       <v-toolbar-items @click="cerrar_sesion=true">
@@ -231,6 +226,16 @@
         size="64"
       ></v-progress-circular>
     </v-overlay>
+
+    <v-main>
+      <v-card  height="100%" style="border-radius: 0px;">
+        <v-main class="elevation-0 transparent pa-0" >
+          <v-slide-y-transition mode="out-in" >
+            <router-view  />
+          </v-slide-y-transition>
+        </v-main> 
+      </v-card>
+    </v-main>
    
   </v-app>
 </template>

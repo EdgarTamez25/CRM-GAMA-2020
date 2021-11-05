@@ -179,6 +179,7 @@
 </template>
 
 <script>
+
 	var moment = require('moment'); moment.locale('es') /// inciar Moment 
 	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import  ExcelExport from '@/mixins/ExcelExport.js';

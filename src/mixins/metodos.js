@@ -164,5 +164,25 @@ export default {
 				})
 			})
 		},
+
+		consultar_deptos_por_suc(id_sucursal){ 
+			return new Promise( (resolve) => {
+				this.$http.get('obtener.deptos.por.suc/' + id_sucursal).then((response)=>{
+					resolve(response.body)
+				}).catch(error =>{
+					console.log('error depto_por_suc', error)
+				})
+			})
+		},
+		
+		consulta_prod_por_cliente(payload){  // AUTOCOMPLETE -> CLIENTES
+			return new Promise( resolve => {
+				this.$http.post('productos.cliente.deptos', payload).then((response)=>{
+					resolve(response.body);
+				}).catch(error =>{
+					console.log('error', error)
+				})
+			})	
+		},
   }
 }
