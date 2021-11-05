@@ -17,15 +17,14 @@ class CreateMovimProdTable extends Migration
             $table->bigIncrements('id');
             $table->integer('id_produccion');
             $table->integer('id_depto');
-            $table->integer ('id_sucursal');
+            $table->integer('id_sucursal');
             $table->integer('id_producto');
             $table->integer('cant_sol');
-            $table->integer('recibidas');
-            $table->integer('terminadas');
+            $table->integer('recibidas')->nullable();
+            $table->integer('terminadas')->nullable();
             $table->datetime('creacion');
-            $table->integer('estatus_prod');
+            $table->integer('estatus_prod')->default(1);
             $table->integer('estatus')->default(1);
-            $table->timestamps();
         });
     }
 
