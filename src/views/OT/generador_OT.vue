@@ -1,6 +1,13 @@
 <template>
   <v-row class="pa-4" >
     
+    <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+      <strong> {{alerta.text}} </strong>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+      </template>
+    </v-snackbar>
+
     <!-- //! TITULO DE LA PAGINA -->
     <v-col cols="12" class="py-0">
       <v-card-actions class="pa-0" >
@@ -59,14 +66,14 @@
           <tbody>
             <tr v-for="(item,i) in Detalle" :key="i" >
               <td class="font-weight-black" width="130px" >  {{ item.codigo }}  </td>
-              <td width="100px">{{ item.cantidad }}</td>
+              <td width="100px">{{ item.cantidad | currency(0) }}</td>
               <td width="100px"> {{ item.unidad }} </td>
               <td > 
                 <span v-if="item.concepto" > {{ item.concepto.nombre }} </span>
-                <span v-else> SIN CONCEPTO </span>
+                <span v-else > SIN CONCEPTO </span>
               </td>
               <td>
-                <span v-if="item.fecha"> {{ item.fecha }} </span>
+                <span v-if="item.fecha"> {{ moment(item.fecha).format('LL') }} </span>
                 <span v-else> SIN FECHA </span>
               </td>
               <td > 
@@ -117,12 +124,14 @@
         <v-card-text class="font-weight-black text-h6 text-center py-0"> DETALLE DE LA PARTIDA </v-card-text>
 
           <v-row>
+          <!--
             <v-col cols="12">
                <v-select
                 v-model="editDetalle.concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
                 outlined dense hide-details  placeholder="Concepto" return-object 
               ></v-select>
             </v-col>
+          -->
             <v-col cols="12"> 
               <v-text-field 
                 v-model="editDetalle.fecha" label="Fecha" 
@@ -162,9 +171,13 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import {mapGetters, mapActions} from 'vuex';
 	import metodos         from '@/mixins/metodos.js';
   import overlay         from '@/components/overlay.vue'
+   var accounting = require("accounting");
+  Vue.filter('currency', (val, dec) => { return accounting.formatMoney(val, '', dec) });
+
   export default {
     components:{
       overlay,
@@ -202,7 +215,7 @@
         editedIndex: -1,
         editDetalle : {
           id: null,
-          concepto: { id: null, nombre: '' },
+          concepto: { id: 1, nombre: 'PRODUCCION' },
           fecha: '',
           urgencia: { id:null, nombre: '' },
           razon: '',
@@ -233,35 +246,17 @@
 
     methods: {  
       init(){
-        console.log('detallesol', this.detallesol)
+        // console.log('detallesol', this.detallesol)
         this.Detalle = []; this.fecha = this.traerFechaActual();
         for(let i=0; i<this.detallesol.length; i++){
           this.Detalle.push({ 
               ...this.detallesol[i], 
-              concepto: null,
+              concepto     : { id: 1, nombre:'PRODUCCIÓN'},
               urgencia     : null,
               razon        : '',
               fecha        : this.traerFechaActual(),
               listo        : false 
           })
-
-          // this.Detalle.push( {
-          //     id           : this.detallesol[i].id,
-          //     id_solicitud : this.detallesol[i].id_solicitud,
-          //     id_depto     : this.detallesol[i].id_depto,
-          //     id_producto  : this.detallesol[i].id_producto,
-          //     nombre       : this.detallesol[i].nombre, 
-          //     codigo       : this.detallesol[i].codigo,
-          //     descripcion  : this.detallesol[i].descripcion,
-          //     tipo_prod    : this.detallesol[i].tipo_prod,
-          //     cantidad     : this.detallesol[i].cantidad,
-          //     estatus      : this.detallesol[i].estatus,
-          //     concepto     : null,
-          //     urgencia     : null,
-          //     razon        : '',
-          //     fecha        : this.traerFechaActual(),
-          //     listo        : false
-          // })
         }
       },
 
@@ -302,10 +297,10 @@
       },
 
       validar_detalle_partida(){
-        if(!this.editDetalle.concepto){
-            this.alerta = { activo: true, text:`Aun no seleccionas el concepto para el producto ${ this.editDetalle.codigo }. `, color:'error'};
-            return
-        }
+        // if(!this.editDetalle.concepto){
+        //     this.alerta = { activo: true, text:`Aun no seleccionas el concepto para el producto ${ this.editDetalle.codigo }. `, color:'error'};
+        //     return
+        // }
         if(!this.editDetalle.urgencia){
           this.alerta = { activo: true, text:`Aun no seleccionas la urgencia del producto ${ this.editDetalle.codigo }.`, color:'error'};
           return;

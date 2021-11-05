@@ -1,5 +1,5 @@
 <template>
-	<v-container>
+	<v-container class="pa-0 py-0">
 		<v-row justify="center">
 			<v-col cols="12" >
 				
@@ -11,15 +11,15 @@
         </v-snackbar>
         
 				<v-card-actions class="pa-0" >
-					<!-- <h3> <strong> {{ modoVista === 1? 'NUEVA ORDEN DE TRABJO':'EDITAR ORDEN DE TRABAJO' }} </strong></h3>  -->
-					<h3> <strong> {{ modoVista === 1? 'NUEVA ORDEN DE TRABJO':'EDITAR ORDEN DE TRABAJO' }} </strong></h3> 
+					<v-card-text class="font-weight-black text-h6">  {{ modoVista === 1? 'NUEVA ORDEN DE TRABJO':'DETALLE ORDEN DE TRABAJO' }} </v-card-text> 
 					<v-spacer></v-spacer>
-					<v-btn color="error" filled @click="$emit('modal',false)" ><v-icon>clear</v-icon></v-btn>
+					<v-btn color="error" fab small @click="$emit('modal',false)" ><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
-				<!-- <v-divider class="mt-2"></v-divider> -->
-				<v-row>
 
-          <v-col cols="12" sm="8"  >
+				<v-row>
+        <!-- VISTA EN MODO EDITAR -->
+          <!-- RESUMEN DE LA ORDEN DE TRABAJO  -->
+          <v-col cols="12" sm="8" v-if="modoVista === 2">
             <v-card outlined>
               <v-simple-table dense >
                 <template v-slot:default>
@@ -33,9 +33,10 @@
                       <td class="subtitle-1">{{ parametros.solicitante }}</td>
                     </tr>
                     <tr>
-                      <td class="font-weight-black">SOLICITUD</td>
-                      <td class="subtitle-1"> {{ parametros.id_solicitud }}
-                      </td>
+                      <td class="font-weight-black">SOLICITUD </td>
+                      <td class="subtitle-1" v-if="parametros.id_solicitud"> {{ parametros.id_solicitud }}</td>
+                      <td class="subtitle-1" v-else> S/REFERENCIA</td>
+
                     </tr>
                     <tr>
                       <td class="font-weight-black">CREACIÓN</td>
@@ -46,74 +47,23 @@
               </v-simple-table>
             </v-card>
           </v-col>
-
-            <v-col cols="12" sm="4">
-              <v-text-field
-                v-model="orden_compra" label="Orden de compra" hide-details dense filled clearable 
-              ></v-text-field>
-              <v-btn 
-                  v-if="modoVista===2 && parametros.estatus != 3 " 
-                  :disabled="orden_compra? false:true" 
-                  @click="PrepararPeticion()"
-                  color="rosa" 
-                  dark 
-                  block
-                  class="mt-2"
-              >  Actualizar OC 
-              </v-btn>
-            </v-col>
-
-				<!--	<v-col cols="12" sm="6" >   VENDEDORES 
-						<v-autocomplete
-							:items="usuarios" v-model="usuario" item-text="nombre" tem-value="id" label="Responsable" 
-							dense filled hide-details color="celeste" append-icon="persons" return-object disabled
-						></v-autocomplete>
-					</v-col> -->
-
-				<!--	<v-col cols="12" sm="6" >  CLIENTE 
-						<v-autocomplete
-							:items="clientes" v-model="cliente" item-text="nombre" item-value="id" label="Clientes" 
-							dense filled hide-details color="celeste" append-icon="people" return-object
-              :disabled="detalle.length? true: false"
-						></v-autocomplete>
-					</v-col> -->
-
-         
-
-           <!-- <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="id_solicitud" label="Solicitud" hide-details dense filled clearable disabled
-            ></v-text-field>
-          </v-col> -->
-
-          <!-- <v-col cols="12" sm="6"  >
-            <v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="fecha1" label="Fecha entrega" append-icon="event" readonly v-on="on"
-                    dense hide-details color="celeste" filled
-                ></v-text-field>
-              </template>
-              <v-date-picker v-model="fecha1" locale="es-es" color="rosa"  scrollable>
-                <v-spacer></v-spacer>
-                <v-btn text small color="gris" @click="fechamodal1 = false">Cancelar</v-btn>
-                <v-btn dark small color="rosa" @click="$refs.fecha1.save(fecha1)">OK</v-btn>
-              </v-date-picker>
-            </v-dialog>
-          </v-col> -->
-
-         <!-- <v-col cols="12" class="text-right" >
-            <v-btn v-if="modoVista===2 && parametros.estatus != 3 " :disabled="orden_compra? false:true" 
-                   color="rosa" dark @click="PrepararPeticion()">  Actualizar Orden de trabajo 
-            </v-btn>
-          </v-col> -->
-
           
-          <!-- <v-col cols="12" sm="4" class="py-0 text-right">
-            <v-btn v-if="modoVista===2" color="gris" dark block small @click="FormularioProductos = !FormularioProductos"> 
-              {{ FormularioProductos ? 'Esconder Formulario': 'Habilitar Formulario' }}  
+          <!-- CAMPO DE ORDEN DE COMPRA  -->
+          <v-col cols="12" sm="4" v-if="modoVista === 2">
+            <v-text-field
+              v-model="orden_compra" label="Orden de compra" hide-details dense filled clearable 
+            ></v-text-field>
+            <v-btn 
+                v-if="modoVista===2 && parametros.estatus != 3 " 
+                :disabled="orden_compra? false:true" 
+                @click="PrepararPeticion()"
+                color="rosa" 
+                dark 
+                block
+                class="mt-2"
+            >  Actualizar OC 
             </v-btn>
-          </v-col> -->
+          </v-col>
 
           <v-col cols="12" class="py-0 pa-0">
             <v-card-text class="font-weight-black text-h6 py-0 text-center" > 
@@ -121,26 +71,12 @@
             </v-card-text>
           </v-col>
 
-          <!--<v-col cols="12" sm="6">
-            <v-select
-              v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
-              dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled
-              
-            ></v-select> 
-          </v-col> -->
-          <!--<v-col cols="12" sm="6">   PRODUCTOS 
-            <v-autocomplete
-              :items="productos" v-model="producto" item-text="codigo" item-value="id" label="Productos" 
-              dense outlined hide-details color="celeste" append-icon="print" return-object
-              :disabled="cliente.id && modo ==1 ? false: true"
-            >
-            </v-autocomplete>
-          </v-col>-->
-
+          <v-col cols="12" class="mt-12" v-if="!detalle.length && modoVista != 1">
+            <loading  />
+          </v-col>
           <!-- TABLA DE PRODUCTOS POR SOLICITAR -->
-          <v-col cols="12">
-            <loading v-if="!detalle.length && modoVista != 1"/>
-            <v-card outlined v-else>
+          <v-col cols="12" v-else>
+            <v-card outlined >
               <v-simple-table fixed-header height="auto" >
                 <template v-slot:default>
                   <thead>
@@ -149,21 +85,23 @@
                       <th class="text-left"> Cantidad  </th>
                       <th class="text-left"> Unidad  </th>
                       <th class="text-left"> Concepto  </th>
-                      <!-- <th class="text-left"> Entrega </th> -->
+                      <th class="text-left"> Fecha entrega  </th>
                       <th class="text-left"> Urgencia  </th>
                       <th class="text-left"> Estatus</th>
-                      <th class="text-left"></th>
+                      <th class="text-left" v-if="parametros.estatus === 1"></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(item, i) in detalle" :key="i">
                       <td>{{ item.producto }}</td>
-                      <td>{{ item.cantidad }}</td>
+                      <td>{{ item.cantidad | currency(0) }}</td>
                       <td>{{ item.unidad }}</td>
                       <td>
                         <span v-if="item.concepto === 1"> PRODUCCION </span>
                         <span v-if="item.concepto === 2"> STOCK </span>
                       </td>
+                      <td> {{  moment(item.fecha_entrega).format('LL')  }} </td>
+                      
                       <td>
                         <span v-if="item.urgencia === 1"> NORMAL</span>
                         <span v-if="item.urgencia === 2"> URGENTE</span>
@@ -175,8 +113,24 @@
                         <span class="success--text font-weight-black" v-if="item.estatus === 3"> FINALIZADA</span>
                       </td>
                       <td v-if="item.estatus === 1" >
-                        <v-btn color="success" class="ma-1" icon v-if="parametros.estatus === 1" @click="rellenaCampos(item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
-                        <v-btn color="error"   class="ma-1" icon v-if="parametros.estatus === 1" @click="eliminaPartida(item.id)"> <v-icon>mdi-delete</v-icon> </v-btn>
+                        <v-btn 
+                          color="success" 
+                          class="ma-1" icon 
+                          v-if="parametros.estatus === 1 && item.concepto != 2" 
+                          @click="rellenaCampos(item)"
+                        > 
+                          <v-icon>mdi-pencil</v-icon> 
+                        </v-btn>
+
+                        <v-btn 
+                          color="error" 
+                          class="ma-1" icon 
+                          v-if="parametros.estatus === 1 && item.concepto != 2"
+                          @click="eliminaPartida(item.id)"
+                        > 
+                          <v-icon>mdi-delete</v-icon> 
+                        </v-btn>
+
                       </td>
                     </tr>
                   </tbody>
@@ -186,11 +140,8 @@
           </v-col>
           
 				</v-row>
-        <!-- <v-col cols="12" align="center" v-if="detalle.length && modoVista != 1">
-          <v-btn color="success" dark rounded small @click="imprimirPDF()">Imprimir</v-btn>
-        </v-col> -->
-        <v-col cols="12" class="mt-3"/>
         
+        <v-col cols="12" class="mt-3"/>
         
         <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
         <v-footer  absolute v-if="modoVista === 1">
@@ -200,6 +151,12 @@
         </v-footer>
         <!-- FORMULARIO EDICION-->
         <v-dialog v-model="FormularioProductos" width="600px">
+          <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+            <strong> {{alerta.texto}} </strong>
+            <template v-slot:action="{ attrs }">
+              <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+            </template>
+          </v-snackbar>
           <v-card class="pa-4">
             <v-row>
               <v-col cols="12" class="py-0 pa-0">
@@ -214,27 +171,37 @@
 
               <v-col cols="12" sm="6">
                 <v-text-field
-                  v-model="cantidad" label="Cantidad" hide-details dense outlined clearable type="number"
+                  v-model="cantidad" label="Cantidad" hide-details dense filled clearable type="number"
                 ></v-text-field>
+                <span class="font-weight-black mx-3" v-if="cantidad"> 
+                  {{ cantidad | currency(0) }}  
+                </span>
               </v-col>
 
+              <v-col cols="12" sm="6"  >
+                <v-text-field
+                  v-model="fecha1" label="Fecha entrega" 
+                  dense hide-details color="celeste" filled type="date"
+                ></v-text-field>
+              </v-col> 
+              <!--
               <v-col cols="12" sm="6">
                 <v-select
                   v-model="concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
-                  dense hide-details  label="Conceptos" return-object outlined
+                  dense hide-details  label="Conceptos" return-object filled
                 ></v-select> 
               </v-col>
-
+              -->
               <v-col cols="12" sm="6">
                 <v-select
-                  v-model="urgencia" :items="urgencias" item-text="nombre" item-value="id" outlined color="celeste" 
+                  v-model="urgencia" :items="urgencias" item-text="nombre" item-value="id" filled color="celeste" 
                   dense hide-details  label="Urgencia" return-object 
                 ></v-select> 
               </v-col>
 
-              <v-col cols="12" sm="6" > 
+              <v-col cols="12" sm="6" v-if="concepto.id === 1"> 
                 <v-textarea
-                  v-model ="razon" outlined label="Razon de la urgencia" rows="1" 
+                  v-model ="razon" filled label="Razon de la urgencia" rows="1" 
                   hide-details dense :disabled="urgencia.id != 1 && urgencia.id ? false:true"
                 ></v-textarea>
               </v-col>
@@ -243,15 +210,15 @@
                 <v-btn color="celeste" dark  @click="validarPartida(1) "> Agregar partida</v-btn> 
               </v-col>
 
-              <v-col class="mt-5"/>
-
-              <v-footer absolute fixed>
-                <v-spacer></v-spacer>
-                <v-btn dark color="success"  @click="validarPartida(2)" >
-                  Actualizar
-                </v-btn> 
-              </v-footer>
+              
             </v-row>
+            <div class="mt-12"></div>
+            <v-footer absolute fixed>
+              <v-spacer></v-spacer>
+              <v-btn dark color="success"  @click="validarPartida(2)" >
+                Actualizar
+              </v-btn> 
+            </v-footer>
           </v-card>
         </v-dialog>
 
@@ -286,14 +253,18 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import {mapGetters, mapActions} from 'vuex'
   import  metodos from '@/mixins/metodos.js';
-	import  jsPdf   from '@/mixins/jsPdf.js';
   import overlay     from '@/components/overlay.vue';
   import loading     from '@/components/loading.vue';
 
+  var accounting = require("accounting");
+  Vue.filter('currency', (val, dec) => { return accounting.formatMoney(val, '', dec) });
+
 	export default {
-		mixins:[metodos,jsPdf],
+		mixins:[metodos],
+		// mixins:[metodos,jsPdf],
 	  components: {
       overlay,
       loading
@@ -308,7 +279,7 @@
         idEditar: null,
         idAEliminar: null,
         alertaEliminar: false,
-        FormularioProductos: true,
+        FormularioProductos: false,
 
         orden_compra:'',
         id_solicitud:null,
@@ -343,14 +314,13 @@
 				Correcto    : false,
         textCorrecto: '',
         colorCorrecto: 'success',
-
 			}
 		},
 		
 		created(){
-      this.consultar_Usuarios();
-      this.consultar_Clientes();
-      this.consultaDepartamentos();
+      // this.consultar_Usuarios();
+      // this.consultar_Clientes();
+      // this.consultaDepartamentos();
 			this.validarModoVista(); 	  // VALIDO EL MODO DE LA VISTA
 		},
 			
@@ -378,18 +348,12 @@
     
       validarPartida(modo){
         this.modo = modo;
-        // if(!this.producto.id)	{ this.alerta = { activo: true, texto:'DEBES SELECCIONAR UN PRODUCTO' , color:'error'}; return }
         if(!this.cantidad)		{ this.alerta = { activo: true, texto:'DEBES ESPECIFICAR UNA CANTIDAD', color:'error'}; return }
         if(!this.concepto.id) { this.alerta = { activo: true, texto:'DEBES SELECCIONAR UN CONCEPTO' , color:'error'}; return }
-        // if(!this.fecha1)			{ this.alerta = { activo: true, texto:'DEBES SELECCIONAR UN PRODUCTO' , color:'error'}; return }
         if(!this.urgencia.id) { this.alerta = { activo: true, texto:'DEBES SELECCIONAR LA URGENCIA DE LA O.T.' , color:'error'}; return }
         if(this.urgencia.id != 1 && !this.razon) { 
             this.alerta = { activo: true, texto:'TIENES QUE ESCRIBIR LA RAZON DE LA URGENCIA.' , color:'error'}; return;
         }
-        // let error = false
-        // if(this.modo === 1){ for(let i=0; i<this.detalle.length; i++){ if(this.detalle[i].id_producto === this.producto.id){ error = true } } };
-        // if(error){ this.alerta = { activo: true, texto:'ESTE PRODUCTO YA EXISTE EN LA LISTA' , color:'error'}; return; }
-        
         this.modo === 1 ? this.agregarPartida(): this.editaPartida();
       },
 
@@ -429,12 +393,12 @@
         this.cantidad = item.cantidad;
         this.concepto = { id: item.concepto };
         this.depto    = { id: item.id_depto };
-        // this.fecha1   = item.fecha_entrega;
+        this.fecha1   = item.fecha_entrega;
         this.urgencia = { id: item.urgencia };
         this.razon    = item.razon;
         this.producto = { id: item.id_producto, nombre: item.producto };
 
-        this.modo     = 2;
+        this.modo = 2;
       },
 
       editaPartida(){
@@ -460,6 +424,7 @@
             id_producto : this.producto.id,
             cantidad    : this.cantidad,
             concepto    : this.concepto.id,
+            fecha_entrega : this.fecha1, 
             urgencia    : this.urgencia.id,
             razon       : this.razon? this.razon:''
           }
@@ -470,6 +435,7 @@
             this.limpiarCamposPartida();
             this.modo = 1 ;
           }).catch(error =>{ 
+            this.alerta = { activo: true, texto:error.bodyText , color:'error'}; 
             console.log('error', error)
           })
         }
@@ -518,18 +484,11 @@
 				if(this.modoVista === 2){
           this.FormularioProductos = false;
           // ASIGNAR VALORES AL FORMULARIO
-          // this.depto        = { id: this.parametros.id_depto }
           this.usuario      = { id: this.parametros.id_solicitante , nombre: this.parametros.solicitante }
 					this.cliente      = { id: this.parametros.id_cliente  , nombre: this.nomcli}
           this.orden_compra = this.parametros.oc;
           this.id_solicitud   = this.parametros.id_solicitud;
           this.consultaDetalle(this.parametros.id);
-
-          // this.consultaProdxCliente( this.cliente.id).then(response =>{
-          //   // console.log('response', response)
-          //   this.productos = response
-          // })
-
 				}else{
 				  this.limpiarCampos()
 				}
@@ -537,7 +496,6 @@
       
       consultaDetalle(id){
         this.$http.get('detalle.ot/'+ id).then((response)=>{
-          // console.log('det', response.body)
           this.detalle = response.body
         }).catch( error =>{ console.log('error', error) })
       },
@@ -570,6 +528,9 @@
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
 			},
 
+
+
+
 			Crear(payload){
 				this.$http.post('crear.orden.trabajo', payload).then((response)=>{
           // console.log('response', response)
@@ -594,11 +555,10 @@
 				this.consultaOT(this.Parametros) //ACTUALIZAR CONSULTA DE CLIENTES
         setTimeout(function(){ that.$emit('modal',false)}, 2000);
 				setTimeout(function(){ that.limpiarCampos()}, 2000);
-        
 			},
 
 			limpiarCampos(){
-        this.FormularioProductos = true;
+        // this.FormularioProductos = true;
         this.producto = { id:null, nombre:'' };
         this.cantidad = '';
         this.concepto = { id:null, nombre:'' };
@@ -617,26 +577,6 @@
 			mostrarError(mensaje){
 				this.snackbar=true; this.text=mensaje; this.color = "error";
       },
-      
-      imprimirPDF(){
-        // let deptos = this.deptos.filter(item =>{ if(this.depto.id === item.id ){ return item.nombre} })
-        let info = [ { text: "Orden de trabajo", value: this.parametros.id         }, 
-                    //  { text: "Departamento"    , value:deptos[0].nombre }, 
-                     { text: "Responsable"     , value: this.parametros.nomusuario ?  this.parametros.nomusuario : '' }, 
-                     { text: "Cliente"         , value: this.parametros.nomcli    },
-                     { text: "Orden de Compra" , value: this.parametros.oc         }, 
-                     { text: "Referencia"      , value: this.parametros.referencia }, 
-                    ];
-        let columnas = [  { title: "Producto" , dataKey: "producto"        }, 
-                          { title: "Cantidad" , dataKey: "cantidad"        }, 
-                          { title: "Concepto" , dataKey: "concepto"        }, 
-                          { title: "Programado"   , dataKey: "fecha_progra"    },
-                          { title: "Entrega"  , dataKey: "fecha_entrega"   },
-                          { title: "Urgencia" , dataKey: "urgencia"        }, 
-                        ];
-        
-        this.generatePDF(columnas, this.detalle, info);
-      }
       
 		}
 	}
