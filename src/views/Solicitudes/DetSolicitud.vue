@@ -90,7 +90,7 @@
                         <td class=" orange--text"  v-if="item.tipo_prod ===2"> Modificación</td>
                         <td class=" celeste--text" v-if="item.tipo_prod ===3"> Nuevo Producto</td>
                         <td >{{ item.codigo }}  </td>
-                        <td >{{ item.cantidad }}</td>
+                        <td >{{ item.cantidad | currency(0) }}</td>
                         <td >{{ item.unidad }}</td>
                         <td >{{ nombres_deptos[item.id_depto-1] }}</td>
                         <td align="right">
@@ -126,21 +126,30 @@
             </v-col>
 
             <v-dialog v-model="crudSolicitud" persistent max-width="700">
-              <v-card class="pa-4 ">
-                <v-card-text class=" subtitle-1 font-weight-black pa-0 " align="center">{{ modoVista === 1 ?'AGREGAR PRODUCTO':'EDITAR PRODUCTO'}}</v-card-text>
+              <v-card class="pa-3">
+                <v-card-actions>
+                  <v-card-text 
+                    class="text-h6 font-weight-black pa-0 " 
+                  >
+                      {{ modoVista === 1 ?'AGREGAR PRODUCTO':'EDITAR PRODUCTO'}}
+                  </v-card-text>
+                  <v-spacer></v-spacer>
+
+                  <v-btn color="error" fab small  @click="crudSolicitud = false" ><v-icon>clear</v-icon></v-btn>
+                </v-card-actions>
 
                 <v-row class="mt-4">
             
                   <v-col cols="12" sm="6"  >
                     <v-select
-                      v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
+                      v-model="depto" :items="deptos" item-text="nombre" item-value="id" filled color="celeste" 
                       dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"  
                     ></v-select>
                   </v-col>
 
                   <v-col cols="12" sm="6" class="" >
                     <v-select
-                      v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+                      v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" filled color="celeste" 
                       dense hide-details label="Tipo de producto" return-object 
                     ></v-select>
                   </v-col>
@@ -155,18 +164,20 @@
                   <!-- //! CANTIDAD  -->
                   <v-col cols="12" sm="6" >
                     <v-text-field 
-                      v-model="cantidad" hide-details dense label="Cantidad" type="number"
+                      v-model="cantidad" hide-details dense label="Cantidad de material" type="number"
                       filled color="celeste" placeholder="Cantidad de material"
                     />
+                    <span class="font-weight-black mx-3" v-if="cantidad"> 
+                      {{ cantidad | currency(0) }}  
+                    </span>
                   </v-col>
 
                   <v-col cols="12" class="my-3"/>
 
                   <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
                   <v-footer  absolute>
-                    <v-btn color="error" outlined @click="crudSolicitud = false"  class="ma-1">Cancelar </v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn color="success"   @click="validaInfoProducto()"> {{ modoVista ===1 ?'Guardar':'Actualizar' }}  </v-btn>
+                    <v-btn color="success"   @click="validaInfoProducto()"> {{ modoVista ===1 ?'Guardar':'Actualizar' }} Información </v-btn>
                   </v-footer>
                 </v-row>
 
@@ -232,12 +243,17 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import {mapGetters, mapActions} from 'vuex';
 	import metodos         from '@/mixins/metodos.js';
   import loading         from '@/components/loading.vue'
   import overlay         from '@/components/overlay.vue'
   import enviarADeptos   from '@/components/enviarADeptos.vue'
   import generadorOT    from '@/views/OT/generador_OT.vue'
+
+  var accounting = require("accounting");
+  Vue.filter('currency', (val, dec) => { return accounting.formatMoney(val, '', dec) });
+
 
   export default {
     mixins:[metodos],

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@amcharts/amcharts4": "^4.9.24",
+    "accounting": "^0.4.1",
     "file-saver": "^2.0.5",
     "jquery": "^3.5.1",
     "jspdf": "^2.2.0",
