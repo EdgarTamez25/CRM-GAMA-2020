@@ -1,0 +1,16 @@
+name: Check critical files
+
+on: [ pull_request ]
+
+jobs:
+  check-critical-files:
+    runs-on: ubuntu-latest
+    name: Check for critical files
+    steps:
+      - uses: codelytv/check-critical-files@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          critical_message: Si actualizas el vendor recuerda commitear el archivo composer.lock <b>critical file</b>
+          critical_files: |
+            /api/vendor/*
+            # .env
