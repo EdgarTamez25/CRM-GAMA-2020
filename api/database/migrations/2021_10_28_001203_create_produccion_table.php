@@ -19,7 +19,7 @@ class CreateProduccionTable extends Migration
             $table->integer('id_producto');
             $table->integer('cant_sol');
             $table->integer('urgencia');
-            $table->integer('total');
+            $table->integer('total')->default(0);
             $table->date('fecha_entrega');
             $table->integer('id_creador');
             $table->date('creacion');
