@@ -113,6 +113,7 @@ export default {
 			
 		},
 
+		// PRODUCTO POR CLIENTES POR DEPARTAMENTOS
 		consultaProdxClientexDepto( data){
 			return new Promise( (resolve, reject) => {
 				this.$http.post('productos.cliente.deptos',data).then((response)=>{
@@ -124,6 +125,7 @@ export default {
 			})
 		},
 
+		// PRODUCTO POR CLIENTES
 		consultaProdxCliente( id_cliente){
 			return new Promise( (resolve, reject) => {
 				this.$http.get('productos.cliente/'+ id_cliente).then((response)=>{
@@ -146,16 +148,18 @@ export default {
 		evaluarContenidoDetalles(data){
 			data.length > 2 ? true: false;
 		},
-
-		consultarSucursales(){ //SUCURSALES
+	
+		//SUCURSALES
+		consultarSucursales(){ 
 			this.$http.get('sucursales').then((response)=>{
 				this.sucursales = response.body
 			}).catch(error =>{
 				console.log('error', error)
 			})
 		},
-
-		consulta_unidades(){ // UNIDADES PARA PRODUCTOS POR CLIENTE
+		
+		// UNIDADES PARA PRODUCTOS POR CLIENTE
+		consulta_unidades(){ 
 			return new Promise( (resolve) => {
 				this.$http.get('obtener.unidades').then((response)=>{
 					resolve(response.body)
@@ -165,6 +169,18 @@ export default {
 			})
 		},
 
+		// PRODUCTOS POR CLIENTES
+		consulta_prod_por_cliente(payload){  
+			return new Promise( resolve => {
+				this.$http.post('productos.cliente.deptos', payload).then((response)=>{
+					resolve(response.body);
+				}).catch(error =>{
+					console.log('error', error)
+				})
+			})	
+		},
+		
+		// DEPARTAMENTOS POR SUCURSAL
 		consultar_deptos_por_suc(id_sucursal){ 
 			return new Promise( (resolve) => {
 				this.$http.get('obtener.deptos.por.suc/' + id_sucursal).then((response)=>{
@@ -174,15 +190,18 @@ export default {
 				})
 			})
 		},
-		
-		consulta_prod_por_cliente(payload){  // AUTOCOMPLETE -> CLIENTES
-			return new Promise( resolve => {
-				this.$http.post('productos.cliente.deptos', payload).then((response)=>{
-					resolve(response.body);
+
+		// PUESTOS POR DEPARTAMENTO 
+		consultar_puestos_por_depto(id_depto){ 
+			return new Promise( (resolve) => {
+				this.$http.get('obtener.puestos.por.depto/' + id_depto).then((response)=>{
+					resolve(response.body)
 				}).catch(error =>{
-					console.log('error', error)
+					console.log('error depto_por_suc', error)
 				})
-			})	
+			})
 		},
+
+		
   }
 }

@@ -71,10 +71,13 @@ class userController extends Controller
 			$nivelSistema = $this -> consultaNivelSistema($req);
 		endif;
 		$sistemas     = $this -> consultaAccesosASistemas($req -> id);
-		$datosUsuario = ["id"     => $usuario[0] -> id, 
-										 "nombre" => $usuario[0] -> nombre, 
-										 "correo" => $usuario[0] -> correo,
+		$datosUsuario = ["id"          => $usuario[0] -> id, 
+										 "empleado"    => $usuario[0] -> empleado,
+										 "nombre" 	   => $usuario[0] -> nombre, 
+										 "correo" 	   => $usuario[0] -> correo,
 										 "id_sucursal" => $usuario[0] -> id_sucursal,
+										 "id_puesto"   => $usuario[0] -> id_puesto,
+										 "id_depto"    => $usuario[0] -> id_depto,
 										 "nivel"  => $req -> sistema != 0 ? $nivelSistema[0] -> id_nivel : []
 										];
 		$Data = ["datosUsuario" => $datosUsuario, "sistemas" => $sistemas  ];
@@ -100,6 +103,7 @@ class userController extends Controller
 
 		$id_usuario = DB::table('users')->insertGetId(   //! INSERTO PRODUCTO EXISTENTE
 			[
+					'empleado'    =>  $req -> empleado,
 					'nombre' 			=>  $req -> nombre,
 					'usuario' 		=>  $req -> usuario,
 					'password'    =>  $req -> password,
@@ -122,12 +126,12 @@ class userController extends Controller
 	}
 
 	public function catalogoUsuarios(){
-			$data = DB::select('SELECT u.id, u.nombre, u.usuario, u.password, u.correo, u.nivel, 
+			$data = DB::select('SELECT u.id, u.empleado, u.nombre, u.usuario, u.password, u.correo, u.nivel, 
 																 u.id_sucursal, s.nombre as nomsuc, u.id_depto, d.nombre as nomdepto, 
 															   u.id_puesto, p.nombre as nompuesto, u.estatus
 													FROM users u 	LEFT JOIN sucursales s 	ON u.id_sucursal = s.id
-																				LEFT JOIN puestos p 		ON u.id_puesto 	= p.id
-																				LEFT JOIN departamentos d 	ON u.id_depto  	= d.id');
+																				LEFT JOIN puesto_por_depto p 		ON u.id_puesto 	= p.id
+																				LEFT JOIN depto_por_suc d 	ON u.id_depto  	= d.id');
 			return $data;
 	}
 
@@ -149,10 +153,11 @@ class userController extends Controller
 			return response("Lo sentimos, este usuario ya esta en uso.",500);
 		endif;
 
-		$usuario = DB::update('UPDATE users SET nombre=:nombre,usuario=:usuario, password=:password,correo=:correo, 
+		$usuario = DB::update('UPDATE users SET empleado=:empleado, nombre=:nombre,usuario=:usuario, password=:password,correo=:correo, 
 													 id_sucursal=:id_sucursal,id_puesto=:id_puesto,id_depto=:id_depto
 											WHERE id =:id',
-											[ 'nombre'			 => $req -> nombre, 
+											[ 'empleado'   => $req -> empleado,
+												'nombre'		 => $req -> nombre, 
 												'usuario'		 => $req -> usuario, 
 												'password'	 => $req -> password, 
 												'correo'		 => $req -> correo,
