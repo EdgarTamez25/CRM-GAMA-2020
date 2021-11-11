@@ -14,7 +14,7 @@ Route::post('iniciar.sesion.integral', 'userController@IniciarSesionIntegral')->
 Route::post('valida.sesion.activa', 'userController@validaSesionActiva')->name('validaSesionActiva');
 Route::post('obtener.datos.usuario', 'userController@obtenerDatosUsuario')->name('obtenerDatosUsuario');
 Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion');
-//===================================  NIVELES ====================================================
+//==================================== NIVELES ====================================================
     Route::get('niveles', 'nivelController@obtenerNiveles')->name('obtenerNiveles');
     Route::get('sistemas', 'sistemasController@obtenerSistemas')->name('obtenerSistemas');
     Route::get('consulta.accesos.usuario/{id}', 'sistemasController@AccesosASistemas')->name('AccesosASistemas');
@@ -22,7 +22,7 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::post('login.permisos', 'userController@SesionPermisos')->name('SesionPermisos');
     Route::get('gama.etiquetas', 'gamaEtiquetasController@modulosActivos')->name('modulosActivos');
     Route::post('login.programacion.flexo', 'userController@SesionProgramacionFlexo')->name('SesionProgramacionFlexo');
-//===================================  USUARIOS ====================================================
+//==================================== USUARIOS ====================================================
     Route::post('usuarios', 'userController@agregarUsuario')->name('agregarUsuario');
     Route::get('catusuarios', 'userController@catalogoUsuarios')->name('catalogoUsuarios');
     Route::put('usuarios/{id}', 'userController@actualizarUsuario')->name('actualizarUsuario');
@@ -30,40 +30,40 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::delete('usuarios/{id}', 'userController@delete')->name('deleteUsuarios');
     Route::get('choferes', 'userController@choferesAll')->name('choferesAll');
     Route::post('estatus.user', 'userController@estatusUser')->name('estatusUser');
-//===================================  VENDEDORES===================================================
+//==================================== VENDEDORES===================================================
     Route::get('vendedores', 'vendedoresController@vendedores')->name('vendedores');
     Route::get('vendxsuc/{suc}', 'vendedoresController@vendxSuc')->name('vendxSuc');
-//===================================  CLIENTES ====================================================
+//==================================== CLIENTES ====================================================
     Route::get('clientes.productos', 'clientesController@clientes')->name('Clientes');
     Route::get('clientes', 'clientesController@catClientes')->name('catClientes');
     Route::get('clientes.selector', 'clientesController@clientesSelector')->name('clientesSelector');
     Route::post('cliente', 'clientesController@add')->name('addCliente');
     Route::put('cliente/{id}', 'clientesController@update')->name('updateCliente');
     Route::post('cambia.estatus', 'clientesController@cambiaEstatus')->name('cambiaEstatus');
-//===================================  PROVEDORES ==================================================
+//==================================== PROVEDORES ==================================================
     Route::get('catproveedores', 'proveedoresController@getcatalogo')->name('getcatprov');
     Route::get('proveedores', 'proveedoresController@getAll')->name('getAllproveedores');
     Route::post('proveedores', 'proveedoresController@add')->name('addProveedor');
     Route::put('proveedores/{id}', 'proveedoresController@update')->name('updateProveedor');
     Route::post('cambia.estatus.p', 'proveedoresController@cambiaEstatusP')->name('cambiaEstatusP');
-//===================================  PRODUCTOS ===================================================
+//==================================== PRODUCTOS ===================================================
     Route::get('catproductos', 'productosController@getcatalogo')->name('getcatproducto');
     Route::get('productosxId/{id}', 'productosController@getcatalogoxId')->name('getcatalogoxId');
     Route::get('productos', 'productosController@getAll')->name('getAllproductos');
     Route::post('productos', 'productosController@add')->name('addProductos');
     Route::put('productos/{id}', 'productosController@update')->name('updateProductos');
-//===================================  SUCURSALES ==================================================
+//==================================== SUCURSALES ==================================================
     Route::get('sucursales', 'sucursalesController@getAll')->name('getAllSuc');
     Route::post('sucursales', 'sucursalesController@add')->name('addsuc');
     Route::put('sucursales/{id}', 'sucursalesController@update')->name('updatesuc');
-//===================================  ZONAS =======================================================
+//==================================== ZONAS =======================================================
     Route::get('zonas', 'zonasController@getAll')->name('getAllZonas');
     Route::get('catzonas', 'zonasController@getcatalogo')->name('getcatalogo');
     Route::post('zonas', 'zonasController@add')->name('addZonas');
     Route::put('zonas/{id}', 'zonasController@update')->name('updateZonas');
-//===================================  SUB ZONAS ===================================================
+//==================================== SUB ZONAS ===================================================
     Route::get('subzonas/{id}', 'subzonasController@SubzonaxZona')->name('SubzonaxZona');
-//===================================  CARTERAS ====================================================
+//==================================== CARTERAS ====================================================
     Route::get('carteras', 'carterasController@getAll')->name('getAllCarteras');
     Route::post('carteras', 'carterasController@add')->name('addCartera');
     Route::put('carteras/{id}', 'carterasController@update')->name('updateCartera');
@@ -93,25 +93,25 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
 // SE USA PARA LA MODAL DE PRECIOS
     Route::get('detalle_productos/{id}', 'preciosController@detalle_productos')->name('getdetalle_productos');
     Route::post('predeterminado', 'preciosController@predeterminado')->name('predeterminado');
-//================================== TIPOS PRECIOS ===============================================
+//==================================== TIPOS PRECIOS ===============================================
     Route::get('tipos-precios', 'tipo_precioController@getAll')->name('getAllTipoPrecio');
     Route::post('tipos-precios', 'tipo_precioController@add')->name('addTipoPrecio');
     Route::put('tipos-precios/{id}', 'tipo_precioController@update')->name('updateTipoPrecio');
-//================================== CATEGORIAS ==================================================
+//==================================== CATEGORIAS ==================================================
     Route::get('categorias', 'categoriasController@categorias')->name('categorias');
-//================================== COMPROMISOS =================================================
+//==================================== COMPROMISOS =================================================
     Route::post('compromisos', 'compromisosController@Compromisos')->name('Compromisos');
     Route::post('addcompromiso', 'compromisosController@addcompromiso')->name('addcompromiso');
     Route::put('putcompromiso/{id}', 'compromisosController@putcompromiso')->name('putcompromiso');
     Route::put('putcompromiso/{id}', 'compromisosController@putcompromiso')->name('putcompromiso');
     Route::post('fase.venta', 'compromisosController@FaseVenta')->name('FaseVenta');
-//================================== HISTORIAL ===================================================
+//==================================== HISTORIAL ===================================================
     Route::get('numero.orden/{id}', 'histrorialController@NumerodeOrden')->name('NumerodeOrden');
     Route::get('ver.resumen/{id}', 'histrorialController@VerResumen')->name('VerResumen');
     Route::post('historial', 'histrorialController@Historial')->name('Historial');
     Route::post('historialxvend', 'histrorialController@HistorialxVend')->name('HistorialxVend');
     Route::post('recotización', 'histrorialController@Recotización')->name('recotización');
-//================================== ENTREGAS ====================================================
+//==================================== ENTREGAS ====================================================
     Route::post('entrega.producto', 'entregasController@EntregarProducto')->name('EntregarProducto');
     Route::post('entrega.id', 'entregasController@entregabyid')->name('Entregabyid');
 //==================================== PROSPECTOS ==================================================
@@ -261,13 +261,20 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::post('agregar.unidades', 'unidadesController@agregarUnidades')->name('agregarUnidades');
     Route::put('actualizar.unidades/{id}', 'unidadesController@actualizarUnidades')->name('actualizarUnidades');
 //==================================== PRODUCCION ==================================================
-    Route::get('obtener.programacion', 'produccionController@obtenerProgramacion')->name('obtenerProgramacion');
-    Route::post('agregar.programacion.mrp', 'produccionController@ciclaProgramacion')->name('ciclaProgramacion');
+    Route::get('obtener.programacion'     , 'produccionController@obtenerProgramacion')      ->name('obtenerProgramacion');
+    Route::post('agregar.programacion.mrp', 'produccionController@ciclaProgramacion')        ->name('ciclaProgramacion');
+    Route::post('obtener.datos.produccion', 'produccionController@obtener_datos_produccion') ->name('obtener_datos_produccion');
+
     // Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
 //=================================== MOVIM PROD ===================================================
     Route::get('obtener.MovimProd', 'movimProdController@obtenerMovimProd')->name('obtenerMovimProd');
     Route::post('agregar.MovimProd', 'movimProdController@agregarMovimProd')->name('agregarMovimProd');
     Route::put('actualizar.MovimProd/{id}', 'movimProdController@actualizarMovimProd')->name('actualizarMovimProd');
 //=================================== DEPARTAMENTOS POR SUCURSAL ====================================
-    Route::get('obtener.deptos.por.suc/{id}', 'departamentosController@obtener_deptos_por_suc')->name('obtener_deptos_por_suc');
+    Route::get('obtener.deptos.por.suc/{id}'   , 'departamentosController@obtener_deptos_por_suc')->name('obtener_deptos_por_suc');
+
+//=================================== PUESTOS POR SUCURSAL ==========================================
+    Route::get('obtener.puestos.por.depto/{id}', 'puestosController@obtener_puestos_por_depto')->name('obtener_puestos_por_depto');
+
+    
 

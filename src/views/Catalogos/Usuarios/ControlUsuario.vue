@@ -11,101 +11,114 @@
 				</v-snackbar>
 				
 				<v-card-actions class="pa-0" >
-					<h3> <strong> {{ param === 1? 'Nuevo Usuario':'Editar Usuario' }} </strong></h3> 
+					<h3> <strong> {{ param === 1? 'NUEVO USUARIO':'EDITAR USUARIO' }} </strong></h3> 
 					<v-spacer></v-spacer>
-					<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
+					<v-btn color="error" fab small @click="$emit('modal',false)" ><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
 
-				<v-divider class="ma-2"></v-divider>
+				<!-- <v-divider class="ma-2"></v-divider> -->
 				<!-- <v-form> -->
 				<v-row>
-					<v-col cols="12" sm="6">
+
+					<v-col cols="12" >
 						<v-text-field
+							v-model ="nombre"
 							append-icon="person"
 							label="Nombre"
 							placeholder="Nombre del empleado"
 							hide-details
 							dense
 							clearable
-							v-model ="nombre"
-							outlined
+							filled
 						></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<v-text-field
+							v-model="empleado"
+							label="# Empleado"
+							placeholder="# Empleado"
+							hide-details
+							dense
+							clearable
+							filled
+						></v-text-field>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<v-text-field
+							v-model ="usuario"
 							append-icon="android"
 							label="Usuario"
 							placeholder="Usuario "
 							hide-details
 							dense
 							clearable
-							v-model ="usuario"
-							outlined
+							filled
 						></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<v-text-field
+							v-model="correo"
 							append-icon="email" 
 							label="Correo"
 							placeholder="Correo electronico"
 							hide-details
 							dense
 							clearable
-							v-model="correo"
-							outlined
+							filled
 						></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6"> 
-						<v-select
-							:items="sucursales"
-							item-text="nombre"
-							item-value="id"
-							label="Sucursal"
-							placeholder="Sucursal"
-							append-icon="store"
-							dense
-							hide-details
-							clearable
-							v-model="sucursal"
-							outlined
-							return-object
-						></v-select>
-					</v-col>
-
-					<v-col cols="12" sm="6">
 						<v-autocomplete
-							:items="departamentos" v-model="departamento" item-text="nombre" item-value="id" label="Departamento" 
-							dense outlined hide-details return-object color="celeste" append-icon="folder_shared"
+							v-model="sucursal" :items="sucursales"  item-text="nombre" item-value="id" label="Sucursales" 
+							dense filled hide-details return-object color="celeste" append-icon="folder_shared"
 						></v-autocomplete>
 					</v-col>
 
 					<v-col cols="12" sm="6">
+						<v-autocomplete
+							v-model="departamento" :items="departamentos" item-text="nombre" item-value="id" label="Departamento" 
+							dense filled hide-details return-object color="celeste" append-icon="folder_shared"
+							:disabled="sucursal.id? false: true"
+						></v-autocomplete>
+					</v-col>
+
+					<v-col cols="12" sm="6" >
 						<v-autocomplete
 							:items="puestos" v-model="puesto" item-text="nombre" item-value="id" label="Puesto" 
-							dense outlined hide-details return-object color="celeste" append-icon="mdi-account-tie"
+							dense filled hide-details return-object color="celeste" append-icon="mdi-account-tie"
+							:disabled="departamento.id? false: true" 
 						></v-autocomplete>
 					</v-col>
 
-					<v-col cols="12" sm="6">
-						<v-autocomplete
-							:items="sistemas" v-model="sistema" item-text="nombre" item-value="id" label="Sistemas" 
-							dense outlined hide-details return-object color="celeste" append-icon="smi-desktop-classic"
-						></v-autocomplete>
+					<!-- ACCESOS A SISTEMA -->
+					<v-col cols="12">
+						<v-divider class="rosa"></v-divider>
+						<v-row>
+							<v-col cols="12" sm="6" >
+								<v-autocomplete
+									:items="sistemas" v-model="sistema" item-text="nombre" item-value="id" label="Sistemas" 
+									dense filled hide-details return-object color="celeste" append-icon="smi-desktop-classic"
+								></v-autocomplete>
+							</v-col>
+
+							<v-col cols="12" sm="6">
+								<v-autocomplete
+									:items="nivelesxsistema" v-model="nivel" item-text="nombre" item-value="id" label="Niveles" 
+									dense filled hide-details return-object color="celeste" append-icon="show_chart"
+								></v-autocomplete>
+							</v-col>
+
+							<v-col cols="12" sm="6" offset-sm="6" class="py-0 text-right" v-if="!editarAcceso">
+								<v-btn block color="celeste" dark @click="sistemaUsuario(modo=1)"> Agregar acceso <v-icon>add</v-icon>  </v-btn>
+							</v-col>
+						</v-row>
 					</v-col>
 
-					<v-col cols="12"  sm="6">
-						<v-autocomplete
-							:items="nivelesxsistema" v-model="nivel" item-text="nombre" item-value="id" label="Niveles" 
-							dense outlined hide-details return-object color="celeste" append-icon="show_chart"
-						></v-autocomplete>
-					</v-col>
-
-					<v-col cols="12" class="py-0 text-right" v-if="!editarAcceso">
-						<v-btn small block color="celeste" dark @click="sistemaUsuario(modo=1)"> Agregar acceso <v-icon>add</v-icon>  </v-btn>
-					</v-col>
+					
 
 					<v-col  cols="6"   class="py-0" v-if="editarAcceso">
 						<v-btn small block  color="error" dark @click="editarAcceso= false"> Cancelar <v-icon right>mdi-close</v-icon> </v-btn>
@@ -114,16 +127,16 @@
 						<v-btn small block color="celeste" dark @click="sistemaUsuario(modo=2)"> Editar acceso <v-icon>add</v-icon>  </v-btn>
 						<!-- <v-btn small block  color="celeste" dark @click="actualizaAcceso(item)"> Editar <v-icon right>edit</v-icon>  </v-btn> -->
 					</v-col>
-<!-- {{ getSistemasUsuario }} -->
+
 					<v-col cols="12">
 						<v-card outlined >
-							<v-simple-table fixed-header  dense v-if="getSistemasUsuario.length">
+							<v-simple-table fixed-header  v-if="getSistemasUsuario.length">
 								<template v-slot:default>
 									<thead>
 										<tr> 
-												<th class="text-left"> Sistema </th>
-												<th class="text-left"> Nivel    </th>
-												<th class="text-left"> Acción   </th>
+												<th class="text-left"> SISTEMA </th>
+												<th class="text-left"> NIVEL    </th>
+												<th class="text-left"> ACCION   </th>
 										</tr>
 									</thead>
 									<tbody>
@@ -249,13 +262,14 @@
 </template>
 
 <script>
-	import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex'
-	import overlay         from '@/components/overlay.vue'
+	import  metodos     from '@/mixins/metodos.js';
+	import  SelectMixin from '@/mixins/SelectMixin.js';
+	import overlay      from '@/components/overlay.vue'
 	var md5 = require('md5'); 
 	
 	export default {
-		mixins:[SelectMixin],
+		mixins:[SelectMixin, metodos ],
 	  components: {
 			overlay,
 		},
@@ -276,6 +290,7 @@
 				show2					: true,
 				// VARIABLES PRINCIPALES
 				id_usuario:  null,
+				empleado: null,
 				nombre		: '',
 				correo		: '',
 				nivel 		: {id:null, nombre:''},
@@ -295,22 +310,22 @@
 				sucursales   : [],
 				departamentos:[],
 				departamento: { id:null, nombre: ''},
-				puestos:[],
 				puesto: {id:null, nombre:''},
+				puestos:[],
 				
 				// ALERTAS
         alerta: { activo: false, texto:'', color:'error', vertical:true },
 				overlay    : false,
 				correcto   : true,
 				// BOTON DE BORRAR
-				borrarModal: false
+				borrarModal: false,
 			}
 		},
 		
 		created(){
 			this.consultarSucursales(); //MANDO A CONSULTAR SUCURSALES A MIXINS
-			this.consultaPuestos();   
-			this.consultaDeptos();
+			// this.consultaPuestos();   
+			// this.consultaDeptos();
 			this.consultaNiveles();
 			this.consultaSistemas();
 			this.validarModoVista(); 	  // VALIDO EL MODO DE LA VISTA
@@ -323,15 +338,27 @@
 		},
 
 		watch:{
-			edit: function(){
+			edit(){
 				this.cambiaPassword= true
 				this.validarModoVista();
 			},
 
-			sistema: function(){
+			sistema(){
 				if(this.sistema.id != null){
 					this.traerNivelxSistema(this.sistema.id, this.niveles);
 				}
+			},
+
+			async sucursal(){
+				// console.log("SUCURSALES");
+				this.departamentos = await this.consultar_deptos_por_suc(this.sucursal.id);
+				
+			},
+
+			async departamento(){
+				// console.log("DEPTOS");
+				this.puestos = await this.consultar_puestos_por_depto(this.departamento.id);
+
 			}
 		},
 
@@ -348,11 +375,12 @@
 			validarModoVista(){
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
-					this.id_usuario     = this.edit.id
-					this.nombre 				= this.edit.nombre
-					this.usuario        = this.edit.usuario
-					this.correo 				= this.edit.correo
-					this.PasswordActual = this.edit.password 
+  				this.empleado 		  = this.edit.empleado;
+					this.id_usuario     = this.edit.id;
+					this.nombre 				= this.edit.nombre;
+					this.usuario        = this.edit.usuario;
+					this.correo 				= this.edit.correo;
+					this.PasswordActual = this.edit.password; 
 					this.sucursal       = { id:this.edit.id_sucursal  };
 					this.departamento   = { id:this.edit.id_depto     };
 					this.puesto 				= { id:this.edit.id_puesto    };
@@ -367,6 +395,7 @@
 
 			validaInfo(){
 				if(!this.nombre)	    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL NOMBRE DEL EMPLEADO' , color:'error'} ; return };
+				if(!this.empleado)    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL NÚMERO DE EMPLEADO'  , color:'error'} ; return };
 				if(!this.usuario)	    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL NOMBRE DE USUARIO'   , color:'error'} ; return };
 				if(!this.correo)	    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL CORREO ELECTRONIO'   , color:'error'} ; return };
 				if(!this.sucursal.id) { this.alerta = { activo: true, texto:'NO PUEDES OMITIR LA SUCURSAL'  				  , color:'error'} ; return };
@@ -401,17 +430,18 @@
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
 				const payload = new Object();
+							payload.empleado     = this.empleado;
 							payload.nombre       = this.nombre;
 							payload.usuario      = this.usuario.toUpperCase();
-							payload.correo       = this.correo,
-							payload.id_sucursal  = this.sucursal.id,
-							payload.id_depto     = this.departamento.id
-							payload.id_puesto    = this.puesto.id,
-							payload.password     = this.PasswordAEdit,
-							payload.accesosAEdit = this.accesosAEdit
-							payload.accesos      = this.getSistemasUsuario
+							payload.correo       = this.correo;
+							payload.id_sucursal  = this.sucursal.id;
+							payload.id_depto     = this.departamento.id;
+							payload.id_puesto    = this.puesto.id;
+							payload.password     = this.PasswordAEdit;
+							payload.accesosAEdit = this.accesosAEdit;
+							payload.accesos      = this.getSistemasUsuario;
 
-				console.log('pay', payload)
+				// console.log('pay', payload)
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearUsuario(payload): this.ActualizarUsuario(payload);
 			},
@@ -469,7 +499,7 @@
 				
 				switch (modo) {
 					case 1:
-						console.log('modo', modo)
+						// console.log('modo', modo)
 						const data1 = new Object();
 									data1.id_sistema =  this.sistema.id;
 									data1.nomsistema =  this.sistema.nombre;
@@ -483,7 +513,7 @@
 						break;
 
 					case 2:
-						console.log('modo', modo)
+						// console.log('modo', modo)
 						const data2 = new Object();
 									data2.id         =  this.accesosAEdit.id;
 									data2.id_sistema =  this.sistema.id;
@@ -532,6 +562,7 @@
 			},
 
 			limpiarCampos(){
+				this.empleado  = null;
 				this.nombre    = '';
 				this.usuario   = '';
 				this.correo    = '',

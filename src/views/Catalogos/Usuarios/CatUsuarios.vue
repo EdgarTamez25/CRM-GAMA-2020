@@ -1,11 +1,10 @@
 <template>
   <v-main class="pa-0 ma-3">
-  	<v-row class="justify-center">
+  	<v-row class="justify-center" >
   		<v-col cols="12">
-				<v-card-actions class="font-weight-black headline"> USUARIOS </v-card-actions>
-
-
-				<v-card class="mt-3" outlined>
+				<v-card class="pa-3" outlined>
+					<v-card-actions class="font-weight-black headline"> USUARIOS </v-card-actions>
+				
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
@@ -13,12 +12,13 @@
 			        label="Buscar usuarios"
 			        single-line
 			        hide-details
+							filled dense 
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
-			      <v-btn small class="celeste" @click="abrirModal(1)" dark>Agregar  </v-btn>
+			      <v-btn  class="celeste" @click="abrirModal(1)" dark>Agregar  </v-btn>
 			      <v-btn small class="gris" icon dark @click="consultaUsuarios" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
-				
+					
 			    <v-data-table
 			      :headers="headers"
 			      :items="getUsuarios"
@@ -51,6 +51,7 @@
 				    </template>
 
 			    </v-data-table>
+
 			  </v-card>
 				
 				<!-- PAGINACION -->
@@ -87,7 +88,8 @@
 				edit:'',
 			
 				headers:[
-					{ text: 'N°'  		 , align: 'left'  , value: 'id'		  },
+					{ text: '# '  		 , align: 'left'  , value: 'id'		  },
+					{ text: '# Empleado'  		 , align: 'left'  , value: 'empleado'		  },
 					{ text: 'Nombre'	 , align: 'left'  , value: 'nombre' },
 					{ text: 'Usuario'	 , align: 'left'  , value: 'usuario' },
 					{ text: 'Correo'   , align: 'left'  , value: 'correo' },
