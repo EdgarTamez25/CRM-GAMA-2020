@@ -13,6 +13,7 @@ class produccionController extends Controller{
     }
 	// ! ************************************************************************
 
+<<<<<<< refs/remotes/origin/ET
 	// **************** FUNCIONES AGREGAR PROGRAMACION **************************
 		public function ciclaProgramacion(Request $req){
 				// return ($req->programacion[0]['depto']['id']);
@@ -23,6 +24,57 @@ class produccionController extends Controller{
 				endfor;
 				return response("Se programó correctamente", 200);
 		}
+=======
+    public function ciclaProgramacion(Request $req)
+    {
+        // return ($req->programacion[0]['depto']['id']);
+        for ($i = 0; $i < count($req->programacion); $i++):
+            $id_produccion = $this->agregarProgramacion($req, $req->programacion[$i]['depto']['id'], $req->programacion[$i]['sucursal']['id']);
+            $this->agregarPrimerMov($req->programacion[$i], $id_produccion, $req->id_producto, $req->creacion);
+        endfor;
+        $actualizarFecha = actualizaFechaProg($req->programacion);
+    }
+
+    public function actualizaFechaProg($data){
+        $actualizaFechaProg = DB::update('UPDATE det_ot SET fecha_progra=:fecha_progra
+                                          WHERE  id=:id',
+                                          [
+                                              'fecha_progra'  => $data -> creacion,
+                                              'id'            => $data -> id_det_ot,
+                                          ]);
+    }
+
+    public function evaluaEstatusPartida($data){
+        $uno=0; $dos=0; $prod=[];
+        //consulta de objeto con los registros a evaluar
+        $prod = DB::select('SELECT * FROM produccion WHERE id_det_ot =? ',
+                            [
+                                $data -> id_det_ot
+                            ]);
+        //ciclo de identificacion de estatus
+        for($i=0;$i<count($prod); $i++):
+            if($prod[$i] -> estatus === 1 ):
+                $uno++;
+            elseif($prod[$i] -> estatus === 2):
+                $dos++;
+            endif;
+		endfor;
+        //ciclo para establecer el estatus al cual se actualizara
+        if($uno > 0):
+            $tmp  = ["id" => $data['id_det_ot'], "estatus" => 1 ];
+            $this -> actualizaEstatusDetOt($tmp);
+        elseif($dos > 0):
+            $tmp  = ["id" => $data['id_det_ot'], "estatus" => 2 ];
+            $this -> actualizaEstatusDetOt($tmp);
+        endif;
+    }
+
+    public function actualizaEstatusDetOt($data){
+        $fecha_actual = date('Y-m-d h:i:s', time());
+        DB::update('UPDATE det_ot SET estatus=:estatus, finalizacion=:finalizacion
+                    WHERE id=:id',['estatus' => $data['estatus'],$fecha_actual], $data['id']);
+    }
+>>>>>>> actualizar estatus de_ot
 
 		public function actualizar_det_ot($id_det_ot, $estatus){
 				DB::update('UPDATE det_ot SET estatus=:estatus WHERE id=:id',['estatus' => $estatus, 'id' => $id_det_ot]);
@@ -104,6 +156,7 @@ class produccionController extends Controller{
     }
 
     public function obtener_datos_produccion(Request $req){
+<<<<<<< refs/remotes/origin/ET
 
         $produccion = DB::select('SELECT m.*,
 																				us.nombre  as nomemisor,  
@@ -128,6 +181,22 @@ class produccionController extends Controller{
 																				LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
 																				LEFT JOIN ot  		   	     ON dt.id_ot = ot.id
 																				LEFT JOIN clientes       c ON ot.id_cliente = c.id
+=======
+        $produccion = DB::select('SELECT m.*,
+                                        a.codigo,
+                                        u.nombre as nomunidad,
+                                        p.fecha_entrega, p.urgencia,
+                                        dt.id_ot,
+                                        ot.id_cliente,
+                                        c.nombre as nomcli
+                                FROM movim_prod m
+                                        LEFT JOIN prodxcli   a ON m.id_producto   = a.id
+                                        LEFT JOIN unidades   u ON a.id_unidad     = u.id
+                                        LEFT JOIN produccion p ON m.id_produccion = p.id
+                                        LEFT JOIN det_ot dt    ON p.id_det_ot     = dt.id
+                                        LEFT JOIN ot  		   ON dt.id_ot        = ot.id
+                                        LEFT JOIN clientes  c  ON ot.id_cliente   = c.id
+>>>>>>> actualizar estatus de_ot
                                 WHERE m.id_depto   = ? AND
                                         m.estatus_prod = ? AND
                                         m.creacion BETWEEN ? AND ?',
@@ -139,6 +208,7 @@ class produccionController extends Controller{
                                         ]);
 				return $produccion ? $produccion: [];
     }
+<<<<<<< refs/remotes/origin/ET
 		
 		public function iniciar_partida_movim(Request $req){
 			$iniciar_partida = DB::update('UPDATE movim_prod SET fecha_inicio=:fecha_inicio, estatus_prod=:estatus_prod
@@ -314,4 +384,6 @@ class produccionController extends Controller{
 
 
 
+=======
+>>>>>>> actualizar estatus de_ot
 }
