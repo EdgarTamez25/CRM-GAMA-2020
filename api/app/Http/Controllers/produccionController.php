@@ -98,4 +98,31 @@ class produccionController extends Controller
             return response("Ocurrio un problema al actualizar el registro de movimiento de produccion, por favor intentelo mas tarde.", 500);
         endif;
     }
+
+    public function obtener_datos_produccion(Request $req){
+        $produccion = DB::select('SELECT m.*,
+                                        a.codigo,
+                                        u.nombre as nomunidad,
+                                        p.fecha_entrega, p.urgencia,
+                                        dt.id_ot,
+                                        ot.id_cliente,
+                                        c.nombre as nomcli
+                                FROM movim_prod m
+                                        LEFT JOIN prodxcli   a ON m.id_producto   = a.id
+                                        LEFT JOIN unidades   u ON a.id_unidad     = u.id
+                                        LEFT JOIN produccion p ON m.id_produccion = p.id
+                                        LEFT JOIN det_ot dt    ON p.id_det_ot     = dt.id
+                                        LEFT JOIN ot  		   ON dt.id_ot        = ot.id
+                                        LEFT JOIN clientes  c  ON ot.id_cliente   = c.id
+                                WHERE m.id_depto   = ? AND
+                                        m.estatus_prod = ? AND
+                                        m.creacion BETWEEN ? AND ?',
+                                        [
+                                            $req -> id_depto,
+                                            $req -> estatus,
+                                            $req -> fecha1,
+                                            $req -> fecha2
+                                        ]);
+				return $produccion ? $produccion: [];
+    }
 }
