@@ -21,7 +21,47 @@ class produccionController extends Controller
             $id_produccion = $this->agregarProgramacion($req, $req->programacion[$i]['depto']['id'], $req->programacion[$i]['sucursal']['id']);
             $this->agregarPrimerMov($req->programacion[$i], $id_produccion, $req->id_producto, $req->creacion);
         endfor;
-        return response("Se programó correctamente", 200);
+        $actualizarFecha = actualizaFechaProg($req->programacion);
+    }
+
+    public function actualizaFechaProg($data){
+        $actualizaFechaProg = DB::update('UPDATE det_ot SET fecha_progra=:fecha_progra
+                                          WHERE  id=:id',
+                                          [
+                                              'fecha_progra'  => $data -> creacion,
+                                              'id'            => $data -> id_det_ot,
+                                          ]);
+    }
+
+    public function evaluaEstatusPartida($data){
+        $uno=0; $dos=0; $prod=[];
+        //consulta de objeto con los registros a evaluar
+        $prod = DB::select('SELECT * FROM produccion WHERE id_det_ot =? ',
+                            [
+                                $data -> id_det_ot
+                            ]);
+        //ciclo de identificacion de estatus
+        for($i=0;$i<count($prod); $i++):
+            if($prod[$i] -> estatus === 1 ):
+                $uno++;
+            elseif($prod[$i] -> estatus === 2):
+                $dos++;
+            endif;
+		endfor;
+        //ciclo para establecer el estatus al cual se actualizara
+        if($uno > 0):
+            $tmp  = ["id" => $data['id_det_ot'], "estatus" => 1 ];
+            $this -> actualizaEstatusDetOt($tmp);
+        elseif($dos > 0):
+            $tmp  = ["id" => $data['id_det_ot'], "estatus" => 2 ];
+            $this -> actualizaEstatusDetOt($tmp);
+        endif;
+    }
+
+    public function actualizaEstatusDetOt($data){
+        $fecha_actual = date('Y-m-d h:i:s', time());
+        DB::update('UPDATE det_ot SET estatus=:estatus, finalizacion=:finalizacion
+                    WHERE id=:id',['estatus' => $data['estatus'],$fecha_actual], $data['id']);
     }
 
     public function agregarProgramacion($data, $id_depto, $id_sucursal)
@@ -97,5 +137,32 @@ class produccionController extends Controller
         else:
             return response("Ocurrio un problema al actualizar el registro de movimiento de produccion, por favor intentelo mas tarde.", 500);
         endif;
+    }
+
+    public function obtener_datos_produccion(Request $req){
+        $produccion = DB::select('SELECT m.*,
+                                        a.codigo,
+                                        u.nombre as nomunidad,
+                                        p.fecha_entrega, p.urgencia,
+                                        dt.id_ot,
+                                        ot.id_cliente,
+                                        c.nombre as nomcli
+                                FROM movim_prod m
+                                        LEFT JOIN prodxcli   a ON m.id_producto   = a.id
+                                        LEFT JOIN unidades   u ON a.id_unidad     = u.id
+                                        LEFT JOIN produccion p ON m.id_produccion = p.id
+                                        LEFT JOIN det_ot dt    ON p.id_det_ot     = dt.id
+                                        LEFT JOIN ot  		   ON dt.id_ot        = ot.id
+                                        LEFT JOIN clientes  c  ON ot.id_cliente   = c.id
+                                WHERE m.id_depto   = ? AND
+                                        m.estatus_prod = ? AND
+                                        m.creacion BETWEEN ? AND ?',
+                                        [
+                                            $req -> id_depto,
+                                            $req -> estatus,
+                                            $req -> fecha1,
+                                            $req -> fecha2
+                                        ]);
+				return $produccion ? $produccion: [];
     }
 }
