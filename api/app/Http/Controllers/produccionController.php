@@ -13,55 +13,62 @@ class produccionController extends Controller
         $programacion = DB::select('SELECT * FROM produccion WHERE estatus = 1');
         return $programacion;
     }
+	// ! ************************************************************************
+	// **************** FUNCIONES AGREGAR PROGRAMACION **************************
+		public function ciclaProgramacion(Request $req){
+				// return ($req->programacion[0]['depto']['id']);
+				for ($i = 0; $i < count($req->programacion); $i++):
+						$id_produccion = $this->agregarProgramacion($req, $req->programacion[$i]['depto']['id'], $req->programacion[$i]['sucursal']['id']);
+						$this->agregarPrimerMov($req->programacion[$i], $id_produccion, $req->id_producto, $req->creacion);
+												$this->actualizar_det_ot($req -> id_det_ot, 2);  // ACTUALIZAR DET_OT 
+				endfor;
+				return response("Se programó correctamente", 200);
+		}
 
-    public function ciclaProgramacion(Request $req)
-    {
-        // return ($req->programacion[0]['depto']['id']);
-        for ($i = 0; $i < count($req->programacion); $i++):
-            $id_produccion = $this->agregarProgramacion($req, $req->programacion[$i]['depto']['id'], $req->programacion[$i]['sucursal']['id']);
-            $this->agregarPrimerMov($req->programacion[$i], $id_produccion, $req->id_producto, $req->creacion);
-        endfor;
-        return response("Se programó correctamente", 200);
-    }
+		public function actualizar_det_ot($id_det_ot, $estatus){
+				DB::update('UPDATE det_ot SET estatus=:estatus WHERE id=:id',['estatus' => $estatus, 'id' => $id_det_ot]);
+		}
 
-    public function agregarProgramacion($data, $id_depto, $id_sucursal)
-    {
-        // !    EL REQUEST CONTIENE UN ARRAY DE OBJETOS LLAMADO PROGRAMACION "$req -> programacion"
-        // ! 1. CREO EL REGISTRO PARA LA PRODUCCION
-        // return $item['sucursal'];
-        // return $item['sucursal'] -> id;
-        // return 'Sucursal: ' + $item['sucursal']['id'];
-        $agregarProg = DB::table('produccion')->insertGetId(
-            [
-                'id_det_ot' => $data['id_det_ot'],             //! 2 RECUPERO id_det_ot del data
-                'id_producto' => $data['id_producto'],         //! 2 RECUPERO id_producto del data
-                'cant_sol' => $data['cant_sol'],               //! 2 RECUPERO cant_sol del data
-                'urgencia' => $data['urgencia'],               //! 2 RECUPERO urgencia del data
-                'fecha_entrega' => $data['fecha_entrega'],     //! 2 RECUPERO fecha_entrega del data
-                'id_creador' => $data['id_creador'],           //! 2 RECUPERO id_creador del data
-                'creacion' => $data['creacion'],               //! 2 RECUPERO creacion del data
-                'tipo_prog' => $data['tipo_prog'],             //! 2 RECUPERO tipo
-                'cant_prog' => $data['cant_prog'],
-                'id_depto' => $id_depto,
-                'id_sucursal' => $id_sucursal
-            ]
-        );
-        return $agregarProg;
-    }
 
-    public function agregarPrimerMov($item, $id_produccion, $id_producto, $creacion)
-    {
-        $agregar = DB::table('movim_prod')->insertGetId(
-            [
-                'id_produccion' => $id_produccion,
-                'id_depto' => $item['depto']['id'],
-                'id_sucursal' => $item['sucursal']['id'],
-                'id_producto' => $id_producto,
-                'cant_sol' => $item['cantidad'],
-                'creacion' => $creacion
-            ]
-        );
-    }
+		public function agregarProgramacion($data, $id_depto, $id_sucursal)
+		{
+				// !    EL REQUEST CONTIENE UN ARRAY DE OBJETOS LLAMADO PROGRAMACION "$req -> programacion"
+				// ! 1. CREO EL REGISTRO PARA LA PRODUCCION
+				// return $item['sucursal'];
+				// return $item['sucursal'] -> id;
+				// return 'Sucursal: ' + $item['sucursal']['id'];
+				$agregarProg = DB::table('produccion')->insertGetId(
+						[
+								'id_det_ot' => $data['id_det_ot'],             //! 2 RECUPERO id_det_ot del data
+								'id_producto' => $data['id_producto'],         //! 2 RECUPERO id_producto del data
+								'cant_sol' => $data['cant_sol'],               //! 2 RECUPERO cant_sol del data
+								'urgencia' => $data['urgencia'],               //! 2 RECUPERO urgencia del data
+								'fecha_entrega' => $data['fecha_entrega'],     //! 2 RECUPERO fecha_entrega del data
+								'id_creador' => $data['id_creador'],           //! 2 RECUPERO id_creador del data
+								'creacion' => $data['creacion'],               //! 2 RECUPERO creacion del data
+								'tipo_prog' => $data['tipo_prog'],             //! 2 RECUPERO tipo
+								'cant_prog' => $data['cant_prog'],
+								'id_depto' => $id_depto,
+								'id_sucursal' => $id_sucursal
+						]
+				);
+				return $agregarProg;
+		}
+
+		public function agregarPrimerMov($item, $id_produccion, $id_producto, $creacion)
+		{
+				$agregar = DB::table('movim_prod')->insertGetId(
+						[
+								'id_produccion' => $id_produccion,
+								'id_depto' => $item['depto']['id'],
+								'id_sucursal' => $item['sucursal']['id'],
+								'id_producto' => $id_producto,
+								'cant_sol' => $item['cantidad'],
+								'creacion' => $creacion
+						]
+				);
+		}
+	// ! ************************************************************************
 
     public function obtenerMovimProd()
     {
@@ -100,20 +107,30 @@ class produccionController extends Controller
     }
 
     public function obtener_datos_produccion(Request $req){
+
         $produccion = DB::select('SELECT m.*,
-                                        a.codigo,
-                                        u.nombre as nomunidad,
-                                        p.fecha_entrega, p.urgencia,
-                                        dt.id_ot,
-                                        ot.id_cliente,
-                                        c.nombre as nomcli
-                                FROM movim_prod m
-                                        LEFT JOIN prodxcli   a ON m.id_producto   = a.id
-                                        LEFT JOIN unidades   u ON a.id_unidad     = u.id
-                                        LEFT JOIN produccion p ON m.id_produccion = p.id
-                                        LEFT JOIN det_ot dt    ON p.id_det_ot     = dt.id
-                                        LEFT JOIN ot  		   ON dt.id_ot        = ot.id
-                                        LEFT JOIN clientes  c  ON ot.id_cliente   = c.id
+																				us.nombre  as nomemisor,  
+																				us2.nombre as nomreceptor,
+																				d.nombre   as deptoemisor,
+																				d2.nombre  as deptoreceptor,
+																				a.codigo,
+																				u.nombre as nomunidad,
+																				p.fecha_entrega, p.urgencia,
+																				dt.id_ot,
+																				ot.id_cliente,
+																				c.nombre as nomcli,
+																				DATEDIFF(p.fecha_entrega, NOW()) as dias
+																		FROM movim_prod m
+																				LEFT JOIN users         us ON m.id_usr_emisor = us.id
+																				LEFT JOIN users    	   us2 ON m.id_usr_receptor = us2.id
+																				LEFT JOIN depto_por_suc  d ON m.emisor = d.id
+																				LEFT JOIN depto_por_suc d2 ON m.receptor = d2.id
+																				LEFT JOIN prodxcli       a ON m.id_producto = a.id
+																				LEFT JOIN unidades       u ON a.id_unidad = u.id
+																				LEFT JOIN produccion     p ON m.id_produccion = p.id
+																				LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
+																				LEFT JOIN ot  		   	     ON dt.id_ot = ot.id
+																				LEFT JOIN clientes       c ON ot.id_cliente = c.id
                                 WHERE m.id_depto   = ? AND
                                         m.estatus_prod = ? AND
                                         m.creacion BETWEEN ? AND ?',
@@ -125,4 +142,154 @@ class produccionController extends Controller
                                         ]);
 				return $produccion ? $produccion: [];
     }
+		
+		public function iniciar_partida_movim(Request $req){
+			$iniciar_partida = DB::update('UPDATE movim_prod SET fecha_inicio=:fecha_inicio, estatus_prod=:estatus_prod
+																					WHERE id =:id',['fecha_inicio' => $req  ->  fecha_inicio,
+																													'estatus_prod' => $req  ->  estatus_prod,
+																													'id' 		 			 => $req  -> id_movim ]);
+
+			return $iniciar_partida? response("La partida se inicio correctamente",200): 
+															 response("Ocurrio un error, intentelo de nuevo.",500);
+			
+		}
+	
+
+	// **************** AUTORIZAR ENVIO DE PRODUCTO *****************************
+		public function autorizar_envio_material(Request $req){
+
+			$id_movim_prod = DB::table('movim_prod')->insertGetId(
+				[
+					'id_produccion' => $req -> id_produccion,
+					'id_depto' 		  => $req -> id_nuevo_depto,
+					'id_sucursal'   => $req -> id_sucursal, 
+					'id_producto'   => $req -> id_producto,         
+					'cant_sol'      => $req -> cant_sol,
+					'tipo_prog'     => $req -> tipo_prog,
+					'id_usr_emisor' => $req -> id_usr_emisor,
+					'emisor'        => $req -> emisor,
+					'enviadas'      => $req -> enviadas,
+					'creacion' 			=> $req -> creacion,   
+					'estatus_prod'  => $req -> estatus_prod,            
+				]
+			);
+			
+			$this -> actualiza_movim_anterior($req -> id_movim, $req -> enviadas);
+
+			return $id_movim_prod? response("El producto se ha envíado correctamente.",200):
+														 response("Ocurrio un error, intentelo nuevamente.",500);
+
+		}
+
+		public function actualiza_movim_anterior($id, $terminadas){
+			$actualizar = DB::update('UPDATE movim_prod SET terminadas=:terminadas + terminadas WHERE id=:id',
+            [
+                'terminadas' => $terminadas,
+                'id' => $id
+            ]);
+		}
+	// ! ************************************************************************
+
+
+	// **************** AUTORIZAR RECIBO DE PRODUCTO ****************************
+		public function autorizar_recibo_material(Request $req){
+			$recibo_material = DB::update('UPDATE movim_prod
+																			SET
+																							id_usr_receptor=:id_usr_receptor, 
+																							receptor=:receptor,           
+																							recibidas=:recibidas,                
+																							estatus_prod=:estatus_prod       
+																			WHERE   id=:id',
+							[	
+								'id_usr_receptor' => $req -> id_usr_receptor,
+								'receptor' 			  => $req -> receptor,
+								'recibidas' 			=> $req -> recibidas,
+								'estatus_prod' 		=> $req -> estatus_prod,
+								'id' 							=> $req -> id_movim
+							]);
+			return $recibo_material ? response("El producto se recibio correctamente.", 200):
+																response("Ocurrio un problema , por favor intentelo mas tarde.", 500);
+		}
+	// ! ************************************************************************
+	
+
+	// **************** FINALIZACION DE MOVIMIENTO ******************************
+		public function finalizar_partida_movim(Request $req){
+			$actualizar = DB::update('UPDATE movim_prod
+                                    SET finalizacion=:finalizacion,       
+                                        estatus_prod=:estatus_prod
+                                    WHERE   id=:id',
+            [
+                'finalizacion' => $req -> finalizacion,
+                'estatus_prod' => 3,
+                'id' => $req -> id_movim
+            ]);
+			return $actualizar ? response("La partida se finalizo correctamente", 200):
+													 response("Ocurrio un error, intentelo mas tarde", 500);
+		}
+	// ! ************************************************************************
+
+	public function obtener_productos_enviados(Request $req){
+		$prod_enviados =  DB::select('SELECT m.*,
+																				us.nombre  as nomemisor,  
+																				us2.nombre as nomreceptor,
+																				d.nombre   as deptoemisor,
+																				d2.nombre  as deptoreceptor,
+																				d3.nombre  as departamento,
+																				a.codigo,
+																				u.nombre as nomunidad,
+																				p.fecha_entrega, p.urgencia,
+																				dt.id_ot,
+																				ot.id_cliente,
+																				c.nombre as nomcli,
+																				DATEDIFF(p.fecha_entrega, NOW()) as dias
+																		FROM movim_prod m
+																				LEFT JOIN users         us ON m.id_usr_emisor = us.id
+																				LEFT JOIN users    	   us2 ON m.id_usr_receptor = us2.id
+																				LEFT JOIN depto_por_suc  d ON m.emisor = d.id
+																				LEFT JOIN depto_por_suc d2 ON m.receptor = d2.id
+																				LEFT JOIN depto_por_suc d3 ON m.id_depto = d3.id
+																				LEFT JOIN prodxcli       a ON m.id_producto = a.id
+																				LEFT JOIN unidades       u ON a.id_unidad = u.id
+																				LEFT JOIN produccion     p ON m.id_produccion = p.id
+																				LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
+																				LEFT JOIN ot  		   	     ON dt.id_ot = ot.id
+																				LEFT JOIN clientes       c ON ot.id_cliente = c.id
+																		WHERE m.emisor = ? AND m.creacion BETWEEN ? AND ?',
+																				[
+																						$req -> id_depto,
+																						$req -> fecha1,
+																						$req -> fecha2
+																				]);
+			return $prod_enviados ? $prod_enviados: [];
+	}
+
+	public function movimiento_por_produccion(){
+		return DB::select("SELECT m.*,
+														us.nombre  as nomemisor,  
+														us2.nombre as nomreceptor,
+														d.nombre   as deptoemisor,
+														d2.nombre  as deptoreceptor,
+															d3.nombre  as departamento,
+														a.codigo,
+														u.nombre as nomunidad,
+														p.fecha_entrega, p.urgencia,
+														dt.id_ot,
+														ot.id_cliente,
+														c.nombre as nomcli,
+														DATEDIFF(p.fecha_entrega, NOW()) as dias
+											FROM movim_prod m
+												LEFT JOIN users         us ON m.id_usr_emisor = us.id
+												LEFT JOIN users    	   us2 ON m.id_usr_receptor = us2.id
+												LEFT JOIN depto_por_suc  d ON m.emisor = d.id
+												LEFT JOIN depto_por_suc d2 ON m.receptor = d2.id
+												LEFT JOIN depto_por_suc d3 ON m.id_depto = d3.id
+												LEFT JOIN prodxcli       a ON m.id_producto = a.id
+												LEFT JOIN unidades       u ON a.id_unidad = u.id
+												LEFT JOIN produccion     p ON m.id_produccion = p.id
+												LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
+												LEFT JOIN ot  		   	     ON dt.id_ot = ot.id
+												LEFT JOIN clientes       c ON ot.id_cliente = c.id
+											WHERE m.id_produccion = 3 ORDER BY m.id ASC");
+	}
 }

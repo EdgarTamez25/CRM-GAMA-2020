@@ -264,6 +264,18 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::get('obtener.programacion'     , 'produccionController@obtenerProgramacion')      ->name('obtenerProgramacion');
     Route::post('agregar.programacion.mrp', 'produccionController@ciclaProgramacion')        ->name('ciclaProgramacion');
     Route::post('obtener.datos.produccion', 'produccionController@obtener_datos_produccion') ->name('obtener_datos_produccion');
+    
+    
+    Route::post('iniciar.partida.movim'    , 'produccionController@iniciar_partida_movim') ->name('iniciar_partida_movim');  // VISTA PRODUCCION 
+    Route::post('autorizar.recibo.material', 'produccionController@autorizar_recibo_material') ->name('autorizar_recibo_material');  // VISTA PRODUCCION 
+    Route::post('autorizar.envio.material' , 'produccionController@autorizar_envio_material') ->name('autorizar_envio_material');  // VISTA PRODUCCION 
+    Route::post('finalizar.partida.movim'  , 'produccionController@finalizar_partida_movim') ->name('finalizar_partida_movim');  // VISTA PRODUCCION 
+    Route::post('obtener.productos.enviados'  , 'produccionController@obtener_productos_enviados') ->name('obtener_productos_enviados');  // VISTA PRODUCCION 
+
+    Route::get('movim.produccion', 'produccionController@movimiento_por_produccion')->name('movimiento_por_produccion');
+
+    
+    
 
     // Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
 //=================================== MOVIM PROD ===================================================
@@ -277,4 +289,3 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::get('obtener.puestos.por.depto/{id}', 'puestosController@obtener_puestos_por_depto')->name('obtener_puestos_por_depto');
 
     
-

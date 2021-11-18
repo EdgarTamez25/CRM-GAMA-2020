@@ -8,7 +8,7 @@
       class="elevation-3 mt-2"
       style="border-radius:12px"
       dark
-    >
+      >
       <v-list dense nav class="py-0">
         <v-list-item two-line  @click="mini= !mini">
           <v-list-item-avatar size="30px">
