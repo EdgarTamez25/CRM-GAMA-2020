@@ -13,8 +13,8 @@ class departamentosController extends Controller
     }
 
     public function obtener_deptos_por_suc($id){
-        $deptos = DB::select('SELECT d.id, d.nombre, d.id_sucursal 
-																FROM depto_por_suc d 
+        $deptos = DB::select('SELECT d.*
+																	FROM depto_por_suc d 
 															WHERE d.id_sucursal = ?', [$id]);
 				
 				return $deptos ? $deptos : [];

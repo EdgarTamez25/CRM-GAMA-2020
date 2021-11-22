@@ -14,6 +14,8 @@ Route::post('iniciar.sesion.integral', 'userController@IniciarSesionIntegral')->
 Route::post('valida.sesion.activa', 'userController@validaSesionActiva')->name('validaSesionActiva');
 Route::post('obtener.datos.usuario', 'userController@obtenerDatosUsuario')->name('obtenerDatosUsuario');
 Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion');
+
+
 //==================================== NIVELES ====================================================
     Route::get('niveles', 'nivelController@obtenerNiveles')->name('obtenerNiveles');
     Route::get('sistemas', 'sistemasController@obtenerSistemas')->name('obtenerSistemas');
@@ -266,16 +268,21 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::post('obtener.datos.produccion', 'produccionController@obtener_datos_produccion') ->name('obtener_datos_produccion');
     
     
-    Route::post('iniciar.partida.movim'    , 'produccionController@iniciar_partida_movim') ->name('iniciar_partida_movim');  // VISTA PRODUCCION 
+    Route::post('iniciar.partida.movim'    , 'produccionController@iniciar_partida_movim') ->name('iniciar_partida_movim');          // VISTA PRODUCCION 
     Route::post('autorizar.recibo.material', 'produccionController@autorizar_recibo_material') ->name('autorizar_recibo_material');  // VISTA PRODUCCION 
-    Route::post('autorizar.envio.material' , 'produccionController@autorizar_envio_material') ->name('autorizar_envio_material');  // VISTA PRODUCCION 
-    Route::post('finalizar.partida.movim'  , 'produccionController@finalizar_partida_movim') ->name('finalizar_partida_movim');  // VISTA PRODUCCION 
+    Route::post('autorizar.envio.material' , 'produccionController@autorizar_envio_material') ->name('autorizar_envio_material');    // VISTA PRODUCCION 
+    Route::post('finalizar.partida.movim'  , 'produccionController@finalizar_partida_movim') ->name('finalizar_partida_movim');      // VISTA PRODUCCION 
     Route::post('obtener.productos.enviados'  , 'produccionController@obtener_productos_enviados') ->name('obtener_productos_enviados');  // VISTA PRODUCCION 
 
-    Route::get('movim.produccion', 'produccionController@movimiento_por_produccion')->name('movimiento_por_produccion');
+    Route::get('validar.estatus.movimientos', 'produccionController@validar_estatus_movimientos') ->name('validar_estatus_movimientos');  // PRODUCTO TERMINADO 
 
-    
-    
+
+
+
+//==================================== PRODUCTOS TERMINADOS ==================================================
+    Route::post('agregar.producto.terminado'  , 'prodterminadoController@agregar_producto_terminado')   ->name('agregar_producto_terminado');  // PRODUCTO TERMINADO 
+    Route::post('obtener.productos.terminados', 'prodterminadoController@obtener_productos_terminados') ->name('obtener_productos_terminados');  // PRODUCTO TERMINADO 
+
 
     // Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
 //=================================== MOVIM PROD ===================================================
