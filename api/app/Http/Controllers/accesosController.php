@@ -11,42 +11,73 @@ use Illuminate\Support\Facades\Storage;
 class accesosController extends Controller{		
 	// ============================== FUNCIONES DE GAMA EXTERNO ====================================================
 	public function buscarUsuarioRH($id){
-		$usuario = DB::select('SELECT id, nombre FROM users WHERE id = ?',[$id]);
+		$usuario = DB::select('SELECT id, empleado, nombre 
+														FROM users 
+													 WHERE empleado = ?',[$id]);
 		if($usuario): return $usuario; else: return $usuario = []; endif;
 	}
 	
 	public function RHAcceso(Request $req){
 		return DB::insert('INSERT INTO rh_accesos (id_usuario,fecha1,hora1,concepto,id_sucursal,id_cliente)
-												VALUES(?,?,?,?,?,?)',[$req -> id_usuario, $req -> fecha1, $req -> hora1,$req -> concepto, $req -> id_sucursal, $req -> id_cliente]);
+												VALUES(?,?,?,?,?,?)',
+												[
+													$req -> empleado, 
+													$req -> fecha1, 
+													$req -> hora1,
+													$req -> concepto, 
+													$req -> id_sucursal, 
+													$req -> id_cliente
+												]);
 	}
 
 	public function Accesos($id){
-		$acceso = DB::select('SELECT a.id, a.id_usuario, u.nombre, p.nombre as puesto, a.concepto, a.fecha1,a.hora1, a.fecha2, a.hora2, a.estatus 
-                            FROM rh_accesos a LEFT JOIN users u   ON a.id_usuario = u.id
-                                              LEFT JOIN puestos p ON u.id_puesto  = p.id
-                          WHERE a.estatus = 1 AND a.id_sucursal = ?',[$id]);
+		$acceso = DB::select('SELECT a.*,
+																 u.nombre, u.empleado, 
+																 p.nombre as puesto 
+                            FROM rh_accesos a 
+															LEFT JOIN users u   ON a.id_usuario = u.empleado
+                              LEFT JOIN puestos p ON u.id_puesto  = p.id
+                          WHERE a.estatus = 1 AND 
+															  a.id_sucursal = ?',[$id]);
 		if($acceso): return $acceso; else: return $acceso = []; endif;
 	}
 
 	public function accesosAll(Request $req){
-		$accesoall = DB::select('SELECT a.id, a.id_usuario, u.nombre, a.concepto, a.fecha1, a.fecha2, a.hora1,a.hora2,s.nombre as sucursal, c.nombre as cliente
-															FROM rh_accesos a LEFT JOIN users u      ON a.id_usuario  = u.id 
-																								LEFT JOIN sucursales s ON a.id_sucursal = s.id
-																								LEFT JOIN clientes c   ON a.id_cliente  = c.id
-														 WHERE a.id_sucursal = ? AND a.fecha1 between ? AND ? ORDER BY a.id DESC',[$req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
-		if($accesoall): return $accesoall; else: return $accesoall = []; endif;
+		$accesoall = DB::select('SELECT a.*,
+																		u.nombre, u.empleado,
+																		s.nombre as sucursal, 
+																		c.nombre as cliente
+															FROM rh_accesos a 
+																LEFT JOIN users u      ON a.id_usuario  = u.empleado 
+																LEFT JOIN sucursales s ON a.id_sucursal = s.id
+																LEFT JOIN clientes c   ON a.id_cliente  = c.id
+														 WHERE a.id_sucursal = ? AND 
+														 		   a.fecha1 between ? AND ? 
+															ORDER BY a.id DESC',[$req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
+		return $accesoall ? $accesoall: [];
 	}
 	
 	public function ActualizaAcceso(Request $req){
-		$UsuarioRH = DB::select('SELECT rh.id, u.nombre FROM rh_accesos rh 
-															LEFT JOIN  users u ON rh.id_usuario = u.id WHERE rh.id_usuario =? AND rh.estatus = 1',[$req -> id_usuario]);
-    // return $UsuarioRH;
+		$UsuarioRH = DB::select('SELECT rh.id, 
+																	  u.nombre, u.empleado
+															FROM rh_accesos rh 
+																LEFT JOIN  users u ON rh.id_usuario = u.empleado
+														 WHERE rh.id_usuario =? AND 
+														 			 rh.estatus = 1',[$req -> id_usuario]);
     
 		if($UsuarioRH): 
 			$id = $UsuarioRH[0] -> id;
-			$data = DB::update('UPDATE rh_accesos SET fecha2=:fecha2, hora2=:hora2,estatus=:estatus WHERE id=:id',
-													['fecha2'		=> $req -> fecha2, 		'hora2'	 => $req -> hora2,
-													 'estatus'	=> $req -> estatus, 	'id'		 => $id	]
+			$data = DB::update('UPDATE rh_accesos 
+														SET fecha2=:fecha2, 
+																hora2=:hora2,
+																estatus=:estatus 
+													WHERE id=:id',
+													[
+													 'fecha2'	=> $req -> fecha2, 		
+													 'hora2'	=> $req -> hora2,
+													 'estatus'=> $req -> estatus, 	
+													 'id' => $id	
+													]
 												);
 				return $UsuarioRH;
 		else:

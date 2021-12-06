@@ -7,112 +7,12 @@ use Illuminate\Support\Facades\DB;
 
 class produccionController extends Controller{
 
-    public function obtenerProgramacion(){
-        $programacion = DB::select('SELECT * FROM produccion WHERE estatus = 1');
-        return $programacion;
-    }
-	// ! ************************************************************************
-
-        public function ciclaProgramacion(Request $req)
-        {
-                // return ($req->programacion[0]['depto']['id']);
-                for ($i = 0; $i < count($req->programacion); $i++):
-                        $id_produccion = $this->agregarProgramacion($req, $req->programacion[$i]['depto']['id'], $req->programacion[$i]['sucursal']['id']);
-                        $this->agregarPrimerMov($req->programacion[$i], $id_produccion, $req->id_producto, $req->creacion);
-                                                $this->actualizar_det_ot($req -> id_det_ot, $req -> creacion, 2);  // ACTUALIZAR DET_OT
-                endfor;
-                return response("Se programó correctamente", 200);
-        }
-
-    public function actualizaFechaProg($id_det_ot, $creacion, $estatus){
-        $actualizaFechaProg = DB::update('UPDATE det_ot SET fecha_progra=:fecha_progra
-                                          WHERE  id=:id',
-                                          [
-                                              'fecha_progra'  => $creacion,
-                                              'estatus'       => $estatus,
-                                              'id'            => $id_det_ot
-                                          ]);
-    }
-
-    public function evaluaEstatusPartida($data){
-        $uno=0; $dos=0; $prod=[];
-        //consulta de objeto con los registros a evaluar
-        $prod = DB::select('SELECT * FROM produccion WHERE id_det_ot =? ',
-                            [
-                                $data -> id_det_ot
-                            ]);
-        //ciclo de identificacion de estatus
-        for($i=0;$i<count($prod); $i++):
-            if($prod[$i] -> estatus === 1 ):
-                $uno++;
-            elseif($prod[$i] -> estatus === 2):
-                $dos++;
-            endif;
-		endfor;
-        //ciclo para establecer el estatus al cual se actualizara
-        if($uno > 0):
-            $tmp  = ["id" => $data['id_det_ot'], "estatus" => 1 ];
-            $this -> actualizaEstatusDetOt($tmp);
-        elseif($dos > 0):
-            $tmp  = ["id" => $data['id_det_ot'], "estatus" => 2 ];
-            $this -> actualizaEstatusDetOt($tmp);
-        endif;
-    }
-
-    public function actualizaEstatusDetOt($data){
-        $fecha_actual = date('Y-m-d h:i:s', time());
-        DB::update('UPDATE det_ot SET estatus=:estatus, finalizacion=:finalizacion
-                    WHERE id=:id',['estatus' => $data['estatus'],$fecha_actual], $data['id']);
-    }
-
-		public function actualizar_det_ot($id_det_ot, $estatus){
-				DB::update('UPDATE det_ot SET estatus=:estatus WHERE id=:id',['estatus' => $estatus, 'id' => $id_det_ot]);
-		}
-
-
-		public function agregarProgramacion($data, $id_depto, $id_sucursal){
-				// !    EL REQUEST CONTIENE UN ARRAY DE OBJETOS LLAMADO PROGRAMACION "$req -> programacion"
-				// ! 1. CREO EL REGISTRO PARA LA PRODUCCION
-				$agregarProg = DB::table('produccion')->insertGetId(
-						[
-								'id_det_ot' => $data['id_det_ot'],             //! 2 RECUPERO id_det_ot del data
-								'id_producto' => $data['id_producto'],         //! 2 RECUPERO id_producto del data
-								'cant_sol' => $data['cant_sol'],               //! 2 RECUPERO cant_sol del data
-								'urgencia' => $data['urgencia'],               //! 2 RECUPERO urgencia del data
-								'fecha_entrega' => $data['fecha_entrega'],     //! 2 RECUPERO fecha_entrega del data
-								'id_creador' => $data['id_creador'],           //! 2 RECUPERO id_creador del data
-								'creacion' => $data['creacion'],               //! 2 RECUPERO creacion del data
-								'tipo_prog' => $data['tipo_prog'],             //! 2 RECUPERO tipo
-								'cant_prog' => $data['cant_prog'],
-								'id_depto' => $id_depto,
-								'id_sucursal' => $id_sucursal
-						]
-				);
-				return $agregarProg;
-		}
-
-		public function agregarPrimerMov($item, $id_produccion, $id_producto, $creacion){
-				$agregar = DB::table('movim_prod')->insertGetId(
-						[
-								'id_produccion' => $id_produccion,
-								'id_depto' => $item['depto']['id'],
-								'id_sucursal' => $item['sucursal']['id'],
-								'id_producto' => $id_producto,
-								'cant_sol' => $item['cantidad'],
-								'creacion' => $creacion
-						]
-				);
-		}
-	// ! ************************************************************************
-
-    public function obtenerMovimProd()
-    {
+    public function obtenerMovimProd(){
         $produccion = DB::select('SELECT * FROM movim_prod WHERE estatus = 1');
         return $produccion;
     }
 
-    public function actualizarMovimProd($id, Request $req)
-    {
+    public function actualizarMovimProd($id, Request $req){
         $actualizar = DB::update('UPDATE movim_prod
                                     SET
                                             id_produccion=:id_produccion,       id_depto=:id_depto,
@@ -151,7 +51,7 @@ class produccionController extends Controller{
 																				a.codigo,
 																				u.nombre as nomunidad,
 																				p.fecha_entrega, p.urgencia,
-																				dt.id_ot,
+																				dt.id as id_det_ot, dt.id_ot,
 																				ot.id_cliente,
 																				c.nombre as nomcli,
 																				DATEDIFF(p.fecha_entrega, NOW()) as dias
@@ -225,7 +125,6 @@ class produccionController extends Controller{
 		}
 	// ! ************************************************************************
 
-
 	// **************** AUTORIZAR RECIBO DE PRODUCTO ****************************
 		public function autorizar_recibo_material(Request $req){
 			$recibo_material = DB::update('UPDATE movim_prod
@@ -247,7 +146,6 @@ class produccionController extends Controller{
 		}
 	// ! ************************************************************************
 
-
 	// **************** FINALIZACION DE MOVIMIENTO ******************************
 		public function finalizar_partida_movim(Request $req){
 			$actualizar = DB::update('UPDATE movim_prod
@@ -261,6 +159,7 @@ class produccionController extends Controller{
             ]);
 
 			$this -> validar_estatus_movimientos($req);
+			$this -> evaluaEstatusPartida($req);
 			return $actualizar ? response("La partida se finalizo correctamente", 200):
 													 response("Ocurrio un error, intentelo mas tarde", 500);
 		}
@@ -303,7 +202,6 @@ class produccionController extends Controller{
 		}
 	// ! ************************************************************************
 
-
 	// **************** VALIDACION DE MOVIMIENTOS *******************************
 		public function validar_estatus_movimientos($data){
 			$cero=0;$uno=0; $dos=0; $tres=0; $cuatro=0; $movim=[];
@@ -340,7 +238,7 @@ class produccionController extends Controller{
 		}
 
 		// *** ACTUALIZAR ESTATUS DE PRODUCCION ***********************************
-		public function actualizar_estatus_produccion($data	){
+		public function actualizar_estatus_produccion($data){
 		 $fecha_actual = date('Y-m-d h:i:s', time());
 		 DB::update('UPDATE produccion SET finalizacion=:finalizacion, estatus=:estatus
 									WHERE id =:id',['finalizacion' => $fecha_actual,
@@ -350,6 +248,38 @@ class produccionController extends Controller{
 		}
 	// ! ************************************************************************
 
+	// **************** ACTUALIZAR ESTATUS DE DETALLE DE PRODUCCION *************
+		public function evaluaEstatusPartida($data){
+				$uno=0; $dos=0; $prod=[];
+				//consulta de objeto con los registros a evaluar
+				$prod = DB::select('SELECT * FROM produccion WHERE id_det_ot =? ',
+														[ $data -> id_det_ot ]);
+				//ciclo de identificacion de estatus
+				for($i=0;$i<count($prod); $i++):
+						if($prod[$i] -> estatus === 1 ):
+								$uno++;
+						elseif($prod[$i] -> estatus === 2):
+								$dos++;
+						endif;
+				endfor;
+				//ciclo para establecer el estatus al cual se actualizara
+				if($uno > 0):
+						$tmp  = ["id" => $data['id_det_ot'], "estatus" => 2 ];
+						$this -> actualizaEstatusDetOt($tmp);
+				elseif($dos > 0):
+						$tmp  = ["id" => $data['id_det_ot'], "estatus" => 3 ];
+						$this -> actualizaEstatusDetOt($tmp);
+				endif;
+		}
 
+		public function actualizaEstatusDetOt($data){
+				$fecha_actual = date('Y-m-d h:i:s', time());
+				DB::update('UPDATE det_ot SET estatus=:estatus, finalizacion=:finalizacion
+										WHERE id=:id',['estatus' => $data['estatus'],
+																	'finalizacion' => $fecha_actual, 
+																	'id' => $data['id'] 
+																	]);
+		}
 
+	// ! ************************************************************************
 }

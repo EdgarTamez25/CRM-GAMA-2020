@@ -38,24 +38,18 @@ export default {
 		},
 
 		consulta_deptos_productos(){
-			let nombres_depos = [ 'FLEXOGRAFÍA', '', 'DIGITAL', 'ACABADOS', 'SERIGRAFÍA','EMPAQUE','SUBLIMACIÓN','TAMPOGRAFÍA','UV'];
+			// let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO', 'DIGITAL', 'ACABADOS', 'SERIGRAFÍA','EMPAQUE','SUBLIMACIÓN','TAMPOGRAFÍA','UV'];
+			let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO'];
 			return nombres_depos;
 		},
 
 		consultaDepartamentos(){
 			return new Promise( resolve => {
-				let departamentos = [	{ id:1, nombre:'FLEXOGRAFÍA'},
-															// { id:2, nombre:'BORDADOS'},
-															{ id:3, nombre:'DIGITAL'},
-															{ id:4, nombre:'ACABADOS'},
-															{ id:5, nombre:'SERIGRAFÍA'},
-															// { id:6, nombre:'EMPAQUE'},
-															// { id:7, nombre:'SUBLIMACIÓN'},
-															// { id:8, nombre:'TAMPOGRAFÍA'},
-															// { id:9, nombre:'UV'}
+				let departamentos = [	
+															{ id:1, nombre:'FLEXOGRAFÍA'  },
+															{ id:2, nombre:'ARTE Y DISEÑO'},
 														];
 				resolve(departamentos);
-
 			})
 		},
 

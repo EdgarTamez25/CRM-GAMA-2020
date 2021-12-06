@@ -11,8 +11,11 @@ class sucursalesController extends Controller
 {
     public function getAll()
     {
-        $Sucursales = sucursales::all();
-        return $Sucursales;
+        // $Sucursales = sucursales::all();
+        // return $Sucursales;
+			$sucursales = DB::select("SELECT * FROM sucursales WHERE estatus = 1");
+			return $sucursales ? $sucursales: [];
+
     }
 
 		public function add(Request $request){

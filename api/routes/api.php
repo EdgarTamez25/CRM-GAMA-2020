@@ -173,7 +173,6 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::post('crear.orden.trabajo', 'OTContrller@CrearOT')->name('CrearOT');     // EN PROCESO
     Route::put('actualiza.urgencia.det.ot/{id}', 'OTContrller@ActualizaUrgenciaDetOT')->name('ActualizaUrgenciaDetOT');
 //==================================== MONITOR   ==================================================
-    Route::post('obtener.datos.monitor', 'monitorController@ObtenerDatosMonitor')->name('ObtenerDatosMonitor');
     Route::post('programar.producto', 'monitorController@ProgramarProductos')->name('ProgramarProductos');
     Route::post('obtener.programaciones.bordados', 'monitorController@ObtenerPrograBordados')->name('ObtenerPrograBordados');
     Route::post('obtener.programaciones.digital', 'monitorController@ObtenerPrograDigital')->name('ObtenerPrograDigital');
@@ -262,29 +261,41 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::get('obtener.unidades', 'unidadesController@obtenerUnidades')->name('obtenerUnidades');
     Route::post('agregar.unidades', 'unidadesController@agregarUnidades')->name('agregarUnidades');
     Route::put('actualizar.unidades/{id}', 'unidadesController@actualizarUnidades')->name('actualizarUnidades');
+
+//!==================================== PROYECTOR MASTER=============================================
+    Route::post('agregar.programacion.mrp', 'masterController@ciclaProgramacion') ->name('ciclaProgramacion');
+    Route::post('obtener.datos.monitor'   , 'masterController@obtener_datos_monitor')->name('obtener_datos_monitor');
+    Route::post('obtener.distribucion.programacion', 'masterController@obtener_distribucion_programacion')->name('obtener_distribucion_programacion');
+    Route::post('obtener.distribucion.movimientos' , 'masterController@obtener_distribucion_movimientos') ->name('obtener_distribucion_movimientos');
+    
 //==================================== PRODUCCION ==================================================
-    Route::get('obtener.programacion'     , 'produccionController@obtenerProgramacion')      ->name('obtenerProgramacion');
-    Route::post('agregar.programacion.mrp', 'produccionController@ciclaProgramacion')        ->name('ciclaProgramacion');
+    // Route::get('obtener.programacion'     , 'produccionController@obtenerProgramacion')      ->name('obtenerProgramacion');
     Route::post('obtener.datos.produccion', 'produccionController@obtener_datos_produccion') ->name('obtener_datos_produccion');
     
     
-    Route::post('iniciar.partida.movim'    , 'produccionController@iniciar_partida_movim') ->name('iniciar_partida_movim');          // VISTA PRODUCCION 
-    Route::post('autorizar.recibo.material', 'produccionController@autorizar_recibo_material') ->name('autorizar_recibo_material');  // VISTA PRODUCCION 
-    Route::post('autorizar.envio.material' , 'produccionController@autorizar_envio_material') ->name('autorizar_envio_material');    // VISTA PRODUCCION 
-    Route::post('finalizar.partida.movim'  , 'produccionController@finalizar_partida_movim') ->name('finalizar_partida_movim');      // VISTA PRODUCCION 
-    Route::post('obtener.productos.enviados'  , 'produccionController@obtener_productos_enviados') ->name('obtener_productos_enviados');  // VISTA PRODUCCION 
+    Route::post('iniciar.partida.movim'    , 'produccionController@iniciar_partida_movim') ->name('iniciar_partida_movim');          // PRODUCCION 
+    Route::post('autorizar.recibo.material', 'produccionController@autorizar_recibo_material') ->name('autorizar_recibo_material');  // PRODUCCION 
+    Route::post('autorizar.envio.material' , 'produccionController@autorizar_envio_material') ->name('autorizar_envio_material');    // PRODUCCION 
+    Route::post('finalizar.partida.movim'  , 'produccionController@finalizar_partida_movim') ->name('finalizar_partida_movim');      // PRODUCCION 
+    Route::post('obtener.productos.enviados'  , 'produccionController@obtener_productos_enviados') ->name('obtener_productos_enviados');  // PRODUCCION 
 
-    Route::get('validar.estatus.movimientos', 'produccionController@validar_estatus_movimientos') ->name('validar_estatus_movimientos');  // PRODUCTO TERMINADO 
-
-
-
-
+    Route::get('validar.estatus.movimientos', 'produccionController@validar_estatus_movimientos') ->name('validar_estatus_movimientos');  // PRODUCCION
+    // Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
+    
 //==================================== PRODUCTOS TERMINADOS ==================================================
-    Route::post('agregar.producto.terminado'  , 'prodterminadoController@agregar_producto_terminado')   ->name('agregar_producto_terminado');  // PRODUCTO TERMINADO 
+    Route::post('agregar.producto.terminado'  , 'prodterminadoController@agregar_producto_terminado')   ->name('agregar_producto_terminado');   // PRODUCTO TERMINADO 
     Route::post('obtener.productos.terminados', 'prodterminadoController@obtener_productos_terminados') ->name('obtener_productos_terminados');  // PRODUCTO TERMINADO 
 
+//==================================== ENTRADAS ALMACEN VIRTUAL ==============================================
+    Route::post('generar.nueva.entrada'    , 'entradasController@generar_nueva_entrada')     -> name('generar_nueva_entrada');      // ENTRADA AL ALMACEN 
+    Route::post('obtener.entradas'         , 'entradasController@obtener_entradas')          -> name('obtener_entradas');           // ENTRADA AL ALMACEN 
+    Route::post('anadir.producto.terminado', 'entradasController@anadir_producto_terminado') -> name('anadir_producto_terminado');  // ENTRADA AL ALMACEN 
 
-    // Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
+//==================================== SALIDAS ALMACEN VIRTUAL ==============================================
+    Route::post('generar.nueva.salida'   , 'salidasController@generar_nueva_salida')    -> name('generar_nueva_salida');     // SALIDA ALMACEN
+    Route::post('obtener.salidas.almacen', 'salidasController@obtener_salidas_almacen') -> name('obtener_salidas_almacen');  // SALIDA ALMACEN
+
+    
 //=================================== MOVIM PROD ===================================================
     Route::get('obtener.MovimProd', 'movimProdController@obtenerMovimProd')->name('obtenerMovimProd');
     Route::post('agregar.MovimProd', 'movimProdController@agregarMovimProd')->name('agregarMovimProd');

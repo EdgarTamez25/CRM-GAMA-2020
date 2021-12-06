@@ -27,37 +27,53 @@ class prodterminadoController extends Controller
                                   response("Ocurrio un error, intentelo nuevamente.",500);
   }
 
-  public function actualiza_movim_anterior($id, $terminadas){
-    $actualizar = DB::update('UPDATE movim_prod SET terminadas=:terminadas + terminadas WHERE id=:id',
-          [
-              'terminadas' => $terminadas,
-              'id' => $id
-          ]);
-  }
 // ! ************************************************************************
 
 // **************** PRODUCTO TERMINADO **************************************
 public function obtener_productos_terminados(Request $req){
-  $productos_terminados = DB::select('SELECT pt.*,
-                                   ot.id_cliente, ot.oc,
-                                   c.nombre as nomcli,
-                                   s.nombre as nomsucursal,
-                                   p.codigo , p.id_unidad,
-                                   un.nombre as unidad
-                              FROM productos_terminados pt 
-                                LEFT JOIN ot           ON pt.id_ot = ot.id
-                                LEFT JOIN clientes c   ON ot.id_cliente = c.id
-                                LEFT JOIN sucursales s ON pt.id_sucursal = s.id
-                                LEFT JOIN prodxcli p   ON pt.id_producto = p.id
-                                LEFT JOIN unidades un  ON p.id_unidad = un.id
-                            WHERE pt.id_sucursal   = ? AND
-                                  pt.estatus = ?',
-                                  [
-                                      $req -> id_sucursal,
-                                      $req -> estatus,
-                                  ]);
+  $productos_terminados = DB::select('SELECT pt.* ,
+                                             p.codigo,
+                                             u.nombre as unidad,
+                                             s.nombre as nomsucursal
+                                        FROM productos_terminados pt
+                                          LEFT JOIN prodxcli p   ON pt.id_producto = p.id
+                                          LEFT JOIN unidades u   ON p.id_unidad = u.id
+                                          LEFT JOIN sucursales s ON pt.id_sucursal = s.id
+                            WHERE pt.id_sucursal   = ?', [ $req -> id_sucursal ]);
     return $productos_terminados ? $productos_terminados: [];
+}
+
+// **************** DESCONTAR CANTIDAD DE EXISTENCIA **************************************
+
+  public function descontar_cantidad_inventario($id, $cantidad_salida){
+      $existencia  = $this -> obtener_existencia_producto($id, $cantidad_salida);
+      if($existencia):
+        $producto_terminado = DB::update('UPDATE productos_terminados
+                                      SET cantidad=:cantidad
+                                  WHERE id=:id',
+              [
+                  'cantidad' => $existencia,
+                  'id' => $id
+              ]);
+        return $producto_terminado? true:false;
+      else:
+        return false;
+      endif;
+      
   }
+
+  public function obtener_existencia_producto($id, $cantidad_salida ){
+    $total = DB::select('SELECT cantidad FROM productos_terminados WHERE id=?', [$id]);
+    if($total[0] -> cantidad > $cantidad_salida):
+      $nueva_existencia = $total[0] -> cantidad - $cantidad_salida;
+      return $nueva_existencia;
+    else:
+      return 0;
+    endif;
+  }
+
+
+
 
 
 }

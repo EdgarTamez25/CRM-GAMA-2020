@@ -23,8 +23,10 @@ export default{
 	actions:{
 
 		consultaProductosxCliente({commit}, id_cliente ){
-      commit('LOADING',true); commit('PRODUCTOS_CLIENTE', []); 
-      
+			
+			commit('PRODUCTOS_CLIENTE', []); 
+			if(!id_cliente){ return }
+			commit('LOADING',true);
 			Vue.http.get('productos.cliente/'+ id_cliente ).then(response=>{
 				commit('PRODUCTOS_CLIENTE', response.body);
 			}).catch((error)=>{

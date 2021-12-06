@@ -56,9 +56,10 @@
 								<v-icon> mdi-alert-circle-outline </v-icon>
 							</v-btn>
 				    </template> -->
-						<template v-slot:item.dx="{ item }"  > 
+						<!--<template v-slot:item.dx="{ item }"  > 
 			    		<span class="font-weight-black ">{{ nombres_deptos[item.dx-1]  }}</span>
-				    </template>
+				    </template>-->
+
 						<template v-slot:item.codigo="{ item }"  > 
 			    		<span class="font-weight-black rosa--text">{{ item.codigo  }}</span>
 				    </template>
@@ -81,7 +82,7 @@
 				<v-card class="pa-3">
 					<controlProductoxCli 
 						:modoVista="modoVista" 
-						:data="data" 
+						:parametros="parametros" 
 						:Vista="Vista"
 						@modal="controlProductoModal = $event"/>
 				</v-card>
@@ -103,87 +104,90 @@
 			controlProductoxCli,
 		},
 		data () {
-				return {
-					page: 1,
-					pageCount: 0,
-					itemsPerPage: 200,
-					// ALERTAS
-					snackbar: false,
-					text		: '',
-					color		: 'success',
-					//PRODUCTOS
-          search: '',   
-					controlProductoModal: false,
-					modoVista: 0,
-					Vista: '',
-					data:'',
-					headers:[
-						{ text: 'Departamento'    , align: 'left'  , value: 'dx' },
-						{ text: 'Codigo'   , align: 'left'  , value: 'codigo' },
-						{ text: 'Nombre'   , align: 'left'  , value: 'nombre' },
-						{ text: 'Desc '    , align: 'left'  , value: 'descripcion' },
-						// { text: 'estatus'  , align: 'center'  , value: 'estatus' },
-						{ text: ' '        , align: 'right' , value: 'action', sortable: false },
-					],
-					cliente: { id:null, nombre:'' },
-					deptos:[],
-					nombres_deptos:[]
-				}
-			},
-
-			async created(){
-        // this.consultaProductos()// CONSULTAR PRODUCTOS A VUEX
-        await this.consultaClienteProductos();
-				this.nombres_deptos = await this.consulta_deptos_productos();
-			},
-
-			computed:{
-        ...mapGetters('ProductosxCliente' ,['Loading','getProductosxCli']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
-				...mapGetters('Clientes'  ,['getClientesProductos']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
-        
-				tamanioPantalla () {
-					switch (this.$vuetify.breakpoint.name) {
-						case 'xs':
-							return this.$vuetify.breakpoint.height -300
-						break;
-						case 'sm': 
-							return this.$vuetify.breakpoint.height -300
-						break;
-						case 'md':
-							return this.$vuetify.breakpoint.height -300
-						break;
-						case 'lg':
-							return this.$vuetify.breakpoint.height -300
-						break;
-						case 'xl':
-							return this.$vuetify.breakpoint.height -300
-						break;
-					}
-				},
-			},
-
-			watch:{
-				cliente(){
-					if(this.cliente){ this.productosxCliente() }
-				}
-			},
-
-			methods:{
-				...mapActions('ProductosxCliente',['consultaProductosxCliente']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
-				...mapActions('Clientes'  ,['consultaClienteProductos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
-        
-
-        productosxCliente(){
-          this.consultaProductosxCliente(this.cliente.id);
-				},
-
-				abrirModal(modoVista, data){ //NUEVO / EDITAR PRODUCTO 
-					const payload = new Object();	payload.id_cliente = this.cliente.id ? this.cliente.id: 0 ;
-					this.modoVista = modoVista;
-					this.data = data? data: payload;
-					this.Vista    = 'PRODUCTOS';
-					this.controlProductoModal = true;
-				},
+			return {
+				page: 1,
+				pageCount: 0,
+				itemsPerPage: 200,
+				// ALERTAS
+				snackbar: false,
+				text		: '',
+				color		: 'success',
+				//PRODUCTOS
+				search: '',   
+				controlProductoModal: false,
+				modoVista: 0,
+				Vista: '',
+				parametros:'',
+				headers:[
+					// { text: 'Departamento'    , align: 'left'  , value: 'dx' },
+					{ text: 'Codigo'      , align: 'left'  , value: 'codigo' },
+					{ text: 'Nombre'      , align: 'left'  , value: 'nombre' },
+					{ text: 'Descripción' , align: 'left'  , value: 'descripcion' },
+					{ text: 'Dirección'  	, align: 'left'  , value: 'url' },
+					{ text: ' '        , align: 'right' , value: 'action', sortable: false },
+				],
+				cliente: { id:null, nombre:'' },
+				deptos:[],
+				nombres_deptos:[]
 			}
+		},
+
+		async created(){
+			// this.consultaProductos()// CONSULTAR PRODUCTOS A VUEX
+			await this.consultaClienteProductos();
+			this.productosxCliente(this.cliente.id);
+			// this.nombres_deptos = await this.consulta_deptos_productos();
+		},
+
+		computed:{
+			...mapGetters('ProductosxCliente' ,['Loading','getProductosxCli']), // IMPORTANDO USO DE VUEX - PRODUCTOS (GETTERS)
+			...mapGetters('Clientes'  ,['getClientesProductos']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+			
+			tamanioPantalla () {
+				switch (this.$vuetify.breakpoint.name) {
+					case 'xs':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'sm': 
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'md':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'lg':
+						return this.$vuetify.breakpoint.height -300
+					break;
+					case 'xl':
+						return this.$vuetify.breakpoint.height -300
+					break;
+				}
+			},
+		},
+
+		watch:{
+			cliente(){
+				if(this.cliente){ this.productosxCliente() }
+			}
+		},
+
+		methods:{
+			...mapActions('ProductosxCliente',['consultaProductosxCliente']), // IMPORTANDO USO DE VUEX - PRODUCTOS(ACCIONES)
+			...mapActions('Clientes'  ,['consultaClienteProductos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+
+			productosxCliente(){
+				this.consultaProductosxCliente(this.cliente.id);
+			},
+
+			abrirModal(modoVista, data){ //NUEVO / EDITAR PRODUCTO 
+				const payload = {
+					id_cliente: this.cliente.id ? this.cliente.id: 0
+				}
+
+				this.modoVista = modoVista;
+				this.parametros = data? data: payload;
+				// this.Vista    = 'PRODUCTOS';
+				this.controlProductoModal = true;
+			},
+		}
 	}
 </script>

@@ -21,8 +21,6 @@ export default {
 		},
 
 		traerNivelxSistema(id_sistema = 1, niveles){
-			// console.log('niveles', niveles)
-			// console.log('id_sistema', id_sistema)
 			if(!niveles.length){ return };
 			this.nivelesxsistema = [];
 			const sistemas = [ 
@@ -30,7 +28,9 @@ export default {
 				{ id: 2, niveles:[ 3,,12,13 ] },  		// CRM-GAMA-MOVIL 
 				{ id: 3, niveles:[ 1,7,13 ] },  		  // REGISTRO ENTRADA Y SALIDA 
 				{ id: 4, niveles:[ 1,10,13 ] },  		  // MEJORA CONTINUA 
-				{ id: 5, niveles:[ 1,2,9,13 ] }   		// PROGRAMACION FLEXO 
+				{ id: 5, niveles:[ 1,2,9,13 ] },  		// PROGRAMACION FLEXO 
+				{ id: 6, niveles:[ 1,2,5,9, ] }   		// MRP 
+
 			]
 			
 			for(let i=0; i< sistemas[id_sistema-1].niveles.length; i++){

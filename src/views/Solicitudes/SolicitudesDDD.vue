@@ -247,8 +247,8 @@
                 ],
         departamento: { id:1, nombre:'DESARROLLO'},
         departamentos:[{ id: 1, nombre:'DESARROLLO'}, 
-                { id: 2, nombre:'DIGITAL'   }, 
-                { id: 3, nombre:'DISEÑO'    }   
+                { id: 2, nombre:'ARTE Y DISEÑO'   }, 
+                // { id: 3, nombre:'DISEÑO'    }   
 							],
 				
 				tipos:['Producto Existente','Modificación de Producto','Nuevo Producto'],

@@ -9,23 +9,7 @@ use Illuminate\Support\Facades\DB; //USAR ESCRITURA SQL
 class monitorController extends Controller
 {
     
-    public function ObtenerDatosMonitor(Request $req){
-
-    	$Monitor = DB::select('SELECT do.id, do.id_ot, do.id_producto, p.codigo,p.id_unidad, u.nombre as unidad,
-																		do.partida, do.cantidad,do.concepto, do.urgencia, do.razon, do.fecha_entrega,
-																		do.creacion, do.fecha_progra, do.finalizacion, do.estatus,
-																		ot.id_cliente, c.nombre as nomcli, ot.id_solicitante, us.nombre as solicitante,
-																		ot.id_solicitud, ot.oc
-															FROM det_ot do LEFT JOIN ot 			  ON do.id_ot          = ot.id
-																					   LEFT JOIN prodxcli p ON do.id_producto    = p.id
-																						 LEFT JOIN unidades u ON p.id_unidad       = u.id
-																						 LEFT JOIN clientes c ON ot.id_cliente     = c.id
-																						 LEFT JOIN users   us ON ot.id_solicitante = us.id
-															WHERE do.estatus = ? AND ot.fecha BETWEEN ? AND ? ORDER BY do.id DESC',
-			[$req -> estatus, $req -> fecha1, $req -> fecha2 ]);
-
-			return $Monitor ? $Monitor : [];
-    }
+    
     public function ProgramarProductos(Request $req){
     	for($i=0;$i<count($req -> detalle);$i++ ):
 

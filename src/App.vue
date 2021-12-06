@@ -315,7 +315,7 @@ export default {
   }),
 
   created(){
-     // this.overlay = true;
+     this.overlay = true;
     if (typeof(Storage) !== "undefined") {
         // VERIFICO SI EXISTE UN USUARIO ACTIVO 
         if(localStorage.getItem("KeyLogger") != null){
@@ -329,19 +329,19 @@ export default {
               this.blocked = false;  // DESACTIVO BLOCKEO
             }).catch( error=>{       // OBTENGO LA INFORMACION DEL USUARIO
               this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
-              // window.location.href = this.urlSistemaPrincipal;
+              window.location.href = this.urlSistemaPrincipal;
             });  
           }).catch( error =>{
-            // window.location.href = this.urlSistemaPrincipal;
+            window.location.href = this.urlSistemaPrincipal;
           })
           if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
             this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
           }
         }else{ 
-        //  window.location.href = this.urlSistemaPrincipal;
+         window.location.href = this.urlSistemaPrincipal;
         }
     } else {
-      // window.location.href = this.urlSistemaPrincipal;
+      window.location.href = this.urlSistemaPrincipal;
     }
     // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
     // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS

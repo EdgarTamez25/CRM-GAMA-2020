@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class sistemasController extends Controller
 {
     public function obtenerSistemas(){
-        return DB::select('SELECT * FROM sistemas');
+        return DB::select('SELECT * FROM sistemas WHERE estatus = 1');
     }
 
     public function AccesosASistemas($id){

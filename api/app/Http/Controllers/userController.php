@@ -61,7 +61,9 @@ class userController extends Controller
 	}
 
 	public function consultaNivelSistema($dataUsuario){
-		return DB::select('SELECT * FROM accesos WHERE id_usuario = ? AND id_sistema=?',[$dataUsuario['id'], $dataUsuario['sistema'] ]);
+		return DB::select('SELECT * FROM accesos 
+												WHERE id_usuario = ? AND id_sistema=?',
+												[$dataUsuario['id'], $dataUsuario['sistema'] ]);
 	}
 
 	public function obtenerDatosUsuario(Request $req){
