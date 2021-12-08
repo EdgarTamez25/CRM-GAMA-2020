@@ -107,6 +107,16 @@ export default {
 			
 		},
 
+		consultar_productos_cliente(id_cliente){  // REMPLAZO DE LA VISTA ALTA DE OT
+			return new Promise( resolve => {
+				this.$http.get('productos.cliente/'+ id_cliente).then((response)=>{
+					resolve(response.body);
+				}).catch(error =>{
+					console.log('error', error)
+				})
+			})	
+		},
+
 		// PRODUCTO POR CLIENTES POR DEPARTAMENTOS
 		consultaProdxClientexDepto( data){
 			return new Promise( (resolve, reject) => {
@@ -164,15 +174,15 @@ export default {
 		},
 
 		// PRODUCTOS POR CLIENTES
-		consulta_prod_por_cliente(payload){  
-			return new Promise( resolve => {
-				this.$http.post('productos.cliente.deptos', payload).then((response)=>{
-					resolve(response.body);
-				}).catch(error =>{
-					console.log('error', error)
-				})
-			})	
-		},
+		// consulta_prod_por_cliente(payload){  
+		// 	return new Promise( resolve => {
+		// 		this.$http.post('productos.cliente.deptos', payload).then((response)=>{
+		// 			resolve(response.body);
+		// 		}).catch(error =>{
+		// 			console.log('error', error)
+		// 		})
+		// 	})	
+		// },
 		
 		// DEPARTAMENTOS POR SUCURSAL
 		consultar_deptos_por_suc(id_sucursal){ 

@@ -196,8 +196,8 @@
         />
       <v-spacer></v-spacer>
       
-      <v-toolbar-items @click="cerrar_sesion=true">
-        <v-icon right>mdi-exit-to-app</v-icon>
+      <v-toolbar-items @click="cerrar_sesion=true" >
+        <v-btn text> <v-icon >mdi-exit-to-app</v-icon> </v-btn>
       </v-toolbar-items>
      <!-- <v-toolbar-items text-right> 
         <v-btn text color="white" dark @click="BuscarPredeterminado"> 
@@ -215,7 +215,7 @@
         <v-card-actions>
           <v-btn color="morado"  dark @click="cerrar_sesion=false">no, Cancelar</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="celeste" dark text  @click="salir">SÍ, Cerrar Sesión</v-btn>
+          <v-btn color="celeste" dark text  @click="salir()">SÍ, Cerrar Sesión</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -66,6 +66,8 @@ class productosxcliController extends Controller
 			return $productosxCli ? response($productosxCli,200) : response([], 500); 
 		}
 
+		
+
 
 		//! *****************************************************************************************
 

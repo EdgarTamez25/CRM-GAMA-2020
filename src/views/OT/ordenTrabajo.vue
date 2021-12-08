@@ -66,7 +66,7 @@
 								></v-text-field>
 								<v-spacer></v-spacer>
 								<!--<v-btn  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn> -->
-								<v-btn color="primary" dark  @click="altaOT = !altaOT"> Nueva O.T </v-btn>
+								<!--<v-btn color="primary" dark  @click="altaOT = !altaOT"> Nueva O.T </v-btn> -->
 								<v-btn  class="gris" icon dark @click="initialize()" ><v-icon>refresh</v-icon> </v-btn>
 							</v-card-actions>
 						</v-col>

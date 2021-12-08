@@ -39,10 +39,9 @@ const routes = [
   // { path:'/analisis-fases' , name:'analisis-fases', component:()=> import('@/views/Historial/analisisFases.vue')             , meta: { ADMIN: true, SUPER:true }},
   
 ]
-
+ // mode:'history',
+  // base: process.env.BASE_URL,
 const router = new VueRouter({
-  mode:'history',
-  base: process.env.BASE_URL,
   routes
 })
 
