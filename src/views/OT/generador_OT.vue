@@ -249,14 +249,17 @@
         // console.log('detallesol', this.detallesol)
         this.Detalle = []; this.fecha = this.traerFechaActual();
         for(let i=0; i<this.detallesol.length; i++){
-          this.Detalle.push({ 
+          if(this.detallesol[i].estatus != 4){ 
+            this.Detalle.push({ 
               ...this.detallesol[i], 
               concepto     : { id: 1, nombre:'PRODUCCIÓN'},
               urgencia     : null,
               razon        : '',
               fecha        : this.traerFechaActual(),
               listo        : false 
-          })
+            })
+          }
+          
         }
       },
 

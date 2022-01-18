@@ -291,6 +291,9 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
 	Route::post('obtener.productos.enviados'  , 'produccionController@obtener_productos_enviados') ->name('obtener_productos_enviados');  // PRODUCCION 
 
 	Route::get('validar.estatus.movimientos', 'produccionController@validar_estatus_movimientos') ->name('validar_estatus_movimientos');  // PRODUCCION
+	Route::post('autorizar.reposicion.material', 'produccionController@autorizar_reposicion_material') ->name('autorizar_reposicion_material');    // PRODUCCION 
+
+    
 	// Route::put('actualizar.produccion/{id}', 'produccionController@actualizarProduccion')->name('actualizarProduccion');
     
 //==================================== PRODUCTOS TERMINADOS ==================================================

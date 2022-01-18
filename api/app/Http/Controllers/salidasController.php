@@ -48,8 +48,11 @@ class salidasController extends Controller
 																LEFT JOIN unidades un on p.id_unidad  = un.id
 																LEFT JOIN sucursales sc ON s.id_sucursal = sc.id
 																LEFT JOIN users u ON s.id_creador = u.id
-														WHERE DATE(s.creacion) BETWEEN DATE(?) AND DATE(?)',
-														[$req -> fecha1 , $req -> fecha2 ]);
+														WHERE DATE(s.creacion) BETWEEN DATE(?) AND DATE(?) AND s.id_sucursal = ?',
+														[$req -> fecha1 , 
+															$req -> fecha2,
+															$req -> id_sucursal
+														]);
 			return $salidas ? $salidas : [];
 		}
 }

@@ -23,7 +23,7 @@ class entradasController extends Controller
 				
 			//* ACTUALIZAR MOVIMIENTO ANTERIOR ****************************************
 			$movimiento = new produccionController();
-			$movimiento -> actualiza_movim_anterior($req -> id_movim, $req -> cantidad);
+			$movimiento -> actualiza_movim_anterior($req -> id_movim, $req -> cantidad, $req -> id_creador);
 			
 			return $entrada? response("El producto se ha envíado correctamente.",200):
 												response("Ocurrio un error, intentelo nuevamente.",500);
@@ -60,6 +60,12 @@ class entradasController extends Controller
 
 	//! ****************** ENVIAR A PRODUCTOS TERMINADOS ***********************************
 		public function anadir_producto_terminado(Request $req){
+		  $validacion = $this -> validar_cantidad_solcitada($req);
+
+			if(!$validacion['estatus']):
+				return response("Solo puedes acceder" ." " .$validacion['cantidad'], 500);
+			endif;
+
 			// 1. BUSCO EN PRODUCTOS TERMINADOS SI EXISTE EL PRODUCTO QUE RECIBO
 			$producto = $this -> buscar_producto_registrado($req -> id_producto);
 			// 2.EVALUO SI EL PRODUCTO EXISTE O NO
@@ -69,9 +75,35 @@ class entradasController extends Controller
 																$this -> actualizar_producto_terminado($req -> cantidad_recibida, $producto);
 			// 3. ACTUALIZO LA CANTIDAD AUTORIZADA EN EL REGISTRO DE ENTRADA.
 			$this -> actualizar_cantidad_entrega($req);
+			// 3.1. ACTUALIZAR LA CANTIDAD TOTAL DE PRODUCCION.
+			$this -> actualizar_total_produccion($req);
 			// 4. EVALUO RESPUESTA PARA RETORNAR AL FRONDEND.
 			return $resultado ? response("Se añadio a productos terminados correctamente.",200):
 													response("Ocurrio un error, intentelo mas tarde.",500);
+		}
+		
+		public function validar_cantidad_solcitada($detalle){
+			$cant_sol = DB::select('SELECT cant_sol FROM produccion 
+															WHERE id = ?', [$detalle['id_produccion']]);
+
+			$entradas = DB::select('SELECT sum(cantidad_recibida) as total FROM entradas
+																WHERE id_produccion = ? AND id_producto = ?',
+															[$detalle['id_produccion'], $detalle['id_producto'] ]);
+
+			$Total   = $entradas[0] -> total + $detalle['cantidad_recibida'];
+			$Retorno = $cant_sol[0] -> cant_sol - $entradas[0] -> total;
+
+			if($Total <= $cant_sol[0] -> cant_sol ):
+				return ["cantidad" => 0 , "estatus" => true ];
+			else:
+				return ["cantidad" => $Retorno , "estatus" => false ];
+			endif;
+		}
+
+		// 1. BUSCO EN PRODUCTOS TERMINADOS SI EXISTE EL PRODUCTO QUE RECIBO
+		public function buscar_producto_registrado($id_producto){
+			$producto =DB::select('SELECT * FROM productos_terminados WHERE id = ?',[$id_producto]);
+			return $producto ? $producto : false;
 		}
 
 		// 2.1 CREO UN NUEVO REGISTRO EN PRODUCTO TERMINDO.
@@ -113,11 +145,17 @@ class entradasController extends Controller
 									]);
 		}
 		
-		// 1. BUSCO EN PRODUCTOS TERMINADOS SI EXISTE EL PRODUCTO QUE RECIBO
-		public function buscar_producto_registrado($id_producto){
-			$producto =DB::select('SELECT * FROM productos_terminados WHERE id = ?',[$id_producto]);
-			return $producto ? $producto : false;
+		// 3.1. ACTUALIZAR LA CANTIDAD TOTAL DE PRODUCCION. 
+		public function actualizar_total_produccion($data){
+			DB::update('UPDATE produccion
+										SET total=:total + total WHERE id=:id',
+									[
+											'total' => $data['cantidad_recibida'],
+											'id' 		=> $data['id_produccion']
+									]);
 		}
+		
+		
 	//! *************************************************************************************
 
 

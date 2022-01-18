@@ -41,8 +41,8 @@
     },
 
     created(){
-      console.log('TAMAÑO', this.$vuetify.breakpoint.width)
-      console.log('TAMAÑO', this.$vuetify.breakpoint.width)
+      // console.log('TAMAÑO', this.$vuetify.breakpoint.width)
+      // console.log('TAMAÑO', this.$vuetify.breakpoint.width)
 
     },
 

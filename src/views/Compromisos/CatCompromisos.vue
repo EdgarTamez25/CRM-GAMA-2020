@@ -49,22 +49,31 @@
 								</v-date-picker>
 							</v-dialog>
 						</v-col>
+
+						<v-col cols="12" sm="8" class="py-0">
+							<v-text-field
+								v-model="search"
+								append-icon="search"
+								label="Buscar compromiso"
+								single-line
+								hide-details
+								filled dense
+							></v-text-field>
+						</v-col>
+
+						<v-col cols="12" sm="4" class="py-0">
+							<v-card-actions class="">
+								<v-spacer></v-spacer>
+								<v-btn  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
+								<v-btn  class="celeste" dark @click="NuevoCompromiso(1)">Agregar </v-btn>
+								<v-btn  class="gris" icon dark @click="consultaCompromisos" ><v-icon>refresh</v-icon> </v-btn>
+							</v-card-actions>
+						</v-col>
+
+
 					</v-row> 
 
-					<v-card-actions class="">
-			      <v-text-field
-			        v-model="search"
-			        append-icon="search"
-			        label="Buscar compromiso"
-			        single-line
-			        hide-details
-							filled dense
-			      ></v-text-field>
-			      <v-spacer></v-spacer>
-						<v-btn small dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
-			      <v-btn small class="celeste" dark @click="NuevoCompromiso(1)">Agregar </v-btn>
-			      <v-btn small class="gris" icon dark @click="consultaCompromisos" ><v-icon>refresh</v-icon> </v-btn>
-			    </v-card-actions>
+					
 					
 			    <v-data-table
 			      :headers="headers"
@@ -286,7 +295,8 @@
 			tamanioPantalla () {
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':
-						return this.$vuetify.breakpoint.height -300
+					 return 'auto';
+						// return this.$vuetify.breakpoint.height -300
 					break;
 					case 'sm': 
 						return this.$vuetify.breakpoint.height -300

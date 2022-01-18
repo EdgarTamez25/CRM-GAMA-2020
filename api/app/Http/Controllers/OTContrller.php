@@ -149,6 +149,14 @@ class OTContrller extends Controller
 	}
 
 	public function ActualizaUrgenciaDetOT($id, Request $req){
-		 DB::update('UPDATE det_ot SET urgencia=:urgencia WHERE id=:id',['urgencia' => $req -> urgencia, 'id' => $req -> id]);
+		 DB::update('UPDATE det_ot 
+		 							SET urgencia=:urgencia,
+									    id_actualiza=:id_actualiza
+								 WHERE id=:id',
+								 [
+									 'urgencia' => $req -> urgencia, 
+									 'id_actualiza' => $req -> id_usuario,
+								   'id' => $req -> id
+								 ]);
 	}
 }

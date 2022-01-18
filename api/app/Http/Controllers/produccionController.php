@@ -68,7 +68,7 @@ class produccionController extends Controller{
 																				LEFT JOIN clientes       c ON ot.id_cliente = c.id
                                 WHERE m.id_depto   = ? AND
                                         m.estatus_prod = ? AND
-                                        m.creacion BETWEEN ? AND ?',
+                                        m.creacion BETWEEN DATE(?) AND DATE(?)',
                                         [
                                             $req -> id_depto,
                                             $req -> estatus,
@@ -96,6 +96,7 @@ class produccionController extends Controller{
 			$id_movim_prod = DB::table('movim_prod')->insertGetId(
 				[
 					'id_produccion' => $req -> id_produccion,
+					'id_movim_ant'  => $req -> id_movim,
 					'id_depto' 		  => $req -> id_nuevo_depto,
 					'id_sucursal'   => $req -> id_sucursal,
 					'id_producto'   => $req -> id_producto,
@@ -109,20 +110,13 @@ class produccionController extends Controller{
 				]
 			);
 
-			$this -> actualiza_movim_anterior($req -> id_movim, $req -> enviadas);
+			$this -> actualiza_movim_anterior($req -> id_movim, $req -> enviadas, $req -> id_usr_emisor);
 
 			return $id_movim_prod? response("El producto se ha envíado correctamente.",200):
 														 response("Ocurrio un error, intentelo nuevamente.",500);
 
 		}
 
-		public function actualiza_movim_anterior($id, $terminadas){
-			$actualizar = DB::update('UPDATE movim_prod SET terminadas=:terminadas + terminadas WHERE id=:id',
-            [
-                'terminadas' => $terminadas,
-                'id' => $id
-            ]);
-		}
 	// ! ************************************************************************
 
 	// **************** AUTORIZAR RECIBO DE PRODUCTO ****************************
@@ -145,6 +139,42 @@ class produccionController extends Controller{
 																response("Ocurrio un problema , por favor intentelo mas tarde.", 500);
 		}
 	// ! ************************************************************************
+
+	// **************** AUTORIZAR REPOSICION ************************************
+		public function autorizar_reposicion_material(Request $req){
+			$descuento = $req -> reposicion;
+			$terminado = DB::update('UPDATE movim_prod SET 
+																 terminadas=terminadas - :terminadas ,
+		 														 reposicion=:reposicion + reposicion,
+		 														 id_actualiza=:id_actualiza,
+																 estatus_prod=:estatus_prod
+		 														WHERE id=:id',
+														[
+															'terminadas' => $req -> reposicion,
+															'reposicion' => $req -> reposicion,
+															'id_actualiza' => $req -> id_usuario,
+															'estatus_prod' => 2,
+															'id' => $req -> id_movim_ant
+														]);
+			return $terminado ? response("La reposición se genero correctamente",200):
+														response("Ocurrio un error, intentelo mas tarde",500);
+
+		}
+
+		public function actualiza_movim_anterior($id, $terminadas, $id_usuario){
+			$actualizar = DB::update('UPDATE movim_prod SET 
+																 terminadas=:terminadas + terminadas,
+																 id_actualiza=:id_actualiza
+																WHERE id=:id',
+            [
+                'terminadas' => $terminadas,
+								'id_actualiza' => $id_usuario,
+                'id' => $id
+            ]);
+		
+		}
+	// ! ************************************************************************
+	
 
 	// **************** FINALIZACION DE MOVIMIENTO ******************************
 		public function finalizar_partida_movim(Request $req){
@@ -192,7 +222,7 @@ class produccionController extends Controller{
 																					LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
 																					LEFT JOIN ot  		   	     ON dt.id_ot = ot.id
 																					LEFT JOIN clientes       c ON ot.id_cliente = c.id
-																			WHERE m.emisor = ? AND m.creacion BETWEEN ? AND ?',
+																			WHERE m.emisor = ? AND m.creacion BETWEEN DATE(?) AND DATE(?)',
 																					[
 																							$req -> id_depto,
 																							$req -> fecha1,

@@ -71,9 +71,9 @@
 						</v-col>
 
 						<v-col cols="12" sm="6" class="py-0 my-0  text-right">
-							<v-btn small class="ma-1" dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
-			      	<v-btn small class=" ma-1 celeste" dark      @click="nuevaSol.modalSolicitud = true">Agregar </v-btn>
-			      	<v-btn small class=" ma-1 gris" icon dark    @click="init()" ><v-icon>refresh</v-icon> </v-btn>
+							<v-btn  class="ma-1" dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn>
+			      	<v-btn  class=" ma-1 celeste" dark      @click="nuevaSol.modalSolicitud = true">Agregar </v-btn>
+			      	<v-btn  class=" ma-1 gris" icon dark    @click="init()" ><v-icon>refresh</v-icon> </v-btn>
 						</v-col>
 					</v-row>
 					
@@ -293,7 +293,8 @@
 			tamanioPantalla () {
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':
-						return this.$vuetify.breakpoint.height -300
+						return 'auto';
+						// return this.$vuetify.breakpoint.height -300
 					break;
 					case 'sm': 
 						return this.$vuetify.breakpoint.height -300

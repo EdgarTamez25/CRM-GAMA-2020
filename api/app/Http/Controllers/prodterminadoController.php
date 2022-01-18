@@ -46,17 +46,23 @@ public function obtener_productos_terminados(Request $req){
 // **************** DESCONTAR CANTIDAD DE EXISTENCIA **************************************
 
   public function descontar_cantidad_inventario($id, $cantidad_salida){
+      // MANDO A TRAER LA CANTIDAD EXISTENTE DEL PRODUCTO EN CUESTION
       $existencia  = $this -> obtener_existencia_producto($id, $cantidad_salida);
-      if($existencia):
+      // EXISTENCIA ES LA RESPUESTA DE LA CONSULTA DEL PRODUCTO DEL PRODUCTO
+      // SI REGRESA 'VACIO' SIGNIFICA QUE LA EXISTENCIA DEL PRODUCTO ES CERO
+      if($existencia || $existencia === 'VACIO'):
+        // ASIGNO EL VALOR DE CERO DESPUES DE EVALUAR LA RESPUESTA
+        $cantidad_nueva = $existencia === 'VACIO'? 0 : $existencia;
         $producto_terminado = DB::update('UPDATE productos_terminados
                                       SET cantidad=:cantidad
                                   WHERE id=:id',
               [
-                  'cantidad' => $existencia,
+                  'cantidad' => $cantidad_nueva,
                   'id' => $id
               ]);
         return $producto_terminado? true:false;
       else:
+        // RETORNO FALSO YA QUE NO HAY EXISTENCIA SUFICIENTE EN ALMACEN
         return false;
       endif;
       
@@ -64,9 +70,9 @@ public function obtener_productos_terminados(Request $req){
 
   public function obtener_existencia_producto($id, $cantidad_salida ){
     $total = DB::select('SELECT cantidad FROM productos_terminados WHERE id=?', [$id]);
-    if($total[0] -> cantidad > $cantidad_salida):
+    if($total[0] -> cantidad >= $cantidad_salida):
       $nueva_existencia = $total[0] -> cantidad - $cantidad_salida;
-      return $nueva_existencia;
+      return $nueva_existencia > 0 ? $nueva_existencia : 'VACIO';
     else:
       return 0;
     endif;
