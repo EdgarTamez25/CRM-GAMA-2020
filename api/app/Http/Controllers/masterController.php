@@ -10,14 +10,16 @@ class masterController extends Controller
 
 	public function obtener_datos_monitor(Request $req){
 		$master = DB::select('SELECT do.*,
-																	p.codigo,p.id_unidad, 
-																	u.nombre as unidad,
-																	us.nombre as solicitante,
- 																	c.nombre as nomcli,
-																	ot.id_cliente,  ot.id_solicitante, 
-																	ot.id_solicitud, ot.oc
+																 p.codigo,p.id_unidad, 
+																 u.nombre as unidad,
+																 us.nombre as solicitante,
+																 c.nombre as nomcli,
+																 ot.id_cliente,  ot.id_solicitante, 
+																 ot.id_solicitud, ot.oc, 
+																 usr.nombre as creador
 														FROM det_ot do 
-															LEFT JOIN ot 			   ON do.id_ot          = ot.id
+															LEFT JOIN ot 	       ON do.id_ot          = ot.id
+															LEFT JOIN users usr  ON ot.id_creador     = usr.id
 															LEFT JOIN prodxcli p ON do.id_producto    = p.id
 															LEFT JOIN unidades u ON p.id_unidad       = u.id
 															LEFT JOIN clientes c ON ot.id_cliente     = c.id

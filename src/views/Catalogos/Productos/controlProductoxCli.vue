@@ -10,7 +10,9 @@
       </v-snackbar>
 
       <v-col cols="9" sm="10" align="left">
-        <v-card-text class="font-weight-black headline  py-0 mt-1 " > {{ modoVista === 1 ? 'NUEVO PRODUCTO': 'EDITAR PRODUCTOS'}} </v-card-text>
+        <v-card-text class="font-weight-black headline py-0 mt-1 " > 
+         {{ modoVista === 1 ? 'NUEVO PRODUCTO': 'EDITAR PRODUCTOS'}} 
+        </v-card-text>
       </v-col>
        <v-col cols="3" sm="2" align="right">
         <v-btn color="error"  @click="$emit('modal',false)" outlined><v-icon>clear</v-icon></v-btn>
@@ -73,13 +75,25 @@
 
         <v-col cols="12" > 
           <v-select
-              v-model="editarItem.depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
-              dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" :disabled="modoVista === 3? true:false"
+            v-model="editarItem.depto" 
+            :items="deptos" item-text="nombre" 
+            item-value="id" 
+            outlined color="celeste" 
+            label="Departamentos" 
+            placeholder="Departamentos" 
+            :disabled="modoVista === 3? true:false"
+            hide-details 
+            return-object 
+            dense
           ></v-select>
         </v-col> 
 
         <v-col cols="12" class="text-right" >
-          <v-btn color="green" dark  @click="validarInfomracion()">{{ modoVista === 1 ? 'CREAR PRODUCTO': 'ACTUAIZAR PRODUCTO' }}</v-btn>
+          <v-btn color="green" dark 
+            @click="validarInfomracion()"
+          >
+          {{ modoVista === 1 ? 'CREAR PRODUCTO': 'ACTUALIZAR PRODUCTO' }}
+          </v-btn>
         </v-col>
       </template>
 

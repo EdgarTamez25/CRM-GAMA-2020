@@ -71,6 +71,7 @@ class OTContrller extends Controller
 					'concepto' 		  => $detalle['concepto']['id'],
 					'urgencia'  		=> $detalle['urgencia']['id'],
 					'razon'  				=> $detalle['razon'],
+					'comentarios'  	=> $detalle['comentarios'],
 					'fecha_entrega' => $detalle['fecha'],     
 					'creacion'      => $fecha.' '.$hora,
 			]);

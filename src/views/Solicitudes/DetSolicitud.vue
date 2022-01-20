@@ -125,17 +125,17 @@
               </v-card>
             </v-col>
 
+            <!-- AGREGAR O EDITAR PRODUCTO -->
             <v-dialog v-model="crudSolicitud" persistent max-width="700">
               <v-card class="pa-3">
                 <v-card-actions>
-                  <v-card-text 
-                    class="text-h6 font-weight-black pa-0 " 
-                  >
+                  <v-card-text class="text-h6 font-weight-black pa-0">
                       {{ modoVista === 1 ?'AGREGAR PRODUCTO':'EDITAR PRODUCTO'}}
                   </v-card-text>
                   <v-spacer></v-spacer>
-
-                  <v-btn color="error" fab small  @click="crudSolicitud = false" ><v-icon>clear</v-icon></v-btn>
+                  <v-btn color="error" fab small  @click="crudSolicitud = false" >
+                    <v-icon>clear</v-icon>
+                  </v-btn>
                 </v-card-actions>
 
                 <v-row class="mt-4">
@@ -337,6 +337,7 @@
 
         this.productosxcliente = [];
         this.consultaProdxClientexDepto( payload).then( response =>{ 
+          // console.log('PRODUCTOS POR CLIENTE', response);
           this.productosxcliente = response
           // this.producto = { id: this.idProdAEditar };
           this.alerta = { activo: true, 

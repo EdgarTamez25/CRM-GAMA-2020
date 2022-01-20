@@ -56,32 +56,41 @@
               <th class="text-left rosa white--text"> PRODUCTO </th>
               <th class="text-left rosa white--text"> CANTIDAD </th>
               <th class="text-left rosa white--text"> UNIDAD </th>
-              <th class="text-left rosa white--text"> CONCEPTO </th>
-              <th class="text-left rosa white--text"> F.ENTREGA </th>
-              <th class="text-left rosa white--text"> URGENCIA </th>
+              <!-- <th class="text-left rosa white--text"> CONCEPTO </th> -->
+               <th class="text-left rosa white--text"> F.ENTREGA </th> 
+              <th class="text-left rosa white--text"> ESTATUS </th> 
               <th class="text-left rosa white--text">  </th>
-
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item,i) in Detalle" :key="i" >
-              <td class="font-weight-black" width="130px" >  {{ item.codigo }}  </td>
-              <td width="100px">{{ item.cantidad | currency(0) }}</td>
-              <td width="100px"> {{ item.unidad }} </td>
-              <td > 
+              <td width="0px" >
+               <v-btn text class="font-weight-black"> {{ item.codigo }}  </v-btn>   
+              </td>
+              <td width="100px" >{{ item.cantidad | currency(0) }}</td>
+              <td width="100px" > {{ item.unidad }} </td>
+              <!-- <td > 
                 <span v-if="item.concepto" > {{ item.concepto.nombre }} </span>
                 <span v-else > SIN CONCEPTO </span>
-              </td>
+              </td> -->
               <td>
-                <span v-if="item.fecha"> {{ moment(item.fecha).format('LL') }} </span>
+                <span v-if="item.fecha" > {{ moment(item.fecha).format('LL') }} </span>
                 <span v-else> SIN FECHA </span>
               </td>
               <td > 
-                <span v-if="item.urgencia"> {{ item.urgencia.nombre }}  </span>
-                <span v-else> SIN URGENCIA </span>
-              </td>
+                <v-btn fab text small color="success" v-if="item.urgencia"> 
+                  <v-icon large> mdi-check-bold </v-icon> 
+                </v-btn>
+                <v-btn fab text small color="error" v-else> 
+                  <v-icon large> mdi-alert-octagon-outline </v-icon> 
+                </v-btn>
+              </td> 
               <td class="pa-2"> 
-                <v-btn fab small color="celeste" dark @click="abrir_detalle_partida(item)"> <v-icon> mdi-pencil </v-icon>  </v-btn> 
+                <v-btn fab small color="celeste" dark 
+                  @click="abrir_detalle_partida(item)"
+                > 
+                  <v-icon> mdi-pencil </v-icon>  
+                </v-btn> 
               </td>
             </tr>
           </tbody>
@@ -90,6 +99,7 @@
     </v-col>
 
     <v-col class="mt-5"/>
+
     <v-footer absolute fixed>
       <v-spacer></v-spacer>
       <v-btn dark color="success" @click="alertaGenerarOT = true" :disabled="GENERAR_OT" >
@@ -99,10 +109,16 @@
 
     <v-dialog v-model="alertaGenerarOT" persistent max-width="500">
       <v-card >
-        <v-card-title class="subtitle-1 font-weight-black" style="word-break:normal;" > SE GENERARA LA ORDEN DE TRABAJO CON LA INFORMACIÓN ACTUAL  </v-card-title>
-        <v-card-subtitle class=" mt-1 subtitle-2 font-weight-black">¿ ESTA SEGURO DE QUERER CONTINUAR ?</v-card-subtitle>
+        <v-card-title class="subtitle-1 font-weight-black" style="word-break:normal;"> 
+          SE GENERARA LA ORDEN DE TRABAJO CON LA INFORMACIÓN ACTUAL  
+        </v-card-title>
+        <v-card-subtitle class=" mt-1 subtitle-2 font-weight-black">
+          ¿ ESTA SEGURO DE QUERER CONTINUAR ?
+        </v-card-subtitle>
         <v-divider class="my-0 py-3" ></v-divider>
-        <v-card-subtitle align="center" class="red--text font-weight-bold "> NO SE PODRAN EFECTUAR CAMBIOS POSTERIORES </v-card-subtitle>
+        <v-card-subtitle align="center" class="red--text font-weight-bold "> 
+          NO SE PODRAN EFECTUAR CAMBIOS POSTERIORES 
+        </v-card-subtitle>
         <v-divider class="my-0 py-2 " ></v-divider>
         <v-card-actions>
           <v-spacer/>
@@ -112,7 +128,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="detalleModal" width="400px" persistent>
+    <v-dialog v-model="detalleModal" width="450px" persistent>
       <v-card class="pa-4">
         <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
           <strong> {{alerta.text}} </strong>
@@ -121,49 +137,64 @@
           </template>
         </v-snackbar>
 
-        <v-card-text class="font-weight-black text-h6 text-center py-0"> DETALLE DE LA PARTIDA </v-card-text>
+        <v-card-text class="font-weight-black text-h6 text-center "> DETALLE DE LA PARTIDA </v-card-text>
 
-          <v-row>
+        <v-row>
           <!--
             <v-col cols="12">
-               <v-select
+              <v-select
                 v-model="editDetalle.concepto" :items="conceptos" item-text="nombre" item-value="id" color="celeste" 
                 outlined dense hide-details  placeholder="Concepto" return-object 
               ></v-select>
             </v-col>
           -->
-            <v-col cols="12"> 
-              <v-text-field 
-                v-model="editDetalle.fecha" label="Fecha" 
-                outlined dense hide-details color="rosa" type="date"
-              ></v-text-field> 
-            </v-col>
-            <v-col cols="12">
-              <v-select
-                v-model="editDetalle.urgencia" :items="urgencias" item-text="nombre" item-value="id" color="celeste" 
-                dense hide-details placeholder="Urgencia" return-object outlined
-              ></v-select>
-            </v-col>
-            <v-col cols="12" >
-              <v-textarea
-                v-model ="editDetalle.razon" label="Razon de la urgencia" rows="2" hide-details dense filled
-              ></v-textarea>
-            </v-col>
-          </v-row>
+          <v-col cols="12" sm="6"> 
+            <v-text-field 
+              v-model="editDetalle.fecha" label="Fecha de entrega" 
+              outlined dense hide-details color="rosa" type="date"
+            ></v-text-field> 
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-select
+              v-model="editDetalle.urgencia" :items="urgencias" item-text="nombre" item-value="id" color="celeste" 
+              dense hide-details placeholder="Urgencia" return-object outlined
+            ></v-select>
+          </v-col>
+
+          <v-col cols="12" v-if="editDetalle.urgencia && editDetalle.urgencia.id != 1">
+            <v-textarea
+              v-model="editDetalle.razon" 
+              label="Razon"
+              placeholder="Escribe la razon de tu urgencia." 
+              rows="1" 
+              hide-details dense filled
+            ></v-textarea>
+          </v-col>
+
+          <v-col cols="12" >
+            <v-textarea
+              v-model="editDetalle.comentarios" 
+              label="Comentarios" 
+              placeholder="Escribe tus comentarios aqui..."
+              rows="4"
+              hide-details dense outlined
+            ></v-textarea>
+          </v-col>
+
+        </v-row>
 
         <div class="mt-10"> </div>
         <v-footer absolute fixed>
-        <v-btn  text color="error" @click="detalleModal = false">Cancelar</v-btn>
-          <v-spacer></v-spacer>
+          <v-btn  text color="error" @click="detalleModal = false">Cancelar</v-btn>
+            <v-spacer></v-spacer>
           <v-btn  dark color="celeste" @click="validar_detalle_partida()" :disabled="overlay ? true : false" >
             Guardar
           </v-btn> 
         </v-footer>
+
       </v-card>
     </v-dialog>
-
-    
-
 
     <overlay v-if="overlay"/>
     
@@ -219,6 +250,7 @@
           fecha: '',
           urgencia: { id:null, nombre: '' },
           razon: '',
+          comentarios: '',
         }
       }
     },
@@ -255,6 +287,7 @@
               concepto     : { id: 1, nombre:'PRODUCCIÓN'},
               urgencia     : null,
               razon        : '',
+              comentarios  : '',
               fecha        : this.traerFechaActual(),
               listo        : false 
             })
@@ -277,7 +310,8 @@
           fecha_procesado: this.traerFechaActual() + ' ' + this.traerHoraActual(),
           sistema        : 'CRM-GAMA'
         };
-
+        // console.log('OT', ot);
+        // return 
         this.$http.post('crear.orden.trabajo', ot).then( response =>{
             this.alerta = { activo: true, text: response.bodyText, color:'green'};
             let that = this; setTimeout(() => { that.$router.push({ name:'solicitudes' })}, 1500);
@@ -300,10 +334,7 @@
       },
 
       validar_detalle_partida(){
-        // if(!this.editDetalle.concepto){
-        //     this.alerta = { activo: true, text:`Aun no seleccionas el concepto para el producto ${ this.editDetalle.codigo }. `, color:'error'};
-        //     return
-        // }
+        
         if(!this.editDetalle.urgencia){
           this.alerta = { activo: true, text:`Aun no seleccionas la urgencia del producto ${ this.editDetalle.codigo }.`, color:'error'};
           return;

@@ -43,38 +43,40 @@ class produccionController extends Controller{
 
     public function obtener_datos_produccion(Request $req){
 
-        $produccion = DB::select('SELECT m.*,
-																				us.nombre  as nomemisor,
-																				us2.nombre as nomreceptor,
-																				d.nombre   as deptoemisor,
-																				d2.nombre  as deptoreceptor,
-																				a.codigo,
-																				u.nombre as nomunidad,
-																				p.fecha_entrega, p.urgencia,
-																				dt.id as id_det_ot, dt.id_ot,
-																				ot.id_cliente,
-																				c.nombre as nomcli,
-																				DATEDIFF(p.fecha_entrega, NOW()) as dias
-																		FROM movim_prod m
-																				LEFT JOIN users         us ON m.id_usr_emisor = us.id
-																				LEFT JOIN users    	   us2 ON m.id_usr_receptor = us2.id
-																				LEFT JOIN depto_por_suc  d ON m.emisor = d.id
-																				LEFT JOIN depto_por_suc d2 ON m.receptor = d2.id
-																				LEFT JOIN prodxcli       a ON m.id_producto = a.id
-																				LEFT JOIN unidades       u ON a.id_unidad = u.id
-																				LEFT JOIN produccion     p ON m.id_produccion = p.id
-																				LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
-																				LEFT JOIN ot  		   	     ON dt.id_ot = ot.id
-																				LEFT JOIN clientes       c ON ot.id_cliente = c.id
-                                WHERE m.id_depto   = ? AND
-                                        m.estatus_prod = ? AND
-                                        m.creacion BETWEEN DATE(?) AND DATE(?)',
-                                        [
-                                            $req -> id_depto,
-                                            $req -> estatus,
-                                            $req -> fecha1,
-                                            $req -> fecha2
-                                        ]);
+			$produccion = DB::select('SELECT m.*,
+																			us.nombre  as nomemisor,
+																			us2.nombre as nomreceptor,
+																			d.nombre   as deptoemisor,
+																			d2.nombre  as deptoreceptor,
+																			a.codigo,
+																			u.nombre as nomunidad,
+																			p.fecha_entrega, p.urgencia,
+																			dt.id as id_det_ot, dt.id_ot, dt.comentarios,
+																			ot.id_cliente,
+																			us3.nombre as creador,
+																			c.nombre as nomcli,
+																			DATEDIFF(p.fecha_entrega, NOW()) as dias
+																	FROM movim_prod m
+																			LEFT JOIN users         us ON m.id_usr_emisor = us.id
+																			LEFT JOIN users    	   us2 ON m.id_usr_receptor = us2.id
+																			LEFT JOIN depto_por_suc  d ON m.emisor = d.id
+																			LEFT JOIN depto_por_suc d2 ON m.receptor = d2.id
+																			LEFT JOIN prodxcli       a ON m.id_producto = a.id
+																			LEFT JOIN unidades       u ON a.id_unidad = u.id
+																			LEFT JOIN produccion     p ON m.id_produccion = p.id
+																			LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
+																			LEFT JOIN ot  		   	   ON dt.id_ot = ot.id
+																				LEFT JOIN users    	   us3 ON ot.id_creador = us3.id
+																			LEFT JOIN clientes       c ON ot.id_cliente = c.id
+																	WHERE m.id_depto   = ? AND
+																			m.estatus_prod = ? AND
+																			m.creacion BETWEEN DATE(?) AND DATE(?)',
+																			[
+																					$req -> id_depto,
+																					$req -> estatus,
+																					$req -> fecha1,
+																					$req -> fecha2
+																			]);
 				return $produccion ? $produccion: [];
     }
 

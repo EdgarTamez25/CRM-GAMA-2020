@@ -241,171 +241,171 @@
 </template>
 
 <script>
-import  SelectMixin from '@/mixins/SelectMixin.js';
-import store from '@/store'
-import { mapGetters,mapActions } from 'vuex';
+  import  SelectMixin from '@/mixins/SelectMixin.js';
+  import store from '@/store'
+  import { mapGetters,mapActions } from 'vuex';
 
-export default {
-  mixins:[SelectMixin],
-  components: {
-  },
-  data: () => ({
-    syster_number: 1,
-    urlSistemaPrincipal: 'http://producciongama.com/',
+  export default {
+    mixins:[SelectMixin],
+    components: {
+    },
+    data: () => ({
+      syster_number: 1,
+      urlSistemaPrincipal: 'http://producciongama.com/',
 
-    cerrar_sesion:false,
+      cerrar_sesion:false,
 
-    drawer: null,
-    contador: 0 ,
-    color: '',
-    colores: ['#272727','#f4e200','#0096cb','#bf1c7f','#894975','#6f7170'], //NGRO,celeste,AZUL,ROSA,celeste,GRIS
-     AppControl: [
-        {
-          admin: [ 
-            // { text: 'Inicio'      ,icon: 'home'                       ,path: '/inicio'},
-            { text: 'Compromisos' ,icon: 'chrome_reader_mode'         ,path: '/compromisos'},
-            { text: 'Solicitudes' ,icon: 'ballot'                     ,path: '/solicitudes'},
-            { text: 'Desarrollo de proyectos' ,icon: 'mdi-monitor-screenshot' ,path: '/desarrollo/proyectos'},
+      drawer: null,
+      contador: 0 ,
+      color: '',
+      colores: ['#272727','#f4e200','#0096cb','#bf1c7f','#894975','#6f7170'], //NGRO,celeste,AZUL,ROSA,celeste,GRIS
+      AppControl: [
+          {
+            admin: [ 
+              // { text: 'Inicio'      ,icon: 'home'                       ,path: '/inicio'},
+              { text: 'Compromisos' ,icon: 'chrome_reader_mode'         ,path: '/compromisos'},
+              { text: 'Solicitudes' ,icon: 'ballot'                     ,path: '/solicitudes'},
+              { text: 'Desarrollo de proyectos' ,icon: 'mdi-monitor-screenshot' ,path: '/desarrollo/proyectos'},
+              ],
+          },
+
+          {
+            icon: 'menu_book',
+            title :' Administración',
+            model: false,
+            administracion: [ 
+              // { text: 'Productos'            ,icon: 'print',path: '/productos'},
+              { text: 'Productos por cliente',icon: 'mdi-printer-3d'    ,path: '/productos-por-cliente'},
+              { text: 'Ordenes de Trabajo'   ,icon: 'mdi-text-box-check',path: '/ordenes-de-trabajo'},
+              // { text: 'Monitor '             ,icon: 'mdi-monitor-eye'   ,path: '/monitor-master'},
             ],
-        },
+          },
 
-        {
-          icon: 'menu_book',
-          title :' Administración',
-          model: false,
-          administracion: [ 
-            // { text: 'Productos'            ,icon: 'print',path: '/productos'},
-            { text: 'Productos por cliente',icon: 'mdi-printer-3d'    ,path: '/productos-por-cliente'},
-            { text: 'Ordenes de Trabajo'   ,icon: 'mdi-text-box-check',path: '/ordenes-de-trabajo'},
-            // { text: 'Monitor '             ,icon: 'mdi-monitor-eye'   ,path: '/monitor-master'},
-          ],
-        },
+        
 
-       
+          {
+            icon: 'account_box',
+            title :' Catálogos',
+            model: false,
+            catalogos: [ 
+              { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
+              { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
+              { text: 'Prospectos'  ,icon: 'person_pin_circle'  ,path: '/prospectos'},
+              { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
+              // { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
+              // { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
+              // { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
+            ],
+          },
+        ],
+        // DIALOGO
+          dialogMoneda: false,
 
-        {
-          icon: 'account_box',
-          title :' Catálogos',
-          model: false,
-          catalogos: [ 
-            { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
-            { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
-            { text: 'Prospectos'  ,icon: 'person_pin_circle'  ,path: '/prospectos'},
-            { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
-            // { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
-            // { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
-            // { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},
-          ],
-        },
-      ],
-      // DIALOGO
-        dialogMoneda: false,
+        // SELECTORES
+          id_moneda  : 0,
+          moneda     : [],
+          monedas    : [],
+          Moneda     : '',
+          // SNACKBAR
+          alerta: { activo: false, texto:'', color:'error', vertical:true },
+          loading: true,
+          blocked: true,
 
-      // SELECTORES
-        id_moneda  : 0,
-				moneda     : [],
-				monedas    : [],
-        Moneda     : '',
-        // SNACKBAR
-        alerta: { activo: false, texto:'', color:'error', vertical:true },
-        loading: true,
-        blocked: true,
+          mini: true,
+    }),
 
-        mini: true,
-  }),
+    created(){
+      this.overlay = true;
+      if (typeof(Storage) !== "undefined") {
+          // VERIFICO SI EXISTE UN USUARIO ACTIVO 
+          if(localStorage.getItem("KeyLogger") != null){
+            this.validaSession().then( response =>{ // VERIFICO SI LA SESSION DEL KEYLOGGER ESTA ACTIVA
+              const payload = new Object();
+                    payload.id       = response.id_usuario
+                    payload.sistema  = this.syster_number
 
-  created(){
-     this.overlay = true;
-    if (typeof(Storage) !== "undefined") {
-        // VERIFICO SI EXISTE UN USUARIO ACTIVO 
-        if(localStorage.getItem("KeyLogger") != null){
-          this.validaSession().then( response =>{ // VERIFICO SI LA SESSION DEL KEYLOGGER ESTA ACTIVA
-            const payload = new Object();
-                  payload.id       = response.id_usuario
-                  payload.sistema  = this.syster_number
-
-            this.ObtenerDatosUsuario(payload).then(response =>{
-              this.alerta = { activo: true, texto: `HOLA DE NUEVO ${ response.nombre }`, color :'success', vertical:true  };
-              this.blocked = false;  // DESACTIVO BLOCKEO
-            }).catch( error=>{       // OBTENGO LA INFORMACION DEL USUARIO
-              this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
+              this.ObtenerDatosUsuario(payload).then(response =>{
+                this.alerta = { activo: true, texto: `HOLA DE NUEVO ${ response.nombre }`, color :'success', vertical:true  };
+                this.blocked = false;  // DESACTIVO BLOCKEO
+              }).catch( error=>{       // OBTENGO LA INFORMACION DEL USUARIO
+                this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
+                window.location.href = this.urlSistemaPrincipal;
+              });  
+            }).catch( error =>{
               window.location.href = this.urlSistemaPrincipal;
-            });  
-          }).catch( error =>{
-            window.location.href = this.urlSistemaPrincipal;
-          })
-          if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
-            this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
+            })
+            if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
+              this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
+            }
+          }else{ 
+          window.location.href = this.urlSistemaPrincipal;
           }
-        }else{ 
-         window.location.href = this.urlSistemaPrincipal;
-        }
-    } else {
-      window.location.href = this.urlSistemaPrincipal;
-    }
-    // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
-    // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
-    // this.consultaMonedas()  // CONSULTAR MONEDAS VUEX
-    // this.ActualizaMoneda()  // CONSULTO LA MONEDA PREDETERMINADA
-  },
-
-  computed:{
-    // IMPORTANDO USO DE VUEX - ZONAS (GETTERS)
-    // ...mapGetters('Monedas' ,['getMonedas']), 
-    ...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
-
-  },
-
-  mounted(){
-    setTimeout(()=>{ this.loading = false; }, 5000);
-  },
-
-  methods:{
-    // ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
-    ...mapActions('Login' ,['salirLogin','ObtenerDatosUsuario','validaSession']), 
-
-    salir(){
-      this.alerta = { activo: true, texto: `HASTA PRONTO ${ this.getdatosUsuario.nombre }`, color :'success' , vertical:true  };
-      this.cerrar_sesion= false;
-      this.salirLogin()
-      this.$store.dispatch("salir")
+      } else {
+        window.location.href = this.urlSistemaPrincipal;
+      }
+      // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
+      // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
+      // this.consultaMonedas()  // CONSULTAR MONEDAS VUEX
+      // this.ActualizaMoneda()  // CONSULTO LA MONEDA PREDETERMINADA
     },
 
-    // BuscarPredeterminado(){
-    //   for(var i=0; i<this.getMonedas.length; i++){
-    //     if(this.getMonedas[i].predeterminado === 1){
-    //       this.id_moneda = this.getMonedas[i].id
-    //       this.Moneda    = this.getMonedas[i].codigo
-    //     }
-    //   } 
-    //   this.dialogMoneda = true; 
-    // },
+    computed:{
+      // IMPORTANDO USO DE VUEX - ZONAS (GETTERS)
+      // ...mapGetters('Monedas' ,['getMonedas']), 
+      ...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
 
-    // MonedaPredeterminada(){
-    //   this.guardarMonedaPredeterminada(this.id_moneda).then(response =>{
-    //     if(response){
-    //       this.dialogMoneda = false; 
-    //       this.alerta = { activo: true, texto: "MONEDA ACTUALIZADA CORRECTAMENTE", color:'error', vertical:true }
-    //     }
-    //   })
-    // },
+    },
 
-    // colorBar(){
-    //   this.color = this.colores[this.contador]  
-    //   this.contador++
-    //   if(this.contador <= 5){
-    //     setTimeout(this.colorBar,10000);
-    //   }
-    //   if(this.contador == 5){
-    //     this.contador = 0
-    //   }
-    // },
+    mounted(){
+      setTimeout(()=>{ this.loading = false; }, 5000);
+    },
 
-    
+    methods:{
+      // ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
+      ...mapActions('Login' ,['salirLogin','ObtenerDatosUsuario','validaSession']), 
+
+      salir(){
+        this.alerta = { activo: true, texto: `HASTA PRONTO ${ this.getdatosUsuario.nombre }`, color :'success' , vertical:true  };
+        this.cerrar_sesion= false;
+        this.salirLogin()
+        this.$store.dispatch("salir")
+      },
+
+      // BuscarPredeterminado(){
+      //   for(var i=0; i<this.getMonedas.length; i++){
+      //     if(this.getMonedas[i].predeterminado === 1){
+      //       this.id_moneda = this.getMonedas[i].id
+      //       this.Moneda    = this.getMonedas[i].codigo
+      //     }
+      //   } 
+      //   this.dialogMoneda = true; 
+      // },
+
+      // MonedaPredeterminada(){
+      //   this.guardarMonedaPredeterminada(this.id_moneda).then(response =>{
+      //     if(response){
+      //       this.dialogMoneda = false; 
+      //       this.alerta = { activo: true, texto: "MONEDA ACTUALIZADA CORRECTAMENTE", color:'error', vertical:true }
+      //     }
+      //   })
+      // },
+
+      // colorBar(){
+      //   this.color = this.colores[this.contador]  
+      //   this.contador++
+      //   if(this.contador <= 5){
+      //     setTimeout(this.colorBar,10000);
+      //   }
+      //   if(this.contador == 5){
+      //     this.contador = 0
+      //   }
+      // },
+
+      
 
 
-  }
-};
+    }
+  };
 </script>
 
 <style>
