@@ -39,7 +39,7 @@ export default {
 
 		consulta_deptos_productos(){
 			// let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO', 'DIGITAL', 'ACABADOS', 'SERIGRAFÍA','EMPAQUE','SUBLIMACIÓN','TAMPOGRAFÍA','UV'];
-			let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO'];
+			let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO','COMERCIAL'];
 			return nombres_depos;
 		},
 
@@ -48,6 +48,8 @@ export default {
 				let departamentos = [	
 															{ id:1, nombre:'FLEXOGRAFÍA'  },
 															{ id:2, nombre:'ARTE Y DISEÑO'},
+															{ id:3, nombre:'COMERCIAL'},
+
 														];
 				resolve(departamentos);
 			})

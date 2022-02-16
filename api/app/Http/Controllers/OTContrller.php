@@ -22,7 +22,7 @@ class OTContrller extends Controller
 
 	public function DetalleOT($id){
 		$detalleOT = DB::select('SELECT d.id, d.partida, d.id_ot, d.id_producto, p.codigo as producto, d.cantidad, p.id_unidad,u.nombre as unidad,
-																		d.fecha_progra, d.fecha_entrega, d.concepto, d.urgencia, d.razon, d.estatus 
+																		d.fecha_progra, d.fecha_entrega, d.concepto, d.urgencia, d.razon, d.estatus, d.comentarios 
 																FROM det_ot d 
 																	LEFT JOIN prodxcli p ON d.id_producto = p.id
 																	LEFT JOIN unidades u ON p.id_unidad   = u.id
@@ -86,7 +86,8 @@ class OTContrller extends Controller
 					'cantidad' 			=> $detalle['cantidad'],
 					'concepto' 		  => $detalle['concepto']['id'],
 					'urgencia'  		=> $detalle['urgencia']['id'],
-					'fecha_entrega' => $detalle['fecha'],     
+					'fecha_entrega' => $detalle['fecha'], 
+					'comentarios'  	=> $detalle['comentarios'],
 					'creacion'      => $fecha.' '.$hora,
 			]);
 	}
@@ -160,4 +161,5 @@ class OTContrller extends Controller
 								   'id' => $req -> id
 								 ]);
 	}
+
 }

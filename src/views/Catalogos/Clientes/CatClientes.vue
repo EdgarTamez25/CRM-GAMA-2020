@@ -104,7 +104,7 @@
 			computed:{
 				...mapGetters('Clientes'  ,['Loading','getClientes']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
 				tamanioPantalla () {
-					console.log(this.$vuetify.breakpoint)
+					// console.log(this.$vuetify.breakpoint)
 					switch (this.$vuetify.breakpoint.name) {
 						case 'xs':
 							return this.$vuetify.breakpoint.height -300

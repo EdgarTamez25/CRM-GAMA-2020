@@ -73,7 +73,7 @@
   		</v-col>
 			
 
-			<!-- -------PRECIOS------ -->
+			<!-- PRECIOS-->
 			<v-dialog v-model="precioActivo" fullscreen hide-overlay transition="dialog-bottom-transition">
 				<v-card>
 					<!-- CABEZERA -->
@@ -86,7 +86,7 @@
 							</v-btn>
 						</v-toolbar-items>
         	</v-toolbar>
-					<!-- ----TABLA -->
+					<!--TABLA -->
 					<v-col cols="12" v-if="precioActivo">
 						<v-card-actions> <h3><strong> Precios del {{ nomproducto }}</strong></h3></v-card-actions>
 

@@ -7,14 +7,13 @@
 					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 				</v-snackbar>
 
-				<v-card-actions class="pa-0" >
-					<h3> <strong> {{ param === 1? 'Nuevo prospecto':'Editar prospecto' }}  </strong></h3> 
+				<v-card-actions class="pa-0 " >
+					<h3> <strong> {{ param === 1? 'NUEVO PROSPECTO':'EDITAR PROSPECTO' }}  </strong></h3> 
 					<v-spacer></v-spacer>
-					<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
+					<v-btn color="error" fab small @click="$emit('modal',false)"><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
 
-				<v-divider class="ma-2"></v-divider>
-				<v-row>
+				<v-row class="mt-3">
 					<v-col cols="12" >
 						<v-text-field
 							append-icon="person"
@@ -86,13 +85,27 @@
 				</v-row>
 				
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
-				<v-card-actions>
+				<v-card-actions class="mt-3 pa-0">
 					<v-spacer></v-spacer>
-					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
-             Confirmar  
+					 <v-btn 
+						 :disabled="dialog" 
+						 persistent :loading="dialog" 
+						 dark center class="white--text" color="success" 
+						 @click="validaInfo" 
+						 v-if="param === 1"
+						>
+             Guardar Información  
           </v-btn>
-					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
-             Actualizar  
+					<v-btn 
+						:disabled="dialog" 
+						persistent 
+						:loading="dialog" 
+						dark center 
+						class="white--text" color="success" 
+						@click="validaInfo" 
+						v-else
+					>
+            Actualizar Información 
           </v-btn>
 
           <v-dialog v-model="dialog" hide-overlay persistent width="300">

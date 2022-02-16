@@ -10,19 +10,19 @@
       </v-snackbar>
 
       <v-col cols="9" sm="10" align="left">
-        <v-card-text class="font-weight-black headline py-0 mt-1 " > 
-         {{ modoVista === 1 ? 'NUEVO PRODUCTO': 'EDITAR PRODUCTOS'}} 
+        <v-card-text class="font-weight-black headline py-0 pa-0 " > 
+         {{ modoVista === 1 ? 'NUEVO PRODUCTO': 'EDITAR PRODUCTO'}} 
         </v-card-text>
       </v-col>
-       <v-col cols="3" sm="2" align="right">
-        <v-btn color="error"  @click="$emit('modal',false)" outlined><v-icon>clear</v-icon></v-btn>
+       <v-col cols="3" sm="2" align="right" class="py-0">
+        <v-btn color="error"  @click="$emit('modal',false)" fab small ><v-icon>clear</v-icon></v-btn>
       </v-col>
 
-      <v-col cols="12" class="" v-if="Loading">
+     <!-- <v-col cols="12" class="" v-if="Loading">
         <loading/>
-      </v-col>
+      </v-col> -->
 
-      <template v-else>
+      <template>
         <v-col cols="12" sm="6">
           <v-autocomplete
             v-model="editarItem.cliente" :items="clientes" item-text="nombre" item-value="id" label="Clientes" 
@@ -81,7 +81,6 @@
             outlined color="celeste" 
             label="Departamentos" 
             placeholder="Departamentos" 
-            :disabled="modoVista === 3? true:false"
             hide-details 
             return-object 
             dense
@@ -145,7 +144,7 @@
 
         // ALERTAS
         overlay: false,
-        Loading: false,
+        // Loading: false,
 				alerta: { activo: false, texto:'', color:'error' },
         alertaFormulario: false
 			}
@@ -170,7 +169,7 @@
 
 		watch:{ 
       parametros(){ 
-        this.Loading = true;
+        // this.Loading = true;
         this.validarModoVista(); 
       },
     },
@@ -187,10 +186,10 @@
               cliente: { id: this.parametros.id_cliente},
               unidad : { id: this.parametros.id_unidad }
             }
-            this.Loading = false;
+            // this.Loading = false;
         }else{
           this.limpiarCampos();
-          this.Loading = false;
+          // this.Loading = false;
         }
 
 
@@ -200,7 +199,7 @@
 				if(!this.editarItem.cliente.id) { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL CLIENTE' , color:'error' }; return }
 				if(!this.editarItem.codigo)	    { this.alerta = { activo: true, texto:'NO PUEDES OMITIR EL CÓDIGO'  , color:'error' }; return }
 				if(!this.editarItem.unidad.id)	{ this.alerta = { activo: true, texto:'NO PUEDES OMITIR LA UNIDAD'  , color:'error' }; return }
-        if(!this.editarItem.url)			  { this.alerta = { activo: true, texto:'DEBES AGREGAR LA DIRECCION DE LA FICHA TECNICA', color:'error' }; return }
+        // if(!this.editarItem.url)			  { this.alerta = { activo: true, texto:'DEBES AGREGAR LA DIRECCION DE LA FICHA TECNICA', color:'error' }; return }
         if(!this.editarItem.depto.id)	  { this.alerta = { activo: true, texto:'DEBES SELECCIONAR UN DEPARTAMENTO'             , color:'error' }; return }
         // if(this.depto.id === 1 && !this.detalle )   {this.alerta   = { activo: true, texto:'NO HAZ GUARDADO LAS CARACTERISTICAS DEL PRODUCTO', color:'error' }; return }
 				this.PrepararPeticion()
@@ -221,7 +220,7 @@
           id_usuario : this.getdatosUsuario.id
         };
 
-        console.log('producto', producto);
+        // console.log('producto', producto);
               
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(producto): this.Actualizar(producto);
@@ -251,7 +250,7 @@
         var that = this ;
 				this.limpiarCampos();  
         this.consultaProductosxCliente(this.parametros.id_cliente) 
-        setTimeout(() => { that.$emit('modal',false)}, 2000);
+        setTimeout(() => { that.$emit('modal',false)}, 1000);
         
 			},
 

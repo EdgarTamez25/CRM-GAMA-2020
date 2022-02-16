@@ -44,7 +44,7 @@ class productosxcliController extends Controller
 	// TODO EL PROCESO PARA ACUTALIZAR PRODUCTO ************ INICIO
 		public function actualizaProducto($id, Request $req){
 			$producto = DB::update('UPDATE prodxcli SET id_cliente=:id_cliente,nombre=:nombre, codigo=:codigo, descripcion=:descripcion,
-																									revision=:revision, url=:url, id_unidad=:id_unidad
+																									revision=:revision, url=:url, id_unidad=:id_unidad, dx=:dx
 																WHERE id=:id', ['id_cliente'  => $req -> id_cliente,
 																								'nombre' 		  => $req -> nombre,
 																								'codigo' 		  => $req -> codigo,
@@ -52,7 +52,9 @@ class productosxcliController extends Controller
 																								'revision' 		=> $req -> revision,
 																								'url' 		    => $req -> url,
 																								'id_unidad'   => $req -> id_unidad,
+																								'dx'   			  => $req -> dx,
 																								'id' 				  => $id	]);
+																								
 			
 			return $producto ? response("El producto se actualizo correctamente" ,200): 
 													response("Ocurrio un error, intentelo mas tarde" ,500);

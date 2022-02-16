@@ -29,11 +29,25 @@ class productosController extends Controller
 		// 																							 LEFT JOIN unidades u       ON p.id_unidad    = u.id
 		// 															WHERE p.estatus = 1');
 		// 	return $CatProductos;
+
+		// return  DB::select('SELECT p.id, p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,p.cantidad,
+		// 																		 p.id_linea, l.nombre as nomlin, p.id_unidad, u.nombre as nomunidad,
+		// 																	IFNULL( ( SELECT pr.precio FROM precios pr WHERE predeterminado =1 AND id_producto = p.id), "0.00") AS precio,
+		// 																	IFNULL( ( SELECT m.codigo  FROM precios pr LEFT JOIN monedas m ON pr.id_moneda = m.id 
+		// 																							WHERE pr.predeterminado =1 AND id_producto = p.id), "") AS codmoneda,
+		// 																	IFNULL( ( SELECT prov.nombre FROM precios pr 
+		// 																								LEFT JOIN proveedores prov ON  pr.id_proveedor = prov.id 
+		// 																						WHERE predeterminado =1 AND id_producto = p.id), "Sin proveedor") AS nomprov,
+		// 																	IFNULL( ( SELECT DISTINCT(prov.id) FROM proveedores prov 
+		// 																								LEFT JOIN precios pr ON pr.id_proveedor = prov.id 
+		// 																						WHERE pr.predeterminado = 1 AND prov.nombre = nomprov),"0") AS id_proveedor
+		// 													FROM productos p LEFT JOIN lineas_prods l 	ON p.id_linea 		= l.id
+		// 																							 LEFT JOIN unidades u       ON p.id_unidad    = u.id') ;
 		// }
 
 		public function getcatalogo(){
 			return  DB::select('SELECT p.id, p.codigo, p.nombre, p.descripcion, p.obs, p.foto, p.estatus, p.tipo_producto,p.cantidad,
-																				 p.id_linea, l.nombre as nomlin, p.id_unidad, u.nombre as nomunidad,
+																				 p.id_linea, p.id_unidad,
 																			IFNULL( ( SELECT pr.precio FROM precios pr WHERE predeterminado =1 AND id_producto = p.id), "0.00") AS precio,
 																			IFNULL( ( SELECT m.codigo  FROM precios pr LEFT JOIN monedas m ON pr.id_moneda = m.id 
 																									WHERE pr.predeterminado =1 AND id_producto = p.id), "") AS codmoneda,
@@ -43,8 +57,7 @@ class productosController extends Controller
 																			IFNULL( ( SELECT DISTINCT(prov.id) FROM proveedores prov 
 																										LEFT JOIN precios pr ON pr.id_proveedor = prov.id 
 																								WHERE pr.predeterminado = 1 AND prov.nombre = nomprov),"0") AS id_proveedor
-															FROM productos p LEFT JOIN lineas_prods l 	ON p.id_linea 		= l.id
-																									 LEFT JOIN unidades u       ON p.id_unidad    = u.id') ;
+															FROM productos p LEFT JOIN unidades u  ON p.id_unidad    = u.id') ;
 		
 			// return response()->json($CatProductos);
 		}

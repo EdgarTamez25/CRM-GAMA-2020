@@ -320,4 +320,7 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
 //=================================== PUESTOS POR SUCURSAL ==========================================
 	Route::get('obtener.puestos.por.depto/{id}', 'puestosController@obtener_puestos_por_depto')->name('obtener_puestos_por_depto');
 
-    
+
+
+//! =================================== ANALISIS DE DATOS  ==========================================
+Route::post('obtener.analisis.produccion', 'analisisController@obtener_analisis_produccion')->name('obtener_analisis_produccion');

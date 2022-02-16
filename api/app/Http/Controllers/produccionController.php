@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\OTContrller; 
+
 // use App\Http\Controllers\OtroController;
 
 class produccionController extends Controller{
@@ -118,7 +120,6 @@ class produccionController extends Controller{
 														 response("Ocurrio un error, intentelo nuevamente.",500);
 
 		}
-
 	// ! ************************************************************************
 
 	// **************** AUTORIZAR RECIBO DE PRODUCTO ****************************
@@ -177,7 +178,6 @@ class produccionController extends Controller{
 		}
 	// ! ************************************************************************
 	
-
 	// **************** FINALIZACION DE MOVIMIENTO ******************************
 		public function finalizar_partida_movim(Request $req){
 			$actualizar = DB::update('UPDATE movim_prod
@@ -190,8 +190,9 @@ class produccionController extends Controller{
                 'id' => $req -> id_movim
             ]);
 
-			$this -> validar_estatus_movimientos($req);
-			$this -> evaluaEstatusPartida($req);
+			$this -> validar_estatus_movimientos($req); // VERIFICAR EL ESTATUS DE PRODUCCION
+			$this -> evaluaEstatusPartida($req);        // VERIFICAR EL ESTATUS DEL DETALLE DE LA ORDEN
+			$this -> verificarEstatusOT($req -> id_ot); // VERIFICAR EL ESTATUS DE LA ORDEN DE TRABAJO
 			return $actualizar ? response("La partida se finalizo correctamente", 200):
 													 response("Ocurrio un error, intentelo mas tarde", 500);
 		}
@@ -303,15 +304,31 @@ class produccionController extends Controller{
 						$this -> actualizaEstatusDetOt($tmp);
 				endif;
 		}
-
+	// **************** ACTUALIZAR ESTATUS DE ORDEN DE TRABAJO ******************
 		public function actualizaEstatusDetOt($data){
-				$fecha_actual = date('Y-m-d h:i:s', time());
-				DB::update('UPDATE det_ot SET estatus=:estatus, finalizacion=:finalizacion
-										WHERE id=:id',['estatus' => $data['estatus'],
-																	'finalizacion' => $fecha_actual, 
-																	'id' => $data['id'] 
-																	]);
+			$fecha_actual = date('Y-m-d h:i:s', time());
+			DB::update('UPDATE det_ot SET estatus=:estatus, finalizacion=:finalizacion
+									WHERE id=:id',['estatus' => $data['estatus'],
+																'finalizacion' => $fecha_actual, 
+																'id' => $data['id'] 
+																]);
 		}
+
+		public function verificarEstatusOT($id_ot){
+			$error = 0;
+			$detalle = DB::select('SELECT * FROM det_ot WHERE id_ot = ?', [$id_ot]);
+			for($i=0;$i<count($detalle);$i++ ):
+				if(!$detalle[$i] -> estatus === 2):
+					$error++;
+				endif;
+			endfor;
+	
+			if($error === 0):
+				DB::update('UPDATE ot SET  estatus=:estatus WHERE id=:id',['estatus' => 3, 'id' => $id_ot]);
+			endif;
+		}
+
+		
 
 	// ! ************************************************************************
 }

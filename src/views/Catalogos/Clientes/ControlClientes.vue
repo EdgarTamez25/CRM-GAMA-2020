@@ -8,13 +8,12 @@
 				</v-snackbar>
 
 				<v-card-actions class="pa-0" >
-					<h3> <strong> {{ param === 2 || param ===3 ? 'Editar Cliente':'Nuevo Cliente' }}  </strong></h3> 
+					<h3> <strong> {{ param === 2 || param ===3 ? 'EDITAR CLIENTE':'NUEVO CLIENTE' }}  </strong></h3> 
 					<v-spacer></v-spacer>
-					<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
+					<v-btn color="error" fab small @click="$emit('modal',false)" ><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
 
-				<v-divider class="ma-2"></v-divider>
-				<v-row>
+				<v-row class="mt-3">
 					<!-- NOMBRE DEL CLIENTE -->
 					<v-col cols="12" >
 						<v-text-field
@@ -167,31 +166,49 @@
 				</v-row>
 
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
-				<v-card-actions>
+				<v-card-actions class="pa-0 mt-3">
 					<v-spacer></v-spacer>
-					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
-             Confirmar  
+					 <v-btn  
+					 	:disabled="dialog" 
+						 persistent 
+						 :loading="dialog" 
+						 dark center 
+						 class="white--text" 
+						 color="success" 
+						 @click="validaInfo()" 
+						 v-if="param === 1">
+             Guardar Información
           </v-btn>
-					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
-             {{ param === 2 ?'Actualizar':'Pasar a cliente'}}  
+					
+					<v-btn 
+						:disabled="dialog" 
+						persistent 
+						:loading="dialog" 
+						dark center 
+						class="white--text" 
+						color="success" 
+						@click="validaInfo()" 
+						v-else>
+             {{ param === 2 ?'Actualizar Información':'Pasar a cliente'}}  
           </v-btn>
-
-          <v-dialog v-model="dialog" hide-overlay persistent width="300">
-            <v-card color="blue darken-4" dark >
-              <v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
-                <br>
-                <v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-
-					<v-dialog v-model="Correcto" hide-overlay persistent width="350">
-            <v-card color="success"  dark class="pa-3">
-							<h3><strong>{{ textCorrecto }} </strong></h3>
-            </v-card>
-          </v-dialog>
-
 				</v-card-actions>
+
+
+				<v-dialog v-model="dialog" hide-overlay persistent width="300">
+					<v-card color="blue darken-4" dark >
+						<v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
+							<br>
+							<v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
+						</v-card-text>
+					</v-card>
+				</v-dialog>
+
+				<v-dialog v-model="Correcto" hide-overlay persistent width="350">
+					<v-card color="success"  dark class="pa-3">
+						<h3><strong>{{ textCorrecto }} </strong></h3>
+					</v-card>
+				</v-dialog>
+
 			</v-col>
 		</v-row>
 	</v-content >
@@ -298,16 +315,16 @@
 			},
 
 			validaInfo(){
-				if(!this.nombre)	  	{ this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL CLIENTE"   ; return }
-				if(!this.direccion)	  { this.snackbar = true; this.text="No puedes omitir la DIRECCIÓN"   ; return }
-				if(!this.ciudad.id)	  { this.snackbar = true; this.text="No puedes omitir la CIUDAD"   ; return }
-				if(!this.cp)	  { this.snackbar = true; this.text="No puedes omitir el Codigo Postal"   ; return }
+				if(!this.nombre){ this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL CLIENTE"   ; return };
+				// if(!this.direccion)	  { this.snackbar = true; this.text="No puedes omitir la DIRECCIÓN"   ; return }
+				if(!this.ciudad.id)	  { this.snackbar = true; this.text="No puedes omitir la CIUDAD"   ; return };
+				// if(!this.cp)	  { this.snackbar = true; this.text="No puedes omitir el Codigo Postal"   ; return }
 				// if(!this.razon_social){ this.snackbar = true; this.text="No puedes omitir la RAZON SOCIAL"; return }
 				// if(!this.zona.id)	  	{ this.snackbar = true; this.text="No puedes omitir la ZONA" ; return }
-				if(!this.tipo_cliente){ this.snackbar = true; this.text="No puedes omitir el TIPO DE CLIENTE"; return }
-				if(!this.nivel.id)	  { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
-				if(!this.rfc)	        { this.snackbar = true; this.text="No puedes omitir el RFC"	; return }
-				if(!this.tel1)	      { this.snackbar = true; this.text="Debes de ingresar al menos un telefono"	; return }
+				if(!this.tipo_cliente){ this.snackbar = true; this.text="No puedes omitir el TIPO DE CLIENTE"; return };
+				if(!this.nivel.id)	  { this.snackbar = true; this.text="No puedes omitir el NIVEL"; return };
+				// if(!this.rfc)	        { this.snackbar = true; this.text="No puedes omitir el RFC"	; return }
+				// if(!this.tel1)	      { this.snackbar = true; this.text="Debes de ingresar al menos un telefono"	; return }
 				// if(!this.diasFact)	  { this.snackbar = true; this.text="No puedes omitir los DIAS LIMITES DE FACTURACIÓN"	; return }
 				this.PrepararPeticion() // MANDO A FORMAR EL OBJETO PARA GUARDAR
 			},
@@ -334,7 +351,7 @@
 													diasfact		: this.diasFact,
 													estatus     : 1,
 													prospecto   : 0,
-													creacion    : this.traerFechaActual()
+													// creacion    : this.traerFechaActual();
 												}
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.CrearCliente(payload): this.ActualizarCliente(payload);

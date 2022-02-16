@@ -148,11 +148,5 @@ class masterController extends Controller
 							"departamento" => $departamento
 						 ];
 		}
-
-
-
-
-			
-	
 		// ! ************************************************************************
 }

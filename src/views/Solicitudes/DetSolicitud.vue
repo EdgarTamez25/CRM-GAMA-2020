@@ -326,11 +326,16 @@
     },
 
     watch:{
-			actualiza: function(){
+			actualiza(){
         this.init();
       },
 
-      depto: function(){
+      depto(){
+        if(this.depto.id  == 3){
+          this.inycecta_producto();
+          return;
+        }
+        
         const payload = new Object();
               payload.id_depto = this.depto.id;
               payload.id_cliente = this.solicitud.id_cliente;
@@ -361,6 +366,13 @@
         this.nombres_deptos = await this.consulta_deptos_productos();
         this.deptos         = await this.consultaDepartamentos();
 
+      },
+
+      inycecta_producto(){
+        this.productosxcliente = [{
+          id: 6148,
+          codigo: 'COMERCIAL'
+        }];
       },
 
       validaInfoProducto(){
