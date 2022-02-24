@@ -21,6 +21,8 @@ import Movimientos from '@/modules/Movimientos';
 
 import OT from '@/modules/OT';
 import Monitor     from '@/modules/Monitor';
+import TipoCambio     from '@/modules/TipoCambio';
+
 
 
 
@@ -99,6 +101,7 @@ export default new Vuex.Store({
     Movimientos,
     ProductosxCliente,
     OT,
-    Monitor
+    Monitor,
+    TipoCambio
   }
 })

@@ -17,15 +17,22 @@ class prospectosController extends Controller {
 																			WHERE c.prospecto = 1');
 	}
 
-	public function addProspecto(Request $request){
-		$addprospecto = prospectos::create($request->all());
-		
-		if($addprospecto):
-			return "El prospecto se ah insertado correctamente";
-		else:
-			return "Ocurrio un problema al crear el prospecto, por favor intentelo mas tarde.";
-		endif;
+	public function addProspecto(Request $req){
+		$addprospecto = DB::table('clientes')->insertGetId(   //! INSERTO PRODUCTO NUEVO
+			[
+					'fuente' 		    => $req -> fuente,
+					'nombre' 			  => $req -> nombre,
+					'tipo_cliente'	=> $req -> tipo_cliente,
+					'nivel'      	  => $req -> nivel,
+					'tel1'     	    => $req -> tel1,
+					'contacto'      => $req -> contacto,
+					'prospecto'    	=> $req -> prospecto,
+					'estatus'    		=> $req -> estatus,
+			]
+		);
 
+		return $addprospecto ? "El prospecto se ah insertado correctamente":
+													 "Ocurrio un problema al crear el prospecto, por favor intentelo mas tarde.";
 	}
 
 	public function UpdateProspecto($id, Request $req){

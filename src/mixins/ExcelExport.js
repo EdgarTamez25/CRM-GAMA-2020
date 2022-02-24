@@ -34,7 +34,7 @@
           excel.export_json_to_excel({ // FUNCION PARA EXPORTAR EXCEL
             header: tHeader,           // COLOCAR ENCABEZADOS
             data,                      // COLOCAR CONTENIDO 
-            filename: titulo,       // NOMBRE DEL ARCHIVO
+            filename: titulo,           // NOMBRE DEL ARCHIVO
             autoWidth: true,           // ANCHO AUTOMATICO DE LAS COLUMNAS
             bookType: 'xls'            // FORMATO
           })

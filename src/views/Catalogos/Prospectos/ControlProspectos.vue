@@ -1,5 +1,5 @@
 <template>
-	<v-content class="pa-0 ma-3">
+	<v-main class="pa-0 ma-3">
 		<v-row justify="center" no-gutters>
 			<v-col cols="12">
 				
@@ -125,7 +125,7 @@
 				</v-card-actions>
 			</v-col>
 		</v-row>
-	</v-content >
+	</v-main >
 </template>
 
 <script>
@@ -204,16 +204,17 @@
 
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
-				const payload = { fuente : 1,
-												  nombre			: this.nombre,
-													tipo_cliente: this.tipo_cliente === 'Nacional'? 1:2,
-													nivel       : this.nivel.id,
-													tel1				: this.tel1,
-													contacto		: this.contacto,
-													prospecto   : 1,
-													estatus     : 1
-													// ubicacion   :''
-												}
+				const payload = { 
+					fuente      : this.getdatosUsuario.id,
+					nombre			: this.nombre,
+					tipo_cliente: this.tipo_cliente === 'Nacional'? 1:2,
+					nivel       : this.nivel.id,
+					tel1				: this.tel1,
+					contacto		: this.contacto,
+					prospecto   : 1,
+					estatus     : 1
+					// ubicacion   :''
+				}
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.Crear(payload): this.Actualizar(payload);
 			},
@@ -221,7 +222,7 @@
 			Crear(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
 				this.dialog = true ;
-				setTimeout(() => (this.dialog = false), 2000)
+				setTimeout(() => (this.dialog = false),1000)
 				
 				// MANDO A INSERTAR CLIENTE
 				this.$http.post('add.prospecto', payload).then((response)=>{
@@ -234,7 +235,7 @@
 			Actualizar(payload){
 				// ACTIVO DIALOGO -> GUARDANDO INFO
 				this.dialog = true ; this.textDialog ="Actualizando Información"
-				setTimeout(() => (this.dialog = false), 2000)
+				setTimeout(() => (this.dialog = false), 1000)
 
 				this.$http.put('update.prospecto/'+ this.edit.id, payload).then((response)=>{
 					this.TerminarProceso(response.body);					

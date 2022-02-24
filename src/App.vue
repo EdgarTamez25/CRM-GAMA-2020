@@ -142,7 +142,7 @@
 
     <!-- <v-content class="ma-3"> -->
 
-    <v-snackbar v-model="alerta.activo" multi-line :vertical="alerta.vertical" top right :color="alerta.color" > 
+    <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
       <strong> {{alerta.texto}} </strong>
       <template v-slot:action="{ attrs }">
         <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
@@ -185,7 +185,7 @@
     </div> -->
 
        <!-- v-if="getLogeado" @click.stop="drawer = !drawer"-->
-    <v-app-bar app color="rosa" dark class="elevation-4 ma-2" v-ripple  style="border-radius:10px">
+    <v-app-bar app color="rosa" dark class="elevation-4 ma-2"  style="border-radius:10px">
        <v-img 
         src="http://producciongama.com/CRM-GAMA-2020/imagenes/logo.png" 
         width="65" 
@@ -195,15 +195,12 @@
         contain
         />
       <v-spacer></v-spacer>
-      
-      <v-toolbar-items @click="cerrar_sesion=true" >
-        <v-btn text> <v-icon >mdi-exit-to-app</v-icon> </v-btn>
-      </v-toolbar-items>
-     <!-- <v-toolbar-items text-right> 
-        <v-btn text color="white" dark @click="BuscarPredeterminado"> 
-          <v-icon large>attach_money</v-icon>
+        <v-btn fab small color="orange" dark class="mx-2 elevation-12" @click="modalTipoCambio=true"> 
+          <v-icon >attach_money</v-icon>
         </v-btn>
-      </v-toolbar-items> -->
+        <v-btn fab small color="grey darken-3" class="elevation-12"  @click="cerrar_sesion=true"> 
+          <v-icon >mdi-exit-to-app</v-icon> 
+        </v-btn>
     </v-app-bar>
 
     <v-dialog v-model="cerrar_sesion" width="400px">
@@ -236,17 +233,55 @@
         </v-main> 
       </v-card>
     </v-main>
+
+    <!-- MODAL TIPO DE CAMBIO -->
+    <v-dialog v-model="modalTipoCambio" width="450" transition="dialog-bottom-transition">
+      <v-card class="pa-2">
+        <v-card-actions class="pa-0 py-0 " >
+          <v-card-text class="font-weight-black text-h6"> TIPO DE CAMBIO </v-card-text> 
+          <v-spacer></v-spacer>
+          <v-btn color="error" fab small  @click="modalTipoCambio= false" ><v-icon>clear</v-icon></v-btn>
+        </v-card-actions> 
+
+        <v-card class="pa-2 mt-2" flat>
+          <v-select
+            v-model="tipo_cambio" :items="['USD']" label="Tipo de cambio" 
+            outlined class="text-h6" disabled
+          ></v-select>
+
+          <v-text-field
+            v-model="cambio" label="Cambio" placeholder="Cambio" append-icon="attach_money"
+            hide-details outlined type="number" class="headline"
+          ></v-text-field>
+        </v-card>
+
+        <v-col cols="12" class="mt-8"/>
+        <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
+        <v-footer absolute >
+          <v-spacer></v-spacer>
+          <v-btn 
+            color="success"  
+            @click="preparar_datos_tipo_cambio()" 
+          >  
+          Guardar Información'
+          </v-btn>
+        </v-footer>
+
+      </v-card>
+    </v-dialog>
    
   </v-app>
 </template>
 
 <script>
   import  SelectMixin from '@/mixins/SelectMixin.js';
+  import  metodos from '@/mixins/metodos.js';
+
   import store from '@/store'
   import { mapGetters,mapActions } from 'vuex';
 
   export default {
-    mixins:[SelectMixin],
+    mixins:[SelectMixin, metodos],
     components: {
     },
     data: () => ({
@@ -268,7 +303,6 @@
               { text: 'Desarrollo de proyectos' ,icon: 'mdi-monitor-screenshot' ,path: '/desarrollo/proyectos'},
               ],
           },
-
           {
             icon: 'menu_book',
             title :' Administración',
@@ -280,9 +314,6 @@
               // { text: 'Monitor '             ,icon: 'mdi-monitor-eye'   ,path: '/monitor-master'},
             ],
           },
-
-        
-
           {
             icon: 'account_box',
             title :' Catálogos',
@@ -312,6 +343,10 @@
           blocked: true,
 
           mini: true,
+          // MODAL TIPO DE CAMBIO
+          modalTipoCambio: false,
+          tipo_cambio:'USD',
+          cambio:0,
     }),
 
     created(){
@@ -329,20 +364,21 @@
                 this.blocked = false;  // DESACTIVO BLOCKEO
               }).catch( error=>{       // OBTENGO LA INFORMACION DEL USUARIO
                 this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
-                window.location.href = this.urlSistemaPrincipal;
+                // window.location.href = this.urlSistemaPrincipal;
               });  
             }).catch( error =>{
-              window.location.href = this.urlSistemaPrincipal;
+              // window.location.href = this.urlSistemaPrincipal;
             })
             if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
               this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
             }
           }else{ 
-          window.location.href = this.urlSistemaPrincipal;
+          // window.location.href = this.urlSistemaPrincipal;
           }
       } else {
-        window.location.href = this.urlSistemaPrincipal;
+        // window.location.href = this.urlSistemaPrincipal;
       }
+        this.obtener_datos_tipo_cambio();
       // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
       // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS
       // this.consultaMonedas()  // CONSULTAR MONEDAS VUEX
@@ -353,16 +389,25 @@
       // IMPORTANDO USO DE VUEX - ZONAS (GETTERS)
       // ...mapGetters('Monedas' ,['getMonedas']), 
       ...mapGetters('Login' ,['getLogeado','getdatosUsuario']), 
-
+      ...mapGetters('TipoCambio' ,['tipo_cambio_hoy']), 
     },
 
     mounted(){
       setTimeout(()=>{ this.loading = false; }, 5000);
     },
 
+    watch:{
+      modalTipoCambio(){
+        if(this.modalTipoCambio){
+          this.obtener_datos_tipo_cambio();
+        }
+      }
+    },
+
     methods:{
       // ...mapActions('Monedas',['consultaMonedas','guardarMonedaPredeterminada','ActualizaMoneda']),
-      ...mapActions('Login' ,['salirLogin','ObtenerDatosUsuario','validaSession']), 
+      ...mapActions('Login'      ,['salirLogin','ObtenerDatosUsuario','validaSession']), 
+      ...mapActions('TipoCambio' ,['obtener_tipo_cambio','agregar_tipo_cambio','editar_tipo_cambio']), 
 
       salir(){
         this.alerta = { activo: true, texto: `HASTA PRONTO ${ this.getdatosUsuario.nombre }`, color :'success' , vertical:true  };
@@ -370,6 +415,41 @@
         this.salirLogin()
         this.$store.dispatch("salir")
       },
+      
+      async obtener_datos_tipo_cambio(){
+        const payload = { fecha: this.traerFechaActual() };
+        this.cambio = await this.obtener_tipo_cambio(payload);
+      },
+      // FUNCION PARA GUARDAR EL TIPO DE CAMBIO
+      preparar_datos_tipo_cambio(){
+        const payload = { 
+          cambio: this.cambio,
+          fecha : this.traerFechaActual(),
+          id_creador: this.getdatosUsuario.id
+        }
+
+        !this.tipo_cambio_hoy ? this.agregar_informacion_cambio(payload):
+                                this.editar_informacion_cambio(payload);
+
+      },
+
+      agregar_informacion_cambio(payload){
+        this.agregar_tipo_cambio(payload).then( response => {
+          this.alerta = { activo: true, texto: response.body , color: 'success' };
+          this.obtener_datos_tipo_cambio();
+        }).catch( error =>{
+          this.alerta = { activo: true, texto: error, color: 'error' };
+        })
+      },
+      
+      editar_informacion_cambio(payload){
+        this.editar_tipo_cambio(payload).then( response => {
+          this.alerta = { activo: true, texto: response.body , color: 'success' };
+          this.obtener_datos_tipo_cambio();
+        }).catch( error =>{
+          this.alerta = { activo: true, texto: error, color: 'error' };
+        })
+      }
 
       // BuscarPredeterminado(){
       //   for(var i=0; i<this.getMonedas.length; i++){

@@ -1,30 +1,37 @@
 <template>
- <v-content class="pa-0">
+ <v-main class="pa-3 ">
 		<v-row no-gutters justify="center">
 			
 			<v-snackbar top v-model="snackbar" :timeout="2000"  :color="color"> {{text}}
 				<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
 			</v-snackbar>
 
-  		<v-col cols="12" sm="10" >
-				<v-card-actions class="font-weight-black headline mt-3"> PROSPECTOS </v-card-actions>
-
+  		<v-col cols="12" >
 				<v-card outlined >
-					<v-card-actions>
+					<v-row>
+						<v-col cols="12" md="6" >
+							<v-card-actions class="font-weight-black headline  py-0 mt-1 " > PROSPECTOS </v-card-actions>
+						</v-col>
+						
+					</v-row>
+
+					<v-card-actions class="py-0">
 			      <v-text-field
 			        v-model="search"
 			        append-icon="search"
 			        label="Buscar prospectos"
-			        single-line
 			        hide-details
+							filled
+							dense
 			      ></v-text-field>
 			      <v-spacer></v-spacer>
-			      <v-btn  class="celeste"  dark @click="abrirModal(1)">
+			      <v-btn  class="celeste" dark @click="abrirModal(1)">
 							Nuevo
 						</v-btn>
 			      <v-btn  class="gris" icon dark @click="consultaProspectos()" ><v-icon>refresh</v-icon> </v-btn>
 			    </v-card-actions>
 
+						<!--disable-pagination -->
 			    <v-data-table
 			      :headers="headers"
 			      :items="getProspectos"
@@ -33,8 +40,10 @@
 						:height="tamanioPantalla"
 						hide-default-footer
 						:loading ="Loading"
-						loading-text="Cargando... Por favor espere."
-						disable-pagination
+						loading-text="Cargando... por favor espere."
+						:page.sync="page"
+      			:items-per-page="itemsPerPage"
+						@page-count="pageCount = $event"
 
 			    >
 						<template v-slot:item.action="{ item }" > 
@@ -46,9 +55,18 @@
 			    </v-data-table>
 			  </v-card>
 
+				<!-- PAGINACION -->
+				<div class="text-center pt-2">
+					<v-pagination v-model="page" :length="pageCount"></v-pagination>
+				</div>
+
 				 <v-dialog persistent v-model="dialog" width="700px" >	
 		    	<v-card class="pa-5">
-		    		<ControlProspectos :param="param" :edit="edit" @modal="dialog = $event" />
+		    		<ControlProspectos 
+							:param="param" 
+							:edit="edit" 
+							@modal="dialog = $event" 
+						/>
 		    	</v-card>
 		    </v-dialog>
 
@@ -87,7 +105,7 @@
 
   		</v-col>
   	</v-row>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
@@ -101,6 +119,10 @@
 		},
 		data () {
 				return {
+					page: 1,
+					pageCount: 0,
+					itemsPerPage: 200,
+
 					search: '',
 					movie:'data',
 					dialog: false,
@@ -133,10 +155,10 @@
 				...mapGetters('Prospectos'  ,['Loading','getProspectos']), // IMPORTANDO USO DE VUEX - Prospectos (GETTERS)
 				...mapGetters('Usuarios'    ,['getUsuarios']), // IMPORTANDO USO DE VUEX - Prospectos (GETTERS)
 				tamanioPantalla () {
-					console.log(this.$vuetify.breakpoint)
+					// console.log(this.$vuetify.breakpoint)
 					switch (this.$vuetify.breakpoint.name) {
 						case 'xs':
-							return this.$vuetify.breakpoint.height -300
+							return 'auto';
 						break;
 						case 'sm': 
 							return this.$vuetify.breakpoint.height -300

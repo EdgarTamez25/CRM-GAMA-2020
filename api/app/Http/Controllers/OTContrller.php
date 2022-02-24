@@ -72,8 +72,12 @@ class OTContrller extends Controller
 					'urgencia'  		=> $detalle['urgencia']['id'],
 					'razon'  				=> $detalle['razon'],
 					'comentarios'  	=> $detalle['comentarios'],
-					'fecha_entrega' => $detalle['fecha'],     
-					'creacion'      => $fecha.' '.$hora,
+					'fecha_entrega' => $detalle['fecha'],    
+					'tproducto'     => $detalle['tproducto'],     
+					'id_moneda'     => $detalle['id_moneda'],     
+					'tipo_cambio'   => $detalle['tipo_cambio'],  
+					'MXN'					  => $detalle['MXN'],     
+					'USD' 					=> $detalle['USD'],     
 			]);
 	}
 

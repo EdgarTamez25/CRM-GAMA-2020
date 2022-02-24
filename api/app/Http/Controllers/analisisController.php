@@ -23,12 +23,12 @@ class analisisController extends Controller
 				$total = DB::select('SELECT count(*) as total
 															FROM produccion 
 														WHERE id_sucursal = ? AND
-																	creacion BETWEEN ? AND ?',
+																	creacion BETWEEN DATE(?) AND DATE(?)',
 													 [$req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
 
 				$depto = DB::select('SELECT DISTINCT(m.id_depto),d.nombre as departamento
 																FROM movim_prod m LEFT JOIN depto_por_suc d ON m.id_depto = d.id
-															WHERE m.id_sucursal = ? AND m.creacion BETWEEN ? AND ? ',
+															WHERE m.id_sucursal = ? AND m.creacion BETWEEN DATE(?) AND DATE(?) ',
 															[$req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
 				
 				for($i=0 ; $i<count($depto); $i++):
@@ -37,7 +37,7 @@ class analisisController extends Controller
 																WHERE estatus_prod = 0  AND 
 																			id_depto = ? AND
 																			id_sucursal = ? AND
-																			creacion BETWEEN ? AND ?',
+																			creacion BETWEEN DATE(?) AND DATE(?)',
 															[$depto[$i] -> id_depto, $req -> id_sucursal, $req -> fecha1, $req -> fecha2]
 					);
 
@@ -45,21 +45,21 @@ class analisisController extends Controller
 																	WHERE estatus_prod = 1  AND 
 																				id_depto = ? AND
 																				id_sucursal   = ? AND
-																				creacion BETWEEN ? AND ?',
+																				creacion BETWEEN DATE(?) AND DATE(?)',
 																[$depto[$i] -> id_depto, $req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
 					
 					$produciento = DB::select('SELECT count(DISTINCT(id_produccion)) as produciento FROM movim_prod 
 																WHERE estatus_prod = 2  AND 
 																			id_depto = ? AND
 																			id_sucursal   = ? AND
-																			creacion BETWEEN ? AND ?',
+																			creacion BETWEEN DATE(?) AND DATE(?)',
 															[$depto[$i] -> id_depto, $req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
 
 					$terminado = DB::select('SELECT count(DISTINCT(id_produccion)) as terminado FROM movim_prod 
 															WHERE estatus_prod = 3  AND 
 																		id_depto = ? AND
 																		id_sucursal   = ? AND
-																		creacion BETWEEN ? AND ?',
+																		creacion BETWEEN DATE(?) AND DATE(?)',
 														[$depto[$i] -> id_depto, $req -> id_sucursal, $req -> fecha1, $req -> fecha2]);
 
 						// "produccion" => $produccion,

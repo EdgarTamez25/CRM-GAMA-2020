@@ -39,7 +39,7 @@ export default {
 
 		consulta_deptos_productos(){
 			// let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO', 'DIGITAL', 'ACABADOS', 'SERIGRAFÍA','EMPAQUE','SUBLIMACIÓN','TAMPOGRAFÍA','UV'];
-			let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO','COMERCIAL'];
+			let nombres_depos = [ 'FLEXOGRAFÍA', 'ARTE Y DISEÑO'];
 			return nombres_depos;
 		},
 
@@ -48,7 +48,7 @@ export default {
 				let departamentos = [	
 															{ id:1, nombre:'FLEXOGRAFÍA'  },
 															{ id:2, nombre:'ARTE Y DISEÑO'},
-															{ id:3, nombre:'COMERCIAL'},
+															// { id:3, nombre:'COMERCIAL'},
 
 														];
 				resolve(departamentos);
@@ -208,6 +208,27 @@ export default {
 			})
 		},
 
-		
+		// PUESTOS POR DEPARTAMENTO 
+		consultar_lineas(){ 
+			return new Promise( (resolve) => {
+				this.$http.get('lineas').then((response)=>{
+					// console.log(response)
+					resolve(response.body)
+				}).catch(error =>{
+					console.log('error lineas', error)
+				})
+			})
+		},
+
+		consultaProdxLinea(id_linea){
+			return new Promise( (resolve, reject) => {
+				this.$http.get('productos.x.linea/'+ id_linea).then((response)=>{
+					resolve(response.body)
+				}).catch(error =>{
+					reject('No se encontraron productos en esté departamento.')
+					console.log('error productos', error)
+				})
+			})
+		}
   }
 }

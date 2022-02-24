@@ -65,7 +65,7 @@
 									filled dense
 								></v-text-field>
 								<v-spacer></v-spacer>
-								<!--<v-btn  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn> -->
+								<v-btn  dark color="green" @click="ImprimirExcel()"> <v-icon >mdi-microsoft-excel </v-icon> </v-btn> 
 								<!--<v-btn color="primary" dark  @click="altaOT = !altaOT"> Nueva O.T </v-btn> -->
 								<v-btn  class="gris" icon dark @click="initialize()" ><v-icon>refresh</v-icon> </v-btn>
 							</v-card-actions>
@@ -175,15 +175,16 @@
   import  metodos  from '@/mixins/metodos.js';
 	import controlOT from '@/views/OT/controlOT.vue';
 	import altaOT    from '@/views/OT/altaOT.vue';
-
+	import  ExcelExport from '@/mixins/ExcelExport.js';
 
   export default {
-    mixins:[metodos],
+    mixins:[metodos, ExcelExport],
 		components: {
 			controlOT,
 			altaOT
 		},
     data: () => ({
+			titulo: 'Ordenes_de_trabajo',
 			search: '',
       page: 0,
       pageCount: 0,
@@ -355,7 +356,7 @@
         this.save();
       },
 
-      save () {
+      save() {
         const payload = new Object({
           nombre           : this.editedItem.nombre,
           cantidad         : this.editedItem.cantidad,
@@ -400,25 +401,26 @@
 
 			ImprimirExcel(){
 				if(!this.getOT.length){
-					this.alerta.snackbar = true; this.alerta.text="No hay información que exportar"; this.alerta.color="red darken-4";
+          this.alerta = { activo: true, texto: "No hay información que exportar", color:'error' };
 					return
 				}
 				let tHeaders=[], tValores= [];
-				let theaders = [{ text: "Id"					    , value:"id" },
-												{ text: "Solicitante"     , value:"solicitante"},
+				let theaders = [{ text: "N° Orden"			  , value:"id" },
 												{ text: "Cliente"         , value:"nomcli"},
-												{ text: "Orden de Compra" , value:"oc"},
-												{ text: "Solicitud"       , value:"id_solicitud"},
-												{ text: "Fecha"           , value:"fecha"},
-												{ text: "Hora"            , value:"hora"},
+												{ text: "Orden de compra" , value:"oc"},
+												{ text: "Fecha creación"  , value:"fecha"},
+												{ text: "Hora creación"   , value:"hora"},
+												{ text: "N° Solicitud"    , value:"id_solicitud"},
+												{ text: "Solicitante"     , value:"solicitante"},
 											 ]
 
 				for(let j =0;j< theaders.length; j++){
 					tHeaders.push(theaders[j].text);
 					tValores.push(theaders[j].value);
 				}
+				
 				let tInformacion = this.getOT
-				this.titulo = this.titulo +'_'+ this.depto.nombre +"_"+ this.fecha1 +"-"+ this.fecha2;
+				this.titulo = this.titulo +'_'+ this.estatus.nombre +"_"+ this.fecha1 +"-"+ this.fecha2;
 				this.manejarDescarga(this.titulo ,tHeaders,tValores,tInformacion)
 			},
     },

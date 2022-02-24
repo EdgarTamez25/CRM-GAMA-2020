@@ -54,6 +54,9 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::get('productos', 'productosController@getAll')->name('getAllproductos');
     Route::post('productos', 'productosController@add')->name('addProductos');
     Route::put('productos/{id}', 'productosController@update')->name('updateProductos');
+    Route::get('productos.x.linea/{id}', 'productosController@productos_x_linea')->name('productos_x_linea');
+
+    
 //==================================== SUCURSALES ==================================================
     Route::get('sucursales', 'sucursalesController@getAll')->name('getAllSuc');
     Route::post('sucursales', 'sucursalesController@add')->name('addsuc');
@@ -202,7 +205,11 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::post('finalizar.producto.uv', 'monitorController@FinalizaProdUV')->name('FinalizaProdUV');
 //==================================================================================================
 
-
+//==================================== TIPO DE CAMBIO ==================================================
+Route::get('catalogo.tipo.cambio', 'tipocambioController@catalogo_tipo_cambio')->name('catalogo_tipo_cambio');
+Route::post('obtener.tipo.cambio', 'tipocambioController@obtener_tipo_cambio')->name('obtener_tipo_cambio');
+Route::post('agregar.tipo.cambio', 'tipocambioController@agregar_tipo_cambio')->name('agregar_tipo_cambio');
+Route::put('editar.tipo.cambio/{id}' , 'tipocambioController@editar_tipo_cambio') ->name('editar_tipo_cambio');
 
 //!==================================================================================================
 //!==================================== RUTAS GAMA EXTERNOS =========================================

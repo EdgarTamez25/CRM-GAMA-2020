@@ -22,7 +22,7 @@ class solicitudesController extends Controller
 															 response('Ocurrio un error',500);   //!RETORNO ID ENCONTRADO O FALSO SI HAY UN ERROR
 		}
 		
-	// !AGREGAR PRODUCTO ------------------------------------------>
+	// ! AGREGAR PRODUCTO ------------------------------------------>
 		public function agregaProductoSol(Request $req){
 
 			$insertProducto = DB::table('det_sol')->insertGetId(
@@ -30,8 +30,13 @@ class solicitudesController extends Controller
 						'id_solicitud' => $req -> id_solicitud,
 						'id_depto' 		 => $req -> id_depto,
 						'id_producto'  => $req -> id_producto,
-						'tipo_prod'    => $req -> tipo_prod,
-						'cantidad'     => $req -> cantidad
+						'cantidad'     => $req -> cantidad,
+						'tproducto'    => $req -> tproducto,
+						'id_linea'     => $req -> id_linea,
+						'id_moneda'    => $req -> id_moneda,
+						'MXN'					 => $req -> MXN,
+						'USD'					 => $req -> USD,
+					  'tipo_cambio'  => $req -> tipo_cambio 
 				]
 			);
 
@@ -41,19 +46,25 @@ class solicitudesController extends Controller
 
 		public function actualizaProductoSol($id, Request $req){
 			$actualizaProdSol = DB::update('UPDATE det_sol SET id_solicitud=:id_solicitud, id_depto=:id_depto, id_producto=:id_producto,
-																												 tipo_prod=:tipo_prod, cantidad=:cantidad
+																												 tproducto=:tproducto, cantidad=:cantidad, id_linea=:id_linea, id_moneda=:id_moneda, 
+																												 MXN=:MXN, USD=:USD, tipo_cambio=:tipo_cambio
 																					WHERE id =:id',['id_solicitud' => $req  -> id_solicitud,
 																													'id_depto'     => $req  -> id_depto,
 																													'id_producto'  => $req  -> id_producto,
-																													'tipo_prod'    => $req  -> tipo_prod,
+																													'tproducto'    => $req  -> tproducto,
 																													'cantidad'     => $req  -> cantidad,
+																													'id_linea'     => $req  -> id_linea,
+																													'id_moneda'    => $req  -> id_moneda,
+																													'MXN'     		 => $req  -> MXN,
+																													'USD'     		 => $req  -> USD,
+																													'tipo_cambio'  => $req  -> tipo_cambio,
 																													'id' 		 			 => $id ]);
 
 			return $actualizaProdSol? response("la información se guardo correctamente",200): 
 																response("Ocurrio un error, intentelo de nuevo",500);
 		}
 		
-	// !CATALOGO DE SOLICITUDES
+	// ! CATALOGO DE SOLICITUDES
 		public function Solicitudes(Request $req){
 			$solicitud = DB::select('SELECT s.id, s.id_cliente, c.nombre as nomcli, s.id_usuario, u.nombre as nomusuario, 
 																			s.fecha, s.hora, s.nota, s.estatus, s.procesado
@@ -73,17 +84,51 @@ class solicitudesController extends Controller
 			return $actualizaEnvioSol? response("la información se guardo correctamente",200): 
 																response("Ocurrio un error, intentelo de nuevo",500);
 		}
-	//! CONSULTAR DETALLE DE LA SOLICITUD
+
+	// ! CONSULTAR DETALLE DE LA SOLICITUD
 		public function DetalleSolicitud($id){
-			// ! IR A DET_SOL PARA OBTENER TODOS LOS PRODUCTOS DE LA SOLICITUD
-			$detalle = DB::select('SELECT ds.id, ds.id_solicitud, ds.id_depto, ds.id_producto, pxc.id_unidad, 
-																		u.nombre as unidad, pxc.codigo, pxc.descripcion, ds.tipo_prod, 
-																			ds.cantidad, ds.estatus
-															FROM det_sol ds 
-																  LEFT JOIN prodxcli pxc ON ds.id_producto = pxc.id 
-																	LEFT JOIN unidades u   ON pxc.id_unidad = u.id
-															WHERE id_solicitud = ?', [$id]);
-			return $detalle ? $detalle: $detalle = [];
+			// CONSULTO TODOS LOS REGISTROS DE LA SOLICITUD
+			$detalle = DB::select('SELECT * FROM det_sol WHERE id_solicitud = ?',[$id]);
+			// DECLARO VARIABLE PARA GUARDAR LA CONSULTA DESEADA
+			$detalle_completo = [];
+			// CICLAR LA CONSULTA PARA OBTENER EL TIPO DE PRODUCTO.
+			for($i=0 ; $i<count($detalle) ; $i++):
+				if($detalle[$i] -> tproducto == 1):
+					$prodxcli = $this -> consultar_detalle_prodxcli($detalle[$i] -> id);
+					array_push($detalle_completo, $prodxcli[0]);
+				else:
+					$prod = $this -> consultar_detalle_prod($detalle[$i] -> id);
+					array_push($detalle_completo, $prod[0]);
+				endif;
+			endfor;
+
+			return $detalle_completo  ? $detalle_completo: [];
+		}
+
+		public function consultar_detalle_prodxcli($id){
+			// ESTA FUNCION SOLO CONSULTA EL DETALLE DE LA SOLICITUD EN RELACION
+			// A LOS PRODUCTOS POR CLIENTES.
+			return DB::select('SELECT ds.*,
+																u.nombre as unidad, 
+																pxc.codigo, pxc.descripcion, pxc.id_unidad, pxc.nombre
+													FROM det_sol ds 
+															LEFT JOIN prodxcli pxc ON ds.id_producto = pxc.id 
+															LEFT JOIN unidades u   ON pxc.id_unidad = u.id
+													WHERE ds.id = ?', [$id]); 
+		}
+
+		public function consultar_detalle_prod($id){
+			// ESTA FUNCION SOLO CONSULTA EL DETALLE DE LA SOLICITUD EN RELACION
+			// A LOS PRODUCTOS COMERCIALES .
+			return DB::select('SELECT ds.*, 
+																u.nombre as unidad, 
+																p.codigo, p.descripcion, p.id_unidad, p.nombre,
+																l.nombre as nomlin
+													FROM det_sol ds 
+															LEFT JOIN productos p ON ds.id_producto = p.id 
+															LEFT JOIN unidades u  ON p.id_unidad = u.id
+															LEFT JOIN lineas_prods l  ON ds.id_linea = l.id
+													WHERE ds.id = ?', [$id]); 
 		}
 	
 	// ! CONSULTAR SOLICITUDES DESARROLLO/DIGITAL/DISEÑO
@@ -151,7 +196,7 @@ class solicitudesController extends Controller
 														response("Ocurrio un error, intentelo de nuevo",500);
 		}
 
-	//! OBTENER MODIFICACIONES DE UNA SOLICITUD
+	// ! OBTENER MODIFICACIONES DE UNA SOLICITUD
 		public function Modificaciones($id){
 				return  DB::select('SELECT * FROM dx_modif WHERE id_prod_modif =?',[$id]);
 		}

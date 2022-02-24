@@ -25,7 +25,7 @@ class masterController extends Controller
 															LEFT JOIN clientes c ON ot.id_cliente     = c.id
 															LEFT JOIN users   us ON ot.id_solicitante = us.id
 														WHERE do.estatus = ? AND 
-														      ot.fecha BETWEEN ? AND ? 
+														      do.creacion BETWEEN DATE(?) AND DATE(?) 
 															ORDER BY do.id 
 															DESC',
 														[ 

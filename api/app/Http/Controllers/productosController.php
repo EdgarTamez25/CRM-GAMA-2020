@@ -8,14 +8,12 @@ use App\productos;
 
 class productosController extends Controller
 {
-    public function getAll()
-    {
+    public function getAll(){
         $Productos = productos::all();
         return $Productos;
 		}
 
-		public function ProdxClixDeptos(Request $req)
-		{
+		public function ProdxClixDeptos(Request $req){
 			$productos = DB::select('SELECT nombre, codigo FROM prodxcli WHERE id_cliente = ? AND dx',[$req -> id_cliente, $req -> dx]);
 			return $productos;
 		}
@@ -112,5 +110,10 @@ class productosController extends Controller
 												);
 			
 			return 'El productos se actualizo correctamente';
-	}
+		}
+
+		public function productos_x_linea($id){
+			$producto = DB::select('SELECT * FROM productos WHERE id_linea = ?',[$id]);
+			return $producto ? $producto : [];
+		}
 }

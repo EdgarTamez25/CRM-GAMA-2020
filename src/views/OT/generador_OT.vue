@@ -45,7 +45,7 @@
     </v-col>
 
     <v-col cols="12" sm="5"  class="">
-      <v-text-field v-model="oc" hide-details dense filled placeholder="Orden de compra" label="Orden de compra"></v-text-field>
+      <v-text-field v-model.trim="oc" hide-details dense filled placeholder="Orden de compra" label="Orden de compra"></v-text-field>
     </v-col>
 
     <v-col cols="12">
@@ -297,7 +297,9 @@
       },
 
       PrepararObjecto(){
-        this.alertaGenerarOT = false;  this.overlay = true
+        this.alertaGenerarOT = false;  
+        this.overlay = true;
+
         const ot = {
           id_cliente     : this.solicitud.id_cliente,
           id_solicitante : this.solicitud.id_usuario,
@@ -310,8 +312,7 @@
           fecha_procesado: this.traerFechaActual() + ' ' + this.traerHoraActual(),
           sistema        : 'CRM-GAMA'
         };
-        // console.log('OT', ot);
-        // return 
+       
         this.$http.post('crear.orden.trabajo', ot).then( response =>{
             this.alerta = { activo: true, text: response.bodyText, color:'green'};
             let that = this; setTimeout(() => { that.$router.push({ name:'solicitudes' })}, 1500);
