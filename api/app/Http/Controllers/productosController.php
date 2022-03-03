@@ -112,6 +112,11 @@ class productosController extends Controller
 			return 'El productos se actualizo correctamente';
 		}
 
+		public function obtener_productos_comerciales(){
+			$comerciales = DB::select('SELECT * FROM productos WHERE estatus = 1');
+			return $comerciales ? $comerciales : [];
+		}
+
 		public function productos_x_linea($id){
 			$producto = DB::select('SELECT * FROM productos WHERE id_linea = ?',[$id]);
 			return $producto ? $producto : [];

@@ -7,28 +7,54 @@ use Illuminate\Support\Facades\DB; //USAR ESCRITURA SQL
 
 class OTContrller extends Controller
 {
-    // !CATALOGO DE ORDENES TRABAJO
-	public function OrdenesTrabajo(Request $req){
-		$OT = DB::select('SELECT ot.id, ot.id_cliente, c.nombre as nomcli, ot.id_solicitud,  ot.oc,
-														 ot.fecha, ot.hora, ot.estatus, ot.id_solicitante , u.nombre as solicitante,
-														 ot.id_creador, us.nombre as creador
-												FROM ot LEFT JOIN clientes c ON ot.id_cliente     = c.id
-																LEFT JOIN users    u ON ot.id_solicitante = u.id
-																LEFT JOIN users   us ON ot.id_creador     = us.id
-											WHERE ot.estatus = ? AND ot.fecha BETWEEN ? AND ?
-											ORDER BY ot.id DESC',[ $req -> estatus, $req -> fecha1, $req -> fecha2 ]);
-		return $OT ? $OT: $OT = [];
-	}
+  // !CATALOGO DE ORDENES TRABAJO
+		public function OrdenesTrabajo(Request $req){
+			$OT = DB::select('SELECT ot.id, ot.id_cliente, c.nombre as nomcli, ot.id_solicitud,  ot.oc,
+															ot.fecha, ot.hora, ot.estatus, ot.id_solicitante , u.nombre as solicitante,
+															ot.id_creador, us.nombre as creador
+													FROM ot LEFT JOIN clientes c ON ot.id_cliente     = c.id
+																	LEFT JOIN users    u ON ot.id_solicitante = u.id
+																	LEFT JOIN users   us ON ot.id_creador     = us.id
+												WHERE ot.estatus = ? AND ot.fecha BETWEEN ? AND ?
+												ORDER BY ot.id DESC',[ $req -> estatus, $req -> fecha1, $req -> fecha2 ]);
+			return $OT ? $OT: $OT = [];
+		}
+	// ! DETALLE DE ORDEN DE TRABAJO **************************************************************************************************************
+		public function DetalleOT($id){
+			$detalle = DB::select('SELECT * FROM det_ot WHERE id_ot = ?', [$id]);
+			$detalle_completo = [];
 
-	public function DetalleOT($id){
-		$detalleOT = DB::select('SELECT d.id, d.partida, d.id_ot, d.id_producto, p.codigo as producto, d.cantidad, p.id_unidad,u.nombre as unidad,
-																		d.fecha_progra, d.fecha_entrega, d.concepto, d.urgencia, d.razon, d.estatus, d.comentarios 
-																FROM det_ot d 
-																	LEFT JOIN prodxcli p ON d.id_producto = p.id
-																	LEFT JOIN unidades u ON p.id_unidad   = u.id
-																WHERE d.id_ot = ?', [ $id]);
-		return $detalleOT ? $detalleOT : [];
-	}
+			for($i=0;$i<count($detalle);$i++):
+				if($detalle[$i] -> tproducto == 1): // PRODUCCION
+					$prod_produccion = $this -> consulta_detalle_produccion($detalle[$i] -> id);
+					array_push($detalle_completo, $prod_produccion[0]);
+				endif;
+
+				if($detalle[$i] -> tproducto == 2): // COMERCIALIZACION
+					$prod_comercial = $this -> consulta_detalle_comercial($detalle[$i] -> id);
+					array_push($detalle_completo, $prod_comercial[0]);
+				endif;
+			endfor;
+			
+			return $detalle_completo ? $detalle_completo : [];
+		}
+
+		public function consulta_detalle_produccion($id){
+			return DB::select('SELECT d.*, p.codigo as producto, p.id_unidad, u.nombre as unidad
+													FROM det_ot d 
+														LEFT JOIN prodxcli p ON d.id_producto = p.id
+														LEFT JOIN unidades u ON p.id_unidad   = u.id
+												WHERE d.id = ?', [ $id]);
+		}
+
+		public function consulta_detalle_comercial($id){
+			return DB::select('SELECT d.*, p.codigo as producto, p.id_unidad, u.nombre as unidad
+													FROM det_ot d 
+														LEFT JOIN productos p ON d.id_producto = p.id
+														LEFT JOIN unidades u ON p.id_unidad   = u.id
+												WHERE d.id = ?', [ $id]);
+		}
+	// ! ***************************************************************************************************************************************
 
 	public function CrearOT(Request $req){
 		$id_ot = DB::table('ot')->insertGetId(
@@ -92,7 +118,11 @@ class OTContrller extends Controller
 					'urgencia'  		=> $detalle['urgencia']['id'],
 					'fecha_entrega' => $detalle['fecha'], 
 					'comentarios'  	=> $detalle['comentarios'],
-					'creacion'      => $fecha.' '.$hora,
+					'tproducto'     => $detalle['tproducto']['id'],     
+					'id_moneda'     => $detalle['moneda']['id'],     
+					'tipo_cambio'   => $detalle['tipo_cambio'],  
+					'MXN'					  => $detalle['MXN'],     
+					'USD' 					=> $detalle['USD'],  
 			]);
 	}
 
@@ -130,13 +160,20 @@ class OTContrller extends Controller
 	public function ActualizaPartidaDetOT(Request $req){
 		$actualizaPartida = DB::update('UPDATE det_ot SET cantidad=:cantidad, concepto=:concepto, 
 																											urgencia=:urgencia, razon=:razon,
-																											fecha_entrega=:fecha_entrega
+																											fecha_entrega=:fecha_entrega,
+																											comentarios=:comentarios,
+																											id_moneda=:id_moneda,
+																											MXN=:MXN, USD=:USD
 																		WHERE id=:id',[
 																									 'cantidad'      => $req -> cantidad, 
 																									 'concepto'      => $req -> concepto, 
 																									 'urgencia'      => $req -> urgencia, 
 																									 'razon'         => $req -> razon, 
 																									 'fecha_entrega' => $req -> fecha_entrega, 
+																									 'comentarios'   => $req -> comentarios,
+																									 'id_moneda'     => $req -> id_moneda,
+																									 'MXN'      		 => $req -> MXN,
+																									 'USD'      		 => $req -> USD,
 																									 'id' 					 => $req -> id
 																								  ]);
 

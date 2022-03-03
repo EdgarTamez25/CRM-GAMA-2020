@@ -7,14 +7,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function(){ return view('welcome'); });
 Route::post('iniciar.sesion.integral', 'userController@IniciarSesionIntegral')->name('IniciarSesionIntegral');
 Route::post('valida.sesion.activa', 'userController@validaSesionActiva')->name('validaSesionActiva');
 Route::post('obtener.datos.usuario', 'userController@obtenerDatosUsuario')->name('obtenerDatosUsuario');
 Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion');
-
 
 //==================================== NIVELES ====================================================
     Route::get('niveles', 'nivelController@obtenerNiveles')->name('obtenerNiveles');
@@ -55,7 +52,7 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
     Route::post('productos', 'productosController@add')->name('addProductos');
     Route::put('productos/{id}', 'productosController@update')->name('updateProductos');
     Route::get('productos.x.linea/{id}', 'productosController@productos_x_linea')->name('productos_x_linea');
-
+    Route::get('obtener.productos.comerciales', 'productosController@obtener_productos_comerciales')-> name('obtener_productos_comerciales');
     
 //==================================== SUCURSALES ==================================================
     Route::get('sucursales', 'sucursalesController@getAll')->name('getAllSuc');
@@ -206,13 +203,13 @@ Route::post('cerrar.sesion', 'userController@CerrarSesion')->name('CerrarSesion'
 //==================================================================================================
 
 //==================================== TIPO DE CAMBIO ==================================================
-Route::get('catalogo.tipo.cambio', 'tipocambioController@catalogo_tipo_cambio')->name('catalogo_tipo_cambio');
-Route::post('obtener.tipo.cambio', 'tipocambioController@obtener_tipo_cambio')->name('obtener_tipo_cambio');
-Route::post('agregar.tipo.cambio', 'tipocambioController@agregar_tipo_cambio')->name('agregar_tipo_cambio');
-Route::put('editar.tipo.cambio/{id}' , 'tipocambioController@editar_tipo_cambio') ->name('editar_tipo_cambio');
+    Route::get('catalogo.tipo.cambio', 'tipocambioController@catalogo_tipo_cambio')->name('catalogo_tipo_cambio');
+    Route::post('obtener.tipo.cambio', 'tipocambioController@obtener_tipo_cambio')->name('obtener_tipo_cambio');
+    Route::post('agregar.tipo.cambio', 'tipocambioController@agregar_tipo_cambio')->name('agregar_tipo_cambio');
+    Route::put('editar.tipo.cambio/{id}' , 'tipocambioController@editar_tipo_cambio') ->name('editar_tipo_cambio');
 
 //!==================================================================================================
-//!==================================== RUTAS GAMA EXTERNOS =========================================
+//!=================================== RUTAS GAMA EXTERNOS =========================================
 //!===================================================================================================
 
 //*==================================== ACCESOS-RH ==================================================
@@ -243,8 +240,7 @@ Route::put('editar.tipo.cambio/{id}' , 'tipocambioController@editar_tipo_cambio'
     Route::post('sala.juntas', 'juntasController@salaJuntas')->name('salaJuntas');
 //==================================================================================================
 
-
-//*==================================== RUTAS PROGRAMACION FLEXO =====================================
+//*=================================== RUTAS PROGRAMACION FLEXO =====================================
 //*===================================================================================================
     // Route::get('obtener.operadores', 'userController@obtenerOperadores')->name('obtenerOperadores');
     // Route::post('agregar.programacion', 'programacionFlexoController@programacionFlexo')->name('programacionFlexo');
@@ -267,7 +263,7 @@ Route::put('editar.tipo.cambio/{id}' , 'tipocambioController@editar_tipo_cambio'
     // Route::get('obtener.suajes', 'suajesController@Suajes')->name('Suajes');
 
 
-//*==================================== RUTAS M.R.P GAMA ======= =====================================
+//*=================================== RUTAS M.R.P GAMA ======= =====================================
 //*===================================================================================================
 //==================================== PERMISOS MRP ==================================================
 	Route::get('obtener.permisos_usuario/{id}'   ,'permisosMRPController@obtener_permisos_usuario')    -> name('obtener_permisos_usuario');
@@ -280,7 +276,7 @@ Route::put('editar.tipo.cambio/{id}' , 'tipocambioController@editar_tipo_cambio'
 	Route::post('agregar.unidades', 'unidadesController@agregarUnidades')->name('agregarUnidades');
 	Route::put('actualizar.unidades/{id}', 'unidadesController@actualizarUnidades')->name('actualizarUnidades');
 
-//!==================================== PROYECTOR MASTER=============================================
+//!=================================== PROYECTOR MASTER ============================================
 	Route::post('agregar.programacion.mrp', 'masterController@ciclaProgramacion') ->name('ciclaProgramacion');
 	Route::post('obtener.datos.monitor'   , 'masterController@obtener_datos_monitor')->name('obtener_datos_monitor');
 	Route::post('obtener.distribucion.programacion', 'masterController@obtener_distribucion_programacion')->name('obtener_distribucion_programacion');
@@ -317,17 +313,17 @@ Route::put('editar.tipo.cambio/{id}' , 'tipocambioController@editar_tipo_cambio'
 	Route::post('obtener.salidas.almacen', 'salidasController@obtener_salidas_almacen') -> name('obtener_salidas_almacen');  // SALIDA ALMACEN
 
     
-//=================================== MOVIM PROD ===================================================
+//==================================== MOVIM PROD ===================================================
 	Route::get('obtener.MovimProd', 'movimProdController@obtenerMovimProd')->name('obtenerMovimProd');
 	Route::post('agregar.MovimProd', 'movimProdController@agregarMovimProd')->name('agregarMovimProd');
 	Route::put('actualizar.MovimProd/{id}', 'movimProdController@actualizarMovimProd')->name('actualizarMovimProd');
-//=================================== DEPARTAMENTOS POR SUCURSAL ====================================
+//==================================== DEPARTAMENTOS POR SUCURSAL ====================================
 	Route::get('obtener.deptos.por.suc/{id}'   , 'departamentosController@obtener_deptos_por_suc')->name('obtener_deptos_por_suc');
 
-//=================================== PUESTOS POR SUCURSAL ==========================================
+//==================================== PUESTOS POR SUCURSAL ==========================================
 	Route::get('obtener.puestos.por.depto/{id}', 'puestosController@obtener_puestos_por_depto')->name('obtener_puestos_por_depto');
 
 
 
-//! =================================== ANALISIS DE DATOS  ==========================================
+//! ================================== ANALISIS DE DATOS  ==========================================
 Route::post('obtener.analisis.produccion', 'analisisController@obtener_analisis_produccion')->name('obtener_analisis_produccion');

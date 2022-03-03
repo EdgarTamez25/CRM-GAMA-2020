@@ -403,10 +403,10 @@
           this.alerta = { activo: true, text:'Aun no asignas el tipo de cambio.', color:'error'};
           return;
         }
-        // this.overlay = true; 
-        // this.crudSolicitud = false;
+        this.overlay = true; 
+        this.crudSolicitud = false;
         let precio_peso = 0 , precio_dolar = 0;
-        let tipo_de_cambio = 21;
+        // let tipo_de_cambio = 21;
 
         if(this.tipo_cambio_hoy.cambio){ 
           

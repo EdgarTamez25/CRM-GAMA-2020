@@ -23,9 +23,6 @@ import OT from '@/modules/OT';
 import Monitor     from '@/modules/Monitor';
 import TipoCambio     from '@/modules/TipoCambio';
 
-
-
-
 Vue.use(Vuex)
 
 export default new Vuex.Store({
