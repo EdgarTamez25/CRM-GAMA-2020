@@ -263,7 +263,9 @@
           {
             admin: [ 
               // { text: 'Inicio'      ,icon: 'home'                       ,path: '/inicio'},
-              { text: 'Compromisos' ,icon: 'chrome_reader_mode'         ,path: '/compromisos'},
+              { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
+              { text: 'Calendario'  ,icon: 'chrome_reader_mode' ,path: '/calendario.compromiso'},
+
               { text: 'Solicitudes' ,icon: 'ballot'                     ,path: '/solicitudes'},
               { text: 'Desarrollo de proyectos' ,icon: 'mdi-monitor-screenshot' ,path: '/desarrollo/proyectos'},
               ],
@@ -329,19 +331,19 @@
                 this.blocked = false;  // DESACTIVO BLOCKEO
               }).catch( error=>{       // OBTENGO LA INFORMACION DEL USUARIO
                 this.alerta = { activo: true, texto: error.bodyText, color:'error', vertical:true }
-                window.location.href = this.urlSistemaPrincipal;
+                // window.location.href = this.urlSistemaPrincipal;
               });  
             }).catch( error =>{
-              window.location.href = this.urlSistemaPrincipal;
+              // window.location.href = this.urlSistemaPrincipal;
             })
             if(this.$router.currentRoute.name != 'Inicio'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
               this.$router.push({ name: 'Inicio' });         // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
             }
           }else{ 
-          window.location.href = this.urlSistemaPrincipal;
+          // window.location.href = this.urlSistemaPrincipal;
           }
       } else {
-        window.location.href = this.urlSistemaPrincipal;
+        // window.location.href = this.urlSistemaPrincipal;
       }
       // this.colorBar();     // MANDO A LLAMAR LA FUNCION DEL BANNER DE COLORES
       // this.consultarMonedas()	// LLENAR SELECTOR DE MONEDAS

@@ -84,7 +84,16 @@ class compromisosController extends Controller
 			endif; 
 		}
 
-
+		public function calendario_compromisos_vendedor(Request $req){
+			$calendario = DB::select('SELECT c.*, v.nombre as nomvend, cli.nombre as nomcli, ca.nombre as categoria 
+																	FROM compromisos c LEFT JOIN users v ON c.id_vendedor = v.id
+																										 LEFT JOIN clientes cli ON c.id_cliente  = cli.id
+																										 LEFT JOIN categorias ca ON c.id_categoria = ca.id
+																WHERE c.fecha BETWEEN ? AND ? AND c.id_vendedor = ?',
+																[$req -> fecha1, $req -> fecha2, $req -> id_vendedor]);
+			return $calendario ? $calendario: [];
+		}
+		
 		//================================ FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
 		public function Historial($id_compromiso, $fecha, $hora, $fase_venta, $numorden, $aceptado,$obscierre ){
 			$historial = DB::insert('INSERT INTO historial(id_compromiso,fecha,hora,fase_venta,numorden,aceptado,obscierre)

@@ -165,10 +165,10 @@
 			}
 		},
 		
-		created(){
+		async created(){
 			this.validarModoVista() 	  // VALIDO EL MODO DE LA VISTA
 			this.consultar_Vendedores()
-			this.consultar_Categorias()
+			this.categorias = await this.consultar_Categorias();
 			this.consultar_Clientes()
 		},
 			

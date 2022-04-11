@@ -56,10 +56,12 @@ export default {
 		},
 
 		consultar_Vendedores(){  // AUTOCOMPLETE -> VENDEDORES
-			this.$http.get('vendedores').then((response)=>{
-				this.vendedores = response.body //LLENNO ARRAY
-			}).catch(error =>{
-				console.log('error', error)
+			return new Promise( resolve => {
+				this.$http.get('vendedores').then((response)=>{
+					resolve(response.body)
+				}).catch(error =>{
+					console.log('error acabados', error)
+				})
 			})
 		},
 

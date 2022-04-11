@@ -27,8 +27,9 @@ const routes = [
   { path:'/ordenes-de-trabajo'   , name:'ordenes-de-trabajo'	  , component:()=> import('@/views/OT/ordenTrabajo.vue')                     , meta: { ADMIN: true, SUPER:true,  SCLIENTE:true  }},
   { path:'/monitor-master'       , name:'monitor-master'	      , component:()=> import('@/views/OT/Monitor.vue')                          , meta: { ADMIN: true, SUPER:true,  SCLIENTE:false }},
   { path:'/detalle-ot'           , name:'detalle-ot'	          , component:()=> import('@/views/OT/controlOT.vue')                        , meta: { ADMIN: true, SUPER:true,  SCLIENTE:true  }},
-  { path:'/prospectos'           , name:'prospectos'            , component:()=> import('@/views/Catalogos/Prospectos/Prospectos.vue' )    , meta: { ADMIN: true, SUPER:true,  SCLIENTE:true  }},
-  
+  { path:'/prospectoss'           , name:'prospectos'           , component:()=> import('@/views/Catalogos/Prospectos/Prospectos.vue' )    , meta: { ADMIN: true, SUPER:true,  SCLIENTE:true  }},
+  { path:'/calendario.compromiso', name:'calendario.compromiso' , component:()=> import('@/views/Compromisos/Calendario.vue') , meta: { ADMIN: true, SUPER:true,  SCLIENTE:false  }},
+
   // { path:'/:id'				       , name: 'Login'        , component: Login         , meta: { libre:true }},
   // { path:'/home'			     , name: 'Home'	        , component: Home          , meta: { ADMIN:true, SUPER:true,  VENTAS:true, SCLIENTE:true, VEND:true, CHOFER:true, EXTRA:true, DDD:true  }},
   // { path:'/productos'		   , name:'productos'	    , component:()=> import('@/views/Catalogos/Productos/CatProductos.vue')    , meta: { ADMIN: true, SUPER:true }},

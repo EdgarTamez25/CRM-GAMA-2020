@@ -46,6 +46,7 @@ class produccionController extends Controller{
     public function obtener_datos_produccion(Request $req){
 
 			$produccion = DB::select('SELECT m.*,
+																			d3.nombre as depto,
 																			us.nombre  as nomemisor,
 																			us2.nombre as nomreceptor,
 																			d.nombre   as deptoemisor,
@@ -61,6 +62,7 @@ class produccionController extends Controller{
 																	FROM movim_prod m
 																			LEFT JOIN users         us ON m.id_usr_emisor = us.id
 																			LEFT JOIN users    	   us2 ON m.id_usr_receptor = us2.id
+																			LEFT JOIN depto_por_suc d3 ON m.id_depto = d3.id
 																			LEFT JOIN depto_por_suc  d ON m.emisor = d.id
 																			LEFT JOIN depto_por_suc d2 ON m.receptor = d2.id
 																			LEFT JOIN prodxcli       a ON m.id_producto = a.id
@@ -68,7 +70,7 @@ class produccionController extends Controller{
 																			LEFT JOIN produccion     p ON m.id_produccion = p.id
 																			LEFT JOIN det_ot        dt ON p.id_det_ot = dt.id
 																			LEFT JOIN ot  		   	   ON dt.id_ot = ot.id
-																				LEFT JOIN users    	   us3 ON ot.id_creador = us3.id
+																			LEFT JOIN users    	   us3 ON ot.id_creador = us3.id
 																			LEFT JOIN clientes       c ON ot.id_cliente = c.id
 																	WHERE m.id_depto   = ? AND
 																			m.estatus_prod = ? AND
@@ -93,6 +95,16 @@ class produccionController extends Controller{
 
 		}
 
+	// **************** AUTORIZAR ENVIO DE PRODUCTO *****************************
+		public function generar_movimiento_partida(Request $req){
+			$movimiento = DB::update('UPDATE movim_prod SET id_depto=:id_depto,id_sucursal=:id_sucursal
+																	WHERE id=:id',['id_depto' 	 => $req -> id_nuevo_depto,
+																		  					 'id_sucursal' => $req -> id_nueva_sucursal,
+																								 'id' 				 => $req -> id_movim ]);
+			return $movimiento ? response("El producto se movio correctamente.", 200):
+													 response("Ocurrio un problema , por favor intentelo mas tarde.", 500);
+		}
+	// ! ************************************************************************
 
 	// **************** AUTORIZAR ENVIO DE PRODUCTO *****************************
 		public function autorizar_envio_material(Request $req){
@@ -159,7 +171,7 @@ class produccionController extends Controller{
 															'estatus_prod' => 2,
 															'id' => $req -> id_movim_ant
 														]);
-			return $terminado ? response("La reposición se genero correctamente",200):
+				return $terminado ? response("La reposición se genero correctamente",200):
 														response("Ocurrio un error, intentelo mas tarde",500);
 
 		}
@@ -174,7 +186,20 @@ class produccionController extends Controller{
 								'id_actualiza' => $id_usuario,
                 'id' => $id
             ]);
-		
+		}
+
+		public function registra_cantidad_reponer(Request $req){
+			$cantReponer = DB::update('UPDATE movim_prod SET 
+																 sol_reposicion=:sol_reposicion + sol_reposicion,
+																 estatus=:estatus
+																WHERE id=:id',
+            [
+                'sol_reposicion' => $req -> sol_reposicion,
+								'estatus' => $req -> estatus,
+                'id' => $req -> id_movim
+            ]);
+			return $cantReponer ? response("La reposición se registro correctamente",200):
+													response("Ocurrio un error, intentelo mas tarde",500); 
 		}
 	// ! ************************************************************************
 	
