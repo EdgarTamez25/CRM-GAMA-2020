@@ -264,7 +264,7 @@
             admin: [ 
               // { text: 'Inicio'      ,icon: 'home'                       ,path: '/inicio'},
               { text: 'Compromisos' ,icon: 'chrome_reader_mode' ,path: '/compromisos'},
-              { text: 'Calendario'  ,icon: 'chrome_reader_mode' ,path: '/calendario.compromiso'},
+              { text: 'Calendario'  ,icon: 'mdi-calendar-text' ,path: '/calendario.compromiso'},
 
               { text: 'Solicitudes' ,icon: 'ballot'                     ,path: '/solicitudes'},
               { text: 'Desarrollo de proyectos' ,icon: 'mdi-monitor-screenshot' ,path: '/desarrollo/proyectos'},
@@ -293,7 +293,7 @@
               { text: 'Usuarios'          ,icon: 'person'       ,path: '/usuarios'},
               { text: 'Clientes'          ,icon: 'people'       ,path: '/clientes'},
               { text: 'Prospectos'  ,icon: 'person_pin_circle'  ,path: '/prospectos'},
-              { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
+              // { text: 'Proveedores'       ,icon: 'how_to_reg'       ,path: '/proveedores'},
               // { text: 'Zonas'             ,icon: 'pin_drop'     ,path: '/zonas-subzonas'},
               // { text: 'Carteras'          ,icon: 'folder_shared',path: '/carteras'},
               // { text: 'Monedas'           ,icon: 'euro'         ,path: '/monedas'},

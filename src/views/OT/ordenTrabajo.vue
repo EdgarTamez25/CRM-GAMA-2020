@@ -130,9 +130,9 @@
 							<v-btn class="ma-1" small color="success" @click="editItem(item)">
 							<v-icon > mdi-pencil </v-icon>
 							</v-btn>
-							<v-btn class="ma-1" small color="error" @click="deleteItem(item)">
+							<!--<v-btn class="ma-1" small color="error" @click="deleteItem(item)">
 							<v-icon> mdi-delete </v-icon>
-							</v-btn>
+							</v-btn> -->
 						</template>
 					
 					</v-data-table>
@@ -165,6 +165,13 @@
 			</v-dialog>
 
 
+			<v-dialog width="600" v-model="plantilla_modal" hide-overlay>
+				<v-card class="pa-4">
+					<plantilla/>
+				</v-card>
+			</v-dialog>
+
+
 		</v-row>
 	</v-main>
 </template>
@@ -175,15 +182,19 @@
   import  metodos  from '@/mixins/metodos.js';
 	import controlOT from '@/views/OT/controlOT.vue';
 	import altaOT    from '@/views/OT/altaOT.vue';
+  var moment = require('moment'); moment.locale('es') /// inciar Moment 
+  import plantilla from '@/components/plantilla.vue'
 
 
   export default {
     mixins:[metodos],
 		components: {
 			controlOT,
-			altaOT
+			altaOT,
+			plantilla
 		},
     data: () => ({
+			plantilla_modal:false,
 			search: '',
       page: 0,
       pageCount: 0,

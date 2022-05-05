@@ -169,18 +169,23 @@
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':
 						return this.$vuetify.breakpoint.height -260
+            
 					break;
 					case 'sm': 
 						return this.$vuetify.breakpoint.height -260
+            
 					break;
 					case 'md':
 						return this.$vuetify.breakpoint.height -260
+            
 					break;
 					case 'lg':
 						return this.$vuetify.breakpoint.height -260
+            
 					break;
 					case 'xl':
 						return this.$vuetify.breakpoint.height -260
+            
 					break;
 				}
 			},
@@ -255,7 +260,7 @@
           fecha2: max
         }
         this.$http.post('calendario.compromisos.vendedor', payload).then(response =>{
-          console.log('response calendario 1', response.body);
+          // console.log('response calendario 1', response.body);
           for (const i in response.body) {
             events.push({
               name: response.body[i].categoria,

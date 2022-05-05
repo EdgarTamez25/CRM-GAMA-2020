@@ -140,7 +140,10 @@
           </v-col>
           
 				</v-row>
-        
+
+        <v-col cols="12" align="center" v-if="detalle.length && modoVista != 1">
+          <v-btn color="success" dark @click="imprimir_orden_trabajo()">Imprimir</v-btn>
+        </v-col>
         <v-col cols="12" class="mt-3"/>
         
         <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
@@ -212,6 +215,7 @@
 
               
             </v-row>
+        
             <div class="mt-12"></div>
             <v-footer absolute fixed>
               <v-spacer></v-spacer>
@@ -243,7 +247,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-          
+
         <overlay v-if="overlay"/>
 
 			</v-col>
@@ -255,19 +259,20 @@
 <script>
   import Vue from 'vue'
   import {mapGetters, mapActions} from 'vuex'
-  import  metodos from '@/mixins/metodos.js';
-  import overlay     from '@/components/overlay.vue';
-  import loading     from '@/components/loading.vue';
+  import overlay from '@/components/overlay.vue';
+  import loading from '@/components/loading.vue';
+  import metodos from '@/mixins/metodos.js';
+  import jsPdf   from '@/mixins/jsPdf.js';
 
   var accounting = require("accounting");
   Vue.filter('currency', (val, dec) => { return accounting.formatMoney(val, '', dec) });
 
 	export default {
-		mixins:[metodos],
-		// mixins:[metodos,jsPdf],
+		// mixins:[metodos],
+		mixins:[metodos,jsPdf],
 	  components: {
       overlay,
-      loading
+      loading,
 		},
 		props:[
 			'modoVista',
@@ -275,6 +280,7 @@
 	  ],
 	  data () {
 			return {
+        plantilla_modal: true,
         // VARIABLES PRINCIPALES
         idEditar: null,
         idAEliminar: null,
@@ -577,7 +583,36 @@
 			mostrarError(mensaje){
 				this.snackbar=true; this.text=mensaje; this.color = "error";
       },
-      
+
+      imprimir_orden_trabajo(){
+        console.log('parametros', this.parametros);
+        
+        let info = [ 
+                    [
+                      { text: "Cliente"  , value: this.parametros.nomcli    },
+                      { text: "Vendedor" , value: this.parametros.solicitante }, 
+                    ],
+                    [
+                      { text: "Orden de Compra" , value: this.parametros.oc         }, 
+                      { text: "Fecha de Programación", value: this.moment(this.parametros.fecha).format('LL') },
+                    ]
+        ];
+
+        let columnas = [  { title: "Par"           , style:{ height: '10px' } ,dataKey: "id"       }, 
+                          { title: "Producto"      , style:{ height: '10px' } ,dataKey: "producto" }, 
+                          { title: "Cantidad"      , style:{ height: '10px' } ,dataKey: "cantidad" }, 
+                          { title: "Digital"       , style:{ height: '10px' } ,dataKey: "digital" }, 
+                          { title: "Offset"        , style:{ height: '10px' } ,dataKey: "offset"  }, 
+                          { title: "Acabados"      , style:{ height: '10px' } ,dataKey: "acabados" }, 
+                          { title: "Comentarios"   , style:{ height: '10px' } ,dataKey: "comentarios"     }, 
+                          { title: "F.Entrega"     , style:{ height: '10px' } ,dataKey: "fecha_entrega"},
+                          { title: "Proceso"       , style:{ height: '10px' } ,dataKey: "departamento"     }, 
+                          { title: "Finalización"  , style:{ height: '10px' } ,dataKey: "" },
+
+                        ];
+        let ot = this.parametros.id;
+        this.generatePDF(columnas, this.detalle, info, ot);
+      },
 		}
 	}
 </script>
